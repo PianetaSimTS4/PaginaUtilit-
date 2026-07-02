@@ -3,14 +3,14 @@ import { Guide, Cheat, QuizQuestion } from '../types';
 export const guidesData: Guide[] = [
   {
     id: 'guide-moveobjects',
-    title: 'Guida Suprema al Cheat "MoveObjects" (bb.moveobjects)',
+    title: 'Lorem Ipsum Dolor Sit Amet',
     description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin elementum, lorem a scelerisque dictum, arcu nunc.',
     category: 'costruzione',
     author: 'SimmerItalia99',
     date: '28 Giugno 2026',
     readTime: '5 min',
     difficulty: 'Principiante',
-    tags: ['costruzione', 'trucchi', 'bb.moveobjects', 'arredamento'],
+    tags: ['lorem', 'ipsum', 'dolor', 'sit'],
     content: [
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sed dapibus leo, nec finibus mi. Phasellus hendrerit vulputate dolor, sed convallis ex congue eget. Aliquam lorem nulla, pretium nec elit non, aliquet tristique lacus.',
       'Aenean lobortis diam at interdum eleifend. Ut gravida rhoncus dolor, ac convallis enim hendrerit a. Proin congue, eros id dictum sodales, est ipsum lacinia ligula, sit amet rhoncus nunc felis non est.',
@@ -26,14 +26,14 @@ export const guidesData: Guide[] = [
   },
   {
     id: 'guide-mods-cc',
-    title: 'Come Installare Mod e Materiale Personalizzato (CC) nel 2026',
+    title: 'Consectetur Adipiscing Elit',
     description: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
     category: 'mod_cc',
     author: 'SimsGuruLuca',
     date: '15 Giugno 2026',
     readTime: '6 min',
     difficulty: 'Intermedio',
-    tags: ['mod', 'cc', 'installazione', 'guida sicura'],
+    tags: ['consectetur', 'adipiscing', 'elit', 'lorem'],
     content: [
       'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
       'Mauris dictum tincidunt nisl, nec maximus libero consequat quis. Aliquam interdum urna sit amet massa pharetra, non vulputate libero tristique. Curabitur vel leo id erat auctor gravida in eget nulla.',
@@ -49,14 +49,14 @@ export const guidesData: Guide[] = [
   },
   {
     id: 'guide-occulti-vampiri',
-    title: 'Guida Suprema ai Vampiri: Poteri, Debolezze e Segreti',
+    title: 'Nullam Hendrerit Mi Eu Finibus',
     description: 'Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra.',
     category: 'gameplay',
     author: 'ContessaSim',
     date: '02 Luglio 2026',
     readTime: '8 min',
     difficulty: 'Esperto',
-    tags: ['gameplay', 'vampiri', 'poteri', 'occulti'],
+    tags: ['nullam', 'hendrerit', 'finibus', 'lorem'],
     content: [
       'Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris. Integer in mauris eu nibh euismod gravida.',
       'Aliquam sollicitudin, arcu a laoreet tempor, risus neque pretium ipsum, sed convallis risus ligula a tellus. Cras iaculis ultricies nulla. Donec quis dui at sem tempor varius. Ut nonummy convallis risus.',
@@ -72,14 +72,14 @@ export const guidesData: Guide[] = [
   },
   {
     id: 'guide-roofing',
-    title: 'Tetti Perfetti: Come evitare errori comuni di costruzione',
+    title: 'Nemo Enim Ipsam Voluptatem',
     description: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.',
     category: 'costruzione',
     author: 'ArchitettoSim',
     date: '20 Giugno 2026',
     readTime: '7 min',
     difficulty: 'Esperto',
-    tags: ['costruzione', 'tetti', 'architettura', 'consigli'],
+    tags: ['nemo', 'enim', 'ipsam', 'lorem'],
     content: [
       'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.',
       'Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet.',
@@ -95,17 +95,17 @@ export const guidesData: Guide[] = [
   },
   {
     id: 'guide-affitti-luna',
-    title: 'Guida a "Affittasi" (For Rent): Gestire appartamenti e lotti residenziali d’affitto',
+    title: 'Quis Autem Vel Eum Iure',
     description: 'Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur.',
     category: 'espansioni',
     author: 'SimImmobiliare',
     date: '10 Giugno 2026',
     readTime: '8 min',
     difficulty: 'Intermedio',
-    tags: ['espansioni', 'for rent', 'affittasi', 'case d\'affitto', 'business'],
+    tags: ['quis', 'autem', 'eum', 'lorem'],
     content: [
       'Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur. At vero eos et accusamus et iusto odio.',
-      'Dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt.',
+      'Dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecat cupiditate non provident, similique sunt in culpa qui officia deserunt.',
       'Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est.',
       'Omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic.',
       'Tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.'
@@ -121,93 +121,93 @@ export const guidesData: Guide[] = [
 export const cheatsData: Cheat[] = [
   {
     code: 'testingcheats true',
-    description: 'Attiva i trucchi avanzati di gioco. Indispensabile per far funzionare quasi tutti gli altri codici.',
+    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sed dapibus leo, nec finibus mi.',
     category: 'Generali',
-    requirements: 'Nessuno'
+    requirements: 'LOREM'
   },
   {
     code: 'motherlode',
-    description: 'Aggiunge immediatamente 50.000 Simoleon ai fondi della famiglia attiva.',
+    description: 'Aenean lobortis diam at interdum eleifend. Ut gravida rhoncus dolor, ac convallis enim hendrerit a.',
     category: 'Soldi',
-    requirements: 'Nessuno'
+    requirements: 'LOREM'
   },
   {
     code: 'kaching',
-    description: 'Aggiunge immediatamente 1.000 Simoleon ai fondi della famiglia.',
+    description: 'Praesent at nunc a lectus eleifend elementum sit amet tristique mi. Sed vitae interdum erat.',
     category: 'Soldi',
-    requirements: 'Nessuno'
+    requirements: 'LOREM'
   },
   {
     code: 'rosebud',
-    description: 'Aggiunge immediatamente 1.000 Simoleon ai fondi (storico trucco di The Sims 1!).',
+    description: 'Vivamus vestibulum ligula sed nulla pharetra, vitae facilisis ex volutpat. Quisque hendrerit.',
     category: 'Soldi',
-    requirements: 'Nessuno'
+    requirements: 'LOREM'
   },
   {
     code: 'Money [cifra]',
-    description: 'Imposta i fondi della famiglia all’esatta cifra indicata (es. "Money 150000").',
+    description: 'Nam eleifend hendrerit massa, vitae congue tortor feugiat sed. Aliquam erat volutpat.',
     category: 'Soldi',
-    requirements: 'testingcheats true'
+    requirements: 'LOREM_TEST'
   },
   {
     code: 'bb.moveobjects',
-    description: 'Rimuove la griglia di collisione, consentendo di fondere o alzare/abbassare gli oggetti.',
+    description: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
     category: 'Costruzione',
-    requirements: 'Nessuno'
+    requirements: 'LOREM'
   },
   {
     code: 'bb.showhiddenobjects',
-    description: 'Abilita il catalogo del Debug, sbloccando centinaia di oggetti d’ambiente non acquistabili normalmente.',
+    description: 'Mauris dictum tincidunt nisl, nec maximus libero consequat quis. Aliquam interdum urna sit amet.',
     category: 'Costruzione',
-    requirements: 'Nessuno'
+    requirements: 'LOREM'
   },
   {
     code: 'bb.showliveeditobjects',
-    description: 'Sblocca migliaia di oggetti di scenario creati dagli sviluppatori (alberi, rocce, auto decorative).',
+    description: 'Nullam hendrerit mi eu finibus feugiat. Vestibulum pretium scelerisque elit, id maximus diam feugiat ac.',
     category: 'Costruzione',
-    requirements: 'bb.showhiddenobjects attivo'
+    requirements: 'LOREM_SHOW'
   },
   {
     code: 'bb.ignoregameplayunlocksentitlement',
-    description: 'Sblocca istantaneamente tutti i premi delle carriere (mobili e vestiti bloccati dalle promozioni).',
+    description: 'Quisque sodales scelerisque turpis, id condimentum dolor imperdiet vitae. Duis feugiat, elit quis aliquet.',
     category: 'Costruzione',
-    requirements: 'Nessuno'
+    requirements: 'LOREM'
   },
   {
     code: 'sims.fill_all_commodities',
-    description: 'Riempie istantaneamente al massimo tutte le barre dei bisogni del Sim selezionato.',
+    description: 'Sed rhoncus lectus magna, quis facilisis leo tincidunt vitae. Nunc at pretium ante. Etiam quis.',
     category: 'Bisogni/Stati',
-    requirements: 'testingcheats true'
+    requirements: 'LOREM_TEST'
   },
   {
     code: 'stats.set_skill_level Major_HomestyleCooking 10',
-    description: 'Imposta al massimo (Livello 10) l’abilità di Cucina Casalinga del Sim selezionato.',
+    description: 'Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo.',
     category: 'Carriere/Abilità',
-    requirements: 'testingcheats true'
+    requirements: 'LOREM_TEST'
   },
   {
     code: 'stats.set_skill_level Major_Charisma 10',
-    description: 'Imposta al massimo l’abilità di Carisma del Sim selezionato.',
+    description: 'Aliquam sollicitudin, arcu a laoreet tempor, risus neque pretium ipsum, sed convallis risus ligula.',
     category: 'Carriere/Abilità',
-    requirements: 'testingcheats true'
+    requirements: 'LOREM_TEST'
   },
   {
     code: 'careers.promote Executive',
-    description: 'Promuove il Sim di un livello nella carriera Affari (ramo Dirigenziale).',
+    description: 'Morbi leo mi, nonummy eget, tristique non, rhoncus non, leo. Nullam tempor. Class aptent taciti.',
     category: 'Carriere/Abilità',
-    requirements: 'testingcheats true'
+    requirements: 'LOREM_TEST'
   },
   {
     code: 'traits.equip_trait Trait_OccultVampire',
-    description: 'Trasforma istantaneamente il Sim selezionato in un Vampiro.',
+    description: 'Quisque cursus, metus vitae pharetra auctor, sem massa mattis sem, at interdum magna augue a odio.',
     category: 'Bisogni/Stati',
-    requirements: 'testingcheats true'
+    requirements: 'LOREM_TEST'
   },
   {
     code: 'cas.fulleditmode',
-    description: 'Sblocca la modifica completa del Sim nel CAS (puoi rimodellare corpo, cambiare tratti o età di Sim esistenti).',
+    description: 'Aenean nec lorem. In porttitor. Donec laoreet nonummy augue. Suspendisse dui purus, scelerisque at.',
     category: 'Generali',
-    requirements: 'testingcheats true'
+    requirements: 'LOREM_TEST'
   }
 ];
 
