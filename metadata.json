@@ -1,0 +1,6 @@
+{
+  "name": "PianetaSim Guides",
+  "description": "Sezione guide interattiva e completa per PianetaSim, la community italiana dedicata a The Sims.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
