@@ -15,9 +15,9 @@ export default function GuideCard({ guide, isBookmarked, onToggleBookmark }: Gui
 
   // Difficulty badge colors
   const diffColors = {
-    Principiante: 'bg-emerald-50 text-emerald-700 border-emerald-100',
-    Intermedio: 'bg-amber-50 text-amber-700 border-amber-100',
-    Esperto: 'bg-rose-50 text-rose-700 border-rose-100'
+    Principiante: 'bg-emerald-500/10 text-fluo-green border-fluo-green/20',
+    Intermedio: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+    Esperto: 'bg-fuchsia-500/10 text-fluo-fuchsia border-fluo-fuchsia/20'
   };
 
   const categoryLabels = {
@@ -29,11 +29,19 @@ export default function GuideCard({ guide, isBookmarked, onToggleBookmark }: Gui
   };
 
   const categoryColors = {
-    gameplay: 'bg-indigo-50 text-indigo-700 border-indigo-100',
-    costruzione: 'bg-orange-50 text-orange-700 border-orange-100',
-    trucchi: 'bg-rose-50 text-rose-700 border-rose-100',
-    mod_cc: 'bg-purple-50 text-purple-700 border-purple-100',
-    espansioni: 'bg-teal-50 text-teal-700 border-teal-100'
+    gameplay: 'bg-purple-500/10 text-fluo-purple border-fluo-purple/30',
+    costruzione: 'bg-emerald-500/10 text-fluo-green border-fluo-green/30',
+    trucchi: 'bg-fuchsia-500/10 text-fluo-fuchsia border-fluo-fuchsia/30',
+    mod_cc: 'bg-cyan-500/10 text-fluo-blue border-fluo-blue/30',
+    espansioni: 'bg-purple-500/10 text-fluo-purple border-fluo-purple/30'
+  };
+
+  const shadowClasses = {
+    gameplay: 'neon-shadow-purple',
+    costruzione: 'neon-shadow-green',
+    trucchi: 'neon-shadow-fuchsia',
+    mod_cc: 'neon-shadow-blue',
+    espansioni: 'neon-shadow-purple'
   };
 
   return (
@@ -44,7 +52,7 @@ export default function GuideCard({ guide, isBookmarked, onToggleBookmark }: Gui
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -15 }}
         transition={{ duration: 0.3 }}
-        className="bg-white rounded-xl border border-slate-100 p-6 shadow-sm hover:shadow-md hover:border-slate-200 transition-all duration-200 flex flex-col justify-between group h-full"
+        className={`bg-space-card rounded-xl border border-slate-800 p-6 hover:border-slate-700 transition-all duration-300 flex flex-col justify-between group h-full ${shadowClasses[guide.category]}`}
       >
         <div>
           {/* Tags / Badges row */}
@@ -63,8 +71,8 @@ export default function GuideCard({ guide, isBookmarked, onToggleBookmark }: Gui
                 }}
                 className={`p-1.5 rounded-lg border transition-all ${
                   isBookmarked
-                    ? 'bg-amber-50 border-amber-200 text-amber-500'
-                    : 'bg-slate-50 border-slate-100 text-slate-400 hover:text-slate-600'
+                    ? 'bg-amber-500/10 border-amber-500/40 text-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.2)]'
+                    : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700'
                 }`}
                 title={isBookmarked ? "Rimuovi dai Preferiti" : "Salva nei Preferiti"}
               >
@@ -73,23 +81,23 @@ export default function GuideCard({ guide, isBookmarked, onToggleBookmark }: Gui
             </div>
           </div>
 
-          <h3 className="text-lg font-bold text-slate-800 leading-snug group-hover:text-plumbob-green transition-colors duration-200 mb-2">
+          <h3 className="text-lg font-bold text-white leading-snug group-hover:text-fluo-green transition-colors duration-200 mb-2">
             {guide.title}
           </h3>
 
-          <p className="text-sm text-slate-500 line-clamp-3 mb-4 leading-relaxed">
+          <p className="text-sm text-slate-300 line-clamp-3 mb-4 leading-relaxed">
             {guide.description}
           </p>
 
           {/* Tags in cards */}
           <div className="flex flex-wrap gap-1.5 mb-6">
             {guide.tags.slice(0, 3).map((tag, idx) => (
-              <span key={idx} className="text-[10px] text-slate-400 bg-slate-50 px-2 py-0.5 rounded">
+              <span key={idx} className="text-[10px] text-slate-400 bg-slate-900/50 border border-slate-800 px-2 py-0.5 rounded">
                 #{tag}
               </span>
             ))}
             {guide.tags.length > 3 && (
-              <span className="text-[10px] text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded">
+              <span className="text-[10px] text-slate-400 bg-slate-900/50 border border-slate-800 px-1.5 py-0.5 rounded">
                 +{guide.tags.length - 3}
               </span>
             )}
@@ -97,21 +105,21 @@ export default function GuideCard({ guide, isBookmarked, onToggleBookmark }: Gui
         </div>
 
         {/* Footer info */}
-        <div className="pt-4 border-t border-slate-50 flex items-center justify-between text-xs text-slate-400 mt-auto">
+        <div className="pt-4 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400 mt-auto">
           <div className="flex items-center gap-3">
             <span className="flex items-center gap-1">
-              <User className="w-3.5 h-3.5 text-slate-300" />
+              <User className="w-3.5 h-3.5 text-slate-500" />
               {guide.author}
             </span>
             <span className="flex items-center gap-1">
-              <Clock className="w-3.5 h-3.5 text-slate-300" />
+              <Clock className="w-3.5 h-3.5 text-slate-500" />
               {guide.readTime}
             </span>
           </div>
 
           <button
             onClick={() => setIsOpen(true)}
-            className="flex items-center gap-1 text-xs font-semibold text-plumbob-green hover:text-emerald-700 transition-colors py-1 pl-2 group-hover:translate-x-0.5 transition-transform duration-200"
+            className="flex items-center gap-1 text-xs font-semibold text-fluo-green hover:text-emerald-300 transition-colors py-1 pl-2 group-hover:translate-x-0.5 transition-transform duration-200"
           >
             Leggi
             <ChevronRight className="w-3.5 h-3.5" />
@@ -122,16 +130,16 @@ export default function GuideCard({ guide, isBookmarked, onToggleBookmark }: Gui
       {/* Detail Overlay Modal */}
       <AnimatePresence>
         {isOpen && (
-          <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
             {/* Modal Body */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="bg-white rounded-2xl w-full max-w-2xl max-h-[85vh] overflow-y-auto shadow-2xl border border-slate-100 flex flex-col"
+              className="bg-space-card rounded-2xl w-full max-w-2xl max-h-[85vh] overflow-y-auto shadow-2xl border border-slate-800 flex flex-col"
             >
               {/* Header */}
-              <div className="p-6 border-b border-slate-100 sticky top-0 bg-white z-10 flex items-start justify-between gap-4">
+              <div className="p-6 border-b border-slate-800 sticky top-0 bg-space-card z-10 flex items-start justify-between gap-4">
                 <div>
                   <div className="flex flex-wrap items-center gap-2 mb-2">
                     <span className={`text-[11px] font-bold px-2 py-0.5 rounded border ${categoryColors[guide.category]}`}>
@@ -142,13 +150,13 @@ export default function GuideCard({ guide, isBookmarked, onToggleBookmark }: Gui
                     </span>
                     <span className="text-[11px] text-slate-400">{guide.date}</span>
                   </div>
-                  <h2 className="text-xl md:text-2xl font-bold text-slate-800 leading-tight">
+                  <h2 className="text-xl md:text-2xl font-bold text-white leading-tight">
                     {guide.title}
                   </h2>
                 </div>
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="p-1.5 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors"
+                  className="p-1.5 rounded-full hover:bg-slate-800 text-slate-400 hover:text-slate-200 transition-colors"
                 >
                   <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -159,7 +167,7 @@ export default function GuideCard({ guide, isBookmarked, onToggleBookmark }: Gui
               {/* Content Body */}
               <div className="p-6 space-y-6">
                 {/* Intro summary */}
-                <div className="p-4 bg-slate-50 border-l-4 border-plumbob-green rounded-r-lg text-slate-600 text-sm leading-relaxed italic">
+                <div className="p-4 bg-slate-900/50 border-l-4 border-fluo-green rounded-r-lg text-slate-300 text-sm leading-relaxed italic">
                   {guide.description}
                 </div>
 
@@ -167,10 +175,10 @@ export default function GuideCard({ guide, isBookmarked, onToggleBookmark }: Gui
                 <div className="space-y-4">
                   {guide.content.map((paragraph, index) => (
                     <div key={index} className="flex gap-3 items-start">
-                      <div className="w-6 h-6 bg-emerald-50 text-plumbob-green border border-emerald-100 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
+                      <div className="w-6 h-6 bg-emerald-500/10 text-fluo-green border border-fluo-green/20 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
                         {index + 1}
                       </div>
-                      <p className="text-slate-600 text-sm leading-relaxed pt-0.5">
+                      <p className="text-slate-200 text-sm leading-relaxed pt-0.5">
                         {paragraph}
                       </p>
                     </div>
@@ -179,15 +187,15 @@ export default function GuideCard({ guide, isBookmarked, onToggleBookmark }: Gui
 
                 {/* Tips Box */}
                 {guide.tips && guide.tips.length > 0 && (
-                  <div className="p-5 bg-emerald-50/50 border border-emerald-100/60 rounded-xl space-y-3">
-                    <h4 className="text-sm font-bold text-emerald-800 flex items-center gap-1.5">
-                      <Award className="w-4.5 h-4.5 text-plumbob-green" />
+                  <div className="p-5 bg-purple-500/5 border border-fluo-purple/20 rounded-xl space-y-3">
+                    <h4 className="text-sm font-bold text-fluo-purple flex items-center gap-1.5">
+                      <Award className="w-4.5 h-4.5 text-fluo-purple" />
                       Consigli Pro del Creatore
                     </h4>
                     <ul className="space-y-2">
                       {guide.tips.map((tip, idx) => (
-                        <li key={idx} className="flex items-start gap-2 text-xs text-slate-600 leading-relaxed">
-                          <CornerDownRight className="w-3.5 h-3.5 text-plumbob-green shrink-0 mt-0.5" />
+                        <li key={idx} className="flex items-start gap-2 text-xs text-slate-300 leading-relaxed">
+                          <CornerDownRight className="w-3.5 h-3.5 text-fluo-green shrink-0 mt-0.5" />
                           <span>{tip}</span>
                         </li>
                       ))}
@@ -196,14 +204,14 @@ export default function GuideCard({ guide, isBookmarked, onToggleBookmark }: Gui
                 )}
 
                 {/* Meta details */}
-                <div className="flex flex-wrap items-center justify-between text-xs text-slate-400 pt-4 border-t border-slate-50">
+                <div className="flex flex-wrap items-center justify-between text-xs text-slate-400 pt-4 border-t border-slate-800">
                   <div className="flex items-center gap-4">
-                    <span>Scritto da <strong>{guide.author}</strong></span>
-                    <span>Tempo di lettura: <strong>{guide.readTime}</strong></span>
+                    <span>Scritto da <strong className="text-slate-200">{guide.author}</strong></span>
+                    <span>Tempo di lettura: <strong className="text-slate-200">{guide.readTime}</strong></span>
                   </div>
                   <div className="flex flex-wrap gap-1 mt-2 sm:mt-0">
                     {guide.tags.map((tag, idx) => (
-                      <span key={idx} className="bg-slate-100 text-slate-500 px-2 py-0.5 rounded">
+                      <span key={idx} className="bg-slate-900 text-slate-400 border border-slate-800 px-2 py-0.5 rounded">
                         #{tag}
                       </span>
                     ))}
@@ -212,10 +220,10 @@ export default function GuideCard({ guide, isBookmarked, onToggleBookmark }: Gui
               </div>
 
               {/* Footer */}
-              <div className="p-4 border-t border-slate-100 bg-slate-50 flex justify-end">
+              <div className="p-4 border-t border-slate-800 bg-slate-900/50 flex justify-end">
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold rounded-lg transition-colors cursor-pointer"
+                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-lg transition-colors cursor-pointer"
                 >
                   Chiudi Guida
                 </button>
