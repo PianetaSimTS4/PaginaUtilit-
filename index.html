@@ -1,13 +1,1023 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Google AI Studio App</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
-</html>
+<!DOCTYPE html>
+<html lang="it" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PianetaSim - Guide e Trucchi The Sims 4</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'space-dark': '#070913',
+            'space-card': '#121424',
+            'fluo-green': '#26ff5e',
+            'fluo-purple': '#b026ff',
+            'fluo-blue': '#00f0ff',
+            'fluo-fuchsia': '#ff007f',
+          },
+          fontFamily: {
+            sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'sans-serif'],
+            display: ['Outfit', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
 
+  <!-- Logo Load Helper Scripts -->
+  <script>
+    var logoPaths = [
+      'images/logo.png',
+      '/images/logo.png',
+      'logo.png',
+      '/logo.png',
+      'logo.PNG',
+      '/logo.PNG',
+      'images/logo.PNG',
+      '/images/logo.PNG'
+    ];
+    var logoIndex = 0;
+
+    function tryNextLogo() {
+      logoIndex++;
+      var img = document.getElementById('logo-img');
+      if (img && logoIndex < logoPaths.length) {
+        img.src = logoPaths[logoIndex];
+      } else if (img) {
+        img.classList.add('hidden');
+        var fallback = document.getElementById('logo-fallback');
+        if (fallback) fallback.classList.remove('hidden');
+      }
+    }
+
+    function onLogoLoad() {
+      var img = document.getElementById('logo-img');
+      if (img) {
+        img.classList.remove('hidden');
+        var fallback = document.getElementById('logo-fallback');
+        if (fallback) fallback.classList.add('hidden');
+      }
+    }
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #070913;
+      color: #e2e8f0;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Outfit', sans-serif;
+    }
+
+    /* Custom space background animations */
+    @keyframes space-drift {
+      0% { background-position: 0% 0%; }
+      50% { background-position: 50% 50%; }
+      100% { background-position: 100% 100%; }
+    }
+
+    .space-bg {
+      background-image: 
+        radial-gradient(circle at 5% 10%, #ffffff 1px, transparent 1px),
+        radial-gradient(circle at 15% 40%, #ffffff 1.2px, transparent 1.2px),
+        radial-gradient(circle at 25% 75%, #ffffff 1px, transparent 1px),
+        radial-gradient(circle at 35% 20%, #ffffff 1.5px, transparent 1.5px),
+        radial-gradient(circle at 45% 60%, #ffffff 1px, transparent 1px),
+        radial-gradient(circle at 55% 85%, #ffffff 1.2px, transparent 1.2px),
+        radial-gradient(circle at 65% 30%, #ffffff 1.5px, transparent 1.5px),
+        radial-gradient(circle at 75% 70%, #ffffff 1px, transparent 1px),
+        radial-gradient(circle at 85% 15%, #ffffff 1.2px, transparent 1.2px),
+        radial-gradient(circle at 95% 50%, #ffffff 1px, transparent 1px),
+        radial-gradient(circle at 12% 80%, #26ff5e 1.5px, transparent 1.5px),
+        radial-gradient(circle at 48% 35%, #b026ff 1.5px, transparent 1.5px),
+        radial-gradient(circle at 78% 25%, #00f0ff 1.5px, transparent 1.5px),
+        radial-gradient(circle at 88% 90%, #ff007f 1.5px, transparent 1.5px),
+        radial-gradient(circle at 30% 95%, #00f0ff 1.2px, transparent 1.2px),
+        radial-gradient(circle at 70% 55%, #26ff5e 1.2px, transparent 1.2px);
+      background-size: 400px 400px;
+      animation: space-drift 100s linear infinite;
+      opacity: 0.85;
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Plumbob & Neon glow effects */
+    .neon-shadow-green {
+      box-shadow: 0 0 15px rgba(38, 255, 94, 0.25);
+      border-color: rgba(38, 255, 94, 0.3);
+    }
+    .neon-shadow-purple {
+      box-shadow: 0 0 15px rgba(176, 38, 255, 0.25);
+      border-color: rgba(176, 38, 255, 0.3);
+    }
+    .neon-shadow-blue {
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.25);
+      border-color: rgba(0, 240, 255, 0.3);
+    }
+    .neon-shadow-fuchsia {
+      box-shadow: 0 0 15px rgba(255, 0, 127, 0.25);
+      border-color: rgba(255, 0, 127, 0.3);
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-8px) rotate(3deg); }
+    }
+    .float-animation {
+      animation: float 4s ease-in-out infinite;
+    }
+
+    /* Hide scrollbars but keep functionality */
+    .scrollbar-none::-webkit-scrollbar { display: none; }
+    .scrollbar-none {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="flex flex-col min-h-full selection:bg-fluo-green selection:text-black">
+
+  <!-- Ambient Space Background -->
+  <div class="space-bg"></div>
+
+  <!-- Decorative light shapes -->
+  <div class="absolute top-20 left-1/4 w-96 h-96 bg-fluo-purple/10 rounded-full filter blur-[120px] pointer-events-none z-0"></div>
+  <div class="absolute top-80 right-1/4 w-96 h-96 bg-fluo-blue/10 rounded-full filter blur-[120px] pointer-events-none z-0"></div>
+
+  <!-- 1. Header Navigation Bar -->
+  <header class="bg-slate-950/80 backdrop-blur-md border-b border-slate-900 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 md:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      
+      <!-- Brand Logo & Fallback -->
+      <div class="flex items-center gap-3">
+        <img 
+          id="logo-img" 
+          src="images/logo.png" 
+          alt="PianetaSim Logo" 
+          class="h-11 w-auto object-contain shrink-0 float-animation hidden"
+          onload="onLogoLoad()"
+          onerror="tryNextLogo()"
+        />
+        <div id="logo-fallback" class="flex items-center gap-2">
+          <span class="w-3.5 h-3.5 rounded-full bg-fluo-green shadow-[0_0_10px_#26ff5e] animate-pulse"></span>
+          <span class="font-black text-xl tracking-wider text-white">PIANETA<span class="text-fluo-green">SIM</span></span>
+        </div>
+      </div>
+
+      <!-- Navigation tabs inside Header -->
+      <nav class="flex items-center gap-1.5 overflow-x-auto max-w-full pb-1 sm:pb-0 scrollbar-none">
+        <button
+          id="btn-tab-guides"
+          onclick="switchTab('guides')"
+          class="px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap bg-fluo-purple text-white shadow-[0_0_15px_rgba(176,38,255,0.55)] border border-fluo-purple/30"
+        >
+          Guide Complete
+        </button>
+        <button
+          id="btn-tab-cheats"
+          onclick="switchTab('cheats')"
+          class="px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900"
+        >
+          Database Trucchi
+        </button>
+        <button
+          id="btn-tab-home"
+          onclick="goToHome()"
+          class="px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900"
+        >
+          Home
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content Stage -->
+  <main class="flex-grow max-w-7xl w-full mx-auto px-4 md:px-8 py-8 relative z-10">
+
+    <!-- 2. Hero Section / Banner (Allineato all'asse mezzana / Centrato) -->
+    <section class="relative border-b border-slate-900/60 py-12 px-4 md:px-8 bg-slate-950/20 rounded-3xl mb-8 flex flex-col items-center text-center">
+      <div class="max-w-3xl space-y-4 flex flex-col items-center">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 text-fluo-green text-xs font-bold rounded-full border border-fluo-green/20 shadow-[0_0_10px_rgba(38,255,94,0.15)]">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-fluo-green"></i>
+          Sito Ufficiale PianetaSim - Sezione Guide HTML
+        </span>
+        <h2 class="text-3xl md:text-5xl font-black text-white tracking-tight leading-tight">
+          Tutto quello che devi sapere su <span class="text-fluo-green drop-shadow-[0_0_10px_rgba(38,255,94,0.3)] whitespace-nowrap">The Sims 4</span>
+        </h2>
+        <p class="text-slate-300 text-sm max-w-xl leading-relaxed text-center">
+          Benvenuto nella sezione delle guide interattive di PianetaSim! Impara nuove tecniche di costruzione dei tetti, sblocca carriere segrete e copia trucchi con un solo click.
+        </p>
+        
+        <!-- Bookmarks banner indicator -->
+        <div id="quick-bookmarks-banner" class="pt-2 hidden">
+          <button
+            onclick="toggleBookmarksOnly()"
+            class="inline-flex items-center gap-1.5 text-xs text-amber-400 font-bold bg-amber-500/10 px-3.5 py-2 rounded-lg border border-amber-500/30 hover:bg-amber-500/20 transition-colors cursor-pointer shadow-[0_0_12px_rgba(245,158,11,0.15)]"
+          >
+            <i data-lucide="star" class="w-4 h-4 fill-current text-amber-400"></i>
+            Visualizza Preferiti (<span id="bookmark-banner-count">0</span>)
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Dynamic Application Body View Container -->
+    <div id="app-body" class="w-full">
+      <!-- Content loaded dynamically via Javascript -->
+    </div>
+
+  </main>
+
+  <!-- 4. Customized Footer section -->
+  <footer class="bg-slate-950 border-t border-slate-900 text-slate-400 py-10 px-4 md:px-8 mt-12 text-xs relative z-10">
+    <div class="max-w-xl mx-auto text-center space-y-6">
+      <p class="text-sm md:text-base font-semibold text-slate-200 leading-relaxed">
+        Unisciti ai nostri social ed entra a far parte della community Pianeta Sim!
+      </p>
+      
+      <div class="flex justify-center">
+        <a 
+          href="https://t.me/TheSims4ItaliaPianetaSim" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2.5 bg-sky-500 hover:bg-sky-400 text-white font-bold px-6 py-3 rounded-full transition-all duration-200 shadow-lg shadow-sky-950/50 cursor-pointer text-sm"
+        >
+          <i data-lucide="send" class="w-5 h-5 fill-current text-white"></i>
+          Entra nel Gruppo Telegram
+        </a>
+      </div>
+
+      <div class="text-slate-500 pt-4 border-t border-slate-900/60 text-xs">
+        © 2026 Pianeta Sim. Tutti i diritti riservati.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Instant Toasts Banner Notification -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- APPLICATION CODE AND DATABASES -->
+  <script>
+    // Databases
+    const guides = [
+      {
+        id: 'guide-moveobjects',
+        title: 'Guida Suprema al Cheat "MoveObjects" (bb.moveobjects)',
+        description: 'Impara come posizionare liberamente gli oggetti, unire i mobili e sbloccare oggetti nascosti per creare case da sogno.',
+        category: 'costruzione',
+        author: 'SimmerItalia99',
+        readTime: '5 min',
+        tags: ['costruzione', 'trucchi', 'bb.moveobjects', 'arredamento'],
+        content: [
+          'Il cheat "bb.moveobjects" è lo strumento più potente per ogni costruttore in The Sims 4. Consente di ignorare le regole di collisione della griglia, permettendo di posizionare gli oggetti l’uno dentro l’altro o all’esterno dei confini standard.',
+          'Per attivarlo, premi contemporaneamente Ctrl + Shift + C su PC/Mac (o tutti e quattro i dorsali su console) per aprire la console dei comandi, digita "bb.moveobjects" e premi Invio. Riceverai la conferma che il trucco è attivo.',
+          'Usa i tasti 9 e 0 (non il tastierino numerico) mentre tieni premuto un oggetto per alzarlo o abbassarlo a piacimento. Questo ti consente di posizionare piante sugli scaffali, cuscini sui divani o creare composizioni personalizzate.',
+          'Tieni premuto il tasto Alt per disattivare l’ancoraggio alla griglia e ruotare gli oggetti a 360 gradi con estrema precisione.',
+          'Unisci armadi o ripiani per creare strutture uniche. Combina diversi tipi di piante per creare cespugli folti ed elaborati.'
+        ],
+        tips: [
+          'Assicurati che i Sim possano ancora interagire con gli oggetti modificati. Fai sempre un test di gameplay!',
+          'Usa il trucco bb.showhiddenobjects per sbloccare oggetti di scenario gratuiti.',
+          'Se gli oggetti spariscono quando li sposti vicino ai muri, tieni premuto ALT per sbloccare la collisione ravvicinata.'
+        ]
+      },
+      {
+        id: 'guide-mods-cc',
+        title: 'Come Installare Mod e Materiale Personalizzato (CC) nel 2026',
+        description: 'La guida definitiva e sicura per installare mod di gameplay (come MC Command Center) e vestiti/capelli personalizzati.',
+        category: 'mod_cc',
+        author: 'SimsGuruLuca',
+        readTime: '6 min',
+        tags: ['mod', 'cc', 'installazione', 'guida sicura'],
+        content: [
+          'The Sims 4 supporta ufficialmente le mod e il Materiale Personalizzato (CC). Esistono due tipi di file: i file ".package" (capelli, vestiti, mobili) e le mod di script (".ts4script", che modificano il codice di gioco, come MCCC).',
+          'Trova la tua cartella "Mods". Su Windows si trova solitamente in: Documenti\\Electronic Arts\\The Sims 4\\Mods. Su Mac: Utility\\Electronic Arts\\The Sims 4\\Mods.',
+          'Scarica i file di tuo interesse. Se scarichi archivi (.zip, .rar, .7z), estraili. Trascina i file ".package" e ".ts4script" direttamente dentro la cartella "Mods".',
+          'ATTENZIONE: Le mod di script (.ts4script) non devono essere inserite a più di una sottocartella di profondità (es. Mods/MC_Command_Center/ va bene, ma Mods/Gameplay/MCCC/MCCC_Files/ non funzionerà).',
+          'Apri il gioco, vai su Opzioni di Gioco > Altro. Spunta le caselle "Attiva il materiale personalizzato e le mod" e "Mod dello script consentite". Riavvia il gioco per applicare.'
+        ],
+        tips: [
+          'Dopo ogni aggiornamento ufficiale del gioco di The Sims 4, le mod vengono disattivate automaticamente perché potrebbero causare crash. Controlla sempre se sono uscite versioni aggiornate dei tuoi script preferiti!',
+          'Non inserire file .zip interi nella cartella Mods. Estraili sempre!',
+          'Usa un programma come "The Sims 4 Mod Organizer" per mantenere pulita la cartella.'
+        ]
+      },
+      {
+        id: 'guide-occulti-vampiri',
+        title: 'Guida Suprema ai Vampiri: Poteri, Debolezze e Segreti',
+        description: 'Diventa il vampiro supremo dei tuoi sogni. Scopri come scalare i ranghi della notte, sbloccare poteri e sopravvivere al sole.',
+        category: 'gameplay',
+        author: 'ContessaSim',
+        readTime: '8 min',
+        tags: ['gameplay', 'vampiri', 'poteri', 'occulti'],
+        content: [
+          'I vampiri introducono un gameplay oscuro e affascinante a Forgotten Hollow. Per diventare un vampiro, puoi crearlo direttamente dal menu Crea un Sim o farti mordere da un vampiro esistente (come Vladislaus Straud) dopo aver stretto amicizia.',
+          'I vampiri non usano i bisogni standard. Hanno l’Energia Vampirica (che diminuisce di giorno e usando poteri) e la Sete (soddisfatta bevendo plasma da altri Sim, sacche di plasma o frutti di plasma).',
+          'Facendo azioni vampiresche o leggendo i tomi di Lore Vampiresca, guadagnerai punti esperienza per salire di rango: da Novizio a Vampiro Supremo. Ogni rango ti permette di selezionare nuovi Poteri.',
+          'Bilanciamento: Per ogni potere sbloccato, devi scegliere una Debolezza vampirica (es. Sonno agitato, Stomaco appassito, Sensibilità solare). Scegli saggiamente!',
+          'Per sopravvivere al sole cocente, puoi sbloccare il potere "Resistenza al Sole" al livello massimo, oppure creare la pozione "Resistenza Solare Vampirica" al tavolo da mixologia se hai un’alta Lore.'
+        ],
+        tips: [
+          'Il frutto di plasma può essere piantato per avere una scorta infinita e biologica di cibo senza spaventare i vicini.',
+          'Se il tuo vampiro sta bruciando al sole, mandalo rapidamente al coperto o in una bara per ricaricare l’energia.',
+          'Puoi curare il vampirismo creando la "Cura Vampirica Suprema" al bar con aglio, frutti di plasma e aconito.'
+        ]
+      },
+      {
+        id: 'guide-roofing',
+        title: 'Tetti Perfetti: Come evitare errori comuni di costruzione',
+        description: 'Basta tetti piatti o sporgenti che attraversano le stanze! Ecco le tecniche per creare tetti realistici e armoniosi.',
+        category: 'costruzione',
+        author: 'ArchitettoSim',
+        readTime: '7 min',
+        tags: ['costruzione', 'tetti', 'architettura', 'consigli'],
+        content: [
+          'Il tetto è spesso la parte più difficile da realizzare in una casa. L’errore più comune è usare un unico grande pezzo di tetto che risulta goffo e sproporzionato.',
+          'Scomponi la casa in forme più semplici. Copri ogni sezione rettangolare o quadrata con pezzi di tetto separati (tetti a due falde, a padiglione o piatti).',
+          'Tieni premuto il tasto Shift mentre trascini le frecce di sporgenza del tetto. Questo ti permette di regolare la sporgenza di una sola estremità alla volta, evitando che il tetto penetri visivamente all’interno delle stanze o dei balconi adiacenti.',
+          'Usa i piccoli pomelli rotondi che appaiono sul tetto selezionato per regolarne la curvatura. Puoi creare splendidi tetti in stile vittoriano o tetti spioventi asiatici.',
+          'Aggiungi modanature e dettagli di finitura dal menu Costruisci > Tetti per dare un aspetto finito e professionale alle tue creazioni.'
+        ],
+        tips: [
+          'Usa tetti in vetro per creare serre spettacolari o lucernari moderni sopra i soggiorni.',
+          'I tetti sono completamente gratuiti! Sperimenta senza timore di finire i simoleon.'
+        ]
+      },
+      {
+        id: 'guide-affitti-luna',
+        title: 'Guida a "Affittasi" (For Rent): Gestire appartamenti e lotti residenziali d’affitto',
+        description: 'Impara a progettare condomini multifamiliari, gestire gli inquilini e massimizzare le tue entrate come proprietario.',
+        category: 'espansioni',
+        author: 'SimImmobiliare',
+        readTime: '8 min',
+        tags: ['espansioni', 'for rent', 'affittasi', 'case d\'affitto', 'business'],
+        content: [
+          'L’espansione "Affittasi" consente di suddividere un singolo lotto in un massimo di 6 unità abitative indipendenti, ospitando fino a 6 famiglie diverse nello stesso posto.',
+          'Per iniziare, cambia il tipo di lotto in "Residenziale d’affitto" dal menu di costruzione. Successivamente, seleziona le stanze e assegna ciascuna a un’Unità specifica (es. Unità 1, Unità 2) o lasciale come "Spazio Comune" (es. corridoi, giardini, piscine).',
+          'Come proprietario, puoi vivere in una delle unità o risiedere in un lotto completamente diverso. Puoi impostare il prezzo dell’affitto giornaliero, la durata del contratto e le regole della casa (es. niente rumori, niente animali).',
+          'Gestisci gli imprevisti: tubi che scoppiano, infestazioni di insetti o muffa tossica. Risolvere tempestivamente questi problemi terrà alta la valutazione delle tue unità e felici gli inquilini.',
+          'Se gli inquilini non pagano o infrangono le regole ripetutamente, puoi sfrattarli, ma fai attenzione alle ripercussioni legali e al livello di stress generale!'
+        ],
+        tips: [
+          'Metti lavatrici e asciugatrici negli spazi comuni per far socializzare i tuoi inquilini!',
+          'Un livello elevato di abilità di Manualità ti farà risparmiare migliaia di simoleon nelle riparazioni d’emergenza.',
+          'Controlla periodicamente i contatori per assicurarti che gli inquilini non stiano sprecando risorse.'
+        ]
+      }
+    ];
+
+    const cheats = [
+      { code: 'testingcheats true', description: 'Attiva i trucchi avanzati di gioco. Indispensabile per far funzionare quasi tutti gli altri codici.', category: 'Generali', requirements: 'Nessuno' },
+      { code: 'motherlode', description: 'Aggiunge immediatamente 50.000 Simoleon ai fondi della famiglia attiva.', category: 'Soldi', requirements: 'Nessuno' },
+      { code: 'kaching', description: 'Aggiunge immediatamente 1.000 Simoleon ai fondi della famiglia.', category: 'Soldi', requirements: 'Nessuno' },
+      { code: 'rosebud', description: 'Aggiunge immediatamente 1.000 Simoleon ai fondi (storico trucco di The Sims 1!).', category: 'Soldi', requirements: 'Nessuno' },
+      { code: 'Money [cifra]', description: 'Imposta i fondi della famiglia all’esatta cifra indicata (es. "Money 150000").', category: 'Soldi', requirements: 'testingcheats true' },
+      { code: 'bb.moveobjects', description: 'Rimuove la griglia di collisione, consentendo di fondere o alzare/abbassare gli oggetti.', category: 'Costruzione', requirements: 'Nessuno' },
+      { code: 'bb.showhiddenobjects', description: 'Abilita il catalogo del Debug, sbloccando centinaia di oggetti d’ambiente non acquistabili normalmente.', category: 'Costruzione', requirements: 'Nessuno' },
+      { code: 'bb.showliveeditobjects', description: 'Sblocca migliaia di oggetti di scenario creati dagli sviluppatori (alberi, rocce, auto decorative).', category: 'Costruzione', requirements: 'bb.showhiddenobjects attivo' },
+      { code: 'bb.ignoregameplayunlocksentitlement', description: 'Sblocca istantaneamente tutti i premi delle carriere (mobili e vestiti bloccati dalle promozioni).', category: 'Costruzione', requirements: 'Nessuno' },
+      { code: 'sims.fill_all_commodities', description: 'Riempie istantaneamente al massimo tutte le barre dei bisogni del Sim selezionato.', category: 'Bisogni/Stati', requirements: 'testingcheats true' },
+      { code: 'stats.set_skill_level Major_HomestyleCooking 10', description: 'Imposta al massimo (Livello 10) l’abilità di Cucina Casalinga del Sim selezionato.', category: 'Carriere/Abilità', requirements: 'testingcheats true' },
+      { code: 'stats.set_skill_level Major_Charisma 10', description: 'Imposta al massimo l’abilità di Carisma del Sim selezionato.', category: 'Carriere/Abilità', requirements: 'testingcheats true' },
+      { code: 'careers.promote Executive', description: 'Promuove il Sim di un livello nella carriera Affari (ramo Dirigenziale).', category: 'Carriere/Abilità', requirements: 'testingcheats true' },
+      { code: 'traits.equip_trait Trait_OccultVampire', description: 'Trasforma istantaneamente il Sim selezionato in un Vampiro.', category: 'Bisogni/Stati', requirements: 'testingcheats true' },
+      { code: 'cas.fulleditmode', description: 'Sblocca la modifica completa del Sim nel CAS (puoi rimodellare corpo, cambiare tratti o età di Sim esistenti).', category: 'Generali', requirements: 'testingcheats true' }
+    ];
+
+    const categoryLabels = {
+      gameplay: 'Gameplay',
+      costruzione: 'Costruzioni',
+      trucchi: 'Trucchi',
+      mod_cc: 'Mod & CC',
+      espansioni: 'Espansioni'
+    };
+
+    const categoryColors = {
+      gameplay: 'bg-purple-500/10 text-purple-400 border-purple-500/30',
+      costruzione: 'bg-emerald-500/10 text-fluo-green border-fluo-green/30',
+      trucchi: 'bg-fuchsia-500/10 text-fuchsia-400 border-fuchsia-500/30',
+      mod_cc: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30',
+      espansioni: 'bg-purple-500/10 text-purple-400 border-purple-500/30'
+    };
+
+    const shadowClasses = {
+      gameplay: 'neon-shadow-purple',
+      costruzione: 'neon-shadow-green',
+      trucchi: 'neon-shadow-fuchsia',
+      mod_cc: 'neon-shadow-blue',
+      espansioni: 'neon-shadow-purple'
+    };
+
+    // State Managers
+    let activeTab = 'guides'; // 'guides' or 'cheats'
+    let selectedCategory = 'all';
+    let searchQuery = '';
+    let showBookmarksOnly = false;
+    let activeGuideId = null; // When selected, opens the separate detail view page
+    let bookmarks = JSON.parse(localStorage.getItem('pianetasim-bookmarks') || '[]');
+
+
+
+    // Load logo first path
+    document.addEventListener('DOMContentLoaded', () => {
+      const img = document.getElementById('logo-img');
+      if (img) {
+        img.src = logoPaths[0];
+      }
+      updateBookmarksCountBanner();
+      renderApp();
+    });
+
+    // Save bookmarks
+    function saveBookmarks() {
+      localStorage.setItem('pianetasim-bookmarks', JSON.stringify(bookmarks));
+      updateBookmarksCountBanner();
+    }
+
+    function updateBookmarksCountBanner() {
+      const banner = document.getElementById('quick-bookmarks-banner');
+      const countSpan = document.getElementById('bookmark-banner-count');
+      if (banner && countSpan) {
+        countSpan.textContent = bookmarks.length;
+        if (bookmarks.length > 0) {
+          banner.classList.remove('hidden');
+        } else {
+          banner.classList.add('hidden');
+        }
+      }
+    }
+
+    // Toggle bookmark
+    function handleToggleBookmark(id, event) {
+      if (event) event.stopPropagation();
+      if (bookmarks.includes(id)) {
+        bookmarks = bookmarks.filter(b => b !== id);
+        showToast('Rimosso dai preferiti!', 'info');
+      } else {
+        bookmarks.push(id);
+        showToast('Aggiunto ai preferiti!', 'success');
+      }
+      saveBookmarks();
+      renderApp();
+    }
+
+    // Tab switching
+    function switchTab(tab) {
+      activeTab = tab;
+      activeGuideId = null;
+      showBookmarksOnly = false;
+      
+      const gBtn = document.getElementById('btn-tab-guides');
+      const cBtn = document.getElementById('btn-tab-cheats');
+      const hBtn = document.getElementById('btn-tab-home');
+
+      // Update button visual styles
+      if (tab === 'guides') {
+        gBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap bg-fluo-purple text-white shadow-[0_0_15px_rgba(176,38,255,0.55)] border border-fluo-purple/30";
+        cBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900";
+        hBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900";
+      } else {
+        gBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900";
+        cBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap bg-fluo-green text-black shadow-[0_0_15px_rgba(38,255,94,0.55)] border border-fluo-green/30";
+        hBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900";
+      }
+      renderApp();
+    }
+
+    // Go to Home (resets everything)
+    function goToHome() {
+      activeTab = 'guides';
+      activeGuideId = null;
+      selectedCategory = 'all';
+      searchQuery = '';
+      showBookmarksOnly = false;
+
+      const gBtn = document.getElementById('btn-tab-guides');
+      const cBtn = document.getElementById('btn-tab-cheats');
+      const hBtn = document.getElementById('btn-tab-home');
+
+      gBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900";
+      cBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900";
+      hBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap bg-fluo-green text-black shadow-[0_0_15px_rgba(38,255,94,0.55)] border border-fluo-green/30";
+
+      renderApp();
+    }
+
+    function toggleBookmarksOnly() {
+      activeTab = 'guides';
+      activeGuideId = null;
+      showBookmarksOnly = !showBookmarksOnly;
+      renderApp();
+    }
+
+    // Count guides per category
+    function getCategoryCount(catId) {
+      if (catId === 'all') return guides.length;
+      return guides.filter(g => g.category === catId).length;
+    }
+
+    // Copy code to clipboard helper
+    function handleCopyCheat(code, elementId) {
+      navigator.clipboard.writeText(code).then(() => {
+        showToast('Codice copiato negli appunti!', 'success');
+        
+        // Temporarily animate copy button
+        const btn = document.getElementById(elementId);
+        if (btn) {
+          btn.innerHTML = `<i data-lucide="check" class="w-3.5 h-3.5 text-black"></i>`;
+          btn.className = "p-1.5 rounded-md border transition-all cursor-pointer bg-fluo-green border-fluo-green text-black";
+          lucide.createIcons();
+          
+          setTimeout(() => {
+            btn.innerHTML = `<i data-lucide="copy" class="w-3.5 h-3.5"></i>`;
+            btn.className = "p-1.5 rounded-md border transition-all cursor-pointer bg-slate-900 border-slate-800 hover:bg-slate-800 text-slate-300";
+            lucide.createIcons();
+          }, 2000);
+        }
+      });
+    }
+
+    // Toast Notifications Engine
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
+
+      const toast = document.createElement('div');
+      toast.className = `flex items-center gap-2 px-4 py-3 rounded-xl border shadow-2xl transition-all duration-300 translate-y-2 opacity-0 pointer-events-auto text-xs font-bold bg-space-card ${
+        type === 'success' 
+          ? 'border-fluo-green/30 text-fluo-green shadow-emerald-950/20' 
+          : 'border-fluo-blue/30 text-fluo-blue shadow-cyan-950/20'
+      }`;
+      
+      const icon = type === 'success' ? 'check' : 'info';
+      toast.innerHTML = `<i data-lucide="${icon}" class="w-4 h-4"></i><span>${message}</span>`;
+      container.appendChild(toast);
+      
+      // Animate in
+      setTimeout(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      }, 50);
+
+      // Remove after 3 seconds
+      setTimeout(() => {
+        toast.classList.add('translate-y-2', 'opacity-0');
+        setTimeout(() => {
+          toast.remove();
+        }, 300);
+      }, 3000);
+
+      lucide.createIcons();
+    }
+
+    // Core Router / Rendering
+    function renderApp() {
+      const container = document.getElementById('app-body');
+      if (!container) return;
+
+      // 1. IF rendering specific guide as a separate page
+      if (activeGuideId) {
+        const guide = guides.find(g => g.id === activeGuideId);
+        if (!guide) {
+          activeGuideId = null;
+          renderApp();
+          return;
+        }
+
+        container.innerHTML = `
+          <div class="max-w-3xl mx-auto space-y-6">
+            <!-- Back navigation button -->
+            <div>
+              <button
+                onclick="activeGuideId = null; renderApp();"
+                class="inline-flex items-center gap-2 text-xs font-bold text-slate-400 hover:text-fluo-green bg-slate-900/80 hover:bg-slate-800/80 border border-slate-800 px-4 py-2.5 rounded-xl cursor-pointer transition-all duration-200"
+              >
+                <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                Torna alle guide
+              </button>
+            </div>
+
+            <!-- Full Page Post Card -->
+            <div class="bg-space-card rounded-2xl border border-slate-800 p-6 md:p-8 shadow-2xl ${shadowClasses[guide.category]}">
+              <!-- Categories Header Badge (Difficulty removed) -->
+              <div class="flex flex-wrap items-center gap-2 mb-4">
+                <span class="text-xs font-bold px-2.5 py-1 rounded-full border ${categoryColors[guide.category]}">
+                  ${categoryLabels[guide.category]}
+                </span>
+              </div>
+
+              <!-- Title -->
+              <h1 class="text-2xl md:text-4xl font-black text-white tracking-tight mb-4 leading-tight">
+                ${guide.title}
+              </h1>
+
+              <!-- Divider -->
+              <div class="border-b border-slate-800/80 my-6"></div>
+
+              <!-- Description -->
+              <div class="p-4 bg-slate-900/50 border-l-4 border-fluo-green rounded-r-lg text-slate-300 text-sm md:text-base leading-relaxed italic mb-8">
+                ${guide.description}
+              </div>
+
+              <!-- Paragraphs/Steps list -->
+              <div class="space-y-6 mb-8">
+                ${guide.content.map((paragraph, idx) => `
+                  <div class="flex gap-4 items-start">
+                    <div class="w-7 h-7 bg-emerald-500/10 text-fluo-green border border-fluo-green/20 rounded-full flex items-center justify-center text-sm font-bold shrink-0 mt-0.5 shadow-[0_0_8px_rgba(38,255,94,0.1)]">
+                      ${idx + 1}
+                    </div>
+                    <p class="text-slate-200 text-sm md:text-base leading-relaxed pt-0.5">
+                      ${paragraph}
+                    </p>
+                  </div>
+                `).join('')}
+              </div>
+
+              <!-- Optional Tips box -->
+              ${guide.tips && guide.tips.length > 0 ? `
+                <div class="p-5 md:p-6 bg-purple-500/5 border border-fluo-purple/20 rounded-2xl space-y-3 mb-8">
+                  <h4 class="text-sm md:text-base font-bold text-fluo-purple flex items-center gap-1.5">
+                    <i data-lucide="award" class="w-5 h-5 text-fluo-purple"></i>
+                    Consigli Pro del Creatore
+                  </h4>
+                  <ul class="space-y-2.5">
+                    ${guide.tips.map(tip => `
+                      <li class="flex items-start gap-2 text-xs md:text-sm text-slate-300 leading-relaxed">
+                        <i data-lucide="corner-down-right" class="w-4 h-4 text-fluo-green shrink-0 mt-0.5"></i>
+                        <span>${tip}</span>
+                      </li>
+                    `).join('')}
+                  </ul>
+                </div>
+              ` : ''}
+
+              <!-- Tags list row (No author or timestamp) -->
+              <div class="pt-6 border-t border-slate-800/80 flex flex-wrap gap-1.5">
+                ${guide.tags.map(tag => `
+                  <span class="text-xs text-slate-400 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-md">
+                    #${tag}
+                  </span>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      // 2. RENDERING GENERAL GUIDES LIST
+      if (activeTab === 'guides') {
+        const filteredGuides = guides.filter(guide => {
+          const matchesSearch = 
+            guide.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            guide.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            guide.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+          const matchesCategory = selectedCategory === 'all' || guide.category === selectedCategory;
+          const matchesBookmark = !showBookmarksOnly || bookmarks.includes(guide.id);
+          return matchesSearch && matchesCategory && matchesBookmark;
+        });
+
+        container.innerHTML = `
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start w-full">
+            
+            <!-- Filter controls Sidebar -->
+            <div class="lg:col-span-3 space-y-6">
+              
+              <!-- Search Box -->
+              <div class="bg-space-card p-5 rounded-2xl border border-slate-800 shadow-xl space-y-3 neon-shadow-purple">
+                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest">
+                  Cerca Guida
+                </h4>
+                <div class="relative">
+                  <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500"></i>
+                  <input
+                    type="text"
+                    id="guide-search-input"
+                    placeholder="Cerca parole chiave..."
+                    value="${searchQuery}"
+                    oninput="searchQuery = this.value; renderApp();"
+                    class="w-full pl-9 pr-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:ring-2 focus:ring-fluo-purple focus:border-transparent outline-none transition-all"
+                  />
+                </div>
+              </div>
+
+              <!-- Categories list -->
+              <div class="bg-space-card p-5 rounded-2xl border border-slate-800 shadow-xl space-y-3 neon-shadow-blue">
+                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest">
+                  Seleziona Categoria
+                </h4>
+                <div class="flex flex-wrap gap-1.5">
+                  ${[
+                    { id: 'all', label: 'Tutte' },
+                    { id: 'gameplay', label: 'Gameplay' },
+                    { id: 'costruzione', label: 'Costruzioni' },
+                    { id: 'trucchi', label: 'Trucchi' },
+                    { id: 'mod_cc', label: 'Mod & CC' },
+                    { id: 'espansioni', label: 'Espansioni' }
+                  ].map(cat => `
+                    <button
+                      onclick="selectedCategory = '${cat.id}'; showBookmarksOnly = false; renderApp();"
+                      class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer border ${
+                        selectedCategory === cat.id && !showBookmarksOnly
+                          ? 'bg-fluo-blue text-black border-fluo-blue shadow-[0_0_8px_rgba(0,240,255,0.4)] font-bold'
+                          : 'bg-slate-900 text-slate-400 border-slate-800 hover:bg-slate-800 hover:text-white'
+                      }"
+                    >
+                      ${cat.label} (${getCategoryCount(cat.id)})
+                    </button>
+                  `).join('')}
+
+                  <!-- Bookmarks Toggle list pill -->
+                  <button
+                    onclick="showBookmarksOnly = !showBookmarksOnly; renderApp();"
+                    class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer border flex items-center gap-1.5 ${
+                      showBookmarksOnly
+                        ? 'bg-amber-500 text-white border-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.4)] font-bold'
+                        : 'bg-slate-900 text-slate-400 border-slate-800 hover:bg-slate-800 hover:text-white'
+                    }"
+                  >
+                    <i data-lucide="star" class="w-3.5 h-3.5 ${showBookmarksOnly ? 'fill-current text-white' : ''}"></i>
+                    Preferiti (${bookmarks.length})
+                  </button>
+                </div>
+              </div>
+
+              <!-- General Info sidebar box -->
+              <div class="p-5 bg-space-card border border-slate-800 text-slate-200 rounded-2xl space-y-3 shadow-md relative overflow-hidden">
+                <h4 class="text-xs font-extrabold uppercase tracking-widest text-fluo-green flex items-center gap-1.5">
+                  <i data-lucide="info" class="w-4 h-4 text-fluo-green"></i>
+                  PianetaSim Info
+                </h4>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                  Siamo la community italiana che supporta i fan di The Sims dal 2018! Esplora le nostre guide e sblocca tutto il potenziale del tuo gioco.
+                </p>
+              </div>
+
+            </div>
+
+            <!-- List Content column -->
+            <div class="lg:col-span-9 space-y-6">
+              
+              <!-- Title header for current query -->
+              <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 class="text-base font-extrabold text-white">
+                  ${showBookmarksOnly 
+                    ? 'I Miei Preferiti Salvati' 
+                    : selectedCategory === 'all' 
+                      ? 'Tutte le Guide Disponibili' 
+                      : `Guide di Categoria: ${selectedCategory.toUpperCase()}`}
+                </h3>
+                <span class="text-xs text-slate-400 font-semibold">
+                  Trovate ${filteredGuides.length} guide
+                </span>
+              </div>
+
+              <!-- Cards grid -->
+              ${filteredGuides.length > 0 ? `
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                  ${filteredGuides.map(guide => {
+                    const isBookmarked = bookmarks.includes(guide.id);
+                    return `
+                      <div
+                        onclick="activeGuideId = '${guide.id}'; renderApp();"
+                        class="bg-space-card rounded-xl border border-slate-800 p-6 hover:border-slate-700 transition-all duration-300 flex flex-col justify-between group h-full cursor-pointer ${shadowClasses[guide.category]}"
+                      >
+                        <div>
+                          <!-- Category Badge and Bookmark Star -->
+                          <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+                            <span class="text-xs font-semibold px-2.5 py-1 rounded-full border ${categoryColors[guide.category]}">
+                              ${categoryLabels[guide.category]}
+                            </span>
+                            <button
+                              onclick="handleToggleBookmark('${guide.id}', event)"
+                              class="p-1.5 rounded-lg border transition-all cursor-pointer ${
+                                isBookmarked
+                                  ? 'bg-amber-500/10 border-amber-500/40 text-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.2)]'
+                                  : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700'
+                              }"
+                              title="${isBookmarked ? 'Rimuovi dai Preferiti' : 'Salva nei Preferiti'}"
+                            >
+                              <i data-lucide="star" class="w-3.5 h-3.5 ${isBookmarked ? 'fill-current' : ''}"></i>
+                            </button>
+                          </div>
+
+                          <!-- Title -->
+                          <h3 class="text-lg font-bold text-white leading-snug group-hover:text-fluo-green transition-colors duration-200 mb-2">
+                            ${guide.title}
+                          </h3>
+
+                          <!-- Description preview -->
+                          <p class="text-sm text-slate-300 line-clamp-3 mb-4 leading-relaxed">
+                            ${guide.description}
+                          </p>
+
+                          <!-- Tags inside card -->
+                          <div class="flex flex-wrap gap-1.5 mb-6">
+                            ${guide.tags.slice(0, 3).map(tag => `
+                              <span class="text-[10px] text-slate-400 bg-slate-900/50 border border-slate-800 px-2 py-0.5 rounded">
+                                #${tag}
+                              </span>
+                            `).join('')}
+                            ${guide.tags.length > 3 ? `
+                              <span class="text-[10px] text-slate-400 bg-slate-900/50 border border-slate-800 px-1.5 py-0.5 rounded">
+                                +${guide.tags.length - 3}
+                              </span>
+                            ` : ''}
+                          </div>
+                        </div>
+
+                        <!-- Card footer / No author or readTime per user instruction -->
+                        <div class="pt-4 border-t border-slate-800 flex items-center justify-end mt-auto">
+                          <button
+                            onclick="activeGuideId = '${guide.id}'; renderApp();"
+                            class="flex items-center gap-1 text-xs font-semibold text-fluo-green hover:text-emerald-300 transition-colors py-1 pl-2 group-hover:translate-x-0.5 transition-transform duration-200"
+                          >
+                            Leggi Guida
+                            <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                          </button>
+                        </div>
+                      </div>
+                    `;
+                  }).join('')}
+                </div>
+              ` : `
+                <div class="py-20 text-center bg-space-card border border-slate-800 rounded-2xl shadow-xl">
+                  <i data-lucide="book-open" class="w-12 h-12 text-slate-500 mx-auto mb-3"></i>
+                  <h4 class="text-base font-bold text-white">Nessuna guida trovata</h4>
+                  <p class="text-xs text-slate-400 max-w-sm mx-auto mt-1 leading-relaxed">
+                    Prova a modificare i termini di ricerca o la categoria selezionata nel menu di sinistra.
+                  </p>
+                  <button
+                    onclick="searchQuery = ''; selectedCategory = 'all'; showBookmarksOnly = false; renderApp();"
+                    class="mt-4 px-4 py-2 bg-fluo-purple hover:bg-fuchsia-600 text-white text-xs font-bold rounded-lg cursor-pointer transition-colors shadow-md shadow-fuchsia-950/50"
+                  >
+                    Azzera Filtri
+                  </button>
+                </div>
+              `}
+
+            </div>
+          </div>
+        `;
+
+        // Focus search input back if we typed
+        const sInput = document.getElementById('guide-search-input');
+        if (sInput) {
+          sInput.focus();
+          // Put cursor at end
+          const val = sInput.value;
+          sInput.value = '';
+          sInput.value = val;
+        }
+
+        lucide.createIcons();
+      }
+
+      // 3. RENDERING CHEATS TAB DATABASE
+      if (activeTab === 'cheats') {
+        const cheatsCategories = ['All', 'Soldi', 'Costruzione', 'Bisogni/Stati', 'Carriere/Abilità', 'Generali'];
+        if (!window.activeCheatCategory) window.activeCheatCategory = 'All';
+        if (!window.cheatSearchQuery) window.cheatSearchQuery = '';
+
+        const filteredCheats = cheats.filter(cheat => {
+          const matchesSearch = 
+            cheat.code.toLowerCase().includes(window.cheatSearchQuery.toLowerCase()) ||
+            cheat.description.toLowerCase().includes(window.cheatSearchQuery.toLowerCase());
+          const matchesCategory = window.activeCheatCategory === 'All' || cheat.category === window.activeCheatCategory;
+          return matchesSearch && matchesCategory;
+        });
+
+        container.innerHTML = `
+          <div class="space-y-6">
+            
+            <!-- Cheat Sheet usage tutorial -->
+            <div class="bg-amber-500/10 border border-amber-500/30 p-4 rounded-xl flex items-start gap-3 shadow-[0_0_15px_rgba(245,158,11,0.1)]">
+              <i data-lucide="shield-alert" class="w-5 h-5 text-amber-400 shrink-0 mt-0.5"></i>
+              <div class="text-xs text-amber-200 leading-relaxed">
+                <strong class="block text-sm font-bold text-amber-300 mb-0.5">Come usare i trucchi in gioco:</strong>
+                Prima di inserire la maggior parte dei trucchi, apri la console dei comandi premendo <strong>Ctrl + Shift + C</strong> (PC/Mac) o i quattro grilletti sul controller (PlayStation/Xbox), digita <strong class="text-fluo-green font-mono">testingcheats true</strong> e premi Invio. Questo abiliterà la modalità avanzata!
+              </div>
+            </div>
+
+            <!-- Filter Categories and Search Input Header -->
+            <div class="bg-space-card p-4 rounded-xl border border-slate-800 shadow-lg flex flex-col md:flex-row gap-4 items-center justify-between">
+              
+              <!-- Cheat Search bar -->
+              <div class="relative w-full md:w-80">
+                <i data-lucide="search" class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                <input
+                  type="text"
+                  id="cheat-search-input"
+                  placeholder="Cerca un trucco o comando..."
+                  value="${window.cheatSearchQuery}"
+                  oninput="window.cheatSearchQuery = this.value; renderApp();"
+                  class="w-full pl-10 pr-4 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white focus:ring-2 focus:ring-fluo-green focus:border-transparent outline-none transition-all"
+                />
+              </div>
+
+              <!-- Cheat Category Selection Filters -->
+              <div class="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto pb-1 md:pb-0 scrollbar-none">
+                ${cheatsCategories.map(cat => `
+                  <button
+                    onclick="window.activeCheatCategory = '${cat}'; renderApp();"
+                    class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all cursor-pointer border ${
+                      window.activeCheatCategory === cat
+                        ? 'bg-fluo-green text-black border-fluo-green font-bold shadow-[0_0_12px_rgba(38,255,94,0.35)]'
+                        : 'bg-slate-900 text-slate-300 border-slate-800 hover:bg-slate-800 hover:border-slate-700'
+                    }"
+                  >
+                    ${cat === 'All' ? 'Tutti i Trucchi' : cat}
+                  </button>
+                `).join('')}
+              </div>
+            </div>
+
+            <!-- Cheats Cards list Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              ${filteredCheats.length > 0 ? filteredCheats.map((cheat, idx) => {
+                const elementId = `cheat-copy-btn-${idx}`;
+                return `
+                  <div class="bg-space-card rounded-xl border border-slate-800 p-5 shadow-sm hover:border-slate-700 transition-all flex flex-col justify-between neon-shadow-blue">
+                    <div>
+                      <div class="flex justify-between items-start gap-2 mb-2">
+                        <span class="text-[10px] uppercase tracking-wider font-extrabold text-fluo-blue">
+                          Categoria: ${cheat.category}
+                        </span>
+                        ${cheat.requirements && cheat.requirements !== 'Nessuno' ? `
+                          <span class="text-[9px] bg-fuchsia-500/10 text-fluo-fuchsia border border-fluo-fuchsia/30 px-1.5 py-0.5 rounded font-medium">
+                            Richiede ${cheat.requirements}
+                          </span>
+                        ` : ''}
+                      </div>
+
+                      <div class="bg-slate-950 border border-slate-800 p-2.5 rounded-lg flex items-center justify-between gap-4 mb-3">
+                        <code class="text-xs font-mono font-bold text-white select-all leading-normal break-all">
+                          ${cheat.code}
+                        </code>
+                        <button
+                          id="${elementId}"
+                          onclick="handleCopyCheat('${cheat.code}', '${elementId}')"
+                          class="p-1.5 rounded-md border transition-all cursor-pointer bg-slate-900 border-slate-800 hover:bg-slate-800 text-slate-300"
+                          title="Copia codice negli appunti"
+                        >
+                          <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                        </button>
+                      </div>
+
+                      <p class="text-xs text-slate-300 leading-relaxed">
+                        ${cheat.description}
+                      </p>
+                    </div>
+                  </div>
+                `;
+              }).join('') : `
+                <div class="col-span-full py-12 text-center bg-space-card border border-slate-800 rounded-xl">
+                  <p class="text-slate-400 text-sm">Nessun trucco trovato corrispondente ai filtri inseriti.</p>
+                  <button
+                    onclick="window.cheatSearchQuery = ''; window.activeCheatCategory = 'All'; renderApp();"
+                    class="mt-3 px-4 py-2 text-xs font-bold bg-fluo-green text-black rounded-lg hover:bg-emerald-400 cursor-pointer"
+                  >
+                    Azzera Filtri
+                  </button>
+                </div>
+              `}
+            </div>
+
+          </div>
+        `;
+
+        // Focus search input back if we typed
+        const sInput = document.getElementById('cheat-search-input');
+        if (sInput) {
+          sInput.focus();
+          // Put cursor at end
+          const val = sInput.value;
+          sInput.value = '';
+          sInput.value = val;
+        }
+
+        lucide.createIcons();
+      }
+    }
+  </script>
+</body>
+</html>
