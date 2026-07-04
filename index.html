@@ -238,16 +238,6 @@
         >
           <h4 class="inline font-bold text-xs text-white">Guide Complete</h4>
         </div>
-        <div
-          id="btn-tab-admin"
-          role="button"
-          tabindex="0"
-          onclick="switchTab('admin')"
-          class="px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900 flex items-center gap-1"
-        >
-          <i data-lucide="settings" class="w-3.5 h-3.5"></i>
-          <h4 class="inline font-bold text-xs">Pannello Admin</h4>
-        </div>
       </nav>
     </div>
   </header>
@@ -414,7 +404,113 @@
 
   <!-- APPLICATION CODE AND DATABASES -->
   <script>    // Databases
-    let guides = [];
+    const guides = [
+      {
+        id: 'guide-moveobjects',
+        title: 'Lorem Ipsum Dolor Sit Amet',
+        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin elementum, lorem a scelerisque dictum, arcu nunc.',
+        category: 'costruzione',
+        author: 'SimmerItalia99',
+        readTime: '5 min',
+        tags: ['lorem', 'ipsum', 'dolor', 'sit'],
+        content: [
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sed dapibus leo, nec finibus mi. Phasellus hendrerit vulputate dolor, sed convallis ex congue eget. Aliquam lorem nulla, pretium nec elit non, aliquet tristique lacus.',
+          'Aenean lobortis diam at interdum eleifend. Ut gravida rhoncus dolor, ac convallis enim hendrerit a. Proin congue, eros id dictum sodales, est ipsum lacinia ligula, sit amet rhoncus nunc felis non est.',
+          'Praesent at nunc a lectus eleifend elementum sit amet tristique mi. Sed vitae interdum erat, nec bibendum tellus. Curabitur sed nisl ut ligula cursus accumsan id sed velit. Ut egestas sapien elementum, eleifend est vel.',
+          'Vivamus vestibulum ligula sed nulla pharetra, vitae facilisis ex volutpat. Quisque hendrerit molestie magna. Pellentesque non justo a nibh finibus feugiat sed non nisl. Cras vulputate metus sem, et tempus lorem interdum ac.',
+          'Nam eleifend hendrerit massa, vitae congue tortor feugiat sed. Aliquam erat volutpat. Proin efficitur elit in purus rutrum molestie. In rhoncus, nulla varius eleifend lobortis, urna nibh convallis ex, sed tempor ex magna eu ex.'
+        ],
+        tips: [
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+          'Ut gravida rhoncus dolor, ac convallis enim hendrerit a.',
+          'Sed vitae interdum erat, nec bibendum tellus.'
+        ]
+      },
+      {
+        id: 'guide-mods-cc',
+        title: 'Consectetur Adipiscing Elit',
+        description: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
+        category: 'mod_cc',
+        author: 'SimsGuruLuca',
+        readTime: '6 min',
+        tags: ['consectetur', 'adipiscing', 'elit', 'lorem'],
+        content: [
+          'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+          'Mauris dictum tincidunt nisl, nec maximus libero consequat quis. Aliquam interdum urna sit amet massa pharetra, non vulputate libero tristique. Curabitur vel leo id erat auctor gravida in eget nulla.',
+          'Nullam hendrerit mi eu finibus feugiat. Vestibulum pretium scelerisque elit, id maximus diam feugiat ac. Curabitur accumsan, justo nec feugiat porttitor, ipsum diam facilisis nulla, sit amet rhoncus ante nisl vel tellus.',
+          'Quisque sodales scelerisque turpis, id condimentum dolor imperdiet vitae. Duis feugiat, elit quis aliquet varius, massa eros mattis ex, sed dictum nisl leo a mi. Aliquam gravida eleifend nibh rhoncus dictum.',
+          'Sed rhoncus lectus magna, quis facilisis leo tincidunt vitae. Nunc at pretium ante. Etiam quis egestas tellus. Curabitur lobortis mi sit amet mi iaculis, vel scelerisque magna congue. Cras eget tempor enim.'
+        ],
+        tips: [
+          'Excepteur sint occaecat cupidatat non proident, sunt in culpa.',
+          'Aliquam interdum urna sit amet massa pharetra, non vulputate.',
+          'Curabitur vel leo id erat auctor gravida in eget nulla.'
+        ]
+      },
+      {
+        id: 'guide-occulti-vampiri',
+        title: 'Nullam Hendrerit Mi Eu Finibus',
+        description: 'Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra.',
+        category: 'gameplay',
+        author: 'ContessaSim',
+        readTime: '8 min',
+        tags: ['nullam', 'hendrerit', 'finibus', 'lorem'],
+        content: [
+          'Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris. Integer in mauris eu nibh euismod gravida.',
+          'Aliquam sollicitudin, arcu a laoreet tempor, risus neque pretium ipsum, sed convallis risus ligula a tellus. Cras iaculis ultricies nulla. Donec quis dui at sem tempor varius. Ut nonummy convallis risus.',
+          'Morbi leo mi, nonummy eget, tristique non, rhoncus non, leo. Nullam tempor. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Vestibulum sapien.',
+          'Quisque cursus, metus vitae pharetra auctor, sem massa mattis sem, at interdum magna augue a odio. Nam nec ante. Sed lacinia, urna non volutpat tempor, tempor erat vehicula aliquet, nulla.',
+          'Aenean nec lorem. In porttitor. Donec laoreet nonummy augue. Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend.'
+        ],
+        tips: [
+          'Morbi leo mi, nonummy eget, tristique non, rhoncus non, leo.',
+          'Quisque cursus, metus vitae pharetra auctor, sem massa mattis.',
+          'Donec laoreet nonummy augue. Suspendisse dui purus.'
+        ]
+      },
+      {
+        id: 'guide-roofing',
+        title: 'Nemo Enim Ipsam Voluptatem',
+        description: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.',
+        category: 'costruzione',
+        author: 'ArchitettoSim',
+        readTime: '7 min',
+        tags: ['nemo', 'enim', 'ipsam', 'lorem'],
+        content: [
+          'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.',
+          'Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet.',
+          'Consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam.',
+          'Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur. Temporibus autem quibusdam et aut officiis.',
+          'At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident.'
+        ],
+        tips: [
+          'Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit.',
+          'Neque porro quisquam est, qui dolorem ipsum quia dolor sit.',
+          'Consectetur, adipisci velit, sed quia non numquam eius modi.'
+        ]
+      },
+      {
+        id: 'guide-affitti-luna',
+        title: 'Quis Autem Vel Eum Iure',
+        description: 'Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur.',
+        category: 'espansioni',
+        author: 'SimImmobiliare',
+        readTime: '8 min',
+        tags: ['quis', 'autem', 'eum', 'lorem'],
+        content: [
+          'Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur. At vero eos et accusamus et iusto odio.',
+          'Dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecat cupiditate non provident, similique sunt in culpa qui officia deserunt.',
+          'Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est.',
+          'Omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic.',
+          'Tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.'
+        ],
+        tips: [
+          'Dignissimos ducimus qui blanditiis praesentium voluptatum deleniti.',
+          'Et harum quidem rerum facilis est et expedita distinctio.',
+          'Omnis dolor repellendus. Temporibus autem quibusdam et aut.'
+        ]
+      }
+    ];
 
     const cheats = [
       { code: 'testingcheats true', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sed dapibus leo, nec finibus mi.', category: 'Generali', requirements: 'LOREM' },
@@ -468,235 +564,17 @@
 
 
 
-    // Load logo first path and fetch guides dynamically
+    // Load logo first path
     document.addEventListener('DOMContentLoaded', () => {
       const img = document.getElementById('logo-img');
       if (img) {
         img.src = logoPaths[0];
       }
       updateBookmarksCountBanner();
-      
-      // Load guides from external JSON file
-      fetch('./guides.json')
-        .then(response => response.json())
-        .then(data => {
-          guides = data;
-          renderApp();
-        })
-        .catch(error => {
-          console.error('Errore nel caricamento delle guide:', error);
-          // Fallback in case guides.json is missing or corrupted
-          guides = [
-            {
-              id: 'guide-error',
-              title: 'Errore nel caricamento delle guide',
-              description: 'Non è stato possibile caricare il file guides.json. Assicurati che sia presente e ben formattato.',
-              category: 'costruzione',
-              author: 'Admin',
-              readTime: '1 min',
-              tags: ['errore', 'json'],
-              content: [
-                'Si è verificato un problema nel recupero dei contenuti. Verifica che il file "guides.json" esista nella cartella principale e non contenga errori di sintassi.'
-              ],
-              tips: []
-            }
-          ];
-          renderApp();
-        });
+      renderApp();
     });
 
     // Save bookmarks
-    // Admin functions
-    window.isAdminAuthenticated = sessionStorage.getItem('pianetasim-admin') === 'true';
-    window.editingGuide = null;
-
-    function handleAdminLogin() {
-      const input = document.getElementById('admin-password-input');
-      if (input && input.value === 'pianetasim') {
-        window.isAdminAuthenticated = true;
-        sessionStorage.setItem('pianetasim-admin', 'true');
-        showToast('Accesso effettuato con successo!', 'success');
-        renderApp();
-      } else {
-        showToast('Password errata. Riprova!', 'info');
-      }
-    }
-
-    function handleAdminLogout() {
-      window.isAdminAuthenticated = false;
-      sessionStorage.removeItem('pianetasim-admin');
-      window.editingGuide = null;
-      showToast('Sessione chiusa.', 'info');
-      switchTab('guides');
-    }
-
-    function selectGuideForEdit(guideId) {
-      if (guideId === 'new') {
-        window.editingGuide = {
-          id: 'nuova-guida-' + Math.floor(Math.random() * 1000),
-          title: '',
-          description: '',
-          category: 'mod_cc',
-          author: 'Admin',
-          readTime: '5 min',
-          tags: [],
-          content: [''],
-          tips: []
-        };
-      } else {
-        const guide = guides.find(g => g.id === guideId);
-        if (guide) {
-          window.editingGuide = JSON.parse(JSON.stringify(guide));
-        }
-      }
-      renderApp();
-    }
-
-    function updateEditingField(field, val) {
-      if (!window.editingGuide) return;
-      window.editingGuide[field] = val;
-      // Auto-update ID from Title if ID is just auto-generated
-      if (field === 'title' && window.editingGuide.id.startsWith('nuova-guida-')) {
-        window.editingGuide.id = val.toLowerCase()
-          .replace(/[^a-z0-9]+/g, '-')
-          .replace(/(^-|-$)+/g, '');
-      }
-      renderApp();
-    }
-
-    function addEditingParagraph() {
-      if (!window.editingGuide) return;
-      window.editingGuide.content.push('');
-      renderApp();
-    }
-
-    function updateEditingParagraph(idx, val) {
-      if (!window.editingGuide) return;
-      window.editingGuide.content[idx] = val;
-    }
-
-    function removeEditingParagraph(idx) {
-      if (!window.editingGuide) return;
-      window.editingGuide.content.splice(idx, 1);
-      renderApp();
-    }
-
-    function addEditingTip() {
-      if (!window.editingGuide) return;
-      if (!window.editingGuide.tips) window.editingGuide.tips = [];
-      window.editingGuide.tips.push('');
-      renderApp();
-    }
-
-    function updateEditingTip(idx, val) {
-      if (!window.editingGuide) return;
-      window.editingGuide.tips[idx] = val;
-    }
-
-    function removeEditingTip(idx) {
-      if (!window.editingGuide) return;
-      window.editingGuide.tips.splice(idx, 1);
-      renderApp();
-    }
-
-    function saveEditingGuide() {
-      if (!window.editingGuide) return;
-      
-      const g = window.editingGuide;
-      if (!g.title.trim()) {
-        showToast('Il titolo è obbligatorio!', 'info');
-        return;
-      }
-      if (!g.id.trim()) {
-        showToast('ID unico è obbligatorio!', 'info');
-        return;
-      }
-      
-      // Clean tags from inputs
-      const tagsInput = document.getElementById('admin-edit-tags');
-      if (tagsInput) {
-        g.tags = tagsInput.value.split(',')
-          .map(t => t.trim().toLowerCase())
-          .filter(t => t.length > 0);
-      }
-
-      // Filter empty paragraphs/tips
-      g.content = g.content.map(p => p.trim()).filter(p => p.length > 0);
-      if (g.content.length === 0) {
-        g.content = ['Contenuto vuoto. Modificalo dal pannello.'];
-      }
-      if (g.tips) {
-        g.tips = g.tips.map(t => t.trim()).filter(t => t.length > 0);
-      }
-
-      // Add to array or replace
-      const existingIdx = guides.findIndex(item => item.id === g.id);
-      
-      if (existingIdx >= 0) {
-        guides[existingIdx] = g;
-      } else {
-        guides.push(g);
-      }
-
-      window.editingGuide = null;
-      showToast('Guida aggiornata in memoria! Ricorda di fare clic su "Salva permanentemente" per registrarla.', 'success');
-      renderApp();
-    }
-
-    function deleteGuideFromAdmin(guideId, event) {
-      if (event) event.stopPropagation();
-      if (confirm('Sei sicuro di voler eliminare questa guida?')) {
-        guides = guides.filter(g => g.id !== guideId);
-        if (window.editingGuide && window.editingGuide.id === guideId) {
-          window.editingGuide = null;
-        }
-        showToast('Guida rimossa! Fai clic su "Salva permanentemente" per registrarla.', 'success');
-        renderApp();
-      }
-    }
-
-    function saveAllGuidesToServer() {
-      showToast('Salvataggio in corso...', 'info');
-      fetch('./api/save-guides', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(guides)
-      })
-      .then(res => {
-        if (res.ok) {
-          return res.json();
-        }
-        throw new Error('Errore di rete');
-      })
-      .then(data => {
-        showToast('Sito salvato permanentemente!', 'success');
-      })
-      .catch(err => {
-        console.error(err);
-        showToast('Salvataggio completato!', 'success');
-      });
-    }
-
-    function downloadGuidesJson() {
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(guides, null, 2));
-      const downloadAnchor = document.createElement('a');
-      downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", "guides.json");
-      document.body.appendChild(downloadAnchor);
-      downloadAnchor.click();
-      downloadAnchor.remove();
-      showToast('File guides.json scaricato!', 'success');
-    }
-
-    function copyGuidesJsonToClipboard() {
-      const jsonStr = JSON.stringify(guides, null, 2);
-      navigator.clipboard.writeText(jsonStr).then(() => {
-        showToast('Codice JSON copiato negli appunti!', 'success');
-      });
-    }
-
     function saveBookmarks() {
       localStorage.setItem('pianetasim-bookmarks', JSON.stringify(bookmarks));
       updateBookmarksCountBanner();
@@ -762,20 +640,16 @@
       const gBtn = document.getElementById('btn-tab-guides');
       const cBtn = document.getElementById('btn-tab-cheats');
       const hBtn = document.getElementById('btn-tab-home');
-      const aBtn = document.getElementById('btn-tab-admin');
 
-      // Default all to inactive
-      if (gBtn) gBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900";
-      if (cBtn) cBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900";
-      if (hBtn) hBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900";
-      if (aBtn) aBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900 flex items-center gap-1";
-
+      // Update button visual styles
       if (tab === 'guides') {
         if (gBtn) gBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap bg-fluo-purple text-white shadow-[0_0_15px_rgba(176,38,255,0.55)] border border-fluo-purple/30";
-      } else if (tab === 'admin') {
-        if (aBtn) aBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap bg-fluo-green text-black shadow-[0_0_15px_rgba(38,255,94,0.55)] border border-fluo-green/30 flex items-center gap-1";
+        if (cBtn) cBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900";
+        if (hBtn) hBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900";
       } else {
+        if (gBtn) gBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900";
         if (cBtn) cBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap bg-fluo-green text-black shadow-[0_0_15px_rgba(38,255,94,0.55)] border border-fluo-green/30";
+        if (hBtn) hBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900";
       }
       renderApp();
     }
@@ -790,12 +664,10 @@
       const gBtn = document.getElementById('btn-tab-guides');
       const cBtn = document.getElementById('btn-tab-cheats');
       const hBtn = document.getElementById('btn-tab-home');
-      const aBtn = document.getElementById('btn-tab-admin');
 
       if (gBtn) gBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900";
       if (cBtn) cBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900";
       if (hBtn) hBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap bg-fluo-green text-black shadow-[0_0_15px_rgba(38,255,94,0.55)] border border-fluo-green/30";
-      if (aBtn) aBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900 flex items-center gap-1";
 
       renderApp();
     }
@@ -1295,315 +1167,6 @@
           sInput.value = '';
           sInput.value = val;
         }
-
-        lucide.createIcons();
-      }
-
-      // 4. RENDERING ADMIN TAB
-      if (activeTab === 'admin') {
-        if (!window.isAdminAuthenticated) {
-          container.innerHTML = `
-            <div class="max-w-md mx-auto py-12 px-6 bg-space-card rounded-2xl border border-slate-800 shadow-2xl neon-shadow-purple text-center">
-              <div class="w-12 h-12 bg-fluo-purple/10 text-fluo-purple rounded-full flex items-center justify-center mx-auto mb-4 float-animation shadow-[0_0_15px_rgba(176,38,255,0.2)]">
-                <i data-lucide="lock" class="w-6 h-6"></i>
-              </div>
-              <h3 class="text-xl font-black text-white mb-2">Area Amministratore</h3>
-              <p class="text-xs text-slate-400 mb-6">Inserisci la chiave d'accesso per gestire le guide di PianetaSim.</p>
-              
-              <div class="space-y-4">
-                <input 
-                  type="password" 
-                  id="admin-password-input" 
-                  placeholder="Chiave d'accesso..."
-                  class="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white text-center focus:ring-2 focus:ring-fluo-purple outline-none"
-                  onkeydown="if(event.key === 'Enter') handleAdminLogin()"
-                />
-                <button 
-                  onclick="handleAdminLogin()"
-                  class="w-full py-2.5 bg-fluo-purple hover:bg-fuchsia-600 text-white text-xs font-bold rounded-xl cursor-pointer transition-colors shadow-md shadow-fuchsia-950/40"
-                >
-                  Accedi al Pannello
-                </button>
-                <p class="text-[10px] text-slate-500">Nota: La password predefinita è <span class="text-slate-400 font-bold">pianetasim</span></p>
-              </div>
-            </div>
-          `;
-          lucide.createIcons();
-          return;
-        }
-
-        container.innerHTML = `
-          <div class="space-y-6">
-            <!-- Actions Topbar -->
-            <div class="bg-space-card p-4 rounded-xl border border-slate-800 flex flex-wrap justify-between items-center gap-4 neon-shadow-green">
-              <div>
-                <h3 class="text-base font-black text-white flex items-center gap-2">
-                  <span class="w-2.5 h-2.5 rounded-full bg-fluo-green shadow-[0_0_8px_#26ff5e] animate-pulse"></span>
-                  Pannello di Gestione Contenuti
-                </h3>
-                <p class="text-[10px] text-slate-400 mt-0.5">Gestisci ed edita le guide senza programmare. Le modifiche si salvano nel file JSON in tempo reale.</p>
-              </div>
-              
-              <div class="flex flex-wrap items-center gap-2">
-                <button 
-                  onclick="saveAllGuidesToServer()"
-                  class="bg-fluo-green hover:bg-emerald-400 text-black px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-[0_0_12px_rgba(38,255,94,0.3)]"
-                >
-                  <i data-lucide="save" class="w-4 h-4"></i>
-                  Salva permanentemente
-                </button>
-                <button 
-                  onclick="downloadGuidesJson()"
-                  class="bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 px-3.5 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5"
-                >
-                  <i data-lucide="download" class="w-4 h-4"></i>
-                  Scarica JSON (per GitHub)
-                </button>
-                <button 
-                  onclick="copyGuidesJsonToClipboard()"
-                  class="bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 px-3 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer"
-                  title="Copia codice JSON"
-                >
-                  Copia JSON
-                </button>
-                <button 
-                  onclick="handleAdminLogout()"
-                  class="bg-rose-950/40 hover:bg-rose-900/60 border border-rose-800/40 text-rose-400 px-3 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer"
-                >
-                  Esci
-                </button>
-              </div>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-              <!-- Left Column: Guides list -->
-              <div class="lg:col-span-4 space-y-4 bg-space-card border border-slate-800 p-5 rounded-2xl shadow-xl">
-                <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                  <h4 class="text-xs font-extrabold uppercase tracking-widest text-slate-300">Tutte le guide (${guides.length})</h4>
-                  <button 
-                    onclick="selectGuideForEdit('new')"
-                    class="bg-fluo-purple hover:bg-fuchsia-600 text-white px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition-all cursor-pointer flex items-center gap-1 shadow-[0_0_10px_rgba(176,38,255,0.3)]"
-                  >
-                    <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-                    Nuova Guida
-                  </button>
-                </div>
-                
-                <div class="space-y-2 max-h-[500px] overflow-y-auto scrollbar-none">
-                  ${guides.map(g => {
-                    const isSelected = window.editingGuide && window.editingGuide.id === g.id;
-                    return `
-                      <div 
-                        onclick="selectGuideForEdit('${g.id}')"
-                        class="p-3 rounded-xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${
-                          isSelected 
-                            ? 'bg-slate-900 border-fluo-purple/40 text-white shadow-md' 
-                            : 'bg-slate-950 border-slate-900 text-slate-300 hover:bg-slate-900 hover:border-slate-800'
-                        }"
-                      >
-                        <div class="min-w-0">
-                          <h5 class="text-xs font-bold truncate">${g.title || '(Senza Titolo)'}</h5>
-                          <span class="text-[9px] uppercase font-bold text-slate-500">${categoryLabels[g.category] || 'Altro'}</span>
-                        </div>
-                        <button 
-                          onclick="deleteGuideFromAdmin('${g.id}', event)"
-                          class="p-1.5 rounded-lg bg-slate-900 border border-slate-800/50 text-slate-400 hover:text-rose-500 hover:border-rose-900/40 transition-colors"
-                          title="Elimina"
-                        >
-                          <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                        </button>
-                      </div>
-                    `;
-                  }).join('')}
-                </div>
-              </div>
-
-              <!-- Right Column: Form Editor -->
-              <div class="lg:col-span-8 bg-space-card border border-slate-800 p-6 rounded-2xl shadow-xl min-h-[400px]">
-                ${window.editingGuide ? `
-                  <div class="space-y-6">
-                    <div class="border-b border-slate-800 pb-3 flex justify-between items-center">
-                      <h4 class="text-xs font-extrabold uppercase tracking-widest text-fluo-purple">
-                        ${window.editingGuide.title ? `Modifica: ${window.editingGuide.title}` : 'Crea Nuova Guida'}
-                      </h4>
-                      <span class="text-[10px] text-slate-500 font-mono">ID: ${window.editingGuide.id}</span>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <!-- Title -->
-                      <div class="space-y-1.5">
-                        <label class="block text-xs font-bold text-slate-400">Titolo Guida</label>
-                        <input 
-                          type="text" 
-                          value="${window.editingGuide.title}"
-                          oninput="updateEditingField('title', this.value)"
-                          placeholder="Es: Come costruire tetti complessi"
-                          class="w-full px-3.5 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:ring-2 focus:ring-fluo-purple outline-none"
-                        />
-                      </div>
-
-                      <!-- Category -->
-                      <div class="space-y-1.5">
-                        <label class="block text-xs font-bold text-slate-400">Categoria</label>
-                        <select 
-                          onchange="updateEditingField('category', this.value)"
-                          class="w-full px-3.5 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:ring-2 focus:ring-fluo-purple outline-none"
-                        >
-                          <option value="mod_cc" ${window.editingGuide.category === 'mod_cc' ? 'selected' : ''}>Mod e CC</option>
-                          <option value="gameplay" ${window.editingGuide.category === 'gameplay' ? 'selected' : ''}>Gameplay</option>
-                          <option value="costruzione" ${window.editingGuide.category === 'costruzione' ? 'selected' : ''}>Costruzione</option>
-                          <option value="espansioni" ${window.editingGuide.category === 'espansioni' ? 'selected' : ''}>Espansioni</option>
-                        </select>
-                      </div>
-
-                      <!-- Author -->
-                      <div class="space-y-1.5">
-                        <label class="block text-xs font-bold text-slate-400">Autore</label>
-                        <input 
-                          type="text" 
-                          value="${window.editingGuide.author || 'Admin'}"
-                          oninput="updateEditingField('author', this.value)"
-                          placeholder="Es: Simmer99"
-                          class="w-full px-3.5 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:ring-2 focus:ring-fluo-purple outline-none"
-                        />
-                      </div>
-
-                      <!-- Read Time -->
-                      <div class="space-y-1.5">
-                        <label class="block text-xs font-bold text-slate-400">Tempo di Lettura</label>
-                        <input 
-                          type="text" 
-                          value="${window.editingGuide.readTime || '5 min'}"
-                          oninput="updateEditingField('readTime', this.value)"
-                          placeholder="Es: 5 min"
-                          class="w-full px-3.5 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:ring-2 focus:ring-fluo-purple outline-none"
-                        />
-                      </div>
-                    </div>
-
-                    <!-- Description -->
-                    <div class="space-y-1.5">
-                      <label class="block text-xs font-bold text-slate-400">Breve Descrizione (Sotto il titolo nell'anteprima)</label>
-                      <textarea 
-                        rows="2"
-                        oninput="updateEditingField('description', this.value)"
-                        placeholder="Inserisci un riassunto accattivante per catturare l'attenzione del lettore..."
-                        class="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:ring-2 focus:ring-fluo-purple outline-none leading-relaxed"
-                      >${window.editingGuide.description}</textarea>
-                    </div>
-
-                    <!-- Tags -->
-                    <div class="space-y-1.5">
-                      <label class="block text-xs font-bold text-slate-400">Tag (Separati da virgola)</label>
-                      <input 
-                        type="text" 
-                        id="admin-edit-tags"
-                        value="${window.editingGuide.tags.join(', ')}"
-                        placeholder="Es: mod, trucchi, sims4"
-                        class="w-full px-3.5 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:ring-2 focus:ring-fluo-purple outline-none"
-                      />
-                    </div>
-
-                    <!-- Content Paragraphs list -->
-                    <div class="space-y-3 pt-3 border-t border-slate-800/80">
-                      <div class="flex justify-between items-center">
-                        <label class="block text-xs font-extrabold text-slate-300 uppercase tracking-wide">Testo della Guida (Paragrafi)</label>
-                        <button 
-                          onclick="addEditingParagraph()"
-                          class="bg-slate-900 hover:bg-slate-800 text-fluo-purple border border-slate-800 px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all cursor-pointer flex items-center gap-1"
-                        >
-                          <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-                          Aggiungi Paragrafo
-                        </button>
-                      </div>
-
-                      <div class="space-y-3">
-                        ${window.editingGuide.content.map((paragraph, idx) => `
-                          <div class="flex gap-2 items-start bg-slate-950/40 p-2.5 rounded-xl border border-slate-900">
-                            <span class="w-6 h-6 bg-slate-900 border border-slate-800 text-slate-400 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-2">${idx + 1}</span>
-                            <textarea 
-                              rows="3"
-                              placeholder="Scrivi qui il paragrafo..."
-                              oninput="updateEditingParagraph(${idx}, this.value)"
-                              class="flex-grow p-2.5 bg-slate-900/60 border border-slate-800/80 rounded-xl text-xs text-white outline-none focus:ring-2 focus:ring-fluo-purple leading-relaxed"
-                            >${paragraph}</textarea>
-                            <button 
-                              onclick="removeEditingParagraph(${idx})"
-                              class="p-2 bg-slate-900/50 hover:bg-slate-900 border border-slate-800 text-slate-400 hover:text-rose-500 rounded-xl transition-all cursor-pointer shrink-0"
-                              title="Elimina paragrafo"
-                            >
-                              <i data-lucide="x" class="w-4 h-4"></i>
-                            </button>
-                          </div>
-                        `).join('')}
-                      </div>
-                    </div>
-
-                    <!-- Tips (Pro Consigli) list -->
-                    <div class="space-y-3 pt-3 border-t border-slate-800/80">
-                      <div class="flex justify-between items-center">
-                        <label class="block text-xs font-extrabold text-slate-300 uppercase tracking-wide">Consigli Pro del Creatore (Opzionali)</label>
-                        <button 
-                          onclick="addEditingTip()"
-                          class="bg-slate-900 hover:bg-slate-800 text-fluo-purple border border-slate-800 px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all cursor-pointer flex items-center gap-1"
-                        >
-                          <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-                          Aggiungi Consiglio
-                        </button>
-                      </div>
-
-                      <div class="space-y-2">
-                        ${(window.editingGuide.tips || []).map((tip, idx) => `
-                          <div class="flex gap-2 items-center bg-slate-950/40 p-2.5 rounded-xl border border-slate-900">
-                            <i data-lucide="award" class="w-4 h-4 text-fluo-purple shrink-0"></i>
-                            <input 
-                              type="text"
-                              value="${tip}"
-                              placeholder="Es: Tieni premuto ALT per muovere gli oggetti liberamente"
-                              oninput="updateEditingTip(${idx}, this.value)"
-                              class="flex-grow px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:ring-2 focus:ring-fluo-purple outline-none"
-                            />
-                            <button 
-                              onclick="removeEditingTip(${idx})"
-                              class="p-2 bg-slate-900/50 hover:bg-slate-900 border border-slate-800 text-slate-400 hover:text-rose-500 rounded-xl transition-all cursor-pointer shrink-0"
-                              title="Elimina consiglio"
-                            >
-                              <i data-lucide="x" class="w-4 h-4"></i>
-                            </button>
-                          </div>
-                        `).join('')}
-                      </div>
-                    </div>
-
-                    <!-- Save guide button -->
-                    <div class="pt-4 border-t border-slate-800 flex justify-end gap-3">
-                      <button 
-                        onclick="window.editingGuide = null; renderApp();"
-                        class="px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 rounded-xl text-xs font-bold transition-all cursor-pointer"
-                      >
-                        Annulla
-                      </button>
-                      <button 
-                        onclick="saveEditingGuide()"
-                        class="px-5 py-2.5 bg-fluo-purple hover:bg-fuchsia-600 text-white rounded-xl text-xs font-bold transition-all cursor-pointer shadow-[0_0_12px_rgba(176,38,255,0.4)]"
-                      >
-                        Applica Modifiche
-                      </button>
-                    </div>
-                  </div>
-                ` : `
-                  <div class="flex flex-col items-center justify-center py-20 text-center text-slate-500">
-                    <i data-lucide="edit-3" class="w-12 h-12 text-slate-600 mb-4 float-animation"></i>
-                    <h4 class="text-sm font-bold text-slate-300">Nessuna guida in modifica</h4>
-                    <p class="text-xs text-slate-500 max-w-xs mx-auto mt-1 leading-relaxed">
-                      Seleziona una guida dall'elenco di sinistra per iniziare a modificarla, oppure creane una nuova facendo clic su <strong>"Nuova Guida"</strong>.
-                    </p>
-                  </div>
-                `}
-              </div>
-            </div>
-          </div>
-        `;
 
         lucide.createIcons();
       }

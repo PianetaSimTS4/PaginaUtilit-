@@ -38,9 +38,6 @@ function copyDir(src, dest) {
 // 1. Copy index.html
 copyFile(path.join(process.cwd(), 'index.html'), path.join(distDir, 'index.html'));
 
-// 1b. Copy guides.json
-copyFile(path.join(process.cwd(), 'guides.json'), path.join(distDir, 'guides.json'));
-
 // 2. Copy logo.png at root
 copyFile(path.join(process.cwd(), 'logo.png'), path.join(distDir, 'logo.png'));
 
