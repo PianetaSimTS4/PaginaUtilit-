@@ -73,6 +73,9 @@
   <!-- Lucide Icons CDN -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
+  <!-- JSZip CDN for creating ZIP archives directly in browser -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
   <style>
     body {
       font-family: 'Inter', sans-serif;
@@ -829,6 +832,14 @@
                     >
                       <i data-lucide="copy" class="w-3 h-3"></i>
                     </button>
+                    <a
+                      href="${imgUrl}"
+                      download="${imgName}"
+                      class="p-1 bg-fluo-blue text-black rounded hover:bg-opacity-95 text-[10px] font-bold cursor-pointer flex items-center justify-center"
+                      title="Scarica immagine per GitHub"
+                    >
+                      <i data-lucide="download" class="w-3 h-3"></i>
+                    </a>
                     ${!isLocal ? `
                     <button
                       onclick="deleteImage('${imgName}')"
@@ -1618,7 +1629,13 @@
     }
 
     function downloadGuidesJson() {
-      const fullObj = { categories, guides };
+      const fullObj = {
+        categories: categories,
+        guides: guides,
+        siteTitle: siteTitle,
+        siteDescription: siteDescription,
+        alertPopup: alertPopup
+      };
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(fullObj, null, 2));
       const downloadAnchor = document.createElement('a');
       downloadAnchor.setAttribute("href", dataStr);
@@ -1627,6 +1644,70 @@
       downloadAnchor.click();
       downloadAnchor.remove();
       showToast('File guides.json esportato!', 'success');
+    }
+
+    function downloadAllModifiedFilesZip() {
+      if (typeof JSZip === 'undefined') {
+        showToast("Libreria JSZip non ancora caricata. Riprova tra un istante!", "info");
+        return;
+      }
+
+      showToast("Preparazione dell'archivio ZIP in corso...", "info");
+      const zip = new JSZip();
+
+      // 1. Add guides.json
+      const fullObj = {
+        categories: categories,
+        guides: guides,
+        siteTitle: siteTitle,
+        siteDescription: siteDescription,
+        alertPopup: alertPopup
+      };
+      zip.file("guides.json", JSON.stringify(fullObj, null, 2));
+
+      // 2. Add local images from localstorage
+      let localImgs = [];
+      try {
+        const storedLocalImgs = localStorage.getItem('pianetasim-local-images');
+        if (storedLocalImgs) {
+          localImgs = JSON.parse(storedLocalImgs);
+        }
+      } catch (e) {
+        console.error("Errore lettura local-images:", e);
+      }
+
+      let imageCount = 0;
+      localImgs.forEach(img => {
+        if (img.url && img.url.startsWith('data:')) {
+          const commaIdx = img.url.indexOf(',');
+          if (commaIdx >= 0) {
+            const base64Data = img.url.substring(commaIdx + 1);
+            zip.file("images/" + img.name, base64Data, { base64: true });
+            imageCount++;
+          }
+        }
+      });
+
+      // 3. Generate ZIP and trigger browser download
+      zip.generateAsync({ type: "blob" })
+        .then(function(content) {
+          const downloadAnchor = document.createElement('a');
+          downloadAnchor.href = URL.createObjectURL(content);
+          downloadAnchor.download = "pianetasim_modifiche_github.zip";
+          document.body.appendChild(downloadAnchor);
+          downloadAnchor.click();
+          downloadAnchor.remove();
+          
+          if (imageCount > 0) {
+            showToast(`ZIP scaricato! Contiene guides.json e ${imageCount} immagini per la cartella images/`, "success");
+          } else {
+            showToast("Archivio ZIP scaricato con il file guides.json!", "success");
+          }
+        })
+        .catch(err => {
+          console.error("Errore creazione ZIP:", err);
+          showToast("Errore durante la creazione dello ZIP.", "info");
+        });
     }
 
     // Tab switcher
@@ -2384,25 +2465,20 @@
 
               <div class="flex flex-wrap gap-2">
                 <button
-                  onclick="saveAllGuidesToServer()"
-                  class="px-4 py-2 bg-fluo-green text-black font-extrabold rounded-xl text-xs cursor-pointer shadow-[0_0_15px_rgba(38,255,94,0.35)] hover:scale-[1.01] transition-transform"
-                  title="Salva tutte le modifiche apportate sul file guides.json del server"
+                  onclick="downloadAllModifiedFilesZip()"
+                  class="px-4 py-2 bg-fluo-green text-black font-extrabold rounded-xl text-xs cursor-pointer shadow-[0_0_15px_rgba(38,255,94,0.35)] hover:scale-[1.01] transition-transform flex items-center gap-1.5"
+                  title="Scarica un archivio ZIP contenente il file guides.json e tutte le nuove immagini caricate"
                 >
-                  Salva Permanentemente 💾
+                  <i data-lucide="archive" class="w-3.5 h-3.5"></i>
+                  Scarica Modifiche per GitHub (ZIP) 📦
                 </button>
                 <button
                   onclick="downloadGuidesJson()"
-                  class="px-3 py-2 bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white rounded-xl border border-slate-800 text-xs font-bold cursor-pointer"
-                  title="Esporta guides.json locale"
+                  class="px-3 py-2 bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white rounded-xl border border-slate-800 text-xs font-bold cursor-pointer flex items-center gap-1.5"
+                  title="Esporta solo il file guides.json locale"
                 >
-                  Esporta JSON
-                </button>
-                <button
-                  onclick="resetGuidesToDefault()"
-                  class="px-3 py-2 bg-slate-900 hover:bg-slate-800 text-yellow-500 hover:text-yellow-400 rounded-xl border border-slate-800 text-xs font-bold cursor-pointer"
-                  title="Ripristina i dati originali dal server"
-                >
-                  Ripristina Dati 🔄
+                  <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                  Esporta solo JSON
                 </button>
                 <button
                   onclick="handleAdminLogout()"
@@ -2410,6 +2486,46 @@
                 >
                   Esci Amministratore
                 </button>
+              </div>
+            </div>
+
+            <!-- GUIDA AL DEPLOY GITHUB PAGES -->
+            <div class="bg-gradient-to-r from-blue-950/40 to-purple-950/40 p-6 rounded-3xl border border-fluo-blue/20 shadow-xl space-y-4">
+              <div class="flex items-center gap-2">
+                <div class="p-2 bg-fluo-blue/10 text-fluo-blue rounded-xl">
+                  <i data-lucide="github" class="w-5 h-5"></i>
+                </div>
+                <div>
+                  <h4 class="text-sm font-black text-white">Guida al Salvataggio e Deploy su GitHub Pages</h4>
+                  <p class="text-[11px] text-slate-400">Il tuo sito su GitHub è interamente statico e non dipende da AI Studio. Ecco come applicare le modifiche per tutti i visitatori:</p>
+                </div>
+              </div>
+              
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-850 space-y-2">
+                  <h5 class="font-extrabold text-fluo-green flex items-center gap-1.5 font-sans">
+                    <span class="w-2.5 h-2.5 rounded-full bg-fluo-green"></span>
+                    1. Scarica il Pacchetto Modificato
+                  </h5>
+                  <ol class="list-decimal pl-4 space-y-1.5 text-slate-300 font-sans">
+                    <li>Modifica le guide, le categorie o carica le immagini qui sul pannello.</li>
+                    <li>Le modifiche vengono salvate in automatico localmente sul tuo browser mentre lavori.</li>
+                    <li>Fai clic su <strong class="text-white">Scarica Modifiche per GitHub (ZIP) 📦</strong> per ottenere l'archivio ZIP contenente sia <code class="font-mono bg-slate-950 px-1 py-0.5 rounded text-fluo-blue text-[10px]">guides.json</code> che la cartella <code class="font-mono bg-slate-950 px-1 py-0.5 rounded text-fluo-green text-[10px]">images/</code> con le nuove immagini.</li>
+                    <li>Estrai lo ZIP sul tuo computer.</li>
+                  </ol>
+                </div>
+                
+                <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-850 space-y-2">
+                  <h5 class="font-extrabold text-fluo-purple flex items-center gap-1.5 font-sans">
+                    <span class="w-2.5 h-2.5 rounded-full bg-fluo-purple"></span>
+                    2. Aggiorna GitHub
+                  </h5>
+                  <ol class="list-decimal pl-4 space-y-1.5 text-slate-300 font-sans">
+                    <li>Trascina i file estratti (il file <code class="font-mono bg-slate-950 px-1 py-0.5 rounded text-[10px]">guides.json</code> e il contenuto di <code class="font-mono bg-slate-950 px-1 py-0.5 rounded text-[10px]">images/</code>) all'interno del tuo repository su GitHub, sostituendo i vecchi file.</li>
+                    <li>Fai il <strong class="text-white">Commit</strong> e <strong class="text-white">Push</strong> su GitHub.</li>
+                    <li>Il deploy su GitHub Pages si avvierà in automatico aggiornando il sito pubblico!</li>
+                  </ol>
+                </div>
               </div>
             </div>
 
