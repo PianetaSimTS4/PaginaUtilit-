@@ -1,0 +1,107 @@
+[
+  {
+    "id": "guide-moveobjects",
+    "title": "Lorem Ipsum Dolor Sit Amet",
+    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin elementum, lorem a scelerisque dictum, arcu nunc.",
+    "category": "costruzione",
+    "author": "SimmerItalia99",
+    "readTime": "5 min",
+    "tags": ["lorem", "ipsum", "dolor", "sit"],
+    "content": [
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sed dapibus leo, nec finibus mi. Phasellus hendrerit vulputate dolor, sed convallis ex congue eget. Aliquam lorem nulla, pretium nec elit non, aliquet tristique lacus.",
+      "Aenean lobortis diam at interdum eleifend. Ut gravida rhoncus dolor, ac convallis enim hendrerit a. Proin congue, eros id dictum sodales, est ipsum lacinia ligula, sit amet rhoncus nunc felis non est.",
+      "Praesent at nunc a lectus eleifend elementum sit amet tristique mi. Sed vitae interdum erat, nec bibendum tellus. Curabitur sed nisl ut ligula cursus accumsan id sed velit. Ut egestas sapien elementum, eleifend est vel.",
+      "Vivamus vestibulum ligula sed nulla pharetra, vitae facilisis ex volutpat. Quisque hendrerit molestie magna. Pellentesque non justo a nibh finibus feugiat sed non nisl. Cras vulputate metus sem, et tempus lorem interdum ac.",
+      "Nam eleifend hendrerit massa, vitae congue tortor feugiat sed. Aliquam erat volutpat. Proin efficitur elit in purus rutrum molestie. In rhoncus, nulla varius eleifend lobortis, urna nibh convallis ex, sed tempor ex magna eu ex."
+    ],
+    "tips": [
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      "Ut gravida rhoncus dolor, ac convallis enim hendrerit a.",
+      "Sed vitae interdum erat, nec bibendum tellus."
+    ]
+  },
+  {
+    "id": "guide-mods-cc",
+    "title": "Consectetur Adipiscing Elit",
+    "description": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+    "category": "mod_cc",
+    "author": "SimsGuruLuca",
+    "readTime": "6 min",
+    "tags": ["consectetur", "adipiscing", "elit", "lorem"],
+    "content": [
+      "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+      "Mauris dictum tincidunt nisl, nec maximus libero consequat quis. Aliquam interdum urna sit amet massa pharetra, non vulputate libero tristique. Curabitur vel leo id erat auctor gravida in eget nulla.",
+      "Nullam hendrerit mi eu finibus feugiat. Vestibulum pretium scelerisque elit, id maximus diam feugiat ac. Curabitur accumsan, justo nec feugiat porttitor, ipsum diam facilisis nulla, sit amet rhoncus ante nisl vel tellus.",
+      "Quisque sodales scelerisque turpis, id condimentum dolor imperdiet vitae. Duis feugiat, elit quis aliquet varius, massa eros mattis ex, sed dictum nisl leo a mi. Aliquam gravida eleifend nibh rhoncus dictum.",
+      "Sed rhoncus lectus magna, quis facilisis leo tincidunt vitae. Nunc at pretium ante. Etiam quis egestas tellus. Curabitur lobortis mi sit amet mi iaculis, vel scelerisque magna congue. Cras eget tempor enim."
+    ],
+    "tips": [
+      "Excepteur sint occaecat cupidatat non proident, sunt in culpa.",
+      "Aliquam interdum urna sit amet massa pharetra, non vulputate.",
+      "Curabitur vel leo id erat auctor gravida in eget nulla."
+    ]
+  },
+  {
+    "id": "guide-occulti-vampiri",
+    "title": "Nullam Hendrerit Mi Eu Finibus",
+    "description": "Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra.",
+    "category": "gameplay",
+    "author": "ContessaSim",
+    "readTime": "8 min",
+    "tags": ["nullam", "hendrerit", "finibus", "lorem"],
+    "content": [
+      "Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris. Integer in mauris eu nibh euismod gravida.",
+      "Aliquam sollicitudin, arcu a laoreet tempor, risus neque pretium ipsum, sed convallis risus ligula a tellus. Cras iaculis ultricies nulla. Donec quis dui at sem tempor varius. Ut nonummy convallis risus.",
+      "Morbi leo mi, nonummy eget, tristique non, rhoncus non, leo. Nullam tempor. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Vestibulum sapien.",
+      "Quisque cursus, metus vitae pharetra auctor, sem massa mattis sem, at interdum magna augue a odio. Nam nec ante. Sed lacinia, urna non volutpat tempor, tempor erat vehicula aliquet, nulla.",
+      "Aenean nec lorem. In porttitor. Donec laoreet nonummy augue. Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend."
+    ],
+    "tips": [
+      "Morbi leo mi, nonummy eget, tristique non, rhoncus non, leo.",
+      "Quisque cursus, metus vitae pharetra auctor, sem massa mattis.",
+      "Donec laoreet nonummy augue. Suspendisse dui purus."
+    ]
+  },
+  {
+    "id": "guide-roofing",
+    "title": "Nemo Enim Ipsam Voluptatem",
+    "description": "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.",
+    "category": "costruzione",
+    "author": "ArchitettoSim",
+    "readTime": "7 min",
+    "tags": ["nemo", "enim", "ipsam", "lorem"],
+    "content": [
+      "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.",
+      "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet.",
+      "Consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam.",
+      "Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur. Temporibus autem quibusdam et aut officiis.",
+      "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident."
+    ],
+    "tips": [
+      "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit.",
+      "Neque porro quisquam est, qui dolorem ipsum quia dolor sit.",
+      "Consectetur, adipisci velit, sed quia non numquam eius modi."
+    ]
+  },
+  {
+    "id": "guide-affitti-luna",
+    "title": "Quis Autem Vel Eum Iure",
+    "description": "Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur.",
+    "category": "espansioni",
+    "author": "SimImmobiliare",
+    "readTime": "8 min",
+    "tags": ["quis", "autem", "eum", "lorem"],
+    "content": [
+      "Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur. At vero eos et accusamus et iusto odio.",
+      "Dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt.",
+      "Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est.",
+      "Omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic.",
+      "Tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor."
+    ],
+    "tips": [
+      "Dignissimos ducimus qui blanditiis praesentium voluptatum deleniti.",
+      "Et harum quidem rerum facilis est et expedita distinctio.",
+      "Omnis dolor repellendus. Temporibus autem quibusdam et aut."
+    ]
+  }
+]
