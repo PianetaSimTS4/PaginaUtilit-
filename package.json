@@ -4,10 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "python3 server.py",
+    "dev": "node server.js",
     "build": "node build.js",
-    "start": "python3 server.py",
-    "preview": "python3 server.py",
+    "start": "node server.js",
+    "preview": "node server.js",
     "clean": "rm -rf dist",
     "lint": "echo 'Codebase is HTML, CSS, JS, and Python only. No lint step required.'"
   },
