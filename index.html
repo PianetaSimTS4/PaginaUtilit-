@@ -173,7 +173,7 @@
     <div class="max-w-7xl mx-auto px-4 md:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
       
       <!-- Brand Logo & Fallback -->
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-3 cursor-pointer select-none">
         <img 
           id="logo-img" 
           src="images/logo.png" 
@@ -188,7 +188,7 @@
         </div>
       </div>
 
-      <!-- Navigation tabs inside Header -->
+      <!-- Navigation tabs inside Header (Admin Link completely hidden by default to keep it a secret) -->
       <nav class="flex items-center gap-1.5 overflow-x-auto max-w-full pb-1 sm:pb-0 scrollbar-none">
         <a
           id="btn-tab-home"
@@ -236,8 +236,19 @@
           onclick="switchTab('guides')"
           class="px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap bg-fluo-purple text-white shadow-[0_0_15px_rgba(176,38,255,0.55)] border border-fluo-purple/30"
         >
-          <h4 class="inline font-bold text-xs text-white">Guide Complete</h4>
+          <h4 class="inline font-bold text-xs text-white">Guide & Utilità</h4>
         </div>
+        
+        <div
+          id="btn-tab-admin"
+          role="button"
+          tabindex="0"
+          onclick="switchTab('admin')"
+          class="hidden px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900"
+        >
+          <h4 class="inline font-bold text-xs">Pannello Admin</h4>
+        </div>
+        
       </nav>
     </div>
   </header>
@@ -245,19 +256,27 @@
   <!-- Main Content Stage -->
   <main class="flex-grow max-w-7xl w-full mx-auto px-4 md:px-8 py-8 relative z-10">
 
-    <!-- 2. Hero Section / Banner (Allineato all'asse mezzana / Centrato) -->
+    <!-- 2. Hero Section / Banner -->
     <section class="relative border-b border-slate-900/60 py-12 px-4 md:px-8 bg-slate-950/20 rounded-3xl mb-8 flex flex-col items-center text-center">
       <div class="max-w-3xl space-y-4 flex flex-col items-center">
-        <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 text-fluo-green text-xs font-bold rounded-full border border-fluo-green/20 shadow-[0_0_10px_rgba(38,255,94,0.15)]">
-          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-fluo-green"></i>
-          Sito Ufficiale PianetaSim - Sezione Guide HTML
-        </span>
-        <h2 class="text-3xl md:text-5xl font-black text-white tracking-tight leading-tight">
+        <h2 id="site-hero-title" class="text-3xl md:text-5xl font-black text-white tracking-tight leading-tight">
           Tutto quello che devi sapere su <span class="text-fluo-green drop-shadow-[0_0_10px_rgba(38,255,94,0.3)] whitespace-nowrap">The Sims 4</span>
         </h2>
-        <p class="text-slate-300 text-sm max-w-xl leading-relaxed text-center">
-          Benvenuto nella sezione delle guide interattive di PianetaSim! Impara nuove tecniche di costruzione dei tetti, sblocca carriere segrete e copia trucchi con un solo click.
+        <p id="site-hero-desc" class="text-slate-300 text-sm max-w-xl leading-relaxed text-center">
+          Benvenuto nella sezione delle guide di PianetaSim! Impara nuove tecniche di costruzione, installa mod tradotte e copia trucchi con un solo click.
         </p>
+        <!-- Dynamic Custom Alert Box (Embedded inline instead of full screen modal overlay) -->
+        <div id="inline-alert-box" class="w-full max-w-2xl mt-4 hidden text-left border rounded-2xl p-4 relative transition-all duration-300">
+          <div class="flex items-start gap-3">
+            <div id="inline-alert-icon-container" class="p-2 rounded-xl shrink-0">
+              <i id="inline-alert-icon" data-lucide="alert-triangle" class="w-5 h-5"></i>
+            </div>
+            <div class="space-y-1">
+              <h4 id="inline-alert-title" class="text-xs font-black uppercase tracking-wider text-white"></h4>
+              <div id="inline-alert-text" class="text-xs text-slate-300 leading-relaxed font-sans"></div>
+            </div>
+          </div>
+        </div>>
         
         <!-- Bookmarks banner indicator -->
         <div id="quick-bookmarks-banner" class="pt-2 hidden">
@@ -279,7 +298,7 @@
 
   </main>
 
-  <!-- 4. Customized Footer section -->
+  <!-- 4. Customized Footer section (Backup / Panel link completely removed as requested) -->
   <footer class="bg-slate-950 border-t border-slate-900 text-slate-400 py-10 px-4 md:px-8 mt-12 text-xs relative z-10">
     <div class="max-w-xl mx-auto text-center space-y-6">
       <p class="text-sm md:text-base font-semibold text-slate-200 leading-relaxed">
@@ -298,8 +317,8 @@
         </a>
       </div>
 
-      <div class="text-slate-500 pt-4 border-t border-slate-900/60 text-xs">
-        © 2026 Pianeta Sim. Tutti i diritti riservati.
+      <div class="text-slate-500 pt-4 border-t border-slate-900/60 text-xs flex flex-col items-center gap-2">
+        <div>© 2026 Pianeta Sim. Tutti i diritti riservati.</div>
       </div>
     </div>
   </footer>
@@ -307,7 +326,53 @@
   <!-- Instant Toasts Banner Notification -->
   <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
-  <!-- Help Sim Modal -->
+  <!-- Dynamic Custom Alert Popup Modal -->
+  <div id="alert-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4">
+    <!-- Backdrop -->
+    <div onclick="closeAlertModal()" class="absolute inset-0 bg-black/80 backdrop-blur-md"></div>
+
+    <!-- Alert Modal Box -->
+    <div id="alert-modal-box" class="bg-space-card border rounded-3xl w-full max-w-lg p-6 md:p-8 relative z-10 transition-all transform scale-95 opacity-0 duration-300">
+      <!-- Close button -->
+      <button
+        onclick="closeAlertModal()"
+        class="absolute top-4 right-4 text-slate-400 hover:text-white bg-slate-900 hover:bg-slate-850 p-2 rounded-full cursor-pointer transition-colors"
+      >
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+
+      <div class="space-y-6">
+        <!-- Header / Icon -->
+        <div class="flex items-center gap-3">
+          <div id="alert-modal-icon-container" class="p-3 rounded-2xl float-animation">
+            <i id="alert-modal-icon" data-lucide="alert-triangle" class="w-7 h-7"></i>
+          </div>
+          <div>
+            <span class="text-[10px] uppercase font-bold tracking-widest text-slate-400">Avviso Importante</span>
+            <h3 id="alert-modal-title" class="text-lg md:text-xl font-black text-white leading-tight"></h3>
+          </div>
+        </div>
+
+        <!-- Message Content -->
+        <div id="alert-modal-text" class="text-xs md:text-sm text-slate-300 leading-relaxed font-sans space-y-2">
+          <!-- Text with formatting support -->
+        </div>
+
+        <!-- Action / Okay Button -->
+        <div class="pt-4 border-t border-slate-900 flex justify-end">
+          <button
+            onclick="closeAlertModal()"
+            id="alert-modal-ok-btn"
+            class="px-5 py-2.5 rounded-xl text-xs font-extrabold cursor-pointer transition-all duration-200"
+          >
+            Ho Capito
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Supporto Modal -->
   <div id="help-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
     <!-- Backdrop -->
     <div onclick="toggleHelpModal(false)" class="absolute inset-0 bg-black/85 backdrop-blur-md"></div>
@@ -317,7 +382,7 @@
       <!-- Close button -->
       <button
         onclick="toggleHelpModal(false)"
-        class="absolute top-4 right-4 text-slate-400 hover:text-white bg-slate-900 hover:bg-slate-800 p-2 rounded-full cursor-pointer transition-colors"
+        class="absolute top-4 right-4 text-slate-400 hover:text-white bg-slate-900 hover:bg-slate-850 p-2 rounded-full cursor-pointer transition-colors"
       >
         <i data-lucide="x" class="w-4 h-4"></i>
       </button>
@@ -330,7 +395,7 @@
           </div>
           <div>
             <h3 class="text-xl font-black text-white leading-tight">
-              Help Sim
+              Supporto & FAQ
             </h3>
             <p class="text-xs text-slate-400">
               Supporto & Risorse per la Community di PianetaSim
@@ -403,175 +468,539 @@
   </div>
 
   <!-- APPLICATION CODE AND DATABASES -->
-  <script>    // Databases
-    const guides = [
-      {
-        id: 'guide-moveobjects',
-        title: 'Lorem Ipsum Dolor Sit Amet',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin elementum, lorem a scelerisque dictum, arcu nunc.',
-        category: 'costruzione',
-        author: 'SimmerItalia99',
-        readTime: '5 min',
-        tags: ['lorem', 'ipsum', 'dolor', 'sit'],
-        content: [
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sed dapibus leo, nec finibus mi. Phasellus hendrerit vulputate dolor, sed convallis ex congue eget. Aliquam lorem nulla, pretium nec elit non, aliquet tristique lacus.',
-          'Aenean lobortis diam at interdum eleifend. Ut gravida rhoncus dolor, ac convallis enim hendrerit a. Proin congue, eros id dictum sodales, est ipsum lacinia ligula, sit amet rhoncus nunc felis non est.',
-          'Praesent at nunc a lectus eleifend elementum sit amet tristique mi. Sed vitae interdum erat, nec bibendum tellus. Curabitur sed nisl ut ligula cursus accumsan id sed velit. Ut egestas sapien elementum, eleifend est vel.',
-          'Vivamus vestibulum ligula sed nulla pharetra, vitae facilisis ex volutpat. Quisque hendrerit molestie magna. Pellentesque non justo a nibh finibus feugiat sed non nisl. Cras vulputate metus sem, et tempus lorem interdum ac.',
-          'Nam eleifend hendrerit massa, vitae congue tortor feugiat sed. Aliquam erat volutpat. Proin efficitur elit in purus rutrum molestie. In rhoncus, nulla varius eleifend lobortis, urna nibh convallis ex, sed tempor ex magna eu ex.'
-        ],
-        tips: [
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-          'Ut gravida rhoncus dolor, ac convallis enim hendrerit a.',
-          'Sed vitae interdum erat, nec bibendum tellus.'
-        ]
-      },
-      {
-        id: 'guide-mods-cc',
-        title: 'Consectetur Adipiscing Elit',
-        description: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
-        category: 'mod_cc',
-        author: 'SimsGuruLuca',
-        readTime: '6 min',
-        tags: ['consectetur', 'adipiscing', 'elit', 'lorem'],
-        content: [
-          'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-          'Mauris dictum tincidunt nisl, nec maximus libero consequat quis. Aliquam interdum urna sit amet massa pharetra, non vulputate libero tristique. Curabitur vel leo id erat auctor gravida in eget nulla.',
-          'Nullam hendrerit mi eu finibus feugiat. Vestibulum pretium scelerisque elit, id maximus diam feugiat ac. Curabitur accumsan, justo nec feugiat porttitor, ipsum diam facilisis nulla, sit amet rhoncus ante nisl vel tellus.',
-          'Quisque sodales scelerisque turpis, id condimentum dolor imperdiet vitae. Duis feugiat, elit quis aliquet varius, massa eros mattis ex, sed dictum nisl leo a mi. Aliquam gravida eleifend nibh rhoncus dictum.',
-          'Sed rhoncus lectus magna, quis facilisis leo tincidunt vitae. Nunc at pretium ante. Etiam quis egestas tellus. Curabitur lobortis mi sit amet mi iaculis, vel scelerisque magna congue. Cras eget tempor enim.'
-        ],
-        tips: [
-          'Excepteur sint occaecat cupidatat non proident, sunt in culpa.',
-          'Aliquam interdum urna sit amet massa pharetra, non vulputate.',
-          'Curabitur vel leo id erat auctor gravida in eget nulla.'
-        ]
-      },
-      {
-        id: 'guide-occulti-vampiri',
-        title: 'Nullam Hendrerit Mi Eu Finibus',
-        description: 'Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra.',
-        category: 'gameplay',
-        author: 'ContessaSim',
-        readTime: '8 min',
-        tags: ['nullam', 'hendrerit', 'finibus', 'lorem'],
-        content: [
-          'Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris. Integer in mauris eu nibh euismod gravida.',
-          'Aliquam sollicitudin, arcu a laoreet tempor, risus neque pretium ipsum, sed convallis risus ligula a tellus. Cras iaculis ultricies nulla. Donec quis dui at sem tempor varius. Ut nonummy convallis risus.',
-          'Morbi leo mi, nonummy eget, tristique non, rhoncus non, leo. Nullam tempor. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Vestibulum sapien.',
-          'Quisque cursus, metus vitae pharetra auctor, sem massa mattis sem, at interdum magna augue a odio. Nam nec ante. Sed lacinia, urna non volutpat tempor, tempor erat vehicula aliquet, nulla.',
-          'Aenean nec lorem. In porttitor. Donec laoreet nonummy augue. Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend.'
-        ],
-        tips: [
-          'Morbi leo mi, nonummy eget, tristique non, rhoncus non, leo.',
-          'Quisque cursus, metus vitae pharetra auctor, sem massa mattis.',
-          'Donec laoreet nonummy augue. Suspendisse dui purus.'
-        ]
-      },
-      {
-        id: 'guide-roofing',
-        title: 'Nemo Enim Ipsam Voluptatem',
-        description: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.',
-        category: 'costruzione',
-        author: 'ArchitettoSim',
-        readTime: '7 min',
-        tags: ['nemo', 'enim', 'ipsam', 'lorem'],
-        content: [
-          'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.',
-          'Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet.',
-          'Consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam.',
-          'Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur. Temporibus autem quibusdam et aut officiis.',
-          'At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident.'
-        ],
-        tips: [
-          'Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit.',
-          'Neque porro quisquam est, qui dolorem ipsum quia dolor sit.',
-          'Consectetur, adipisci velit, sed quia non numquam eius modi.'
-        ]
-      },
-      {
-        id: 'guide-affitti-luna',
-        title: 'Quis Autem Vel Eum Iure',
-        description: 'Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur.',
-        category: 'espansioni',
-        author: 'SimImmobiliare',
-        readTime: '8 min',
-        tags: ['quis', 'autem', 'eum', 'lorem'],
-        content: [
-          'Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur. At vero eos et accusamus et iusto odio.',
-          'Dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecat cupiditate non provident, similique sunt in culpa qui officia deserunt.',
-          'Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est.',
-          'Omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic.',
-          'Tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.'
-        ],
-        tips: [
-          'Dignissimos ducimus qui blanditiis praesentium voluptatum deleniti.',
-          'Et harum quidem rerum facilis est et expedita distinctio.',
-          'Omnis dolor repellendus. Temporibus autem quibusdam et aut.'
-        ]
-      }
-    ];
+  <script>
+    // Databases loaded from JSON
+    let guides = [];
+    let categories = [];
 
     const cheats = [
-      { code: 'testingcheats true', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sed dapibus leo, nec finibus mi.', category: 'Generali', requirements: 'LOREM' },
-      { code: 'motherlode', description: 'Aenean lobortis diam at interdum eleifend. Ut gravida rhoncus dolor, ac convallis enim hendrerit a.', category: 'Soldi', requirements: 'LOREM' },
-      { code: 'kaching', description: 'Praesent at nunc a lectus eleifend elementum sit amet tristique mi. Sed vitae interdum erat.', category: 'Soldi', requirements: 'LOREM' },
-      { code: 'rosebud', description: 'Vivamus vestibulum ligula sed nulla pharetra, vitae facilisis ex volutpat. Quisque hendrerit.', category: 'Soldi', requirements: 'LOREM' },
-      { code: 'Money [cifra]', description: 'Nam eleifend hendrerit massa, vitae congue tortor feugiat sed. Aliquam erat volutpat.', category: 'Soldi', requirements: 'LOREM_TEST' },
-      { code: 'bb.moveobjects', description: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.', category: 'Costruzione', requirements: 'LOREM' },
-      { code: 'bb.showhiddenobjects', description: 'Mauris dictum tincidunt nisl, nec maximus libero consequat quis. Aliquam interdum urna sit amet.', category: 'Costruzione', requirements: 'LOREM' },
-      { code: 'bb.showliveeditobjects', description: 'Nullam hendrerit mi eu finibus feugiat. Vestibulum pretium scelerisque elit, id maximus diam feugiat ac.', category: 'Costruzione', requirements: 'LOREM_SHOW' },
-      { code: 'bb.ignoregameplayunlocksentitlement', description: 'Quisque sodales scelerisque turpis, id condimentum dolor imperdiet vitae. Duis feugiat, elit quis aliquet.', category: 'Costruzione', requirements: 'LOREM' },
-      { code: 'sims.fill_all_commodities', description: 'Sed rhoncus lectus magna, quis facilisis leo tincidunt vitae. Nunc at pretium ante. Etiam quis.', category: 'Bisogni/Stati', requirements: 'LOREM_TEST' },
-      { code: 'stats.set_skill_level Major_HomestyleCooking 10', description: 'Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo.', category: 'Carriere/Abilità', requirements: 'LOREM_TEST' },
-      { code: 'stats.set_skill_level Major_Charisma 10', description: 'Aliquam sollicitudin, arcu a laoreet tempor, risus neque pretium ipsum, sed convallis risus ligula.', category: 'Carriere/Abilità', requirements: 'LOREM_TEST' },
-      { code: 'careers.promote Executive', description: 'Morbi leo mi, nonummy eget, tristique non, rhoncus non, leo. Nullam tempor. Class aptent taciti.', category: 'Carriere/Abilità', requirements: 'LOREM_TEST' },
-      { code: 'traits.equip_trait Trait_OccultVampire', description: 'Quisque cursus, metus vitae pharetra auctor, sem massa mattis sem, at interdum magna augue a odio.', category: 'Bisogni/Stati', requirements: 'LOREM_TEST' },
-      { code: 'cas.fulleditmode', description: 'Aenean nec lorem. In porttitor. Donec laoreet nonummy augue. Suspendisse dui purus, scelerisque at.', category: 'Generali', requirements: 'LOREM_TEST' }
+      { category: 'Denaro', code: 'motherlode', description: 'Aggiunge instantaneamente 50.000 Simoleon ai fondi dell\'unità familiare.' },
+      { category: 'Costruzione', code: 'bb.moveobjects', description: 'Consente di posizionare qualsiasi oggetto ovunque, ignorando le griglie di collisione.' },
+      { category: 'Abilitazione', code: 'testingcheats true', description: 'Abilita l\'inserimento di tutti i trucchi avanzati e sblocca le interazioni Shift-Click.' },
+      { category: 'Costruzione', code: 'bb.showhiddenobjects', description: 'Sblocca il catalogo completo degli oggetti del debug (oggetti ambientali invisibili).' },
+      { category: 'Costruzione', code: 'bb.showliveeditobjects', description: 'Sblocca migliaia di oggetti decorativi di scenario altrimenti non acquistabili.' },
+      { category: 'Mondo', code: 'freerealestate on', description: 'Rende completamente gratuite tutte le case e i lotti del quartiere nella mappa.' }
     ];
 
-    const categoryLabels = {
-      gameplay: 'Altro',
-      costruzione: 'Altro',
-      trucchi: 'Altro',
-      mod_cc: 'Mod e CC',
-      espansioni: 'Altro'
-    };
+    function handleCopyCheat(code, btnId) {
+      navigator.clipboard.writeText(code).then(() => {
+        showToast(`Codice "${code}" copiato!`, 'success');
+        const btn = document.getElementById(btnId);
+        if (btn) {
+          const originalHTML = btn.innerHTML;
+          btn.innerHTML = '<i data-lucide="check" class="w-3.5 h-3.5 text-fluo-green"></i>';
+          lucide.createIcons();
+          setTimeout(() => {
+            btn.innerHTML = originalHTML;
+            lucide.createIcons();
+          }, 2000);
+        }
+      }).catch(err => {
+        showToast('Errore durante la copia!', 'info');
+      });
+    }
 
-    const categoryColors = {
-      gameplay: 'bg-purple-500/10 text-purple-400 border-purple-500/30',
-      costruzione: 'bg-emerald-500/10 text-fluo-green border-fluo-green/30',
-      trucchi: 'bg-fuchsia-500/10 text-fuchsia-400 border-fuchsia-500/30',
-      mod_cc: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30',
-      espansioni: 'bg-purple-500/10 text-purple-400 border-purple-500/30'
-    };
+    // Global Constants for Color Selections
+    const catColorsList = ['nero', 'grigio', 'bianco', 'rosso', 'arancione', 'giallo', 'lime', 'verde', 'verdeacqua', 'azzurro', 'blu', 'viola', 'fucsia', 'rosa'];
+    
+    const textColorsList = [
+      '#ef4444', // rosso
+      '#f97316', // arancione
+      '#eab308', // giallo
+      '#84cc16', // lime
+      '#26ff5e', // verde
+      '#14b8a6', // verdeacqua
+      '#38bdf8', // azzurro
+      '#2563eb', // blu
+      '#b026ff', // viola
+      '#ff007f', // fucsia
+      '#ec4899', // rosa
+      '#ffffff', // bianco
+      '#64748b', // grigio
+      '#090d16'  // nero
+    ];
 
-    const shadowClasses = {
-      gameplay: 'neon-shadow-purple',
-      costruzione: 'neon-shadow-green',
-      trucchi: 'neon-shadow-fuchsia',
-      mod_cc: 'neon-shadow-blue',
-      espansioni: 'neon-shadow-purple'
-    };
+    let selectedCategoryColor = 'azzurro';
+    let uploadedImages = [];
+
+    // Colors mapping helper for dynamic categories
+    function getCategoryStyles(colorPreset) {
+      const presets = {
+        nero: {
+          badge: 'bg-slate-950 text-slate-100 border-slate-800 hover:border-slate-700',
+          shadow: 'neon-shadow-blue',
+          text: 'text-slate-100',
+          colorCode: '#090d16'
+        },
+        grigio: {
+          badge: 'bg-slate-500/10 text-slate-400 border-slate-500/30 hover:border-slate-500/50',
+          shadow: 'neon-shadow-blue',
+          text: 'text-slate-400',
+          colorCode: '#64748b'
+        },
+        bianco: {
+          badge: 'bg-white/10 text-white border-white/30 hover:border-white/50',
+          shadow: 'neon-shadow-blue',
+          text: 'text-white',
+          colorCode: '#ffffff'
+        },
+        rosso: {
+          badge: 'bg-red-500/10 text-red-400 border-red-500/30 hover:border-red-500/50',
+          shadow: 'neon-shadow-fuchsia',
+          text: 'text-red-400',
+          colorCode: '#ef4444'
+        },
+        arancione: {
+          badge: 'bg-orange-500/10 text-orange-400 border-orange-500/30 hover:border-orange-500/50',
+          shadow: 'neon-shadow-green',
+          text: 'text-orange-400',
+          colorCode: '#f97316'
+        },
+        giallo: {
+          badge: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/30 hover:border-yellow-500/50',
+          shadow: 'neon-shadow-green',
+          text: 'text-yellow-400',
+          colorCode: '#eab308'
+        },
+        lime: {
+          badge: 'bg-lime-500/10 text-lime-400 border-lime-500/30 hover:border-lime-500/50',
+          shadow: 'neon-shadow-green',
+          text: 'text-lime-400',
+          colorCode: '#84cc16'
+        },
+        verde: {
+          badge: 'bg-emerald-500/10 text-fluo-green border-fluo-green/30 hover:border-fluo-green/50',
+          shadow: 'neon-shadow-green',
+          text: 'text-fluo-green',
+          colorCode: '#26ff5e'
+        },
+        verdeacqua: {
+          badge: 'bg-teal-500/10 text-teal-400 border-teal-500/30 hover:border-teal-500/50',
+          shadow: 'neon-shadow-blue',
+          text: 'text-teal-400',
+          colorCode: '#14b8a6'
+        },
+        azzurro: {
+          badge: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30 hover:border-cyan-500/50',
+          shadow: 'neon-shadow-blue',
+          text: 'text-cyan-400',
+          colorCode: '#38bdf8'
+        },
+        blu: {
+          badge: 'bg-blue-500/10 text-blue-400 border-blue-500/30 hover:border-blue-500/50',
+          shadow: 'neon-shadow-blue',
+          text: 'text-blue-400',
+          colorCode: '#2563eb'
+        },
+        viola: {
+          badge: 'bg-purple-500/10 text-purple-400 border-purple-500/30 hover:border-purple-500/50',
+          shadow: 'neon-shadow-purple',
+          text: 'text-purple-400',
+          colorCode: '#b026ff'
+        },
+        fucsia: {
+          badge: 'bg-fuchsia-500/10 text-fluo-fuchsia border-fluo-fuchsia/30 hover:border-fluo-fuchsia/50',
+          shadow: 'neon-shadow-fuchsia',
+          text: 'text-fluo-fuchsia',
+          colorCode: '#ff007f'
+        },
+        rosa: {
+          badge: 'bg-pink-500/10 text-pink-400 border-pink-500/30 hover:border-pink-500/50',
+          shadow: 'neon-shadow-fuchsia',
+          text: 'text-pink-400',
+          colorCode: '#ec4899'
+        }
+      };
+      return presets[colorPreset] || presets['viola'];
+    }
+
+    // Text formatting engine for rich paragraph styling (Images, Bold, Italic, Link, Color)
+    function formatParagraphText(text) {
+      if (!text) return "";
+      let html = text;
+      
+      // Escape HTML to prevent raw injection, except we parse our custom safe patterns
+      html = html
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+
+      // 1. Parse custom images: [image] or [image|size](url)
+      html = html.replace(/\[image(?:\|([^\]]+))?\]\((.*?)\)/g, (match, size, url) => {
+        let sizeStyle = "max-height: 450px; width: 100%; max-width: 100%;";
+        if (size) {
+          size = size.trim();
+          if (size.includes('x')) {
+            const parts = size.split('x');
+            const w = parts[0].trim();
+            const h = parts[1].trim();
+            const wVal = /^\d+$/.test(w) ? w + 'px' : w;
+            const hVal = /^\d+$/.test(h) ? h + 'px' : h;
+            sizeStyle = `max-width: ${wVal}; max-height: ${hVal}; width: 100%; object-fit: contain;`;
+          } else {
+            const val = /^\d+$/.test(size) ? size + 'px' : size;
+            sizeStyle = `max-width: ${val}; width: 100%; max-height: 450px; object-fit: contain;`;
+          }
+        }
+        return `<img src="${url}" style="${sizeStyle}" class="rounded-xl border border-slate-800/80 my-5 bg-slate-950/40 p-1.5 shadow-xl block mx-auto transition-transform hover:scale-[1.02]" alt="Immagine della guida" onerror="this.src='https://placehold.co/600x400/121424/e2e8f0?text=Immagine+non+trovata';" />`;
+      });
+
+      // 2. Parse Bold: **text**
+      html = html.replace(/\*\*(.*?)\*\*/g, '<strong class="font-extrabold text-white text-shadow-sm">$1</strong>');
+
+      // 3. Parse Italic: *text*
+      html = html.replace(/\*(.*?)\*/g, '<em class="italic text-slate-100">$1</em>');
+
+      // 4. Parse Links: [label](url)
+      html = html.replace(/\[(.*?)\]\((https?:\/\/.*?)\)/g, (match, label, url) => {
+        return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="text-fluo-blue hover:text-cyan-300 hover:underline font-bold inline-flex items-center gap-0.5">${label} <svg class="w-3 h-3 inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></a>`;
+      });
+
+      // 5. Parse Custom color text blocks: [color:#ff00aa](text to color)
+      html = html.replace(/\[color:(.*?)\]\((.*?)\)/g, '<span style="color: $1">$2</span>');
+
+      return html;
+    }
 
     // State Managers
-    let activeTab = 'guides'; // 'guides' or 'cheats'
+    let activeTab = 'guides'; // 'guides' or 'admin'
     let selectedCategory = 'all';
     let searchQuery = '';
-    let showBookmarksOnly = false;
     let activeGuideId = null; // When selected, opens the separate detail view page
     let bookmarks = JSON.parse(localStorage.getItem('pianetasim-bookmarks') || '[]');
+    window.editingCategoryId = null;
 
+    // Configurable site layout & alert properties
+    let siteTitle = 'Tutto quello che devi sapere su <span class="text-fluo-green drop-shadow-[0_0_10px_rgba(38,255,94,0.3)] whitespace-nowrap">The Sims 4</span>';
+    let siteDescription = 'Benvenuto nella sezione delle guide di PianetaSim! Impara nuove tecniche di costruzione, installa mod tradotte e copia trucchi con un solo click.';
+    let alertPopup = {
+      enabled: false,
+      title: 'Avviso Importante',
+      text: 'Benvenuto su PianetaSim! Questo è un messaggio di avviso personalizzabile.',
+      color: 'rosso'
+    };
+    // Media library handlers
+    function fetchUploadedImages() {
+      fetch('./api/list-images')
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === 'success') {
+            const serverImgs = data.images;
+            let localImgs = [];
+            try {
+              const storedLocalImgs = localStorage.getItem('pianetasim-local-images');
+              if (storedLocalImgs) {
+                localImgs = JSON.parse(storedLocalImgs);
+              }
+            } catch (e) {
+              console.error(e);
+            }
+            uploadedImages = [...serverImgs, ...localImgs];
+            renderUploadedImagesGrid();
+          }
+        })
+        .catch(err => {
+          console.warn('Backend server non raggiungibile, l\'elenco delle immagini rimarrà locale.', err);
+          let localImgs = [];
+          try {
+            const storedLocalImgs = localStorage.getItem('pianetasim-local-images');
+            if (storedLocalImgs) {
+              localImgs = JSON.parse(storedLocalImgs);
+            }
+          } catch (e) {
+            console.error(e);
+          }
+          uploadedImages = localImgs;
+          renderUploadedImagesGrid();
+        });
+    }
 
+    function deleteImage(filename) {
+      if (!confirm(`Sei sicuro di voler eliminare definitivamente l'immagine "${filename}"?`)) return;
+      
+      // Instant UI removal
+      uploadedImages = uploadedImages.filter(img => {
+        const name = typeof img === 'object' && img !== null ? img.name : img;
+        return name !== filename;
+      });
+      renderUploadedImagesGrid();
 
-    // Load logo first path
+      // Clean local storage cache
+      let localImgs = [];
+      try {
+        const storedLocalImgs = localStorage.getItem('pianetasim-local-images');
+        if (storedLocalImgs) {
+          localImgs = JSON.parse(storedLocalImgs);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+      localImgs = localImgs.filter(img => img.name !== filename);
+      localStorage.setItem('pianetasim-local-images', JSON.stringify(localImgs));
+
+      // Server call
+      fetch('./api/delete-image', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filename: filename })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === 'success') {
+          showToast('Immagine eliminata correttamente!', 'success');
+          fetchUploadedImages();
+        } else {
+          // Fallback if server returned non-success but we deleted locally anyway
+          console.warn("Server delete-image status not success, keeping local change.");
+        }
+      })
+      .catch(err => {
+        console.warn('Server di eliminazione non raggiungibile, mantenuta rimozione locale:', err);
+        showToast('Immagine rimossa in locale!', 'success');
+        fetchUploadedImages();
+      });
+    }
+
+    function copyImageValue(value) {
+      const markup = `[image](${value})`;
+      navigator.clipboard.writeText(markup).then(() => {
+        showToast('Markup copiato in memoria!', 'success');
+      }).catch(() => {
+        showToast('Immagine copiata, ma errore negli appunti', 'info');
+      });
+    }
+
+    function removeLocalImage(name) {
+      if (confirm(`Sei sicuro di voler rimuovere questa immagine locale?`)) {
+        let localImgs = [];
+        try {
+          const storedLocalImgs = localStorage.getItem('pianetasim-local-images');
+          if (storedLocalImgs) {
+            localImgs = JSON.parse(storedLocalImgs);
+          }
+        } catch (e) {
+          console.error(e);
+        }
+        
+        localImgs = localImgs.filter(img => img.name !== name);
+        localStorage.setItem('pianetasim-local-images', JSON.stringify(localImgs));
+        
+        fetchUploadedImages();
+        showToast('Immagine locale rimossa!', 'success');
+      }
+    }
+
+    function renderUploadedImagesGrid() {
+      const gridContainer = document.getElementById('uploaded-images-grid-container');
+      if (!gridContainer) return;
+
+      if (!uploadedImages || uploadedImages.length === 0) {
+        gridContainer.innerHTML = `
+          <div class="text-center py-4 border border-slate-900 bg-slate-950/20 rounded-2xl text-[11px] text-slate-500">
+            Nessun media caricato.
+          </div>
+        `;
+        return;
+      }
+
+      gridContainer.innerHTML = `
+        <div class="grid grid-cols-2 gap-2 max-h-[250px] overflow-y-auto pr-1 scrollbar-none mt-3">
+          ${uploadedImages.map(img => {
+            const isObj = typeof img === 'object' && img !== null;
+            const imgName = isObj ? img.name : img;
+            const imgUrl = isObj ? img.url : `images/${img}`;
+            const isLocal = isObj && img.local;
+            
+            // For copying or using in text
+            const copyValue = isLocal ? imgUrl : `images/${imgName}`;
+            
+            return `
+              <div class="bg-slate-950/60 border border-slate-900 rounded-xl p-1.5 flex flex-col justify-between gap-1 group relative overflow-hidden">
+                <!-- Image preview with direct insert or copy -->
+                <div class="w-full aspect-video rounded-lg overflow-hidden bg-slate-900 border border-slate-800 relative">
+                  <img src="${imgUrl}" class="w-full h-full object-cover" alt="preview" />
+                  
+                  <!-- Copy and delete overlay actions -->
+                  <div class="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 p-1">
+                    <button
+                      onclick="copyImageValue('${copyValue}')"
+                      class="p-1 bg-fluo-purple text-white rounded hover:bg-opacity-95 text-[10px] font-bold cursor-pointer"
+                      title="Copia Markup"
+                    >
+                      <i data-lucide="copy" class="w-3 h-3"></i>
+                    </button>
+                    ${!isLocal ? `
+                    <button
+                      onclick="deleteImage('${imgName}')"
+                      class="p-1 bg-red-600 text-white rounded hover:bg-red-500 text-[10px] font-bold cursor-pointer"
+                      title="Elimina"
+                    >
+                      <i data-lucide="trash-2" class="w-3 h-3"></i>
+                    </button>
+                    ` : `
+                    <button
+                      onclick="removeLocalImage('${imgName}')"
+                      class="p-1 bg-red-600 text-white rounded hover:bg-red-500 text-[10px] font-bold cursor-pointer"
+                      title="Rimuovi"
+                    >
+                      <i data-lucide="trash-2" class="w-3 h-3"></i>
+                    </button>
+                    `}
+                  </div>
+                </div>
+                <!-- Filename label -->
+                <div class="text-[9px] text-slate-400 truncate px-1 flex items-center justify-between" title="${imgName}">
+                  <span class="truncate">${imgName}</span>
+                  ${isLocal ? `<span class="text-[8px] text-fluo-green shrink-0 ml-1">Local</span>` : ''}
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+      lucide.createIcons();
+    }
+
+    // Interactive Formatting functions
+    function toggleTextColorPalette(id) {
+      const palette = document.getElementById(`color-palette-${id}`);
+      if (!palette) return;
+      
+      const allPalettes = document.querySelectorAll('[id^="color-palette-"]');
+      allPalettes.forEach(p => {
+        if (p.id !== `color-palette-${id}`) p.classList.add('hidden');
+      });
+
+      palette.classList.toggle('hidden');
+    }
+
+    function applyTextColor(id, colorHex) {
+      const textarea = document.getElementById(id);
+      if (!textarea) return;
+      
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const text = textarea.value;
+      const selected = text.substring(start, end);
+      const replacement = `[color:${colorHex}](${selected || 'testo colorato'})`;
+
+      textarea.value = text.substring(0, start) + replacement + text.substring(end);
+      textarea.focus();
+      textarea.setSelectionRange(start + replacement.length, start + replacement.length);
+
+      const palette = document.getElementById(`color-palette-${id}`);
+      if (palette) palette.classList.add('hidden');
+
+      if (id === 'admin-edit-desc') {
+        updateEditingField('description', textarea.value);
+      } else {
+        const idx = parseInt(id.replace('admin-paragraph-', ''));
+        if (!isNaN(idx)) {
+          updateEditingParagraph(idx, textarea.value);
+        }
+      }
+    }
+
+    // Category Color Preset square updater
+    function selectCategoryColorPreset(colorName) {
+      selectedCategoryColor = colorName;
+      const hiddenInput = document.getElementById('new-cat-color');
+      if (hiddenInput) hiddenInput.value = colorName;
+      
+      const squares = document.querySelectorAll('.cat-color-square');
+      squares.forEach(sq => {
+        const isCurrent = sq.getAttribute('data-color') === colorName;
+        if (isCurrent) {
+          sq.classList.add('ring-1', 'ring-white', 'scale-110', 'border-white');
+        } else {
+          sq.classList.remove('ring-1', 'ring-white', 'scale-110', 'border-white');
+        }
+      });
+    }
+
+    // Secret typed word combo anywhere on page to access Admin
+    let typedKeys = '';
+    document.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      typedKeys += e.key.toLowerCase();
+      if (typedKeys.endsWith('adminsha') || typedKeys.endsWith('adminlidia')) {
+        showToast("🔑 Accesso Segreto Rilevato! Caricamento Pannello Admin...", "success");
+        switchTab('admin');
+        typedKeys = '';
+      }
+      if (typedKeys.length > 25) typedKeys = typedKeys.slice(-12);
+    });
+
+    // Load dynamic guides and categories from external JSON file or browser local storage
     document.addEventListener('DOMContentLoaded', () => {
       const img = document.getElementById('logo-img');
       if (img) {
         img.src = logoPaths[0];
       }
       updateBookmarksCountBanner();
-      renderApp();
+      
+      // Load local changes if they exist (crucial for GitHub / Static Hosting)
+      const cachedData = localStorage.getItem('pianetasim-custom-data');
+      if (cachedData) {
+        try {
+          const parsed = JSON.parse(cachedData);
+          if (parsed.categories && parsed.guides) {
+            categories = parsed.categories;
+            guides = parsed.guides;
+            if (parsed.siteTitle) siteTitle = parsed.siteTitle;
+            if (parsed.siteDescription) siteDescription = parsed.siteDescription;
+            if (parsed.alertPopup) alertPopup = parsed.alertPopup;
+            renderApp();
+            checkAndShowAlertPopup();
+            return; // Skip fetching guides.json if we have local customizations
+          }
+        } catch(e) {
+          console.error("Errore nel caricamento dei dati personalizzati da localStorage:", e);
+        }
+      }
+      
+      // Load from external guides.json file
+      fetch('./guides.json')
+        .then(response => response.json())
+        .then(data => {
+          if (data.categories && data.guides) {
+            categories = data.categories;
+            guides = data.guides;
+            if (data.siteTitle) siteTitle = data.siteTitle;
+            if (data.siteDescription) siteDescription = data.siteDescription;
+            if (data.alertPopup) alertPopup = data.alertPopup;
+          } else {
+            // Fallback for old guides schema
+            categories = [
+              { id: 'mod_cc', label: 'Mod e CC', color: 'cyan' },
+              { id: 'costruzione', label: 'Costruzione', color: 'green' },
+              { id: 'gameplay', label: 'Gameplay', color: 'purple' },
+              { id: 'espansioni', label: 'Espansioni', color: 'rose' }
+            ];
+            guides = data;
+          }
+          renderApp();
+          checkAndShowAlertPopup();
+        })
+        .catch(error => {
+          console.error('Errore nel caricamento delle guide:', error);
+          // High-level fallback in case of connection failure
+          categories = [{ id: 'costruzione', label: 'Generali', color: 'green' }];
+          guides = [
+            {
+              id: 'guide-error',
+              title: 'Errore nel caricamento delle guide',
+              description: 'Non è stato possibile caricare il file guides.json. Controlla il server o la cartella principale.',
+              category: 'costruzione',
+              tags: ['errore'],
+              content: [
+                'Si è verificato un problema nel recupero dei contenuti. Controlla il server o la cartella principale.'
+              ],
+              tips: []
+            }
+          ];
+          renderApp();
+        });
     });
 
     // Save bookmarks
@@ -593,7 +1022,6 @@
       }
     }
 
-    // Toggle bookmark
     function handleToggleBookmark(id, event) {
       if (event) event.stopPropagation();
       if (bookmarks.includes(id)) {
@@ -607,7 +1035,7 @@
       renderApp();
     }
 
-    // Toggle Help Modal Open/Close
+    // Toggle Help Modal
     function toggleHelpModal(show) {
       const modal = document.getElementById('help-modal');
       const box = document.getElementById('help-modal-box');
@@ -631,44 +1059,585 @@
       lucide.createIcons();
     }
 
-    // Tab switching
+    // Custom Warning Alert Popup functions
+    function checkAndShowAlertPopup() {
+      if (!alertPopup || !alertPopup.enabled) {
+        const box = document.getElementById('inline-alert-box');
+        if (box) box.classList.add('hidden');
+        return;
+      }
+      
+      const isClosed = sessionStorage.getItem('pianetasim-alert-closed');
+      if (isClosed === 'true') {
+        const box = document.getElementById('inline-alert-box');
+        if (box) box.classList.add('hidden');
+        return;
+      }
+
+      showInlineAlert();
+    }
+
+    function showInlineAlert(forcePreview = false) {
+      if (!alertPopup) return;
+      
+      if (forcePreview) {
+        sessionStorage.removeItem('pianetasim-alert-closed');
+      }
+
+      const box = document.getElementById('inline-alert-box');
+      const iconContainer = document.getElementById('inline-alert-icon-container');
+      const iconEl = document.getElementById('inline-alert-icon');
+      const titleEl = document.getElementById('inline-alert-title');
+      const textEl = document.getElementById('inline-alert-text');
+
+      if (!box) return;
+
+      // Set text
+      titleEl.textContent = alertPopup.title || 'Avviso';
+      textEl.innerHTML = formatParagraphText(alertPopup.text || '');
+
+      // Apply color styles
+      const col = alertPopup.color || 'rosso';
+      
+      // Reset classes
+      box.className = "w-full max-w-2xl mt-4 text-left border rounded-2xl p-4 relative transition-all duration-300 bg-space-card/80";
+      iconContainer.className = "p-2 rounded-xl shrink-0";
+
+      let borderClass = "border-red-500/30";
+      let textClass = "text-red-500";
+      let bgClass = "bg-red-500/10";
+      let shadowClass = "neon-shadow-red";
+
+      if (col === 'verde') {
+        borderClass = "border-emerald-500/30";
+        textClass = "text-fluo-green";
+        bgClass = "bg-fluo-green/10";
+        shadowClass = "neon-shadow-green";
+      } else if (col === 'azzurro') {
+        borderClass = "border-cyan-500/30";
+        textClass = "text-fluo-blue";
+        bgClass = "bg-fluo-blue/10";
+        shadowClass = "neon-shadow-blue";
+      } else if (col === 'viola') {
+        borderClass = "border-purple-500/30";
+        textClass = "text-fluo-purple";
+        bgClass = "bg-fluo-purple/10";
+        shadowClass = "neon-shadow-purple";
+      } else if (col === 'giallo') {
+        borderClass = "border-amber-500/30";
+        textClass = "text-amber-400";
+        bgClass = "bg-amber-500/10";
+        shadowClass = "neon-shadow-yellow";
+      }
+
+      box.classList.add(borderClass, shadowClass);
+      iconContainer.classList.add(bgClass, textClass);
+      if (iconEl) iconEl.className = `w-5 h-5 ${textClass}`;
+
+      // Show alert box
+      box.classList.remove('hidden');
+      
+      lucide.createIcons();
+    }
+
+    function dismissInlineAlert() {
+      const box = document.getElementById('inline-alert-box');
+      if (box) {
+        box.classList.add('hidden');
+      }
+      sessionStorage.setItem('pianetasim-alert-closed', 'true');
+    }
+
+    function closeAlertModal() {
+      dismissInlineAlert();
+    }
+
+    function showAlertModal(forcePreview = false) {
+      showInlineAlert(forcePreview);
+    }
+
+    // Admin authentication & editing state
+    window.isAdminAuthenticated = sessionStorage.getItem('pianetasim-admin') === 'true';
+    window.editingGuide = null;
+
+    function handleAdminLogin() {
+      const input = document.getElementById('admin-password-input');
+      if (input && input.value === 'sticazzi') {
+        window.isAdminAuthenticated = true;
+        sessionStorage.setItem('pianetasim-admin', 'true');
+        showToast('Accesso effettuato con successo!', 'success');
+        renderApp();
+        fetchUploadedImages();
+      } else {
+        showToast('Password errata. Riprova!', 'info');
+      }
+    }
+
+    function handleAdminLogout() {
+      window.isAdminAuthenticated = false;
+      sessionStorage.removeItem('pianetasim-admin');
+      window.editingGuide = null;
+      showToast('Sessione chiusa.', 'info');
+      switchTab('guides');
+    }
+
+    // Dynamic direct image uploader function
+    function triggerImageUpload(textareaId) {
+      const fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.accept = 'image/*';
+      fileInput.onchange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        showToast('Caricamento immagine...', 'info');
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          const base64Data = evt.target.result;
+          
+          const insertImageToTextarea = (imageUrl) => {
+            if (textareaId) {
+              const textarea = document.getElementById(textareaId);
+              if (textarea) {
+                const customWidth = prompt("Imposta la larghezza o dimensione dell'immagine (es: 300px, 50%, o 400x300 per larghezza x altezza). Lascia vuoto per la misura predefinita:");
+                const sizePart = customWidth && customWidth.trim() ? `|${customWidth.trim()}` : '';
+                const start = textarea.selectionStart;
+                const end = textarea.selectionEnd;
+                const text = textarea.value;
+                const replacement = `\n[image${sizePart}](${imageUrl})\n`;
+                textarea.value = text.substring(0, start) + replacement + text.substring(end);
+                textarea.focus();
+                textarea.setSelectionRange(start + replacement.length, start + replacement.length);
+                
+                // Trigger update in memory
+                const idx = parseInt(textareaId.replace('admin-paragraph-', ''));
+                if (!isNaN(idx)) {
+                  updateEditingParagraph(idx, textarea.value);
+                } else if (textareaId === 'admin-edit-desc') {
+                  updateEditingField('description', textarea.value);
+                }
+              }
+            }
+          };
+
+          // Send request to server
+          fetch('./api/upload-image', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              filename: file.name,
+              base64Data: base64Data
+            })
+          })
+          .then(res => {
+            if (res.ok) return res.json();
+            throw new Error('Upload fallito');
+          })
+          .then(data => {
+            showToast('Immagine caricata correttamente!', 'success');
+            fetchUploadedImages();
+            insertImageToTextarea(data.url);
+          })
+          .catch(err => {
+            console.warn("Utilizzo del fallback locale Base64 (Hosting statico / GitHub):", err);
+            showToast('Immagine caricata in modalità locale (compatibile con GitHub)!', 'success');
+            
+            // Add to locally uploaded images list so it shows in the media library
+            let localImgs = [];
+            try {
+              const storedLocalImgs = localStorage.getItem('pianetasim-local-images');
+              if (storedLocalImgs) {
+                localImgs = JSON.parse(storedLocalImgs);
+              }
+            } catch (e) {
+              console.error(e);
+            }
+            localImgs.unshift({
+              name: file.name,
+              url: base64Data,
+              local: true
+            });
+            localStorage.setItem('pianetasim-local-images', JSON.stringify(localImgs));
+            
+            fetchUploadedImages();
+            insertImageToTextarea(base64Data);
+          });
+        };
+        reader.readAsDataURL(file);
+      };
+      fileInput.click();
+    }
+
+    // Formatting button utility
+    function insertFormat(id, type) {
+      const textarea = document.getElementById(id);
+      if (!textarea) return;
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const text = textarea.value;
+      const selected = text.substring(start, end);
+      let replacement = "";
+      
+      if (type === 'bold') {
+        replacement = `**${selected || 'testo in grassetto'}**`;
+      } else if (type === 'italic') {
+        replacement = `*${selected || 'testo in corsivo'}*`;
+      } else if (type === 'link') {
+        replacement = `[${selected || 'Nome Link'}](https://google.it)`;
+      } else if (type === 'color') {
+        replacement = `[color:#ff007f](${selected || 'testo colorato'})`;
+      }
+
+      textarea.value = text.substring(0, start) + replacement + text.substring(end);
+      textarea.focus();
+      textarea.setSelectionRange(start + replacement.length, start + replacement.length);
+
+      // Save typed content directly back into active editor state
+      if (id === 'admin-edit-desc') {
+        updateEditingField('description', textarea.value);
+      } else {
+        const idx = parseInt(id.replace('admin-paragraph-', ''));
+        if (!isNaN(idx)) {
+          updateEditingParagraph(idx, textarea.value);
+        }
+      }
+    }
+
+    // Add / Edit Categories Management
+    function handleAddCategory() {
+      const labelInput = document.getElementById('new-cat-label');
+      const colorSelect = document.getElementById('new-cat-color');
+      if (!labelInput || !labelInput.value.trim()) {
+        showToast('Il nome della categoria è obbligatorio!', 'info');
+        return;
+      }
+      
+      const label = labelInput.value.trim();
+      const id = label.toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)+/g, '');
+
+      if (categories.some(c => c.id === id)) {
+        showToast('Questa categoria esiste già!', 'info');
+        return;
+      }
+
+      categories.push({
+        id: id,
+        label: label,
+        color: colorSelect.value
+      });
+
+      labelInput.value = '';
+      persistDataLocally();
+      saveAllGuidesToServer();
+      renderApp();
+    }
+
+    function handleUpdateCategory() {
+      if (!window.editingCategoryId) return;
+      const labelInput = document.getElementById('new-cat-label');
+      const colorSelect = document.getElementById('new-cat-color');
+      if (!labelInput || !labelInput.value.trim()) {
+        showToast('Il nome della categoria è obbligatorio!', 'info');
+        return;
+      }
+      
+      const newLabel = labelInput.value.trim();
+      const oldId = window.editingCategoryId;
+      const newId = newLabel.toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)+/g, '');
+
+      if (newId !== oldId && categories.some(c => c.id === newId)) {
+        showToast('Esiste già un\'altra categoria con questo nome!', 'info');
+        return;
+      }
+
+      const catIdx = categories.findIndex(c => c.id === oldId);
+      if (catIdx >= 0) {
+        categories[catIdx].label = newLabel;
+        categories[catIdx].color = colorSelect.value || selectedCategoryColor;
+        categories[catIdx].id = newId;
+      }
+
+      if (oldId !== newId) {
+        guides.forEach(g => {
+          if (g.category === oldId) {
+            g.category = newId;
+          }
+        });
+      }
+
+      window.editingCategoryId = null;
+      persistDataLocally();
+      saveAllGuidesToServer();
+      renderApp();
+    }
+
+    function handleDeleteCategory(catId) {
+      const used = guides.some(g => g.category === catId);
+      if (used) {
+        if (!confirm(`La categoria '${catId}' è associata ad alcune guide. Procedendo, queste guide verranno spostate nella prima categoria disponibile. Continuare?`)) {
+          return;
+        }
+        guides.forEach(g => {
+          if (g.category === catId) {
+            g.category = categories.find(c => c.id !== catId)?.id || 'gameplay';
+          }
+        });
+      }
+
+      categories = categories.filter(c => c.id !== catId);
+      if (window.editingCategoryId === catId) {
+        window.editingCategoryId = null;
+      }
+      persistDataLocally();
+      saveAllGuidesToServer();
+      renderApp();
+    }
+
+    // Guides administration handlers
+    function selectGuideForEdit(guideId) {
+      if (guideId === 'new') {
+        window.editingGuide = {
+          id: 'nuova-guida-' + Math.floor(Math.random() * 10000),
+          title: '',
+          description: '',
+          category: categories[0]?.id || 'gameplay',
+          tags: [],
+          content: [''],
+          tips: []
+        };
+      } else {
+        const guide = guides.find(g => g.id === guideId);
+        if (guide) {
+          window.editingGuide = JSON.parse(JSON.stringify(guide));
+        }
+      }
+      renderApp();
+    }
+
+    function updateEditingField(field, val) {
+      if (!window.editingGuide) return;
+      window.editingGuide[field] = val;
+      if (field === 'title' && window.editingGuide.id.startsWith('nuova-guida-')) {
+        window.editingGuide.id = val.toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/(^-|-$)+/g, '');
+      }
+    }
+
+    function addEditingParagraph() {
+      if (!window.editingGuide) return;
+      window.editingGuide.content.push('');
+      renderApp();
+    }
+
+    function updateEditingParagraph(idx, val) {
+      if (!window.editingGuide) return;
+      window.editingGuide.content[idx] = val;
+    }
+
+    function removeEditingParagraph(idx) {
+      if (!window.editingGuide) return;
+      window.editingGuide.content.splice(idx, 1);
+      renderApp();
+    }
+
+    function addEditingTip() {
+      if (!window.editingGuide) return;
+      if (!window.editingGuide.tips) window.editingGuide.tips = [];
+      window.editingGuide.tips.push('');
+      renderApp();
+    }
+
+    function updateEditingTip(idx, val) {
+      if (!window.editingGuide) return;
+      window.editingGuide.tips[idx] = val;
+    }
+
+    function removeEditingTip(idx) {
+      if (!window.editingGuide) return;
+      window.editingGuide.tips.splice(idx, 1);
+      renderApp();
+    }
+
+    function persistDataLocally() {
+      const payload = {
+        categories: categories,
+        guides: guides,
+        siteTitle: siteTitle,
+        siteDescription: siteDescription,
+        alertPopup: alertPopup
+      };
+      localStorage.setItem('pianetasim-custom-data', JSON.stringify(payload));
+    }
+
+    function resetGuidesToDefault() {
+      if (!confirm("Sei sicuro di voler ripristinare i dati originali? Tutte le modifiche locali non salvate andranno perse.")) return;
+      
+      localStorage.removeItem('pianetasim-custom-data');
+      showToast("Dati locali azzerati! Ricaricamento...", "info");
+      
+      fetch('./guides.json?t=' + Date.now())
+        .then(response => response.json())
+        .then(data => {
+          if (data.categories && data.guides) {
+            categories = data.categories;
+            guides = data.guides;
+            if (data.siteTitle) siteTitle = data.siteTitle;
+            if (data.siteDescription) siteDescription = data.siteDescription;
+            if (data.alertPopup) alertPopup = data.alertPopup;
+          } else {
+            categories = [
+              { id: 'mod_cc', label: 'Mod e CC', color: 'cyan' },
+              { id: 'costruzione', label: 'Costruzione', color: 'green' },
+              { id: 'gameplay', label: 'Gameplay', color: 'purple' },
+              { id: 'espansioni', label: 'Espansioni', color: 'rose' }
+            ];
+            guides = data;
+          }
+          renderApp();
+          showToast("Ripristino completato correttamente!", "success");
+        })
+        .catch(error => {
+          console.error("Errore nel ripristino:", error);
+          showToast("Impossibile recuperare guides.json dal server.", "info");
+        });
+    }
+
+    function saveEditingGuide() {
+      if (!window.editingGuide) return;
+      
+      const g = window.editingGuide;
+      if (!g.title.trim()) {
+        showToast('Il titolo della guida è obbligatorio!', 'info');
+        return;
+      }
+      if (!g.id.trim()) {
+        showToast('ID unico richiesto!', 'info');
+        return;
+      }
+      
+      const tagsInput = document.getElementById('admin-edit-tags');
+      if (tagsInput) {
+        g.tags = tagsInput.value.split(',')
+          .map(t => t.trim().toLowerCase())
+          .filter(t => t.length > 0);
+      }
+
+      g.content = g.content.map(p => p.trim()).filter(p => p.length > 0);
+      if (g.content.length === 0) {
+        g.content = ['Scrivi qui il contenuto del primo paragrafo della guida...'];
+      }
+      if (g.tips) {
+        g.tips = g.tips.map(t => t.trim()).filter(t => t.length > 0);
+      }
+
+      const existingIdx = guides.findIndex(item => item.id === g.id);
+      if (existingIdx >= 0) {
+        guides[existingIdx] = g;
+      } else {
+        guides.push(g);
+      }
+
+      window.editingGuide = null;
+      persistDataLocally();
+      saveAllGuidesToServer();
+      renderApp();
+    }
+
+    function deleteGuideFromAdmin(guideId, event) {
+      if (event) event.stopPropagation();
+      if (confirm('Sei sicuro di voler eliminare questa guida?')) {
+        guides = guides.filter(g => g.id !== guideId);
+        if (window.editingGuide && window.editingGuide.id === guideId) {
+          window.editingGuide = null;
+        }
+        persistDataLocally();
+        saveAllGuidesToServer();
+        renderApp();
+      }
+    }
+
+    function saveSiteConfiguration() {
+      const titleInput = document.getElementById('input-site-title');
+      const descInput = document.getElementById('input-site-description');
+      const alertEnabled = document.getElementById('checkbox-alert-enabled');
+      const alertTitleInput = document.getElementById('input-alert-title');
+      const alertColorSelect = document.getElementById('select-alert-color');
+      const alertTextInput = document.getElementById('input-alert-text');
+
+      if (titleInput) siteTitle = titleInput.value.trim() || siteTitle;
+      if (descInput) siteDescription = descInput.value.trim() || siteDescription;
+      
+      alertPopup = {
+        enabled: alertEnabled ? alertEnabled.checked : false,
+        title: alertTitleInput ? alertTitleInput.value.trim() : 'Avviso',
+        color: alertColorSelect ? alertColorSelect.value : 'rosso',
+        text: alertTextInput ? alertTextInput.value.trim() : ''
+      };
+
+      persistDataLocally();
+      saveAllGuidesToServer();
+      showToast('Configurazione del sito applicata e salvata con successo!', 'success');
+      renderApp();
+    }
+
+    // Permanent JSON Saving to Python Backend
+    function saveAllGuidesToServer() {
+      persistDataLocally();
+      showToast('Salvataggio permanente in corso...', 'info');
+      const payload = {
+        categories: categories,
+        guides: guides,
+        siteTitle: siteTitle,
+        siteDescription: siteDescription,
+        alertPopup: alertPopup
+      };
+      
+      fetch('./api/save-guides', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      })
+      .then(res => {
+        if (res.ok) return res.json();
+        throw new Error('Salvataggio fallito');
+      })
+      .then(data => {
+        showToast('File guides.json salvato correttamente sul server!', 'success');
+      })
+      .catch(err => {
+        console.warn("Utilizzo del backup locale: impossibile raggiungere il server di salvataggio permanente.", err);
+        showToast('Modifiche salvate in locale nel browser (compatibile con GitHub)!', 'success');
+      });
+    }
+
+    function downloadGuidesJson() {
+      const fullObj = { categories, guides };
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(fullObj, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", "guides.json");
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+      showToast('File guides.json esportato!', 'success');
+    }
+
+    // Tab switcher
     function switchTab(tab) {
       activeTab = tab;
       activeGuideId = null;
       selectedCategory = 'all';
       
-      const gBtn = document.getElementById('btn-tab-guides');
-      const cBtn = document.getElementById('btn-tab-cheats');
-      const hBtn = document.getElementById('btn-tab-home');
-
-      // Update button visual styles
-      if (tab === 'guides') {
-        if (gBtn) gBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap bg-fluo-purple text-white shadow-[0_0_15px_rgba(176,38,255,0.55)] border border-fluo-purple/30";
-        if (cBtn) cBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900";
-        if (hBtn) hBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900";
-      } else {
-        if (gBtn) gBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900";
-        if (cBtn) cBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap bg-fluo-green text-black shadow-[0_0_15px_rgba(38,255,94,0.55)] border border-fluo-green/30";
-        if (hBtn) hBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900";
+      if (tab === 'admin') {
+        fetchUploadedImages();
       }
-      renderApp();
-    }
-
-    // Go to Home (resets everything)
-    function goToHome() {
-      activeTab = 'guides';
-      activeGuideId = null;
-      selectedCategory = 'all';
-      searchQuery = '';
-
-      const gBtn = document.getElementById('btn-tab-guides');
-      const cBtn = document.getElementById('btn-tab-cheats');
-      const hBtn = document.getElementById('btn-tab-home');
-
-      if (gBtn) gBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900";
-      if (cBtn) cBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900";
-      if (hBtn) hBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap bg-fluo-green text-black shadow-[0_0_15px_rgba(38,255,94,0.55)] border border-fluo-green/30";
-
       renderApp();
     }
 
@@ -679,34 +1648,10 @@
       renderApp();
     }
 
-    // Count guides per category
     function getCategoryCount(catId) {
       if (catId === 'all') return guides.length;
-      if (catId === 'mod_cc') return guides.filter(g => g.category === 'mod_cc').length;
-      if (catId === 'altro') return guides.filter(g => g.category !== 'mod_cc').length;
       if (catId === 'preferiti') return bookmarks.length;
-      return 0;
-    }
-
-    // Copy code to clipboard helper
-    function handleCopyCheat(code, elementId) {
-      navigator.clipboard.writeText(code).then(() => {
-        showToast('Codice copiato negli appunti!', 'success');
-        
-        // Temporarily animate copy button
-        const btn = document.getElementById(elementId);
-        if (btn) {
-          btn.innerHTML = `<i data-lucide="check" class="w-3.5 h-3.5 text-black"></i>`;
-          btn.className = "p-1.5 rounded-md border transition-all cursor-pointer bg-fluo-green border-fluo-green text-black";
-          lucide.createIcons();
-          
-          setTimeout(() => {
-            btn.innerHTML = `<i data-lucide="copy" class="w-3.5 h-3.5"></i>`;
-            btn.className = "p-1.5 rounded-md border transition-all cursor-pointer bg-slate-900 border-slate-800 hover:bg-slate-800 text-slate-300";
-            lucide.createIcons();
-          }, 2000);
-        }
-      });
+      return guides.filter(g => g.category === catId).length;
     }
 
     // Toast Notifications Engine
@@ -725,12 +1670,10 @@
       toast.innerHTML = `<i data-lucide="${icon}" class="w-4 h-4"></i><span>${message}</span>`;
       container.appendChild(toast);
       
-      // Animate in
       setTimeout(() => {
         toast.classList.remove('translate-y-2', 'opacity-0');
       }, 50);
 
-      // Remove after 3 seconds
       setTimeout(() => {
         toast.classList.add('translate-y-2', 'opacity-0');
         setTimeout(() => {
@@ -741,12 +1684,57 @@
       lucide.createIcons();
     }
 
-    // Core Router / Rendering
+    function handleSearchInput(value) {
+      searchQuery = value;
+      const cleanVal = value.trim().toLowerCase();
+      if (cleanVal === 'adminlidia' || cleanVal === 'adminsha') {
+        searchQuery = '';
+        const searchInput = document.getElementById('guide-search-input');
+        if (searchInput) searchInput.value = '';
+        switchTab('admin');
+        showToast("🔐 Inserisci la password per accedere al pannello", "info");
+        return;
+      }
+      renderApp();
+    }
+
+    // Render engine router
     function renderApp() {
+      // Set dynamic Site configuration
+      const heroTitle = document.getElementById('site-hero-title');
+      const heroDesc = document.getElementById('site-hero-desc');
+      if (heroTitle) heroTitle.innerHTML = siteTitle;
+      if (heroDesc) heroDesc.innerHTML = siteDescription;
+
+      // Update header navigation active states and visibility
+      const btnGuides = document.getElementById('btn-tab-guides');
+      const btnAdmin = document.getElementById('btn-tab-admin');
+
+      if (btnGuides) {
+        if (activeTab === 'guides') {
+          btnGuides.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap bg-fluo-purple text-white shadow-[0_0_15px_rgba(176,38,255,0.55)] border border-fluo-purple/30";
+        } else {
+          btnGuides.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900";
+        }
+      }
+
+      if (btnAdmin) {
+        if (window.isAdminAuthenticated) {
+          btnAdmin.classList.remove('hidden');
+          if (activeTab === 'admin') {
+            btnAdmin.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap bg-fluo-green text-black shadow-[0_0_15px_rgba(38,255,150,0.55)] border border-fluo-green/30";
+          } else {
+            btnAdmin.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900";
+          }
+        } else {
+          btnAdmin.classList.add('hidden');
+        }
+      }
+
       const container = document.getElementById('app-body');
       if (!container) return;
 
-      // 1. IF rendering specific guide as a separate page
+      // 1. DETAIL PAGE (Author and Read Time elements fully removed as requested)
       if (activeGuideId) {
         const guide = guides.find(g => g.id === activeGuideId);
         if (!guide) {
@@ -755,79 +1743,80 @@
           return;
         }
 
+        const catObj = categories.find(c => c.id === guide.category) || { label: 'Generale', color: 'purple' };
+        const catStyles = getCategoryStyles(catObj.color);
+
         container.innerHTML = `
           <div class="max-w-3xl mx-auto space-y-6">
-            <!-- Back navigation button -->
             <div>
               <button
                 onclick="activeGuideId = null; renderApp();"
                 class="inline-flex items-center gap-2 text-xs font-bold text-slate-400 hover:text-fluo-green bg-slate-900/80 hover:bg-slate-800/80 border border-slate-800 px-4 py-2.5 rounded-xl cursor-pointer transition-all duration-200"
               >
                 <i data-lucide="arrow-left" class="w-4 h-4"></i>
-                Torna alle guide
+                Torna all'elenco delle guide
               </button>
             </div>
 
-            <!-- Full Page Post Card -->
-            <div class="bg-space-card rounded-2xl border border-slate-800 p-6 md:p-8 shadow-2xl ${shadowClasses[guide.category]}">
-              <!-- Categories Header Badge (Difficulty removed) -->
-              <div class="flex flex-wrap items-center gap-2 mb-4">
-                <h4 class="inline-block text-xs font-bold px-2.5 py-1 rounded-full border ${categoryColors[guide.category]}">
-                  ${categoryLabels[guide.category]}
-                </h4>
+            <!-- Guide Main Board -->
+            <div class="bg-space-card rounded-2xl border border-slate-800 p-6 md:p-8 shadow-2xl ${catStyles.shadow}">
+              <div class="flex items-center gap-2 mb-4">
+                <span class="inline-block text-xs font-bold px-3 py-1 rounded-full border ${catStyles.badge}">
+                  ${catObj.label}
+                </span>
               </div>
 
-              <!-- Title -->
               <h1 class="text-2xl md:text-4xl font-black text-white tracking-tight mb-4 leading-tight">
                 ${guide.title}
               </h1>
 
-              <!-- Divider -->
               <div class="border-b border-slate-800/80 my-6"></div>
 
-              <!-- Description -->
-              <p class="p-4 bg-slate-900/50 border-l-4 border-fluo-green rounded-r-lg text-slate-300 text-sm md:text-base leading-relaxed italic mb-8 block">
-                ${guide.description}
+              <!-- Brief Description with formatting support -->
+              <p class="p-4 bg-slate-900/50 border-l-4 border-fluo-green rounded-r-lg text-slate-300 text-sm md:text-base leading-relaxed italic mb-8 block font-sans">
+                ${formatParagraphText(guide.description)}
               </p>
 
-              <!-- Paragraphs/Steps list -->
-              <div class="space-y-6 mb-8">
+              <!-- Render formatted paragraphs dynamically -->
+              <div class="space-y-6 mb-8 font-sans text-slate-200 text-sm md:text-base leading-relaxed">
                 ${guide.content.map((paragraph, idx) => `
                   <div class="flex gap-4 items-start">
-                    <h5 class="w-7 h-7 bg-emerald-500/10 text-fluo-green border border-fluo-green/20 rounded-full flex items-center justify-center text-sm font-bold shrink-0 mt-0.5 shadow-[0_0_8px_rgba(38,255,94,0.1)]">
+                    <span class="w-7 h-7 bg-emerald-500/10 text-fluo-green border border-fluo-green/20 rounded-full flex items-center justify-center text-sm font-bold shrink-0 mt-0.5 shadow-[0_0_8px_rgba(38,255,94,0.1)] font-display">
                       ${idx + 1}
-                    </h5>
-                    <p class="text-slate-200 text-sm md:text-base leading-relaxed pt-0.5">
-                      ${paragraph}
-                    </p>
+                    </span>
+                    <div class="flex-grow pt-0.5 space-y-2">
+                      ${formatParagraphText(paragraph)}
+                    </div>
                   </div>
                 `).join('')}
               </div>
 
-              <!-- Optional Tips box -->
+              <!-- Render Tips/Consigli area if populated -->
               ${guide.tips && guide.tips.length > 0 ? `
                 <div class="p-5 md:p-6 bg-purple-500/5 border border-fluo-purple/20 rounded-2xl space-y-3 mb-8">
                   <h4 class="text-sm md:text-base font-bold text-fluo-purple flex items-center gap-1.5">
                     <i data-lucide="award" class="w-5 h-5 text-fluo-purple"></i>
-                    Consigli Pro del Creatore
+                    Consigli Extra di PianetaSim
                   </h4>
                   <ul class="space-y-2.5">
                     ${guide.tips.map(tip => `
                       <li class="flex items-start gap-2 text-xs md:text-sm text-slate-300 leading-relaxed">
                         <i data-lucide="corner-down-right" class="w-4 h-4 text-fluo-green shrink-0 mt-0.5"></i>
-                        <h5 class="inline text-xs md:text-sm text-slate-300 leading-relaxed font-normal">${tip}</h5>
+                        <span class="inline text-xs md:text-sm text-slate-300 leading-relaxed font-normal">
+                          ${formatParagraphText(tip)}
+                        </span>
                       </li>
                     `).join('')}
                   </ul>
                 </div>
               ` : ''}
 
-              <!-- Tags list row (No author or timestamp) -->
+              <!-- Tags container -->
               <div class="pt-6 border-t border-slate-800/80 flex flex-wrap gap-1.5">
                 ${guide.tags.map(tag => `
-                  <h5 class="inline-block text-xs text-slate-400 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-md font-normal">
+                  <span class="inline-block text-xs text-slate-400 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-md font-mono">
                     #${tag}
-                  </h5>
+                  </span>
                 `).join('')}
               </div>
             </div>
@@ -837,7 +1826,7 @@
         return;
       }
 
-      // 2. RENDERING GENERAL GUIDES LIST
+      // 2. GUIDES GENERAL DIRECTORY
       if (activeTab === 'guides') {
         const filteredGuides = guides.filter(guide => {
           const matchesSearch = 
@@ -846,23 +1835,91 @@
             guide.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
           
           let matchesCategory = true;
-          if (selectedCategory === 'mod_cc') {
-            matchesCategory = guide.category === 'mod_cc';
-          } else if (selectedCategory === 'altro') {
-            matchesCategory = guide.category !== 'mod_cc';
-          } else if (selectedCategory === 'preferiti') {
+          if (selectedCategory === 'preferiti') {
             matchesCategory = bookmarks.includes(guide.id);
+          } else if (selectedCategory !== 'all') {
+            matchesCategory = guide.category === selectedCategory;
           }
           return matchesSearch && matchesCategory;
         });
 
+        // FAST-PATH DOM UPDATE: If list wrapper is already in DOM, just update the grid and count badge
+        const listWrapperEl = document.getElementById('guides-list-grid-wrapper');
+        const countBadgeEl = document.getElementById('guides-count-badge');
+        if (listWrapperEl && countBadgeEl) {
+          countBadgeEl.textContent = `Trovate ${filteredGuides.length} guide`;
+          listWrapperEl.innerHTML = filteredGuides.length === 0 ? `
+            <div class="bg-space-card border border-slate-900/60 rounded-3xl p-12 text-center space-y-4">
+              <i data-lucide="folder-open" class="w-12 h-12 text-slate-600 mx-auto"></i>
+              <h4 class="text-slate-400 text-sm font-semibold">Nessuna guida corrisponde ai filtri selezionati.</h4>
+              <button onclick="selectedCategory='all'; searchQuery=''; renderApp();" class="text-xs text-fluo-purple hover:underline font-bold">Resetta tutti i filtri</button>
+            </div>
+          ` : `
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              ${filteredGuides.map(guide => {
+                const catObj = categories.find(c => c.id === guide.category) || { label: 'Generale', color: 'purple' };
+                const catStyles = getCategoryStyles(catObj.color);
+                const isBookmarked = bookmarks.includes(guide.id);
+                
+                return `
+                  <div
+                    onclick="activeGuideId = '${guide.id}'; renderApp();"
+                    class="bg-space-card rounded-2xl border border-slate-800/80 p-5 cursor-pointer hover:border-slate-700/80 transition-all duration-300 hover:-translate-y-1 shadow-md hover:shadow-2xl flex flex-col justify-between group relative overflow-hidden h-[240px]"
+                  >
+                    <div class="space-y-3">
+                      <!-- Row badge category & Bookmark button -->
+                      <div class="flex items-center justify-between">
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full border ${catStyles.badge}">
+                          ${catObj.label}
+                        </span>
+                        
+                        <button
+                          onclick="handleToggleBookmark('${guide.id}', event)"
+                          class="text-slate-500 hover:text-amber-400 p-1 rounded-lg hover:bg-slate-900 transition-colors cursor-pointer"
+                          title="${isBookmarked ? 'Rimuovi dai preferiti' : 'Aggiungi ai preferiti'}"
+                        >
+                          <i data-lucide="star" class="w-4 h-4 ${isBookmarked ? 'text-amber-400 fill-current' : ''}"></i>
+                        </button>
+                      </div>
+
+                      <!-- Title of guide -->
+                      <h3 class="text-base md:text-lg font-black text-slate-100 group-hover:text-white transition-colors line-clamp-2 leading-tight">
+                        ${guide.title}
+                      </h3>
+
+                      <!-- Short description preview -->
+                      <p class="text-xs text-slate-400 line-clamp-3 leading-relaxed font-sans">
+                        ${guide.description.replace(/\[image\]\(.*?\)/g, '[Immagine]')}
+                      </p>
+                    </div>
+
+                    <!-- bottom action indicator with tags (Author and read-time fully removed) -->
+                    <div class="pt-3 border-t border-slate-900 flex items-center justify-between text-[11px]">
+                      <span class="text-slate-500 truncate max-w-[60%] font-mono">
+                        #${guide.tags.slice(0, 2).join(' #')}
+                      </span>
+                      
+                      <span class="text-fluo-purple font-bold flex items-center gap-1 group-hover:text-white transition-colors">
+                        Leggi Guida
+                        <i data-lucide="chevron-right" class="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform"></i>
+                      </span>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          `;
+          lucide.createIcons();
+          return;
+        }
+
         container.innerHTML = `
           <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start w-full">
             
-            <!-- Filter controls Sidebar -->
+            <!-- Dynamic Category and Search Sidebar Menu -->
             <div class="lg:col-span-3 space-y-6">
               
-              <!-- Search Box -->
+              <!-- Search box -->
               <div class="bg-space-card p-5 rounded-2xl border border-slate-800 shadow-xl space-y-3 neon-shadow-purple">
                 <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest">
                   Cerca Guida
@@ -872,56 +1929,84 @@
                   <input
                     type="text"
                     id="guide-search-input"
-                    placeholder="Cerca parole chiave..."
+                    placeholder="Parole chiave, mod, trucchi..."
                     value="${searchQuery}"
-                    oninput="searchQuery = this.value; renderApp();"
+                    oninput="handleSearchInput(this.value)"
                     class="w-full pl-9 pr-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:ring-2 focus:ring-fluo-purple focus:border-transparent outline-none transition-all"
                   />
                 </div>
               </div>
 
-              <!-- Categories list -->
-              <div class="bg-space-card p-5 rounded-2xl border border-slate-800 shadow-xl space-y-3 neon-shadow-blue">
-                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                  Seleziona Categoria
+              <!-- Categories selector -->
+              <div class="bg-space-card p-5 rounded-2xl border border-slate-800 shadow-xl space-y-3.5 neon-shadow-blue">
+                <h4 class="text-xs font-extrabold text-slate-400 uppercase tracking-widest">
+                  Filtra per Categoria
                 </h4>
-                <div class="flex flex-wrap gap-1.5">
-                  ${[
-                    { id: 'all', label: 'Tutte' },
-                    { id: 'mod_cc', label: 'Mod e CC' },
-                    { id: 'altro', label: 'Altro' },
-                    { id: 'preferiti', label: 'Preferiti' }
-                  ].map(cat => {
+                <div class="flex flex-wrap gap-2">
+                  <button
+                    onclick="selectedCategory = 'all'; renderApp();"
+                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer border ${
+                      selectedCategory === 'all'
+                        ? 'bg-fluo-blue text-black border-fluo-blue shadow-[0_0_12px_rgba(0,240,255,0.3)]'
+                        : 'bg-slate-900/80 hover:bg-slate-850 text-slate-300 border-slate-800/80 hover:border-slate-700/80'
+                    }"
+                  >
+                    <span>Tutte</span>
+                    <span class="px-1.5 py-0.5 bg-black/30 text-[10px] rounded-full font-mono">${getCategoryCount('all')}</span>
+                  </button>
+
+                  ${categories.map(cat => {
                     const isActive = selectedCategory === cat.id;
-                    const isPreferiti = cat.id === 'preferiti';
+                    const catStyles = getCategoryStyles(cat.color);
                     return `
                       <button
                         onclick="selectedCategory = '${cat.id}'; renderApp();"
-                        class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer border flex items-center gap-1.5 ${
+                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer border"
+                        style="${
                           isActive
-                            ? isPreferiti
-                              ? 'bg-amber-500 text-white border-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.4)] font-bold'
-                              : 'bg-fluo-blue text-black border-fluo-blue shadow-[0_0_8px_rgba(0,240,255,0.4)] font-bold'
-                            : 'bg-slate-900 text-slate-400 border-slate-800 hover:bg-slate-800 hover:text-white'
+                            ? `background-color: #1e293b; color: #ffffff; border-color: ${catStyles.colorCode}; box-shadow: 0 0 10px ${catStyles.colorCode}25;`
+                            : 'background-color: rgba(15,23,42,0.8); color: #cbd5e1; border-color: rgba(30,41,59,0.8);'
                         }"
                       >
-                        ${isPreferiti ? `<i data-lucide="star" class="w-3.5 h-3.5 ${isActive ? 'fill-current text-white' : ''}"></i>` : ''}
-                        ${cat.label} (${getCategoryCount(cat.id)})
+                        <span class="w-2 h-2 rounded-full" style="background-color: ${catStyles.colorCode}"></span>
+                        <span>${cat.label}</span>
+                        <span class="px-1.5 py-0.5 bg-black/30 text-[10px] rounded-full font-mono">${getCategoryCount(cat.id)}</span>
                       </button>
                     `;
                   }).join('')}
+
+                  <button
+                    onclick="selectedCategory = 'preferiti'; renderApp();"
+                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer border ${
+                      selectedCategory === 'preferiti'
+                        ? 'bg-amber-500 text-white border-amber-500 shadow-[0_0_12px_rgba(245,158,11,0.3)]'
+                        : 'bg-slate-900/80 hover:bg-slate-850 text-slate-300 border-slate-800/80 hover:border-slate-700/80'
+                    }"
+                  >
+                    <i data-lucide="star" class="w-3.5 h-3.5 text-amber-400 fill-current"></i>
+                    <span>Preferiti</span>
+                    <span class="px-1.5 py-0.5 bg-black/30 text-[10px] rounded-full font-mono">${getCategoryCount('preferiti')}</span>
+                  </button>
                 </div>
               </div>
 
-              <!-- General Info sidebar box -->
-              <div class="p-5 bg-space-card border border-slate-800 text-slate-200 rounded-2xl space-y-3 shadow-md relative overflow-hidden">
+              <!-- Community Support Guide Trigger Box -->
+              <div class="p-5 bg-space-card border border-slate-800 rounded-2xl text-slate-200 shadow-md relative overflow-hidden space-y-3">
                 <h4 class="text-xs font-extrabold uppercase tracking-widest text-fluo-green flex items-center gap-1.5">
-                  <i data-lucide="info" class="w-4 h-4 text-fluo-green"></i>
-                  PianetaSim Info
+                  <i data-lucide="help-circle" class="w-4 h-4 text-fluo-green"></i>
+                  Serve aiuto?
                 </h4>
-                <p class="text-xs text-slate-300 leading-relaxed">
-                  Siamo la community italiana che supporta i fan di The Sims dal 2018! Esplora le nostre guide e sblocca tutto il potenziale del tuo gioco.
+                <p class="text-[11px] text-slate-300 leading-relaxed">
+                  Hai dubbi sull'installazione delle mod tradotte o cerchi risposte a bug noti del gioco?
                 </p>
+                <a
+                  href="https://t.me/TheSims4ItaliaPianetaSim"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="w-full block text-center py-2 bg-sky-500 hover:bg-sky-400 text-white font-bold rounded-xl text-xs transition-colors cursor-pointer"
+                >
+                  Gruppo Telegram 💬
+                </a>
               </div>
 
             </div>
@@ -929,246 +2014,755 @@
             <!-- List Content column -->
             <div class="lg:col-span-9 space-y-6">
               
-              <!-- Title header for current query -->
               <div class="flex items-center justify-between border-b border-slate-800 pb-3">
                 <h3 class="text-base font-extrabold text-white">
                   ${selectedCategory === 'preferiti' 
-                    ? 'I Miei Preferiti Salvati' 
+                    ? 'I Miei Preferiti' 
                     : selectedCategory === 'all' 
-                      ? 'Tutte le Guide Disponibili' 
-                      : selectedCategory === 'mod_cc'
-                        ? 'Guide: Mod e CC'
-                        : 'Guide: Altro'}
+                      ? 'Tutte le Guide' 
+                      : categories.find(c => c.id === selectedCategory)?.label || 'Elenco Guide'}
                 </h3>
-                <span class="text-xs text-slate-400 font-semibold">
+                <span id="guides-count-badge" class="text-xs text-slate-400 font-semibold font-mono">
                   Trovate ${filteredGuides.length} guide
                 </span>
               </div>
 
-              <!-- Cards grid -->
-              ${filteredGuides.length > 0 ? `
-                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                  ${filteredGuides.map(guide => {
-                    const isBookmarked = bookmarks.includes(guide.id);
-                    return `
-                      <div
-                        onclick="activeGuideId = '${guide.id}'; renderApp();"
-                        class="bg-space-card rounded-xl border border-slate-800 p-6 hover:border-slate-700 transition-all duration-300 flex flex-col justify-between group h-full cursor-pointer ${shadowClasses[guide.category]}"
-                      >
-                        <div>
-                          <!-- Category Badge and Bookmark Star -->
-                          <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
-                            <h4 class="inline-block text-xs font-semibold px-2.5 py-1 rounded-full border ${categoryColors[guide.category]}">
-                              ${categoryLabels[guide.category]}
-                            </h4>
-                            <button
-                              onclick="handleToggleBookmark('${guide.id}', event)"
-                              class="p-1.5 rounded-lg border transition-all cursor-pointer ${
-                                isBookmarked
-                                  ? 'bg-amber-500/10 border-amber-500/40 text-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.2)]'
-                                  : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700'
-                              }"
-                              title="${isBookmarked ? 'Rimuovi dai Preferiti' : 'Salva nei Preferiti'}"
-                            >
-                              <i data-lucide="star" class="w-3.5 h-3.5 ${isBookmarked ? 'fill-current' : ''}"></i>
-                            </button>
+              <div id="guides-list-grid-wrapper">
+                ${filteredGuides.length === 0 ? `
+                  <div class="bg-space-card border border-slate-900/60 rounded-3xl p-12 text-center space-y-4">
+                    <i data-lucide="folder-open" class="w-12 h-12 text-slate-600 mx-auto"></i>
+                    <h4 class="text-slate-400 text-sm font-semibold">Nessuna guida corrisponde ai filtri selezionati.</h4>
+                    <button onclick="selectedCategory='all'; searchQuery=''; renderApp();" class="text-xs text-fluo-purple hover:underline font-bold">Resetta tutti i filtri</button>
+                  </div>
+                ` : `
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    ${filteredGuides.map(guide => {
+                      const catObj = categories.find(c => c.id === guide.category) || { label: 'Generale', color: 'purple' };
+                      const catStyles = getCategoryStyles(catObj.color);
+                      const isBookmarked = bookmarks.includes(guide.id);
+                      
+                      return `
+                        <div
+                          onclick="activeGuideId = '${guide.id}'; renderApp();"
+                          class="bg-space-card rounded-2xl border border-slate-800/80 p-5 cursor-pointer hover:border-slate-700/80 transition-all duration-300 hover:-translate-y-1 shadow-md hover:shadow-2xl flex flex-col justify-between group relative overflow-hidden h-[240px]"
+                        >
+                          <div class="space-y-3">
+                            <!-- Row badge category & Bookmark button -->
+                            <div class="flex items-center justify-between">
+                              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full border ${catStyles.badge}">
+                                ${catObj.label}
+                              </span>
+                              
+                              <button
+                                onclick="handleToggleBookmark('${guide.id}', event)"
+                                class="text-slate-500 hover:text-amber-400 p-1 rounded-lg hover:bg-slate-900 transition-colors cursor-pointer"
+                                title="${isBookmarked ? 'Rimuovi dai preferiti' : 'Aggiungi ai preferiti'}"
+                              >
+                                <i data-lucide="star" class="w-4 h-4 ${isBookmarked ? 'text-amber-400 fill-current' : ''}"></i>
+                              </button>
+                            </div>
+
+                            <!-- Title of guide -->
+                            <h3 class="text-base md:text-lg font-black text-slate-100 group-hover:text-white transition-colors line-clamp-2 leading-tight">
+                              ${guide.title}
+                            </h3>
+
+                            <!-- Short description preview -->
+                            <p class="text-xs text-slate-400 line-clamp-3 leading-relaxed font-sans">
+                              ${guide.description.replace(/\[image\]\(.*?\)/g, '[Immagine]')}
+                            </p>
                           </div>
 
-                          <!-- Title -->
-                          <h3 class="text-lg font-bold text-white leading-snug group-hover:text-fluo-green transition-colors duration-200 mb-2">
-                            ${guide.title}
-                          </h3>
-
-                          <!-- Description preview -->
-                          <p class="text-sm text-slate-300 line-clamp-3 mb-4 leading-relaxed">
-                            ${guide.description}
-                          </p>
-
-                          <!-- Tags inside card -->
-                          <div class="flex flex-wrap gap-1.5 mb-6">
-                            ${guide.tags.slice(0, 3).map(tag => `
-                              <h5 class="inline-block text-[10px] text-slate-400 bg-slate-900/50 border border-slate-800 px-2 py-0.5 rounded font-normal">
-                                #${tag}
-                              </h5>
-                            `).join('')}
-                            ${guide.tags.length > 3 ? `
-                              <h5 class="inline-block text-[10px] text-slate-400 bg-slate-900/50 border border-slate-800 px-1.5 py-0.5 rounded font-normal">
-                                +${guide.tags.length - 3}
-                              </h5>
-                            ` : ''}
-                          </div>
-                        </div>
-
-                        <!-- Card footer / No author or readTime per user instruction -->
-                        <div class="pt-4 border-t border-slate-800 flex items-center justify-end mt-auto">
-                          <div
-                            class="flex items-center gap-1 text-xs font-semibold text-fluo-green hover:text-emerald-300 transition-colors py-1 pl-2 group-hover:translate-x-0.5 transition-transform duration-200"
-                          >
-                            <h5 class="inline font-bold text-xs text-fluo-green hover:text-emerald-300">Leggi Guida</h5>
-                            <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                          <!-- bottom action indicator with tags (Author and read-time fully removed) -->
+                          <div class="pt-3 border-t border-slate-900 flex items-center justify-between text-[11px]">
+                            <span class="text-slate-500 truncate max-w-[60%] font-mono">
+                              #${guide.tags.slice(0, 2).join(' #')}
+                            </span>
+                            
+                            <span class="text-fluo-purple font-bold flex items-center gap-1 group-hover:text-white transition-colors">
+                              Leggi Guida
+                              <i data-lucide="chevron-right" class="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform"></i>
+                            </span>
                           </div>
                         </div>
-                      </div>
-                    `;
-                  }).join('')}
-                </div>
-              ` : `
-                <div class="py-20 text-center bg-space-card border border-slate-800 rounded-2xl shadow-xl">
-                  <i data-lucide="book-open" class="w-12 h-12 text-slate-500 mx-auto mb-3"></i>
-                  <h4 class="text-base font-bold text-white">Nessuna guida trovata</h4>
-                  <p class="text-xs text-slate-400 max-w-sm mx-auto mt-1 leading-relaxed">
-                    Prova a modificare i termini di ricerca o la categoria selezionata nel menu di sinistra.
-                  </p>
-                  <button
-                    onclick="searchQuery = ''; selectedCategory = 'all'; renderApp();"
-                    class="mt-4 px-4 py-2 bg-fluo-purple hover:bg-fuchsia-600 text-white text-xs font-bold rounded-lg cursor-pointer transition-colors shadow-md shadow-fuchsia-950/50"
-                  >
-                    Azzera Filtri
-                  </button>
-                </div>
-              `}
+                      `;
+                    }).join('')}
+                  </div>
+                `}
+              </div>
 
             </div>
           </div>
         `;
-
-        // Focus search input back if we typed
-        const sInput = document.getElementById('guide-search-input');
-        if (sInput) {
-          sInput.focus();
-          // Put cursor at end
-          const val = sInput.value;
-          sInput.value = '';
-          sInput.value = val;
-        }
-
         lucide.createIcons();
+        return;
       }
 
-      // 3. RENDERING CHEATS TAB DATABASE
-      if (activeTab === 'cheats') {
-        const cheatsCategories = ['All', 'Soldi', 'Costruzione', 'Bisogni/Stati', 'Carriere/Abilità', 'Generali'];
-        if (!window.activeCheatCategory) window.activeCheatCategory = 'All';
-        if (!window.cheatSearchQuery) window.cheatSearchQuery = '';
-
-        const filteredCheats = cheats.filter(cheat => {
-          const matchesSearch = 
-            cheat.code.toLowerCase().includes(window.cheatSearchQuery.toLowerCase()) ||
-            cheat.description.toLowerCase().includes(window.cheatSearchQuery.toLowerCase());
-          const matchesCategory = window.activeCheatCategory === 'All' || cheat.category === window.activeCheatCategory;
-          return matchesSearch && matchesCategory;
-        });
-
-        container.innerHTML = `
-          <div class="space-y-6">
-            
-            <!-- Cheat Sheet usage tutorial -->
-            <div class="bg-amber-500/10 border border-amber-500/30 p-4 rounded-xl flex items-start gap-3 shadow-[0_0_15px_rgba(245,158,11,0.1)]">
-              <i data-lucide="shield-alert" class="w-5 h-5 text-amber-400 shrink-0 mt-0.5"></i>
-              <div class="text-xs text-amber-200 leading-relaxed">
-                <strong class="block text-sm font-bold text-amber-300 mb-0.5">Come usare i trucchi in gioco:</strong>
-                Prima di inserire la maggior parte dei trucchi, apri la console dei comandi premendo <strong>Ctrl + Shift + C</strong> (PC/Mac) o i quattro grilletti sul controller (PlayStation/Xbox), digita <strong class="text-fluo-green font-mono">testingcheats true</strong> e premi Invio. Questo abiliterà la modalità avanzata!
-              </div>
-            </div>
-
-            <!-- Filter Categories and Search Input Header -->
-            <div class="bg-space-card p-4 rounded-xl border border-slate-800 shadow-lg flex flex-col md:flex-row gap-4 items-center justify-between">
-              
-              <!-- Cheat Search bar -->
-              <div class="relative w-full md:w-80">
-                <i data-lucide="search" class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
-                <input
-                  type="text"
-                  id="cheat-search-input"
-                  placeholder="Cerca un trucco o comando..."
-                  value="${window.cheatSearchQuery}"
-                  oninput="window.cheatSearchQuery = this.value; renderApp();"
-                  class="w-full pl-10 pr-4 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white focus:ring-2 focus:ring-fluo-green focus:border-transparent outline-none transition-all"
-                />
-              </div>
-
-              <!-- Cheat Category Selection Filters -->
-              <div class="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto pb-1 md:pb-0 scrollbar-none">
-                ${cheatsCategories.map(cat => `
-                  <button
-                    onclick="window.activeCheatCategory = '${cat}'; renderApp();"
-                    class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all cursor-pointer border ${
-                      window.activeCheatCategory === cat
-                        ? 'bg-fluo-green text-black border-fluo-green font-bold shadow-[0_0_12px_rgba(38,255,94,0.35)]'
-                        : 'bg-slate-900 text-slate-300 border-slate-800 hover:bg-slate-800 hover:border-slate-700'
-                    }"
-                  >
-                    ${cat === 'All' ? 'Tutti i Trucchi' : cat}
-                  </button>
-                `).join('')}
-              </div>
-            </div>
-
-            <!-- Cheats Cards list Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              ${filteredCheats.length > 0 ? filteredCheats.map((cheat, idx) => {
-                const elementId = `cheat-copy-btn-${idx}`;
-                return `
-                  <div class="bg-space-card rounded-xl border border-slate-800 p-5 shadow-sm hover:border-slate-700 transition-all flex flex-col justify-between neon-shadow-blue">
-                    <div>
-                      <div class="flex justify-between items-start gap-2 mb-2">
-                        <h4 class="text-[10px] uppercase tracking-wider font-extrabold text-fluo-blue inline-block">
-                          Categoria: ${cheat.category}
-                        </h4>
-                        ${cheat.requirements && cheat.requirements !== 'Nessuno' ? `
-                          <h5 class="text-[9px] bg-fuchsia-500/10 text-fluo-fuchsia border border-fluo-fuchsia/30 px-1.5 py-0.5 rounded font-bold inline-block">
-                            Richiede ${cheat.requirements}
-                          </h5>
-                        ` : ''}
-                      </div>
-
-                      <div class="bg-slate-950 border border-slate-800 p-2.5 rounded-lg flex items-center justify-between gap-4 mb-3">
-                        <h3 class="text-xs font-mono font-bold text-white select-all leading-normal break-all block">
-                          ${cheat.code}
-                        </h3>
-                        <button
-                          id="${elementId}"
-                          onclick="handleCopyCheat('${cheat.code}', '${elementId}')"
-                          class="p-1.5 rounded-md border transition-all cursor-pointer bg-slate-900 border-slate-800 hover:bg-slate-800 text-slate-300"
-                          title="Copia codice negli appunti"
-                        >
-                          <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-                        </button>
-                      </div>
-
-                      <p class="text-xs text-slate-300 leading-relaxed">
-                        ${cheat.description}
-                      </p>
-                    </div>
-                  </div>
-                `;
-              }).join('') : `
-                <div class="col-span-full py-12 text-center bg-space-card border border-slate-800 rounded-xl">
-                  <p class="text-slate-400 text-sm">Nessun trucco trovato corrispondente ai filtri inseriti.</p>
-                  <button
-                    onclick="window.cheatSearchQuery = ''; window.activeCheatCategory = 'All'; renderApp();"
-                    class="mt-3 px-4 py-2 text-xs font-bold bg-fluo-green text-black rounded-lg hover:bg-emerald-400 cursor-pointer"
-                  >
-                    Azzera Filtri
-                  </button>
+      // 3. SECRETS ADMIN PANEL VIEW
+      if (activeTab === 'admin') {
+        if (!window.isAdminAuthenticated) {
+          container.innerHTML = `
+            <div class="max-w-md mx-auto bg-space-card border border-slate-800 p-8 rounded-3xl shadow-2xl space-y-6 neon-shadow-purple">
+              <div class="text-center space-y-2">
+                <div class="w-12 h-12 bg-fluo-purple/10 text-fluo-purple border border-fluo-purple/20 rounded-2xl flex items-center justify-center mx-auto shadow-lg">
+                  <i data-lucide="lock" class="w-6 h-6"></i>
                 </div>
-              `}
+                <h3 class="text-xl font-black text-white">Area Riservata Amministratore</h3>
+                <p class="text-xs text-slate-400">Inserisci la password segreta per gestire le guide del sito.</p>
+              </div>
+
+              <div class="space-y-4">
+                <div class="space-y-1.5">
+                  <label class="text-xs font-bold text-slate-400 uppercase tracking-widest">Password</label>
+                  <input
+                    type="password"
+                    id="admin-password-input"
+                    placeholder="••••••••••••"
+                    onkeydown="if(event.key==='Enter') handleAdminLogin();"
+                    class="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white outline-none focus:ring-2 focus:ring-fluo-purple"
+                  />
+                </div>
+
+                <button
+                  onclick="handleAdminLogin()"
+                  class="w-full py-2.5 bg-fluo-purple text-white font-bold rounded-xl text-xs cursor-pointer shadow-lg hover:bg-opacity-90 transition-all border border-fluo-purple/30"
+                >
+                  Accedi al Pannello
+                </button>
+              </div>
             </div>
-
-          </div>
-        `;
-
-        // Focus search input back if we typed
-        const sInput = document.getElementById('cheat-search-input');
-        if (sInput) {
-          sInput.focus();
-          // Put cursor at end
-          const val = sInput.value;
-          sInput.value = '';
-          sInput.value = val;
+          `;
+          lucide.createIcons();
+          return;
         }
 
+        // 3B. ADMIN IS AUTHENTICATED
+        if (window.editingGuide) {
+          // ADMIN IS EDITING OR CREATING A GUIDE
+          const g = window.editingGuide;
+          container.innerHTML = `
+            <div class="max-w-4xl mx-auto space-y-6 bg-space-card border border-slate-800 p-6 md:p-8 rounded-3xl shadow-2xl">
+              <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                <div>
+                  <h3 class="text-lg font-black text-white">
+                    ${g.id.startsWith('nuova-guida-') ? 'Crea Nuova Guida' : 'Modifica Guida'}
+                  </h3>
+                  <p class="text-xs text-slate-400">Supporta tag di formattazione avanzati per immagini, grassetto, corsivo, link e colori.</p>
+                </div>
+                <button
+                  onclick="window.editingGuide = null; renderApp();"
+                  class="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white rounded-xl border border-slate-800 text-xs font-bold cursor-pointer transition-colors"
+                >
+                  Annulla
+                </button>
+              </div>
+
+              <!-- Main Fields row -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="space-y-1.5">
+                  <label class="text-xs font-bold text-slate-400 uppercase">Titolo della Guida</label>
+                  <input
+                    type="text"
+                    value="${g.title}"
+                    oninput="updateEditingField('title', this.value)"
+                    placeholder="es: Trucchi di Costruzione Avanzati"
+                    class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:ring-2 focus:ring-fluo-purple outline-none"
+                  />
+                </div>
+
+                <div class="space-y-1.5">
+                  <label class="text-xs font-bold text-slate-400 uppercase">ID Unico Guida (Senza Spazi)</label>
+                  <input
+                    type="text"
+                    value="${g.id}"
+                    oninput="updateEditingField('id', this.value)"
+                    placeholder="es: guide-costruzioni-avanzate"
+                    class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:ring-2 focus:ring-fluo-purple outline-none"
+                  />
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="space-y-1.5">
+                  <label class="text-xs font-bold text-slate-400 uppercase font-sans">Categoria</label>
+                  <select
+                    onchange="updateEditingField('category', this.value)"
+                    class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:ring-2 focus:ring-fluo-purple outline-none"
+                  >
+                    ${categories.map(c => `
+                      <option value="${c.id}" ${g.category === c.id ? 'selected' : ''}>${c.label}</option>
+                    `).join('')}
+                  </select>
+                </div>
+
+                <div class="space-y-1.5">
+                  <label class="text-xs font-bold text-slate-400 uppercase">Tags (Separati da Virgola)</label>
+                  <input
+                    type="text"
+                    id="admin-edit-tags"
+                    value="${g.tags.join(', ')}"
+                    placeholder="es: costruzione, trucchi, mobili"
+                    class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:ring-2 focus:ring-fluo-purple outline-none"
+                  />
+                </div>
+              </div>
+
+              <!-- Brief Description text area with standard formatting toolbar -->
+              <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                  <label class="text-xs font-bold text-slate-400 uppercase font-sans">Breve Descrizione / Introduzione</label>
+                  <div class="flex gap-1 items-center">
+                    <button type="button" onclick="insertFormat('admin-edit-desc', 'bold')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-white font-bold rounded">B</button>
+                    <button type="button" onclick="insertFormat('admin-edit-desc', 'italic')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-white italic rounded">I</button>
+                    <button type="button" onclick="insertFormat('admin-edit-desc', 'link')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-fluo-blue rounded">Link</button>
+                    
+                    <!-- Dropdown Palette for Text Colors -->
+                    <div class="relative inline-block text-left">
+                      <button type="button" onclick="toggleTextColorPalette('admin-edit-desc')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-fluo-fuchsia rounded flex items-center gap-0.5">
+                        <span>Colore</span>
+                        <span class="text-[8px] opacity-70">▼</span>
+                      </button>
+                      <div id="color-palette-admin-edit-desc" class="hidden absolute right-0 mt-1.5 p-2 bg-slate-950 border border-slate-800 rounded-xl shadow-2xl z-50 w-[140px] grid grid-cols-4 gap-1.5">
+                        ${textColorsList.map(hex => `
+                          <button
+                            type="button"
+                            onclick="applyTextColor('admin-edit-desc', '${hex}')"
+                            class="w-6 h-6 rounded-md border border-slate-800 cursor-pointer transition-transform hover:scale-110"
+                            style="background-color: ${hex}"
+                            title="${hex}"
+                          ></button>
+                        `).join('')}
+                      </div>
+                    </div>
+
+                    <button type="button" onclick="triggerImageUpload('admin-edit-desc')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-fluo-green rounded flex items-center gap-0.5">📷 Immagine</button>
+                  </div>
+                </div>
+                <textarea
+                  id="admin-edit-desc"
+                  rows="3"
+                  oninput="updateEditingField('description', this.value)"
+                  placeholder="Scrivi qui la descrizione riassuntiva..."
+                  class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:ring-2 focus:ring-fluo-purple outline-none font-sans"
+                >${g.description}</textarea>
+              </div>
+
+              <!-- Content Paragraphs Dynamic Blocks -->
+              <div class="space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                  <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Paragrafi e Contenuto della Guida</h4>
+                  <button
+                    onclick="addEditingParagraph()"
+                    class="px-2.5 py-1 bg-fluo-purple/10 hover:bg-fluo-purple/20 text-fluo-purple border border-fluo-purple/30 rounded-lg text-[11px] font-bold cursor-pointer"
+                  >
+                    + Aggiungi Paragrafo
+                  </button>
+                </div>
+
+                <div class="space-y-4">
+                  ${g.content.map((p, idx) => `
+                    <div class="p-4 bg-slate-950/60 border border-slate-900 rounded-xl space-y-3 relative">
+                      <div class="flex items-center justify-between">
+                        <span class="text-xs font-extrabold text-fluo-green">Paragrafo #${idx + 1}</span>
+                        
+                        <!-- Toolbar Formatting buttons -->
+                        <div class="flex items-center gap-1">
+                          <button type="button" onclick="insertFormat('admin-paragraph-${idx}', 'bold')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-white font-bold rounded" title="Grassetto">B</button>
+                          <button type="button" onclick="insertFormat('admin-paragraph-${idx}', 'italic')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-white italic rounded" title="Corsivo">I</button>
+                          <button type="button" onclick="insertFormat('admin-paragraph-${idx}', 'link')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-fluo-blue rounded" title="Aggiungi Link">Link</button>
+                          
+                          <!-- Dropdown Palette for Text Colors -->
+                          <div class="relative inline-block text-left">
+                            <button type="button" onclick="toggleTextColorPalette('admin-paragraph-${idx}')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-fluo-fuchsia rounded flex items-center gap-0.5" title="Colore Personalizzato">
+                              <span>Colore</span>
+                              <span class="text-[8px] opacity-70">▼</span>
+                            </button>
+                            <div id="color-palette-admin-paragraph-${idx}" class="hidden absolute right-0 mt-1.5 p-2 bg-slate-950 border border-slate-800 rounded-xl shadow-2xl z-50 w-[140px] grid grid-cols-4 gap-1.5">
+                              ${textColorsList.map(hex => `
+                                <button
+                                  type="button"
+                                  onclick="applyTextColor('admin-paragraph-${idx}', '${hex}')"
+                                  class="w-6 h-6 rounded-md border border-slate-800 cursor-pointer transition-transform hover:scale-110"
+                                  style="background-color: ${hex}"
+                                  title="${hex}"
+                                ></button>
+                              `).join('')}
+                            </div>
+                          </div>
+
+                          <button type="button" onclick="triggerImageUpload('admin-paragraph-${idx}')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-fluo-green rounded flex items-center gap-0.5" title="Carica un'immagine in questo paragrafo">📷 Carica Immagine</button>
+                          
+                          <button
+                            onclick="removeEditingParagraph(${idx})"
+                            class="ml-3 p-1 text-red-500 hover:text-red-400 hover:bg-red-500/10 rounded cursor-pointer transition-colors"
+                            title="Elimina paragrafo"
+                          >
+                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                          </button>
+                        </div>
+                      </div>
+
+                      <textarea
+                        id="admin-paragraph-${idx}"
+                        rows="4"
+                        oninput="updateEditingParagraph(${idx}, this.value)"
+                        placeholder="Inserisci il testo dettagliato. Puoi usare i pulsanti in alto per formattare al volo o inserire immagini caricandole direttamente."
+                        class="w-full px-3 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:ring-2 focus:ring-fluo-purple outline-none font-sans"
+                      >${p}</textarea>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+
+              <!-- Extra Tips Section -->
+              <div class="space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                  <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Consigli Extra / Tips Pro (Opzionali)</h4>
+                  <button
+                    onclick="addEditingTip()"
+                    class="px-2.5 py-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-fluo-green border border-emerald-500/30 rounded-lg text-[11px] font-bold cursor-pointer"
+                  >
+                    + Aggiungi Consiglio
+                  </button>
+                </div>
+
+                <div class="space-y-3">
+                  ${(g.tips || []).map((tip, idx) => `
+                    <div class="flex gap-2 items-center">
+                      <input
+                        type="text"
+                        value="${tip}"
+                        oninput="updateEditingTip(${idx}, this.value)"
+                        placeholder="es: Ricorda di attivare bb.moveobjects prima di procedere"
+                        class="flex-grow px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:ring-2 focus:ring-fluo-purple outline-none"
+                      />
+                      <button
+                        onclick="removeEditingTip(${idx})"
+                        class="p-2 text-red-500 hover:text-red-400 bg-red-500/5 hover:bg-red-500/10 border border-red-500/10 rounded-xl cursor-pointer"
+                      >
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                      </button>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+
+              <!-- Form Buttons -->
+              <div class="pt-6 border-t border-slate-800 flex flex-col sm:flex-row gap-3">
+                <button
+                  onclick="saveEditingGuide()"
+                  class="flex-grow py-3 bg-fluo-purple text-white font-extrabold rounded-xl text-xs cursor-pointer shadow-lg hover:bg-opacity-95 text-center"
+                >
+                  Salva Localmente ed Esci
+                </button>
+                <button
+                  onclick="window.editingGuide = null; renderApp();"
+                  class="flex-grow py-3 bg-slate-900 hover:bg-slate-850 border border-slate-800 text-slate-300 rounded-xl text-xs font-bold cursor-pointer text-center"
+                >
+                  Annulla Modifiche
+                </button>
+              </div>
+            </div>
+          `;
+          lucide.createIcons();
+          return;
+        }
+
+        // 3C. GENERAL ADMIN PANEL VIEW (Manage guides, categories, export/import, server sync)
+        container.innerHTML = `
+          <div class="space-y-8 w-full">
+            
+            <!-- System Status header (No unrequested metrics) -->
+            <div class="bg-space-card p-6 rounded-3xl border border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xl">
+              <div class="space-y-1">
+                <h3 class="text-xl font-black text-white flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-fluo-green shadow-[0_0_8px_#26ff5e]"></span>
+                  Pannello Gestione PianetaSim
+                </h3>
+                <p class="text-xs text-slate-400">Inserisci nuove guide, cancella articoli vecchi o personalizza le categorie.</p>
+              </div>
+
+              <div class="flex flex-wrap gap-2">
+                <button
+                  onclick="saveAllGuidesToServer()"
+                  class="px-4 py-2 bg-fluo-green text-black font-extrabold rounded-xl text-xs cursor-pointer shadow-[0_0_15px_rgba(38,255,94,0.35)] hover:scale-[1.01] transition-transform"
+                  title="Salva tutte le modifiche apportate sul file guides.json del server"
+                >
+                  Salva Permanentemente 💾
+                </button>
+                <button
+                  onclick="downloadGuidesJson()"
+                  class="px-3 py-2 bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white rounded-xl border border-slate-800 text-xs font-bold cursor-pointer"
+                  title="Esporta guides.json locale"
+                >
+                  Esporta JSON
+                </button>
+                <button
+                  onclick="resetGuidesToDefault()"
+                  class="px-3 py-2 bg-slate-900 hover:bg-slate-800 text-yellow-500 hover:text-yellow-400 rounded-xl border border-slate-800 text-xs font-bold cursor-pointer"
+                  title="Ripristina i dati originali dal server"
+                >
+                  Ripristina Dati 🔄
+                </button>
+                <button
+                  onclick="handleAdminLogout()"
+                  class="px-3 py-2 bg-red-950/40 hover:bg-red-900/40 text-red-400 rounded-xl border border-red-900/30 text-xs font-bold cursor-pointer"
+                >
+                  Esci Amministratore
+                </button>
+              </div>
+            </div>
+
+            <!-- Site Customization & Alert Popup Controls Card -->
+            <div class="bg-space-card p-6 rounded-3xl border border-slate-800 shadow-xl space-y-6">
+              <div class="border-b border-slate-800 pb-4">
+                <h3 class="text-base font-black text-white flex items-center gap-2">
+                  <i data-lucide="settings" class="w-4 h-4 text-fluo-purple"></i>
+                  Personalizzazione Sito & Avviso Pop-up
+                </h3>
+                <p class="text-xs text-slate-400">Modifica il titolo principale del sito, la descrizione della hero e configura il pop-up di avviso per i visitatori.</p>
+              </div>
+
+              <!-- Main Fields row -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Title & Description of Site -->
+                <div class="space-y-4">
+                  <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Testata del Sito</h4>
+                  
+                  <div class="space-y-1.5">
+                    <label class="text-[10px] uppercase font-bold text-slate-400">Titolo Hero (supporta HTML/Colori)</label>
+                    <textarea
+                      id="input-site-title"
+                      rows="2"
+                      placeholder="es: Tutto quello che devi sapere su The Sims 4"
+                      class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:ring-2 focus:ring-fluo-purple outline-none resize-y min-h-[50px]"
+                    >${siteTitle}</textarea>
+                  </div>
+
+                  <div class="space-y-1.5">
+                    <label class="text-[10px] uppercase font-bold text-slate-400">Descrizione Hero</label>
+                    <textarea
+                      id="input-site-description"
+                      rows="3"
+                      placeholder="Benvenuto nella sezione delle guide di PianetaSim!..."
+                      class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:ring-2 focus:ring-fluo-purple outline-none resize-y min-h-[60px]"
+                    >${siteDescription}</textarea>
+                  </div>
+                </div>
+
+                <!-- Warning Alert Popup Settings -->
+                <div class="space-y-4">
+                  <div class="flex items-center justify-between">
+                    <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                      Pop-up Avviso Visitatori
+                    </h4>
+                    
+                    <label class="relative inline-flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        id="checkbox-alert-enabled"
+                        ${alertPopup.enabled ? 'checked' : ''}
+                        class="sr-only peer"
+                      />
+                      <div class="w-9 h-5 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-400 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-fluo-purple peer-checked:after:bg-white"></div>
+                      <span class="ml-2 text-[10px] font-bold text-slate-400 uppercase">Attivo</span>
+                    </label>
+                  </div>
+
+                  <div class="grid grid-cols-3 gap-2 items-center">
+                    <div class="col-span-2 space-y-1.5">
+                      <label class="text-[10px] uppercase font-bold text-slate-400">Titolo Avviso</label>
+                      <input
+                        type="text"
+                        id="input-alert-title"
+                        value="${alertPopup.title || ''}"
+                        placeholder="Avviso Importante"
+                        class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:ring-2 focus:ring-fluo-purple outline-none"
+                      />
+                    </div>
+                    
+                    <div class="space-y-1.5">
+                      <label class="text-[10px] uppercase font-bold text-slate-400">Colore Box</label>
+                      <select
+                        id="select-alert-color"
+                        class="w-full px-2 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:ring-2 focus:ring-fluo-purple outline-none"
+                      >
+                        <option value="rosso" ${alertPopup.color === 'rosso' ? 'selected' : ''}>Rosso</option>
+                        <option value="verde" ${alertPopup.color === 'verde' ? 'selected' : ''}>Verde</option>
+                        <option value="azzurro" ${alertPopup.color === 'azzurro' ? 'selected' : ''}>Azzurro</option>
+                        <option value="viola" ${alertPopup.color === 'viola' ? 'selected' : ''}>Viola</option>
+                        <option value="giallo" ${alertPopup.color === 'giallo' ? 'selected' : ''}>Giallo</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="space-y-1.5">
+                    <div class="flex justify-between items-center">
+                      <label class="text-[10px] uppercase font-bold text-slate-400 font-sans">Contenuto Messaggio (supporta Bold, Italic, Link, Color)</label>
+                      <button
+                        type="button"
+                        onclick="saveSiteConfiguration(); setTimeout(() => showAlertModal(true), 50);"
+                        class="px-2 py-0.5 bg-slate-900 hover:bg-slate-850 border border-slate-800 hover:border-slate-700 text-[10px] font-extrabold text-fluo-green rounded-lg cursor-pointer"
+                      >
+                        Anteprima Pop-up 👁️
+                      </button>
+                    </div>
+                    <textarea
+                      id="input-alert-text"
+                      rows="2"
+                      placeholder="Benvenuto su PianetaSim! Scrivi qui il testo dell'avviso..."
+                      class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:ring-2 focus:ring-fluo-purple outline-none resize-y min-h-[50px] font-sans"
+                    >${alertPopup.text || ''}</textarea>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Save customized config button -->
+              <div class="pt-4 border-t border-slate-800 flex justify-end">
+                <button
+                  onclick="saveSiteConfiguration()"
+                  class="px-5 py-2.5 bg-fluo-purple text-white text-xs font-black rounded-xl cursor-pointer hover:bg-opacity-95 shadow-[0_0_12px_rgba(176,38,255,0.2)] flex items-center gap-1.5 transition-all"
+                >
+                  <i data-lucide="check" class="w-4 h-4"></i>
+                  Applica e Salva Modifiche Sito
+                </button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+              
+              <!-- Left Column: Manage Categories dynamic creator -->
+              <div class="lg:col-span-4 space-y-6">
+                <div class="bg-space-card p-6 rounded-3xl border border-slate-800 shadow-xl space-y-4 neon-shadow-blue">
+                  ${(() => {
+                    if (window.editingCategoryId) {
+                      const catToEdit = categories.find(c => c.id === window.editingCategoryId);
+                      if (catToEdit) {
+                        return `
+                          <h4 class="text-sm font-black text-white flex items-center gap-1.5">
+                            <i data-lucide="edit" class="w-4 h-4 text-fluo-blue"></i>
+                            Modifica Categoria
+                          </h4>
+                          <p class="text-xs text-slate-400">Modifica il nome e il colore della categoria esistente.</p>
+
+                          <div class="space-y-3">
+                            <div class="space-y-1">
+                              <label class="text-[10px] uppercase font-bold text-slate-400">Nome Categoria</label>
+                              <input
+                                type="text"
+                                id="new-cat-label"
+                                value="${catToEdit.label}"
+                                placeholder="es: Carriere Segrete"
+                                class="w-full px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white focus:ring-1 focus:ring-fluo-blue outline-none"
+                              />
+                            </div>
+
+                            <div class="space-y-1.5">
+                              <label class="text-[10px] uppercase font-bold text-slate-400">Seleziona Colore</label>
+                              <input type="hidden" id="new-cat-color" value="${catToEdit.color}" />
+                              
+                              <div class="flex flex-wrap gap-1 pt-1">
+                                ${catColorsList.map(col => {
+                                  const catStylesObj = getCategoryStyles(col);
+                                  const isSelected = col === catToEdit.color;
+                                  const activeClass = isSelected ? 'ring-1 ring-white scale-110 border-white' : '';
+                                  return `
+                                    <button
+                                      type="button"
+                                      data-color="${col}"
+                                      onclick="selectCategoryColorPreset('${col}')"
+                                      class="cat-color-square w-3 h-3 rounded-md border border-slate-800 cursor-pointer transition-all hover:scale-125 ${activeClass}"
+                                      style="background-color: ${catStylesObj.colorCode}"
+                                      title="${col}"
+                                    ></button>
+                                  `;
+                                }).join('')}
+                              </div>
+                            </div>
+
+                            <div class="flex gap-2">
+                              <button
+                                onclick="handleUpdateCategory()"
+                                class="flex-grow py-2 bg-fluo-blue text-black font-extrabold rounded-lg text-xs cursor-pointer hover:bg-opacity-90"
+                              >
+                                Salva Categoria
+                              </button>
+                              <button
+                                onclick="window.editingCategoryId = null; renderApp();"
+                                class="px-3 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-400 rounded-lg text-xs font-bold cursor-pointer"
+                              >
+                                Annulla
+                              </button>
+                            </div>
+                          </div>
+                        `;
+                      }
+                    }
+                    
+                    return `
+                      <h4 class="text-sm font-black text-white flex items-center gap-1.5">
+                        <i data-lucide="layers" class="w-4 h-4 text-fluo-blue"></i>
+                        Gestione Categorie
+                      </h4>
+                      <p class="text-xs text-slate-400">Crea nuove categorie personalizzate per organizzare le guide.</p>
+
+                      <div class="space-y-3">
+                        <div class="space-y-1">
+                          <label class="text-[10px] uppercase font-bold text-slate-400">Nome Categoria</label>
+                          <input
+                            type="text"
+                            id="new-cat-label"
+                            placeholder="es: Carriere Segrete"
+                            class="w-full px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white focus:ring-1 focus:ring-fluo-blue outline-none"
+                          />
+                        </div>
+
+                        <div class="space-y-1.5">
+                          <label class="text-[10px] uppercase font-bold text-slate-400">Seleziona Colore</label>
+                          <input type="hidden" id="new-cat-color" value="${selectedCategoryColor}" />
+                          
+                          <div class="flex flex-wrap gap-1 pt-1">
+                            ${catColorsList.map(col => {
+                              const catStylesObj = getCategoryStyles(col);
+                              const isSelected = col === selectedCategoryColor;
+                              const activeClass = isSelected ? 'ring-1 ring-white scale-110 border-white' : '';
+                              return `
+                                <button
+                                  type="button"
+                                  data-color="${col}"
+                                  onclick="selectCategoryColorPreset('${col}')"
+                                  class="cat-color-square w-3 h-3 rounded-md border border-slate-800 cursor-pointer transition-all hover:scale-125 ${activeClass}"
+                                  style="background-color: ${catStylesObj.colorCode}"
+                                  title="${col}"
+                                ></button>
+                              `;
+                            }).join('')}
+                          </div>
+                        </div>
+
+                        <button
+                          onclick="handleAddCategory()"
+                          class="w-full py-2 bg-fluo-blue text-black font-extrabold rounded-lg text-xs cursor-pointer hover:bg-opacity-90"
+                        >
+                          Aggiungi Categoria
+                        </button>
+                      </div>
+                    `;
+                  })()}
+
+                  <hr class="border-slate-800/80 my-3" />
+
+                  <!-- Current categories list -->
+                  <div class="space-y-2">
+                    <h5 class="text-[11px] font-bold text-slate-400 uppercase">Categorie Esistenti:</h5>
+                    <div class="space-y-1.5 max-h-[200px] overflow-y-auto scrollbar-none pr-1">
+                      ${categories.map(c => `
+                        <div class="flex items-center justify-between p-2 bg-slate-900/60 rounded-xl border border-slate-850">
+                          <span class="text-xs text-slate-200 font-semibold flex items-center gap-1.5">
+                            <span class="w-2.5 h-2.5 rounded-full" style="background-color: ${getCategoryStyles(c.color).colorCode}"></span>
+                            ${c.label}
+                          </span>
+                          <div class="flex items-center gap-1">
+                            <button
+                              onclick="window.editingCategoryId = '${c.id}'; selectedCategoryColor = '${c.color}'; renderApp();"
+                              class="p-1 text-fluo-blue hover:text-cyan-300 hover:bg-slate-800/50 rounded-lg cursor-pointer"
+                              title="Modifica questa categoria"
+                            >
+                              <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                            </button>
+                            <button
+                              onclick="handleDeleteCategory('${c.id}')"
+                              class="p-1 text-red-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg cursor-pointer"
+                              title="Elimina questa categoria"
+                            >
+                              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                            </button>
+                          </div>
+                        </div>
+                      `).join('')}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Media Upload Panel (Media center) -->
+                <div class="bg-space-card p-6 rounded-3xl border border-slate-800 shadow-xl space-y-4 neon-shadow-green">
+                  <h4 class="text-sm font-black text-white flex items-center gap-1.5">
+                    <i data-lucide="image" class="w-4 h-4 text-fluo-green"></i>
+                    Caricamento Media Rapido
+                  </h4>
+                  <p class="text-xs text-slate-400">Carica file dal computer per ottenere l'indirizzo dell'immagine da usare nel testo.</p>
+
+                  <div class="p-4 border-2 border-dashed border-slate-800 rounded-2xl text-center space-y-3 bg-slate-900/20 hover:border-fluo-green/40 transition-colors cursor-pointer relative" onclick="triggerImageUpload('admin-edit-desc')">
+                    <i data-lucide="upload-cloud" class="w-8 h-8 text-slate-600 mx-auto"></i>
+                    <div class="text-xs text-slate-300 font-semibold">Clicca per caricare un'immagine</div>
+                    <div class="text-[10px] text-slate-500 font-mono">Trascina o clicca per caricare</div>
+                  </div>
+
+                  <!-- Quick Media Library Gallery Grid Container -->
+                  <div class="space-y-1.5 pt-2">
+                    <h5 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Libreria Immagini</h5>
+                    <div id="uploaded-images-grid-container">
+                      <!-- Loaded dynamically via renderUploadedImagesGrid -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right Column: List of current guides with management actions -->
+              <div class="lg:col-span-8 space-y-6">
+                <div class="bg-space-card p-6 rounded-3xl border border-slate-800 shadow-xl space-y-4">
+                  <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800 pb-3">
+                    <div>
+                      <h4 class="text-base font-black text-white">Elenco delle Guide Presenti</h4>
+                      <p class="text-xs text-slate-400">Modifica il contenuto, cambia i tag o rimuovi gli articoli.</p>
+                    </div>
+                    
+                    <button
+                      onclick="selectGuideForEdit('new')"
+                      class="px-4 py-2 bg-fluo-purple text-white font-extrabold rounded-xl text-xs cursor-pointer shadow-[0_0_12px_rgba(176,38,255,0.4)]"
+                    >
+                      + Crea Nuova Guida
+                    </button>
+                  </div>
+
+                  <div class="space-y-2.5 max-h-[600px] overflow-y-auto scrollbar-none pr-1">
+                    ${guides.map(g => {
+                      const catObj = categories.find(c => c.id === g.category) || { label: 'Nessuna', color: 'purple' };
+                      return `
+                        <div class="p-3 bg-slate-950/60 border border-slate-900 rounded-2xl flex items-center justify-between gap-4 hover:border-slate-800/80 transition-colors">
+                          <div class="space-y-1 truncate">
+                            <span class="text-[9px] font-bold px-2 py-0.5 rounded bg-slate-900 text-slate-400 border border-slate-800">${catObj.label}</span>
+                            <h4 class="text-xs font-bold text-white truncate">${g.title}</h4>
+                          </div>
+
+                          <div class="flex items-center gap-1.5 shrink-0">
+                            <button
+                              onclick="selectGuideForEdit('${g.id}')"
+                              class="p-2 text-fluo-green bg-emerald-500/5 hover:bg-emerald-500/10 border border-emerald-500/10 rounded-xl cursor-pointer"
+                              title="Modifica guida"
+                            >
+                              <i data-lucide="edit-3" class="w-4 h-4"></i>
+                            </button>
+                            <button
+                              onclick="deleteGuideFromAdmin('${g.id}', event)"
+                              class="p-2 text-red-500 bg-red-500/5 hover:bg-red-500/10 border border-red-500/10 rounded-xl cursor-pointer"
+                              title="Elimina guida"
+                            >
+                              <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                          </div>
+                        </div>
+                      `;
+                    }).join('')}
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        `;
         lucide.createIcons();
+        return;
       }
     }
   </script>

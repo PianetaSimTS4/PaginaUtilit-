@@ -8,6 +8,9 @@ if (!fs.existsSync(distDir)) {
   fs.mkdirSync(distDir, { recursive: true });
 }
 
+// Ensure .nojekyll exists in dist to bypass Jekyll on GitHub Pages
+fs.writeFileSync(path.join(distDir, '.nojekyll'), '');
+
 // Copy file helper
 function copyFile(src, dest) {
   if (fs.existsSync(src)) {
@@ -37,6 +40,9 @@ function copyDir(src, dest) {
 
 // 1. Copy index.html
 copyFile(path.join(process.cwd(), 'index.html'), path.join(distDir, 'index.html'));
+
+// 1b. Copy guides.json
+copyFile(path.join(process.cwd(), 'guides.json'), path.join(distDir, 'guides.json'));
 
 // 2. Copy logo.png at root
 copyFile(path.join(process.cwd(), 'logo.png'), path.join(distDir, 'logo.png'));
