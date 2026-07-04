@@ -17,7 +17,14 @@ import {
   Check,
   Award,
   ChevronLeft,
-  Send
+  Send,
+  Globe,
+  Flame,
+  Activity,
+  ExternalLink,
+  MessageCircle,
+  Wrench,
+  AlertCircle
 } from 'lucide-react';
 
 // Components
@@ -28,6 +35,7 @@ import GuideDetail from './components/GuideDetail';
 export default function App() {
   const [activeTab, setActiveTab] = useState<'guides' | 'cheats'>('guides');
   const [activeGuideId, setActiveGuideId] = useState<string | null>(null);
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
   const [logoSrcIndex, setLogoSrcIndex] = useState(0);
   const logoPaths = [
     '/images/logo.png',
@@ -143,39 +151,55 @@ export default function App() {
           </div>
 
           {/* Navigation Tabs */}
-          <nav className="flex items-center gap-1.5 overflow-x-auto max-w-full pb-1 sm:pb-0 scrollbar-none">
-            <button
-              onClick={() => { setActiveTab('guides'); setActiveGuideId(null); setShowBookmarksOnly(false); }}
-              className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-                activeTab === 'guides' && !showBookmarksOnly
-                  ? 'bg-fluo-purple text-white shadow-[0_0_15px_rgba(176,38,255,0.55)] border border-fluo-purple/30'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-850'
-              }`}
-            >
-              Guide Complete
-            </button>
-            <button
-              onClick={() => { setActiveTab('cheats'); setActiveGuideId(null); }}
-              className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-                activeTab === 'cheats'
-                  ? 'bg-fluo-green text-black shadow-[0_0_15px_rgba(38,255,94,0.55)] border border-fluo-green/30'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-850'
-              }`}
-            >
-              Database Trucchi
-            </button>
-            <button
-              onClick={() => {
-                setActiveTab('guides');
-                setActiveGuideId(null);
-                setShowBookmarksOnly(false);
-                setSelectedCategory('all');
-                setSearchQuery('');
-              }}
-              className="px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-850"
+          <nav className="flex flex-wrap items-center gap-1 md:gap-2 justify-center sm:justify-start">
+            <a
+              href="https://pianetasimts.github.io/PianetaSim/index.html"
+              className="px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-300 hover:text-white hover:bg-slate-800 border border-transparent hover:border-slate-700/50"
             >
               Home
+            </a>
+            <a
+              href="https://pianetasimts.github.io/PianetaSim/mod.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-300 hover:text-white hover:bg-slate-800 border border-transparent hover:border-slate-700/50 flex items-center gap-1 group"
+            >
+              Mod & Traduzioni
+              <ExternalLink className="w-3 h-3 text-slate-500 group-hover:text-fluo-blue transition-colors" />
+            </a>
+            <a
+              href="https://pianetasimts.github.io/PianetaSim/mod18.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-300 hover:text-white hover:bg-slate-800 border border-transparent hover:border-slate-700/50 flex items-center gap-1 group"
+            >
+              Mod & Traduzioni 18+
+              <ExternalLink className="w-3 h-3 text-slate-500 group-hover:text-fluo-fuchsia transition-colors" />
+            </a>
+            <a
+              href="https://pianetasimts.github.io/PianetaSim/animazioniww18.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-300 hover:text-white hover:bg-slate-800 border border-transparent hover:border-slate-700/50 flex items-center gap-1 group"
+            >
+              Animazioni
+              <ExternalLink className="w-3 h-3 text-slate-500 group-hover:text-fluo-purple transition-colors" />
+            </a>
+            <button
+              onClick={() => setIsHelpOpen(true)}
+              className="px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-300 hover:text-white hover:bg-slate-800 border border-transparent hover:border-slate-700/50 flex items-center gap-1"
+            >
+              Help Sim
             </button>
+            <a
+              href="https://pianetasimts.github.io/PianetaSim/storie.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-300 hover:text-white hover:bg-slate-800 border border-transparent hover:border-slate-700/50 flex items-center gap-1 group"
+            >
+              Racconti
+              <ExternalLink className="w-3 h-3 text-slate-500 group-hover:text-amber-500 transition-colors" />
+            </a>
           </nav>
         </div>
       </header>
@@ -213,6 +237,34 @@ export default function App() {
 
       {/* 3. Main Content Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 md:px-8 py-8 relative z-10">
+        {/* Section Switcher Tabs */}
+        <div className="flex justify-center mb-8">
+          <div className="bg-slate-950/60 p-1.5 rounded-2xl border border-slate-800/80 flex items-center gap-1.5 shadow-2xl backdrop-blur-md">
+            <button
+              onClick={() => { setActiveTab('guides'); setActiveGuideId(null); setShowBookmarksOnly(false); }}
+              className={`px-5 py-2.5 rounded-xl text-xs md:text-sm font-black transition-all cursor-pointer whitespace-nowrap flex items-center gap-2 ${
+                activeTab === 'guides' && !showBookmarksOnly
+                  ? 'bg-gradient-to-r from-fluo-purple to-purple-600 text-white shadow-[0_0_20px_rgba(176,38,255,0.4)] border border-fluo-purple/30'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-900'
+              }`}
+            >
+              <BookOpen className="w-4 h-4" />
+              Guide Complete
+            </button>
+            <button
+              onClick={() => { setActiveTab('cheats'); setActiveGuideId(null); }}
+              className={`px-5 py-2.5 rounded-xl text-xs md:text-sm font-black transition-all cursor-pointer whitespace-nowrap flex items-center gap-2 ${
+                activeTab === 'cheats'
+                  ? 'bg-gradient-to-r from-fluo-green to-emerald-600 text-black shadow-[0_0_20px_rgba(38,255,94,0.4)] border border-fluo-green/30 font-extrabold'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-900'
+              }`}
+            >
+              <Sparkles className="w-4 h-4" />
+              Database Trucchi
+            </button>
+          </div>
+        </div>
+
         <AnimatePresence mode="wait">
           {/* TAB 1: GUIDES LIST */}
           {activeTab === 'guides' && (
@@ -308,6 +360,8 @@ export default function App() {
                         </button>
                       </div>
                     </div>
+
+
 
                     {/* Info Card box */}
                     <div className="p-5 bg-space-card border border-slate-800 text-slate-200 rounded-2xl space-y-3 shadow-md relative overflow-hidden">
@@ -430,6 +484,118 @@ export default function App() {
           </div>
         </div>
       </footer>
+
+      {/* Help Sim Modal */}
+      <AnimatePresence>
+        {isHelpOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsHelpOpen(false)}
+              className="absolute inset-0 bg-black/85 backdrop-blur-md"
+            />
+
+            {/* Modal Box */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="bg-space-card border border-slate-800 rounded-3xl w-full max-w-xl max-h-[90vh] overflow-y-auto p-6 md:p-8 shadow-[0_0_50px_rgba(38,255,94,0.15)] relative z-10 neon-shadow-green"
+            >
+              {/* Close button */}
+              <button
+                onClick={() => setIsHelpOpen(false)}
+                className="absolute top-4 right-4 text-slate-400 hover:text-white bg-slate-900 hover:bg-slate-850 p-2 rounded-full cursor-pointer transition-colors"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+
+              <div className="space-y-6">
+                {/* Header */}
+                <div className="flex items-center gap-3">
+                  <div className="p-3 bg-fluo-green/10 rounded-2xl text-fluo-green shadow-[0_0_15px_rgba(38,255,94,0.2)] float-animation">
+                    <HelpCircle className="w-7 h-7" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-black text-white leading-tight">
+                      Help Sim
+                    </h3>
+                    <p className="text-xs text-slate-400">
+                      Supporto & Risorse per la Community di PianetaSim
+                    </p>
+                  </div>
+                </div>
+
+                <hr className="border-slate-800" />
+
+                {/* Body Content */}
+                <div className="space-y-4 text-slate-300 text-xs md:text-sm leading-relaxed">
+                  <div className="space-y-2">
+                    <h4 className="font-extrabold text-white text-sm flex items-center gap-1.5 text-fluo-green">
+                      <Wrench className="w-4 h-4" />
+                      Come installare Mod & Traduzioni?
+                    </h4>
+                    <p className="text-slate-400 text-xs">
+                      Installare mod e traduzioni in The Sims 4 è facilissimo. Segui questi passi:
+                    </p>
+                    <ol className="list-decimal list-inside text-xs text-slate-300 space-y-1 bg-slate-900/60 p-3 rounded-xl border border-slate-800">
+                      <li>Scarica i file compressi (.zip, .rar) delle traduzioni o delle mod.</li>
+                      <li>Estrai i file <code className="text-fluo-blue font-mono">.package</code> e <code className="text-fluo-blue font-mono">.ts4script</code>.</li>
+                      <li>Sposta i file estratti nella cartella <code className="text-amber-400 font-mono text-[10px] break-all">Documenti/Electronic Arts/The Sims 4/Mods</code>.</li>
+                      <li>Apri il gioco, vai in Opzioni Gioco &gt; Altro e attiva <span className="text-white font-bold">Attiva il materiale personalizzato e le mod</span> e <span className="text-white font-bold">Mod dello script attivate</span>.</li>
+                    </ol>
+                  </div>
+
+                  <div className="space-y-2">
+                    <h4 className="font-extrabold text-white text-sm flex items-center gap-1.5 text-fluo-blue">
+                      <AlertCircle className="w-4 h-4" />
+                      Problemi comuni (Risoluzione Problemi)
+                    </h4>
+                    <ul className="list-disc list-inside text-xs text-slate-400 space-y-1">
+                      <li><span className="text-slate-300 font-semibold">Le mod non compaiono?</span> Assicurati che non siano inserite in più di una sottocartella all'interno della cartella Mods (massimo 1 livello di profondità per file .ts4script).</li>
+                      <li><span className="text-slate-300 font-semibold">Dopo un aggiornamento del gioco?</span> The Sims 4 disattiva automaticamente le mod ad ogni aggiornamento. Ricordati di riattivarle dalle opzioni e riavviare il gioco.</li>
+                    </ul>
+                  </div>
+
+                  <div className="space-y-2 pt-2">
+                    <h4 className="font-extrabold text-white text-sm flex items-center gap-1.5 text-fluo-fuchsia">
+                      <MessageCircle className="w-4 h-4" />
+                      Hai ancora bisogno di supporto diretto?
+                    </h4>
+                    <p className="text-slate-400 text-xs">
+                      Se hai problemi tecnici o dubbi con le mod, unisciti al nostro gruppo Telegram attivo. Ci sono centinaia di appassionati e moderatori pronti ad aiutarti in tempo reale!
+                    </p>
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="pt-2 flex flex-col sm:flex-row gap-2.5">
+                  <a
+                    href="https://t.me/TheSims4ItaliaPianetaSim"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 flex items-center justify-center gap-2 bg-sky-500 hover:bg-sky-400 text-white font-bold py-2.5 px-4 rounded-xl text-xs transition-all shadow-md shadow-sky-950/30 cursor-pointer text-center"
+                  >
+                    <Send className="w-4 h-4 fill-current text-white" />
+                    Chiedi sul Gruppo Telegram
+                  </a>
+                  <button
+                    onClick={() => setIsHelpOpen(false)}
+                    className="flex-1 bg-slate-900 hover:bg-slate-850 border border-slate-800 text-slate-300 hover:text-white font-bold py-2.5 px-4 rounded-xl text-xs transition-colors cursor-pointer"
+                  >
+                    Ho capito, grazie!
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

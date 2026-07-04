@@ -190,6 +190,45 @@
 
       <!-- Navigation tabs inside Header -->
       <nav class="flex items-center gap-1.5 overflow-x-auto max-w-full pb-1 sm:pb-0 scrollbar-none">
+        <a
+          id="btn-tab-home"
+          href="https://pianetasimts.github.io/PianetaSim/index.html"
+          class="px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900 flex items-center"
+        >
+          <h4 class="inline font-bold text-xs">Home</h4>
+        </a>
+        <a
+          href="https://pianetasimts.github.io/PianetaSim/mod.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900 flex items-center"
+        >
+          <span class="font-bold text-xs text-slate-400 hover:text-white">Mod & Traduzioni</span>
+        </a>
+        <a
+          href="https://pianetasimts.github.io/PianetaSim/mod18.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900 flex items-center"
+        >
+          <span class="font-bold text-xs text-slate-400 hover:text-white">Mod & Traduzioni 18+</span>
+        </a>
+        <a
+          href="https://pianetasimts.github.io/PianetaSim/animazioniww18.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900 flex items-center"
+        >
+          <span class="font-bold text-xs text-slate-400 hover:text-white">Animazioni</span>
+        </a>
+        <a
+          href="https://pianetasimts.github.io/PianetaSim/storie.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900 flex items-center"
+        >
+          <span class="font-bold text-xs text-slate-400 hover:text-white">Racconti</span>
+        </a>
         <div
           id="btn-tab-guides"
           role="button"
@@ -198,24 +237,6 @@
           class="px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap bg-fluo-purple text-white shadow-[0_0_15px_rgba(176,38,255,0.55)] border border-fluo-purple/30"
         >
           <h4 class="inline font-bold text-xs text-white">Guide Complete</h4>
-        </div>
-        <div
-          id="btn-tab-cheats"
-          role="button"
-          tabindex="0"
-          onclick="switchTab('cheats')"
-          class="px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900"
-        >
-          <h4 class="inline font-bold text-xs text-slate-400 hover:text-white">Database Trucchi</h4>
-        </div>
-        <div
-          id="btn-tab-home"
-          role="button"
-          tabindex="0"
-          onclick="goToHome()"
-          class="px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900"
-        >
-          <h4 class="inline font-bold text-xs text-slate-400 hover:text-white">Home</h4>
         </div>
       </nav>
     </div>
@@ -285,6 +306,101 @@
 
   <!-- Instant Toasts Banner Notification -->
   <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- Help Sim Modal -->
+  <div id="help-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+    <!-- Backdrop -->
+    <div onclick="toggleHelpModal(false)" class="absolute inset-0 bg-black/85 backdrop-blur-md"></div>
+
+    <!-- Modal Box -->
+    <div class="bg-space-card border border-slate-800 rounded-3xl w-full max-w-xl max-h-[90vh] overflow-y-auto p-6 md:p-8 shadow-[0_0_50px_rgba(38,255,94,0.15)] relative z-10 neon-shadow-green transition-all transform scale-95 opacity-0 duration-300" id="help-modal-box">
+      <!-- Close button -->
+      <button
+        onclick="toggleHelpModal(false)"
+        class="absolute top-4 right-4 text-slate-400 hover:text-white bg-slate-900 hover:bg-slate-800 p-2 rounded-full cursor-pointer transition-colors"
+      >
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+
+      <div class="space-y-6">
+        <!-- Header -->
+        <div class="flex items-center gap-3">
+          <div class="p-3 bg-fluo-green/10 rounded-2xl text-fluo-green shadow-[0_0_15px_rgba(38,255,94,0.2)] float-animation">
+            <i data-lucide="help-circle" class="w-7 h-7"></i>
+          </div>
+          <div>
+            <h3 class="text-xl font-black text-white leading-tight">
+              Help Sim
+            </h3>
+            <p class="text-xs text-slate-400">
+              Supporto & Risorse per la Community di PianetaSim
+            </p>
+          </div>
+        </div>
+
+        <hr class="border-slate-800" />
+
+        <!-- Body Content -->
+        <div class="space-y-4 text-slate-300 text-xs md:text-sm leading-relaxed">
+          <div class="space-y-2">
+            <h4 class="font-extrabold text-white text-sm flex items-center gap-1.5 text-fluo-green">
+              <i data-lucide="wrench" class="w-4 h-4"></i>
+              Come installare Mod & Traduzioni?
+            </h4>
+            <p class="text-slate-400 text-xs">
+              Installare mod e traduzioni in The Sims 4 è facilissimo. Segui questi passi:
+            </p>
+            <ol class="list-decimal list-inside text-xs text-slate-300 space-y-1 bg-slate-900/60 p-3 rounded-xl border border-slate-800 font-sans">
+              <li>Scarica i file compressi (.zip, .rar) delle traduzioni o delle mod.</li>
+              <li>Estrai i file <code class="text-fluo-blue font-mono">.package</code> e <code class="text-fluo-blue font-mono">.ts4script</code>.</li>
+              <li>Sposta i file estratti nella cartella <code class="text-amber-400 font-mono text-[10px] break-all">Documenti/Electronic Arts/The Sims 4/Mods</code>.</li>
+              <li>Apri il gioco, vai in Opzioni Gioco &gt; Altro e attiva <span class="text-white font-bold">Attiva il materiale personalizzato e le mod</span> e <span class="text-white font-bold">Mod dello script attivate</span>.</li>
+            </ol>
+          </div>
+
+          <div class="space-y-2">
+            <h4 class="font-extrabold text-white text-sm flex items-center gap-1.5 text-fluo-blue">
+              <i data-lucide="alert-circle" class="w-4 h-4"></i>
+              Problemi comuni (Risoluzione Problemi)
+            </h4>
+            <ul class="list-disc list-inside text-xs text-slate-400 space-y-1 font-sans">
+              <li><span class="text-slate-300 font-semibold">Le mod non compaiono?</span> Assicurati che non siano inserite in più di una sottocartella all'interno della cartella Mods (massimo 1 livello di profondità per file .ts4script).</li>
+              <li><span class="text-slate-300 font-semibold">Dopo un aggiornamento del gioco?</span> The Sims 4 disattiva automaticamente le mod ad ogni aggiornamento. Ricordati di riattivarle dalle opzioni e riavviare il gioco.</li>
+            </ul>
+          </div>
+
+          <div class="space-y-2 pt-2">
+            <h4 class="font-extrabold text-white text-sm flex items-center gap-1.5 text-fluo-fuchsia">
+              <i data-lucide="message-circle" class="w-4 h-4"></i>
+              Hai ancora bisogno di supporto diretto?
+            </h4>
+            <p class="text-slate-400 text-xs font-sans">
+              Se hai problemi tecnici o dubbi con le mod, unisciti al nostro gruppo Telegram attivo. Ci sono centinaia di appassionati e moderatori pronti ad aiutarti in tempo reale!
+            </p>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="pt-2 flex flex-col sm:flex-row gap-2.5">
+          <a
+            href="https://t.me/TheSims4ItaliaPianetaSim"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex-grow flex items-center justify-center gap-2 bg-sky-500 hover:bg-sky-400 text-white font-bold py-2.5 px-4 rounded-xl text-xs transition-all shadow-md shadow-sky-950/30 cursor-pointer text-center"
+          >
+            <i data-lucide="send" class="w-4 h-4 fill-current text-white"></i>
+            Chiedi sul Gruppo Telegram
+          </a>
+          <button
+            onclick="toggleHelpModal(false)"
+            class="flex-grow bg-slate-900 hover:bg-slate-850 border border-slate-800 text-slate-300 hover:text-white font-bold py-2.5 px-4 rounded-xl text-xs transition-colors cursor-pointer"
+          >
+            Ho capito, grazie!
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- APPLICATION CODE AND DATABASES -->
   <script>    // Databases
@@ -415,11 +531,11 @@
     ];
 
     const categoryLabels = {
-      gameplay: 'Gameplay',
-      costruzione: 'Costruzioni',
-      trucchi: 'Trucchi',
-      mod_cc: 'Mod & CC',
-      espansioni: 'Espansioni'
+      gameplay: 'Altro',
+      costruzione: 'Altro',
+      trucchi: 'Altro',
+      mod_cc: 'Mod e CC',
+      espansioni: 'Altro'
     };
 
     const categoryColors = {
@@ -491,11 +607,35 @@
       renderApp();
     }
 
+    // Toggle Help Modal Open/Close
+    function toggleHelpModal(show) {
+      const modal = document.getElementById('help-modal');
+      const box = document.getElementById('help-modal-box');
+      if (modal && box) {
+        if (show) {
+          modal.classList.remove('hidden');
+          modal.classList.add('flex');
+          setTimeout(() => {
+            box.classList.remove('scale-95', 'opacity-0');
+            box.classList.add('scale-100', 'opacity-100');
+          }, 10);
+        } else {
+          box.classList.remove('scale-100', 'opacity-100');
+          box.classList.add('scale-95', 'opacity-0');
+          setTimeout(() => {
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+          }, 300);
+        }
+      }
+      lucide.createIcons();
+    }
+
     // Tab switching
     function switchTab(tab) {
       activeTab = tab;
       activeGuideId = null;
-      showBookmarksOnly = false;
+      selectedCategory = 'all';
       
       const gBtn = document.getElementById('btn-tab-guides');
       const cBtn = document.getElementById('btn-tab-cheats');
@@ -503,13 +643,13 @@
 
       // Update button visual styles
       if (tab === 'guides') {
-        gBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap bg-fluo-purple text-white shadow-[0_0_15px_rgba(176,38,255,0.55)] border border-fluo-purple/30";
-        cBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900";
-        hBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900";
+        if (gBtn) gBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap bg-fluo-purple text-white shadow-[0_0_15px_rgba(176,38,255,0.55)] border border-fluo-purple/30";
+        if (cBtn) cBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900";
+        if (hBtn) hBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900";
       } else {
-        gBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900";
-        cBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap bg-fluo-green text-black shadow-[0_0_15px_rgba(38,255,94,0.55)] border border-fluo-green/30";
-        hBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900";
+        if (gBtn) gBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900";
+        if (cBtn) cBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap bg-fluo-green text-black shadow-[0_0_15px_rgba(38,255,94,0.55)] border border-fluo-green/30";
+        if (hBtn) hBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900";
       }
       renderApp();
     }
@@ -520,15 +660,14 @@
       activeGuideId = null;
       selectedCategory = 'all';
       searchQuery = '';
-      showBookmarksOnly = false;
 
       const gBtn = document.getElementById('btn-tab-guides');
       const cBtn = document.getElementById('btn-tab-cheats');
       const hBtn = document.getElementById('btn-tab-home');
 
-      gBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900";
-      cBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900";
-      hBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap bg-fluo-green text-black shadow-[0_0_15px_rgba(38,255,94,0.55)] border border-fluo-green/30";
+      if (gBtn) gBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900";
+      if (cBtn) cBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900";
+      if (hBtn) hBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap bg-fluo-green text-black shadow-[0_0_15px_rgba(38,255,94,0.55)] border border-fluo-green/30";
 
       renderApp();
     }
@@ -536,14 +675,17 @@
     function toggleBookmarksOnly() {
       activeTab = 'guides';
       activeGuideId = null;
-      showBookmarksOnly = !showBookmarksOnly;
+      selectedCategory = 'preferiti';
       renderApp();
     }
 
     // Count guides per category
     function getCategoryCount(catId) {
       if (catId === 'all') return guides.length;
-      return guides.filter(g => g.category === catId).length;
+      if (catId === 'mod_cc') return guides.filter(g => g.category === 'mod_cc').length;
+      if (catId === 'altro') return guides.filter(g => g.category !== 'mod_cc').length;
+      if (catId === 'preferiti') return bookmarks.length;
+      return 0;
     }
 
     // Copy code to clipboard helper
@@ -702,9 +844,16 @@
             guide.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
             guide.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
             guide.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
-          const matchesCategory = selectedCategory === 'all' || guide.category === selectedCategory;
-          const matchesBookmark = !showBookmarksOnly || bookmarks.includes(guide.id);
-          return matchesSearch && matchesCategory && matchesBookmark;
+          
+          let matchesCategory = true;
+          if (selectedCategory === 'mod_cc') {
+            matchesCategory = guide.category === 'mod_cc';
+          } else if (selectedCategory === 'altro') {
+            matchesCategory = guide.category !== 'mod_cc';
+          } else if (selectedCategory === 'preferiti') {
+            matchesCategory = bookmarks.includes(guide.id);
+          }
+          return matchesSearch && matchesCategory;
         });
 
         container.innerHTML = `
@@ -739,36 +888,28 @@
                 <div class="flex flex-wrap gap-1.5">
                   ${[
                     { id: 'all', label: 'Tutte' },
-                    { id: 'gameplay', label: 'Gameplay' },
-                    { id: 'costruzione', label: 'Costruzioni' },
-                    { id: 'trucchi', label: 'Trucchi' },
-                    { id: 'mod_cc', label: 'Mod & CC' },
-                    { id: 'espansioni', label: 'Espansioni' }
-                  ].map(cat => `
-                    <button
-                      onclick="selectedCategory = '${cat.id}'; showBookmarksOnly = false; renderApp();"
-                      class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer border ${
-                        selectedCategory === cat.id && !showBookmarksOnly
-                          ? 'bg-fluo-blue text-black border-fluo-blue shadow-[0_0_8px_rgba(0,240,255,0.4)] font-bold'
-                          : 'bg-slate-900 text-slate-400 border-slate-800 hover:bg-slate-800 hover:text-white'
-                      }"
-                    >
-                      ${cat.label} (${getCategoryCount(cat.id)})
-                    </button>
-                  `).join('')}
-
-                  <!-- Bookmarks Toggle list pill -->
-                  <button
-                    onclick="showBookmarksOnly = !showBookmarksOnly; renderApp();"
-                    class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer border flex items-center gap-1.5 ${
-                      showBookmarksOnly
-                        ? 'bg-amber-500 text-white border-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.4)] font-bold'
-                        : 'bg-slate-900 text-slate-400 border-slate-800 hover:bg-slate-800 hover:text-white'
-                    }"
-                  >
-                    <i data-lucide="star" class="w-3.5 h-3.5 ${showBookmarksOnly ? 'fill-current text-white' : ''}"></i>
-                    Preferiti (${bookmarks.length})
-                  </button>
+                    { id: 'mod_cc', label: 'Mod e CC' },
+                    { id: 'altro', label: 'Altro' },
+                    { id: 'preferiti', label: 'Preferiti' }
+                  ].map(cat => {
+                    const isActive = selectedCategory === cat.id;
+                    const isPreferiti = cat.id === 'preferiti';
+                    return `
+                      <button
+                        onclick="selectedCategory = '${cat.id}'; renderApp();"
+                        class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer border flex items-center gap-1.5 ${
+                          isActive
+                            ? isPreferiti
+                              ? 'bg-amber-500 text-white border-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.4)] font-bold'
+                              : 'bg-fluo-blue text-black border-fluo-blue shadow-[0_0_8px_rgba(0,240,255,0.4)] font-bold'
+                            : 'bg-slate-900 text-slate-400 border-slate-800 hover:bg-slate-800 hover:text-white'
+                        }"
+                      >
+                        ${isPreferiti ? `<i data-lucide="star" class="w-3.5 h-3.5 ${isActive ? 'fill-current text-white' : ''}"></i>` : ''}
+                        ${cat.label} (${getCategoryCount(cat.id)})
+                      </button>
+                    `;
+                  }).join('')}
                 </div>
               </div>
 
@@ -791,11 +932,13 @@
               <!-- Title header for current query -->
               <div class="flex items-center justify-between border-b border-slate-800 pb-3">
                 <h3 class="text-base font-extrabold text-white">
-                  ${showBookmarksOnly 
+                  ${selectedCategory === 'preferiti' 
                     ? 'I Miei Preferiti Salvati' 
                     : selectedCategory === 'all' 
                       ? 'Tutte le Guide Disponibili' 
-                      : `Guide di Categoria: ${selectedCategory.toUpperCase()}`}
+                      : selectedCategory === 'mod_cc'
+                        ? 'Guide: Mod e CC'
+                        : 'Guide: Altro'}
                 </h3>
                 <span class="text-xs text-slate-400 font-semibold">
                   Trovate ${filteredGuides.length} guide
@@ -877,7 +1020,7 @@
                     Prova a modificare i termini di ricerca o la categoria selezionata nel menu di sinistra.
                   </p>
                   <button
-                    onclick="searchQuery = ''; selectedCategory = 'all'; showBookmarksOnly = false; renderApp();"
+                    onclick="searchQuery = ''; selectedCategory = 'all'; renderApp();"
                     class="mt-4 px-4 py-2 bg-fluo-purple hover:bg-fuchsia-600 text-white text-xs font-bold rounded-lg cursor-pointer transition-colors shadow-md shadow-fuchsia-950/50"
                   >
                     Azzera Filtri
