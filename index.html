@@ -47,40 +47,25 @@
   <script>
     var logoPaths = [
       'images/logo.png',
-      '/images/logo.png'
+      '/images/logo.png',
+      'logo.png',
+      '/logo.png',
+      'public/images/logo.png',
+      '/public/images/logo.png'
     ];
     var logoIndex = 0;
-    var logoRetries = 0;
-    var maxRetries = 4;
 
     function tryNextLogo() {
       var img = document.getElementById('logo-img');
       if (!img) return;
       
-      console.warn("Logo failed to load (Path index: " + logoIndex + ", Retry: " + logoRetries + ")");
-      
-      if (logoRetries < maxRetries) {
-        logoRetries++;
-        setTimeout(function() {
-          console.log("Retrying current logo path: " + logoPaths[logoIndex]);
-          img.src = logoPaths[logoIndex] + '?t=' + new Date().getTime();
-        }, 1500);
+      logoIndex++;
+      if (logoIndex < logoPaths.length) {
+        console.warn("Logo path failed, trying fallback: " + logoPaths[logoIndex]);
+        img.src = logoPaths[logoIndex];
       } else {
-        logoIndex++;
-        logoRetries = 0;
-        if (logoIndex < logoPaths.length) {
-          setTimeout(function() {
-            console.log("Trying next logo path: " + logoPaths[logoIndex]);
-            img.src = logoPaths[logoIndex];
-          }, 1000);
-        } else {
-          console.error("All logo paths failed after retries!");
-          // Fallback - show fallback text if it was hidden
-          var fallback = document.getElementById('logo-fallback');
-          if (fallback) {
-            fallback.classList.remove('hidden');
-          }
-        }
+        console.error("All logo paths failed to load!");
+        img.classList.add('hidden');
       }
     }
 
@@ -89,6 +74,11 @@
       if (img) {
         console.log("Logo successfully loaded from: " + img.src);
         img.classList.remove('hidden');
+        // Keep the brand name text visible next to the logo image
+        var fallback = document.getElementById('logo-fallback');
+        if (fallback) {
+          fallback.classList.remove('hidden');
+        }
       }
     }
   </script>
@@ -224,14 +214,22 @@
     }
 
     @keyframes simColorCycle {
-      0%, 24.9% { color: #26ff5e; }
-      25%, 49.9% { color: #38bdf8; }
-      50%, 74.9% { color: #b026ff; }
-      75%, 100% { color: #ff007f; }
+      0%, 100% {
+        color: #26ff5e;
+        text-shadow: 0 0 10px rgba(38, 255, 94, 0.4);
+      }
+      50% {
+        color: #10b981;
+        text-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+      }
+      75% {
+        color: #06b6d4;
+        text-shadow: 0 0 10px rgba(6, 182, 212, 0.4);
+      }
     }
 
     .animate-sim-color {
-      animation: simColorCycle 6s linear infinite;
+      animation: simColorCycle 5s ease-in-out infinite;
       display: inline-block;
     }
 
