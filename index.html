@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PianetaSim - Guide e Trucchi The Sims 4</title>
+  <title>Guide & Utilità</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -1199,8 +1199,8 @@
         }
       }
       
-      // Load from external guides.json file
-      fetch('./guides.json')
+      // Load from external guides.json file (with timestamp cache buster)
+      fetch('./guides.json?t=' + Date.now())
         .then(response => response.json())
         .then(data => {
           if (data.categories && data.guides) {
@@ -2830,6 +2830,14 @@
                 >
                   <i data-lucide="download" class="w-3.5 h-3.5"></i>
                   Esporta solo JSON
+                </button>
+                <button
+                  onclick="resetGuidesToDefault()"
+                  class="px-3 py-2 bg-slate-900 hover:bg-slate-850 text-slate-300 hover:text-white rounded-xl border border-slate-800 text-xs font-bold cursor-pointer flex items-center gap-1.5"
+                  title="Svuota la cache locale del browser e ricarica i dati originari dal file guides.json del server (GitHub)"
+                >
+                  <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-fluo-blue"></i>
+                  Sincronizza / Svuota Cache 🔄
                 </button>
                 <button
                   onclick="handleAdminLogout()"
