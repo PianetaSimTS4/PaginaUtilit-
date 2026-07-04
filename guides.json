@@ -1,9 +1,25 @@
 {
   "categories": [
-    { "id": "mod_cc", "label": "Mod e CC", "color": "cyan" },
-    { "id": "costruzione", "label": "Costruzione", "color": "green" },
-    { "id": "gameplay", "label": "Gameplay", "color": "purple" },
-    { "id": "espansioni", "label": "Espansioni", "color": "rose" }
+    {
+      "id": "mod-e-cc",
+      "label": "Mod e CC",
+      "color": "blu"
+    },
+    {
+      "id": "costruzione",
+      "label": "Costruzione",
+      "color": "giallo"
+    },
+    {
+      "id": "gameplay",
+      "label": "Gameplay",
+      "color": "lime"
+    },
+    {
+      "id": "espansioni",
+      "label": "Espansioni",
+      "color": "rose"
+    }
   ],
   "guides": [
     {
@@ -11,7 +27,12 @@
       "title": "Lorem Ipsum Dolor Sit Amet",
       "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin elementum, lorem a scelerisque dictum, arcu nunc.",
       "category": "costruzione",
-      "tags": ["lorem", "ipsum", "dolor", "sit"],
+      "tags": [
+        "lorem",
+        "ipsum",
+        "dolor",
+        "sit"
+      ],
       "content": [
         "Lorem ipsum dolor sit amet, **consectetur adipiscing elit**. Duis sed dapibus leo, nec finibus mi. Phasellus hendrerit vulputate dolor, sed convallis ex congue eget. Aliquam lorem nulla, pretium nec elit non, aliquet tristique lacus.",
         "Aenean lobortis diam at interdum eleifend. Ut gravida rhoncus dolor, ac convallis enim hendrerit a. Proin congue, eros id dictum sodales, est ipsum lacinia ligula, sit amet rhoncus nunc felis non est.",
@@ -29,8 +50,13 @@
       "id": "guide-mods-cc",
       "title": "Consectetur Adipiscing Elit",
       "description": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
-      "category": "mod_cc",
-      "tags": ["consectetur", "adipiscing", "elit", "lorem"],
+      "category": "mod-e-cc",
+      "tags": [
+        "consectetur",
+        "adipiscing",
+        "elit",
+        "lorem"
+      ],
       "content": [
         "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
         "Mauris dictum tincidunt nisl, nec maximus libero consequat quis. Aliquam interdum urna sit amet massa pharetra, non vulputate libero tristique. Curabitur vel leo id erat auctor gravida in eget nulla.",
@@ -49,7 +75,12 @@
       "title": "Nullam Hendrerit Mi Eu Finibus",
       "description": "Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra.",
       "category": "gameplay",
-      "tags": ["nullam", "hendrerit", "finibus", "lorem"],
+      "tags": [
+        "nullam",
+        "hendrerit",
+        "finibus",
+        "lorem"
+      ],
       "content": [
         "Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris. Integer in mauris eu nibh euismod gravida.",
         "Aliquam sollicitudin, arcu a laoreet tempor, risus neque pretium ipsum, sed convallis risus ligula a tellus. Cras iaculis ultricies nulla. Donec quis dui at sem tempor varius. Ut nonummy convallis risus.",
@@ -68,7 +99,12 @@
       "title": "Nemo Enim Ipsam Voluptatem",
       "description": "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.",
       "category": "costruzione",
-      "tags": ["nemo", "enim", "ipsam", "lorem"],
+      "tags": [
+        "nemo",
+        "enim",
+        "ipsam",
+        "lorem"
+      ],
       "content": [
         "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.",
         "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet.",
@@ -87,7 +123,12 @@
       "title": "Quis Autem Vel Eum Iure",
       "description": "Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur.",
       "category": "espansioni",
-      "tags": ["quis", "autem", "eum", "lorem"],
+      "tags": [
+        "quis",
+        "autem",
+        "eum",
+        "lorem"
+      ],
       "content": [
         "Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur. At vero eos et accusamus et iusto odio.",
         "Dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt.",
@@ -101,5 +142,14 @@
         "Omnis dolor repellendus. Temporibus autem quibusdam et aut."
       ]
     }
-  ]
+  ],
+  "siteTitle": "<span class=\"animate-title-color\">Guide & Utilità</span>",
+  "siteDescription": "Benvenuto nella sezione delle guide di PianetaSim! Impara nuove tecniche di costruzione, installa mod tradotte e copia trucchi con un solo click.",
+  "siteLogo": "images/logo.png",
+  "alertPopup": {
+    "enabled": false,
+    "title": "Avviso Importante",
+    "text": "Benvenuto su PianetaSim! Questo è un messaggio di avviso personalizzabile.",
+    "color": "rosso"
+  }
 }

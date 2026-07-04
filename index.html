@@ -13,7 +13,7 @@
         extend: {
           colors: {
             'space-dark': '#0c1218',
-            'space-card': '#141e2a',
+            'space-card': '#141418',
             'slate': {
               50: '#f8fafc',
               100: '#f1f5f9',
@@ -24,7 +24,7 @@
               600: '#475569',
               700: '#334155',
               800: '#1b2636',
-              850: '#141e2a',
+              850: '#141418',
               900: '#0c1218',
               950: '#06090d',
             },
@@ -47,27 +47,47 @@
   <script>
     var logoPaths = [
       'images/logo.png',
-      'logo.png',
-      'public/images/logo.png',
-      'public/logo.png',
-      'logo.PNG',
-      'images/logo.PNG'
+      '/images/logo.png'
     ];
     var logoIndex = 0;
+    var logoRetries = 0;
+    var maxRetries = 4;
 
     function tryNextLogo() {
-      logoIndex++;
       var img = document.getElementById('logo-img');
-      if (img && logoIndex < logoPaths.length) {
-        img.src = logoPaths[logoIndex];
-      } else if (img) {
-        img.classList.add('hidden');
+      if (!img) return;
+      
+      console.warn("Logo failed to load (Path index: " + logoIndex + ", Retry: " + logoRetries + ")");
+      
+      if (logoRetries < maxRetries) {
+        logoRetries++;
+        setTimeout(function() {
+          console.log("Retrying current logo path: " + logoPaths[logoIndex]);
+          img.src = logoPaths[logoIndex] + '?t=' + new Date().getTime();
+        }, 1500);
+      } else {
+        logoIndex++;
+        logoRetries = 0;
+        if (logoIndex < logoPaths.length) {
+          setTimeout(function() {
+            console.log("Trying next logo path: " + logoPaths[logoIndex]);
+            img.src = logoPaths[logoIndex];
+          }, 1000);
+        } else {
+          console.error("All logo paths failed after retries!");
+          // Fallback - show fallback text if it was hidden
+          var fallback = document.getElementById('logo-fallback');
+          if (fallback) {
+            fallback.classList.remove('hidden');
+          }
+        }
       }
     }
 
     function onLogoLoad() {
       var img = document.getElementById('logo-img');
       if (img) {
+        console.log("Logo successfully loaded from: " + img.src);
         img.classList.remove('hidden');
       }
     }
@@ -181,23 +201,38 @@
       animation: float 4s ease-in-out infinite;
     }
 
-    @keyframes titleColorCycle {
-      0%, 100% {
-        color: #26ff5e; /* fluo-green */
-        text-shadow: 0 0 10px rgba(38, 255, 94, 0.4);
+    @keyframes titleGradientCycle {
+      0% {
+        background-position: 0% 50%;
       }
-      33% {
-        color: #b026ff; /* fluo-purple */
-        text-shadow: 0 0 10px rgba(176, 38, 255, 0.4);
+      50% {
+        background-position: 100% 50%;
       }
-      66% {
-        color: #00f0ff; /* fluo-blue/cyan */
-        text-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
+      100% {
+        background-position: 0% 50%;
       }
     }
 
     .animate-title-color {
-      animation: titleColorCycle 10s infinite ease-in-out;
+      background: linear-gradient(90deg, #26ff5e, #10b981, #06b6d4, #a855f7, #ec4899, #ff007f);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: titleGradientCycle 8s ease-in-out infinite;
+      display: inline-block;
+    }
+
+    @keyframes simColorCycle {
+      0%, 24.9% { color: #26ff5e; }
+      25%, 49.9% { color: #38bdf8; }
+      50%, 74.9% { color: #b026ff; }
+      75%, 100% { color: #ff007f; }
+    }
+
+    .animate-sim-color {
+      animation: simColorCycle 6s linear infinite;
+      display: inline-block;
     }
 
     /* Hide scrollbars but keep functionality */
@@ -221,7 +256,7 @@
   <div class="absolute top-80 right-1/4 w-96 h-96 bg-slate-800/10 rounded-full filter blur-[120px] pointer-events-none z-0"></div>
 
   <!-- 1. Header Navigation Bar -->
-  <header class="bg-slate-950/80 backdrop-blur-md border-b border-slate-900 sticky top-0 z-50">
+  <header class="bg-space-card/85 backdrop-blur-md border-b border-slate-900 sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 md:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
       
       <!-- Brand Logo & Fallback -->
@@ -235,7 +270,7 @@
           onerror="tryNextLogo()"
         />
         <div id="logo-fallback" class="flex items-center">
-          <h2 class="font-black text-xl tracking-wider text-white m-0">PIANETA<span class="animate-title-color">SIM</span></h2>
+          <h2 class="font-black text-xl tracking-wider text-white m-0">PIANETA<span class="animate-sim-color">SIM</span></h2>
         </div>
       </div>
 
@@ -244,7 +279,7 @@
         <a
           id="btn-tab-home"
           href="https://pianetasimts.github.io/PianetaSim/index.html"
-          class="px-4 py-2 sm:px-5 sm:py-3 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-300 bg-slate-900/60 border border-slate-800 hover:text-white hover:bg-slate-800 hover:border-slate-700 flex items-center justify-center shadow-sm"
+          class="px-4 py-2 sm:px-5 sm:py-3 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-300 bg-slate-900/60 border border-slate-800 hover:text-white hover:border-fluo-green flex items-center justify-center shadow-sm"
         >
           Home
         </a>
@@ -252,7 +287,7 @@
           href="https://pianetasimts.github.io/PianetaSim/mod.html"
           target="_blank"
           rel="noopener noreferrer"
-          class="px-4 py-2 sm:px-5 sm:py-3 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-300 bg-slate-900/60 border border-slate-800 hover:text-white hover:bg-slate-800 hover:border-slate-700 flex items-center justify-center shadow-sm"
+          class="px-4 py-2 sm:px-5 sm:py-3 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-300 bg-slate-900/60 border border-slate-800 hover:text-white hover:border-fluo-green flex items-center justify-center shadow-sm"
         >
           Mod & Traduzioni
         </a>
@@ -260,7 +295,7 @@
           href="https://pianetasimts.github.io/PianetaSim/mod18.html"
           target="_blank"
           rel="noopener noreferrer"
-          class="px-4 py-2 sm:px-5 sm:py-3 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-300 bg-slate-900/60 border border-slate-800 hover:text-white hover:bg-slate-800 hover:border-slate-700 flex items-center justify-center shadow-sm"
+          class="px-4 py-2 sm:px-5 sm:py-3 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-300 bg-slate-900/60 border border-slate-800 hover:text-white hover:border-fluo-green flex items-center justify-center shadow-sm"
         >
           Mod & Traduzioni 18+
         </a>
@@ -268,7 +303,7 @@
           href="https://pianetasimts.github.io/PianetaSim/animazioniww18.html"
           target="_blank"
           rel="noopener noreferrer"
-          class="px-4 py-2 sm:px-5 sm:py-3 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-300 bg-slate-900/60 border border-slate-800 hover:text-white hover:bg-slate-800 hover:border-slate-700 flex items-center justify-center shadow-sm"
+          class="px-4 py-2 sm:px-5 sm:py-3 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-300 bg-slate-900/60 border border-slate-800 hover:text-white hover:border-fluo-green flex items-center justify-center shadow-sm"
         >
           Animazioni
         </a>
@@ -276,7 +311,7 @@
           href="https://pianetasimts.github.io/PianetaSim/storie.html"
           target="_blank"
           rel="noopener noreferrer"
-          class="px-4 py-2 sm:px-5 sm:py-3 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-300 bg-slate-900/60 border border-slate-800 hover:text-white hover:bg-slate-800 hover:border-slate-700 flex items-center justify-center shadow-sm"
+          class="px-4 py-2 sm:px-5 sm:py-3 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-300 bg-slate-900/60 border border-slate-800 hover:text-white hover:border-fluo-green flex items-center justify-center shadow-sm"
         >
           Racconti
         </a>
@@ -309,10 +344,10 @@
   <main class="flex-grow max-w-7xl w-full mx-auto px-4 md:px-8 py-8 relative z-10">
 
     <!-- 2. Hero Section / Banner -->
-    <section class="relative border-b border-slate-900/60 py-12 px-4 md:px-8 bg-slate-950/20 rounded-3xl mb-8 flex flex-col items-center text-center">
+    <section class="relative py-12 px-4 md:px-8 mb-4 flex flex-col items-center text-center">
       <div class="max-w-3xl space-y-4 flex flex-col items-center">
         <h2 id="site-hero-title" class="text-3xl md:text-5xl font-black text-white tracking-tight leading-tight">
-          <span class="animate-title-color drop-shadow-[0_0_15px_rgba(38,255,94,0.35)]">Tutto quello che devi sapere su The Sims 4</span>
+          <span class="animate-title-color">Guide & Utilità</span>
         </h2>
         <p id="site-hero-desc" class="text-slate-300 text-sm max-w-xl leading-relaxed text-center">
           Benvenuto nella sezione delle guide di PianetaSim! Impara nuove tecniche di costruzione, installa mod tradotte e copia trucchi con un solo click.
@@ -351,7 +386,7 @@
   </main>
 
   <!-- 4. Customized Footer section (Backup / Panel link completely removed as requested) -->
-  <footer class="bg-slate-950 border-t border-slate-900 text-slate-400 py-10 px-4 md:px-8 mt-12 text-xs relative z-10">
+  <footer class="bg-transparent border-t border-slate-900/40 text-slate-400 py-10 px-4 md:px-8 mt-12 text-xs relative z-10">
     <div class="max-w-xl mx-auto text-center space-y-6">
       <p class="text-sm md:text-base font-semibold text-slate-200 leading-relaxed">
         Unisciti ai nostri social ed entra a far parte della community Pianeta Sim!
@@ -723,7 +758,7 @@
     window.editingCategoryId = null;
 
     // Configurable site layout & alert properties
-    let siteTitle = '<span class="animate-title-color drop-shadow-[0_0_15px_rgba(38,255,94,0.35)]">Tutto quello che devi sapere su The Sims 4</span>';
+    let siteTitle = '<span class="animate-title-color">Guide & Utilità</span>';
     let siteDescription = 'Benvenuto nella sezione delle guide di PianetaSim! Impara nuove tecniche di costruzione, installa mod tradotte e copia trucchi con un solo click.';
     let siteLogo = 'images/logo.png';
     let alertPopup = {
@@ -1120,21 +1155,42 @@
 
     // Load dynamic guides and categories from external JSON file or browser local storage
     document.addEventListener('DOMContentLoaded', () => {
+      // Self-healing: clear or fix any legacy localstorage data that contains the pin
+      const cachedData = localStorage.getItem('pianetasim-custom-data');
+      if (cachedData) {
+        try {
+          const parsed = JSON.parse(cachedData);
+          if (parsed.siteTitle && (parsed.siteTitle.includes('svg') || parsed.siteTitle.includes('pin-glow') || parsed.siteTitle.includes('Tutto quello che'))) {
+            parsed.siteTitle = '<span class="animate-title-color">Guide & Utilità</span>';
+            localStorage.setItem('pianetasim-custom-data', JSON.stringify(parsed));
+          }
+        } catch(e) {}
+      }
+
       updateLogoSrc();
       updateBookmarksCountBanner();
       
       // Load local changes if they exist (crucial for GitHub / Static Hosting)
-      const cachedData = localStorage.getItem('pianetasim-custom-data');
       if (cachedData) {
         try {
           const parsed = JSON.parse(cachedData);
           if (parsed.categories && parsed.guides) {
             categories = parsed.categories;
             guides = parsed.guides;
-            if (parsed.siteTitle) siteTitle = parsed.siteTitle;
+            if (parsed.siteTitle) {
+              siteTitle = parsed.siteTitle;
+              if (siteTitle.includes('Guide & Utilità') || siteTitle.includes('Tutto quello che devi sapere su The Sims 4') || siteTitle.includes('pin-glow') || siteTitle.includes('svg')) {
+                siteTitle = '<span class="animate-title-color">Guide & Utilità</span>';
+              }
+            }
             if (parsed.siteDescription) siteDescription = parsed.siteDescription;
             if (parsed.alertPopup) alertPopup = parsed.alertPopup;
-            if (parsed.siteLogo) siteLogo = parsed.siteLogo;
+            if (parsed.siteLogo) {
+              siteLogo = parsed.siteLogo;
+              if (siteLogo === '/images/logo.png') {
+                siteLogo = 'images/logo.png';
+              }
+            }
             updateLogoSrc();
             renderApp();
             checkAndShowAlertPopup();
@@ -2073,7 +2129,7 @@
         if (activeTab === 'guides') {
           btnGuides.className = "px-4 py-2 sm:px-5 sm:py-3 rounded-full text-xs sm:text-sm font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap bg-fluo-purple text-white shadow-[0_0_15px_rgba(176,38,255,0.55)] border border-fluo-purple/40 flex items-center justify-center";
         } else {
-          btnGuides.className = "px-4 py-2 sm:px-5 sm:py-3 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-300 bg-slate-900/60 border border-slate-800 hover:text-white hover:bg-slate-800 hover:border-slate-700 flex items-center justify-center shadow-sm";
+          btnGuides.className = "px-4 py-2 sm:px-5 sm:py-3 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-300 bg-slate-900/60 border border-slate-800 hover:text-white hover:border-fluo-green flex items-center justify-center shadow-sm";
         }
       }
 
@@ -3482,38 +3538,68 @@
           [availableBlueprints[i], availableBlueprints[j]] = [availableBlueprints[j], availableBlueprints[i]];
         }
 
-        // Grid-based placement helper to avoid overlapping (3 rows for maximum density and coverage)
-        const cols = width < 768 ? 2 : 4;
-        const rows = 3;
-        const cellWidth = width / cols;
-        const cellHeight = height / rows;
-        
-        let count = 0;
-        for (let r = 0; r < rows; r++) {
-          for (let c = 0; c < cols; c++) {
-            if (count >= numConstellations) break;
-            const bp = availableBlueprints[count % availableBlueprints.length];
-            
-            // Random offset within the cell boundaries
-            const centerX = cellWidth * c + cellWidth / 2 + (Math.random() - 0.5) * (cellWidth * 0.22);
-            const centerY = cellHeight * r + cellHeight / 2 + (Math.random() - 0.5) * (cellHeight * 0.22);
-            
-            // Scaled dynamically according to screen resolution
-            const scale = Math.min(cellWidth, cellHeight) * (0.15 + Math.random() * 0.05);
+        // Highly random placement across the entire canvas with dynamic depth of field scale
+        let attempts = 0;
+        while (constellations.length < numConstellations && attempts < 300) {
+          attempts++;
+          const bp = availableBlueprints[constellations.length % availableBlueprints.length];
+          
+          // Random coordinates anywhere on the screen (peeking off-screen is fine for realistic astronomical charts!)
+          const x = Math.random() * width;
+          const y = Math.random() * height;
+          
+          // Dynamic scale: larger size variations for extra depth and high visibility
+          const baseScale = Math.min(width, height) * 0.13;
+          const scaleMult = 0.75 + Math.random() * 1.05; // Varying from 0.75x to 1.80x (making them generally larger and more prominent!)
+          const scale = baseScale * scaleMult;
+          
+          // Check for overlapping centers
+          let overlap = false;
+          for (let other of constellations) {
+            const dx = x - other.x;
+            const dy = y - other.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            const minDist = (scale + other.scale) * 1.05; // margin to prevent overlap
+            if (dist < minDist) {
+              overlap = true;
+              break;
+            }
+          }
+          
+          if (!overlap) {
             const angle = Math.random() * Math.PI * 2;
-            
             constellations.push({
               name: bp.name,
-              x: centerX,
-              y: centerY,
+              x: x,
+              y: y,
               scale: scale,
               angle: angle,
               blueprint: bp,
-              opacity: 0.18 + Math.random() * 0.1,
-              pulseSpeed: 0.001 + Math.random() * 0.002
+              opacity: 0.08 + Math.random() * 0.22, // Size-dependent / random opacity
+              pulseSpeed: 0.0008 + Math.random() * 0.0024
             });
-            count++;
           }
+        }
+        
+        // If we still need more constellations but are running out of space, place remaining randomly
+        while (constellations.length < numConstellations) {
+          const bp = availableBlueprints[constellations.length % availableBlueprints.length];
+          const x = Math.random() * width;
+          const y = Math.random() * height;
+          const baseScale = Math.min(width, height) * 0.13;
+          const scaleMult = 0.75 + Math.random() * 1.05;
+          const scale = baseScale * scaleMult;
+          const angle = Math.random() * Math.PI * 2;
+          constellations.push({
+            name: bp.name,
+            x: x,
+            y: y,
+            scale: scale,
+            angle: angle,
+            blueprint: bp,
+            opacity: 0.08 + Math.random() * 0.22,
+            pulseSpeed: 0.0008 + Math.random() * 0.0024
+          });
         }
       }
 
