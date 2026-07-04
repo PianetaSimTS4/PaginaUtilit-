@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "python3 server.py",
     "build": "node build.js",
+    "start": "python3 server.py",
     "preview": "python3 server.py",
     "clean": "rm -rf dist",
     "lint": "echo 'Codebase is HTML, CSS, JS, and Python only. No lint step required.'"
