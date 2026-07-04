@@ -1,19 +1,19 @@
 {
   "categories": [
     {
-      "id": "mod_cc",
+      "id": "mod-e-cc",
       "label": "Mod e CC",
-      "color": "cyan"
+      "color": "blu"
     },
     {
       "id": "costruzione",
       "label": "Costruzione",
-      "color": "green"
+      "color": "giallo"
     },
     {
       "id": "gameplay",
       "label": "Gameplay",
-      "color": "purple"
+      "color": "lime"
     },
     {
       "id": "espansioni",
@@ -50,7 +50,7 @@
       "id": "guide-mods-cc",
       "title": "Consectetur Adipiscing Elit",
       "description": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
-      "category": "mod_cc",
+      "category": "mod-e-cc",
       "tags": [
         "consectetur",
         "adipiscing",
@@ -149,7 +149,7 @@
   "alertPopup": {
     "enabled": false,
     "title": "Avviso Importante",
-    "color": "rosso",
-    "text": "Benvenuto su PianetaSim! Questo è un messaggio di avviso personalizzabile."
+    "text": "Benvenuto su PianetaSim! Questo è un messaggio di avviso personalizzabile.",
+    "color": "rosso"
   }
 }
