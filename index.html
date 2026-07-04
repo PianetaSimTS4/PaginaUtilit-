@@ -12,8 +12,8 @@
       theme: {
         extend: {
           colors: {
-            'space-dark': '#14161d',
-            'space-card': '#1d212c',
+            'space-dark': '#0c1218',
+            'space-card': '#141e2a',
             'slate': {
               50: '#f8fafc',
               100: '#f1f5f9',
@@ -23,10 +23,10 @@
               500: '#64748b',
               600: '#475569',
               700: '#334155',
-              800: '#252e3d',
-              850: '#1d212c',
-              900: '#14161d',
-              950: '#0f1015',
+              800: '#1b2636',
+              850: '#141e2a',
+              900: '#0c1218',
+              950: '#06090d',
             },
             'fluo-green': '#26ff5e',
             'fluo-purple': '#b026ff',
@@ -105,7 +105,8 @@
 
     body {
       font-family: 'Inter', sans-serif;
-      background-color: #14161d;
+      background: radial-gradient(circle at 75% 45%, #0d2121 0%, #0a111a 60%, #04070a 100%);
+      background-attachment: fixed;
       color: #e2e8f0;
       overflow-x: hidden;
       position: relative;
@@ -311,7 +312,7 @@
     <section class="relative border-b border-slate-900/60 py-12 px-4 md:px-8 bg-slate-950/20 rounded-3xl mb-8 flex flex-col items-center text-center">
       <div class="max-w-3xl space-y-4 flex flex-col items-center">
         <h2 id="site-hero-title" class="text-3xl md:text-5xl font-black text-white tracking-tight leading-tight">
-          Tutto quello che devi sapere su <span class="animate-title-color drop-shadow-[0_0_10px_rgba(38,255,94,0.3)] whitespace-nowrap">The Sims 4</span>
+          <span class="animate-title-color drop-shadow-[0_0_15px_rgba(38,255,94,0.35)]">Tutto quello che devi sapere su The Sims 4</span>
         </h2>
         <p id="site-hero-desc" class="text-slate-300 text-sm max-w-xl leading-relaxed text-center">
           Benvenuto nella sezione delle guide di PianetaSim! Impara nuove tecniche di costruzione, installa mod tradotte e copia trucchi con un solo click.
@@ -722,7 +723,7 @@
     window.editingCategoryId = null;
 
     // Configurable site layout & alert properties
-    let siteTitle = 'Tutto quello che devi sapere su <span class="text-fluo-green drop-shadow-[0_0_10px_rgba(38,255,94,0.3)] whitespace-nowrap">The Sims 4</span>';
+    let siteTitle = '<span class="animate-title-color drop-shadow-[0_0_15px_rgba(38,255,94,0.35)]">Tutto quello che devi sapere su The Sims 4</span>';
     let siteDescription = 'Benvenuto nella sezione delle guide di PianetaSim! Impara nuove tecniche di costruzione, installa mod tradotte e copia trucchi con un solo click.';
     let siteLogo = 'images/logo.png';
     let alertPopup = {
@@ -3599,8 +3600,8 @@
           });
 
           // Draw the connection edges
-          ctx.strokeStyle = `rgba(168, 85, 247, ${currentOpacity * 0.7})`; // more visible violet
-          ctx.lineWidth = 1.0;
+          ctx.strokeStyle = `rgba(168, 85, 247, ${currentOpacity * 0.45})`; // subtle elegant violet lines
+          ctx.lineWidth = 0.7;
           c.blueprint.connections.forEach(conn => {
             const s1 = projectedStars[conn[0]];
             const s2 = projectedStars[conn[1]];
@@ -3610,40 +3611,57 @@
             ctx.stroke();
           });
 
-          // Draw stars with slow-pulsing neon center points (alternating green & purple)
+          // Draw stars with slow-pulsing neon center points (alternating green & purple) and starburst lens flares
           projectedStars.forEach((star, idx) => {
             const isGreen = idx % 2 === 0;
-            const pulse = Math.sin(time * 0.35 + idx) * 0.22 + 0.78; // slow pulsing between 0.56 and 1.0
+            const pulse = Math.sin(time * 0.45 + idx) * 0.22 + 0.78; // pulsing between 0.56 and 1.0
             
             // Neon color codes
             const glowColor = isGreen ? 'rgba(38, 255, 94, ' : 'rgba(176, 38, 255, ';
             
             // 1. Outer Neon Aura (Glow)
-            const grad = ctx.createRadialGradient(star.x, star.y, 0, star.x, star.y, 10);
-            grad.addColorStop(0, `${glowColor}${currentOpacity * 0.75 * pulse})`);
+            const glowRadius = 14 * pulse;
+            const grad = ctx.createRadialGradient(star.x, star.y, 0, star.x, star.y, glowRadius);
+            grad.addColorStop(0, `${glowColor}${currentOpacity * 0.8 * pulse})`);
             grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
             
             ctx.beginPath();
-            ctx.arc(star.x, star.y, 10, 0, Math.PI * 2);
+            ctx.arc(star.x, star.y, glowRadius, 0, Math.PI * 2);
             ctx.fillStyle = grad;
             ctx.fill();
 
-            // 2. Extra outer halo ring for high-contrast visibility
-            ctx.strokeStyle = `${glowColor}${currentOpacity * 0.38})`;
-            ctx.lineWidth = 0.6;
+            // 2. Elegant Astronomical Starburst Cross Flare
+            ctx.strokeStyle = `${glowColor}${currentOpacity * 0.85 * pulse})`;
+            ctx.lineWidth = 0.8;
+            
+            // Horizontal flare spike
             ctx.beginPath();
-            ctx.arc(star.x, star.y, 4.5, 0, Math.PI * 2);
+            ctx.moveTo(star.x - 11 * pulse, star.y);
+            ctx.lineTo(star.x + 11 * pulse, star.y);
             ctx.stroke();
 
-            // 3. Middle White Core (for that star-like intense light center)
+            // Vertical flare spike
             ctx.beginPath();
-            ctx.arc(star.x, star.y, 2.2, 0, Math.PI * 2);
+            ctx.moveTo(star.x, star.y - 11 * pulse);
+            ctx.lineTo(star.x, star.y + 11 * pulse);
+            ctx.stroke();
+
+            // 3. Extra outer halo ring for high-contrast visibility
+            ctx.strokeStyle = `${glowColor}${currentOpacity * 0.4})`;
+            ctx.lineWidth = 0.5;
+            ctx.beginPath();
+            ctx.arc(star.x, star.y, 4.5 * pulse, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // 4. Middle White Core (for intense light center)
+            ctx.beginPath();
+            ctx.arc(star.x, star.y, 2.0, 0, Math.PI * 2);
             ctx.fillStyle = `rgba(255, 255, 255, ${currentOpacity * 1.8 * pulse})`;
             ctx.fill();
             
-            // 4. Vibrant Inner Neon Core
+            // 5. Vibrant Inner Neon Core
             ctx.beginPath();
-            ctx.arc(star.x, star.y, 1.1, 0, Math.PI * 2);
+            ctx.arc(star.x, star.y, 1.0, 0, Math.PI * 2);
             ctx.fillStyle = `${glowColor}${currentOpacity * 2.0})`;
             ctx.fill();
           });
