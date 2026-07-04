@@ -77,6 +77,10 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
   <style>
+    html {
+      font-size: 112.5%;
+    }
+
     body {
       font-family: 'Inter', sans-serif;
       background-color: #070913;
@@ -176,70 +180,77 @@
     <div class="max-w-7xl mx-auto px-4 md:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
       
       <!-- Brand Logo & Fallback -->
-      <div class="flex items-center gap-3 cursor-pointer select-none">
+      <div class="flex items-center gap-3 cursor-pointer select-none" onclick="switchTab('guides')">
+        <!-- Floating 3D Plumbob SVG always visible -->
+        <svg class="w-7 h-7 float-animation shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 0 8px #26ff5e);">
+          <path d="M12 2L6 12L12 15V2Z" fill="#52ff85" />
+          <path d="M12 2L18 12L12 15V2Z" fill="#26ff5e" />
+          <path d="M12 22L6 12L12 15V22Z" fill="#1bcf4a" />
+          <path d="M12 22L18 12L12 15V22Z" fill="#10ad39" />
+        </svg>
+
         <img 
           id="logo-img" 
           src="images/logo.png" 
           alt="PianetaSim Logo" 
-          class="h-11 w-auto object-contain shrink-0 float-animation hidden"
+          class="h-11 w-auto object-contain shrink-0 hidden"
           onload="onLogoLoad()"
           onerror="tryNextLogo()"
         />
-        <div id="logo-fallback" class="flex items-center gap-2">
-          <span class="w-3.5 h-3.5 rounded-full bg-fluo-green shadow-[0_0_10px_#26ff5e] animate-pulse"></span>
+        <div id="logo-fallback" class="flex items-center">
           <h2 class="font-black text-xl tracking-wider text-white m-0">PIANETA<span class="text-fluo-green">SIM</span></h2>
         </div>
       </div>
 
       <!-- Navigation tabs inside Header (Admin Link completely hidden by default to keep it a secret) -->
-      <nav class="flex items-center gap-1.5 overflow-x-auto max-w-full pb-1 sm:pb-0 scrollbar-none">
+      <nav class="flex items-center gap-2 overflow-x-auto max-w-full pb-1 sm:pb-0 scrollbar-none">
         <a
           id="btn-tab-home"
           href="https://pianetasimts.github.io/PianetaSim/index.html"
-          class="px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900 flex items-center"
+          class="px-4.5 py-2.5 rounded-xl text-xs md:text-sm font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900 flex items-center"
         >
-          <h4 class="inline font-bold text-xs">Home</h4>
+          Home
         </a>
         <a
           href="https://pianetasimts.github.io/PianetaSim/mod.html"
           target="_blank"
           rel="noopener noreferrer"
-          class="px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900 flex items-center"
+          class="px-4.5 py-2.5 rounded-xl text-xs md:text-sm font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900 flex items-center"
         >
-          <span class="font-bold text-xs text-slate-400 hover:text-white">Mod & Traduzioni</span>
+          Mod & Traduzioni
         </a>
         <a
           href="https://pianetasimts.github.io/PianetaSim/mod18.html"
           target="_blank"
           rel="noopener noreferrer"
-          class="px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900 flex items-center"
+          class="px-4.5 py-2.5 rounded-xl text-xs md:text-sm font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900 flex items-center"
         >
-          <span class="font-bold text-xs text-slate-400 hover:text-white">Mod & Traduzioni 18+</span>
+          Mod & Traduzioni 18+
         </a>
         <a
           href="https://pianetasimts.github.io/PianetaSim/animazioniww18.html"
           target="_blank"
           rel="noopener noreferrer"
-          class="px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900 flex items-center"
+          class="px-4.5 py-2.5 rounded-xl text-xs md:text-sm font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900 flex items-center"
         >
-          <span class="font-bold text-xs text-slate-400 hover:text-white">Animazioni</span>
+          Animazioni
         </a>
         <a
           href="https://pianetasimts.github.io/PianetaSim/storie.html"
           target="_blank"
           rel="noopener noreferrer"
-          class="px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900 flex items-center"
+          class="px-4.5 py-2.5 rounded-xl text-xs md:text-sm font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900 flex items-center"
         >
-          <span class="font-bold text-xs text-slate-400 hover:text-white">Racconti</span>
+          Racconti
         </a>
         <div
           id="btn-tab-guides"
           role="button"
           tabindex="0"
           onclick="switchTab('guides')"
-          class="px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap bg-fluo-purple text-white shadow-[0_0_15px_rgba(176,38,255,0.55)] border border-fluo-purple/30"
+          class="px-4.5 py-2.5 rounded-xl text-xs md:text-sm font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap bg-fluo-purple text-white shadow-[0_0_15px_rgba(176,38,255,0.55)] border border-fluo-purple/30"
         >
-          <h4 class="inline font-bold text-xs text-white">Guide & Utilità</h4>
+          Guide & Utilità
         </div>
         
         <div
@@ -247,9 +258,9 @@
           role="button"
           tabindex="0"
           onclick="switchTab('admin')"
-          class="hidden px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900"
+          class="hidden px-4.5 py-2.5 rounded-xl text-xs md:text-sm font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-900"
         >
-          <h4 class="inline font-bold text-xs">Pannello Admin</h4>
+          Pannello Admin
         </div>
         
       </nav>
@@ -1086,6 +1097,7 @@
       }
 
       showInlineAlert();
+      showAlertModal(false);
     }
 
     function showInlineAlert(forcePreview = false) {
@@ -1160,11 +1172,93 @@
     }
 
     function closeAlertModal() {
+      const modal = document.getElementById('alert-modal');
+      const box = document.getElementById('alert-modal-box');
+      if (modal && box) {
+        box.classList.remove('scale-100', 'opacity-100');
+        box.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => {
+          modal.classList.remove('flex');
+          modal.classList.add('hidden');
+        }, 300);
+      }
       dismissInlineAlert();
     }
 
     function showAlertModal(forcePreview = false) {
-      showInlineAlert(forcePreview);
+      if (!alertPopup) return;
+      
+      const modal = document.getElementById('alert-modal');
+      const box = document.getElementById('alert-modal-box');
+      const iconContainer = document.getElementById('alert-modal-icon-container');
+      const iconEl = document.getElementById('alert-modal-icon');
+      const titleEl = document.getElementById('alert-modal-title');
+      const textEl = document.getElementById('alert-modal-text');
+      const okBtn = document.getElementById('alert-modal-ok-btn');
+
+      if (!modal || !box) return;
+
+      if (forcePreview) {
+        sessionStorage.removeItem('pianetasim-alert-closed');
+      }
+
+      // Set content
+      titleEl.textContent = alertPopup.title || 'Avviso';
+      textEl.innerHTML = formatParagraphText(alertPopup.text || '');
+
+      // Apply color styles
+      const col = alertPopup.color || 'rosso';
+      
+      // Reset classes
+      box.className = "bg-space-card border rounded-3xl w-full max-w-lg p-6 md:p-8 relative z-10 transition-all transform scale-95 opacity-0 duration-300";
+      iconContainer.className = "p-3 rounded-2xl float-animation shrink-0";
+
+      let borderClass = "border-red-500/30";
+      let textClass = "text-red-500";
+      let bgClass = "bg-red-500/10";
+      let shadowClass = "neon-shadow-red";
+      let btnClass = "bg-red-500 text-white hover:bg-red-600";
+
+      if (col === 'verde') {
+        borderClass = "border-emerald-500/30";
+        textClass = "text-fluo-green";
+        bgClass = "bg-fluo-green/10";
+        shadowClass = "neon-shadow-green";
+        btnClass = "bg-fluo-green text-black hover:bg-opacity-95 shadow-[0_0_15px_rgba(38,255,94,0.3)]";
+      } else if (col === 'azzurro') {
+        borderClass = "border-cyan-500/30";
+        textClass = "text-fluo-blue";
+        bgClass = "bg-fluo-blue/10";
+        shadowClass = "neon-shadow-blue";
+        btnClass = "bg-fluo-blue text-black hover:bg-opacity-95 shadow-[0_0_15px_rgba(0,240,255,0.3)]";
+      } else if (col === 'viola') {
+        borderClass = "border-purple-500/30";
+        textClass = "text-fluo-purple";
+        bgClass = "bg-fluo-purple/10";
+        shadowClass = "neon-shadow-purple";
+        btnClass = "bg-fluo-purple text-white hover:bg-opacity-95 shadow-[0_0_15px_rgba(176,38,255,0.3)]";
+      } else if (col === 'giallo') {
+        borderClass = "border-amber-500/30";
+        textClass = "text-amber-400";
+        bgClass = "bg-amber-500/10";
+        shadowClass = "neon-shadow-yellow";
+        btnClass = "bg-amber-500 text-black hover:bg-amber-600 shadow-[0_0_15px_rgba(245,158,11,0.3)]";
+      }
+
+      box.classList.add(borderClass, shadowClass);
+      iconContainer.classList.add(bgClass, textClass);
+      okBtn.className = `px-5 py-2.5 rounded-xl text-xs font-extrabold cursor-pointer transition-all duration-200 ${btnClass}`;
+      if (iconEl) iconEl.className = `w-7 h-7 ${textClass}`;
+
+      // Open Modal
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      setTimeout(() => {
+        box.classList.remove('scale-95', 'opacity-0');
+        box.classList.add('scale-100', 'opacity-100');
+      }, 10);
+
+      lucide.createIcons();
     }
 
     // Admin authentication & editing state
@@ -1592,14 +1686,14 @@
 
       persistDataLocally();
       saveAllGuidesToServer();
-      showToast('Configurazione del sito applicata e salvata con successo!', 'success');
+      showToast('Configurazione salvata nel file guides.json locale!', 'success');
       renderApp();
     }
 
     // Permanent JSON Saving to Python Backend
     function saveAllGuidesToServer() {
       persistDataLocally();
-      showToast('Salvataggio permanente in corso...', 'info');
+      showToast('Salvataggio del file guides.json in corso...', 'info');
       const payload = {
         categories: categories,
         guides: guides,
@@ -1620,11 +1714,11 @@
         throw new Error('Salvataggio fallito');
       })
       .then(data => {
-        showToast('File guides.json salvato correttamente sul server!', 'success');
+        showToast('File guides.json aggiornato con successo sul server!', 'success');
       })
       .catch(err => {
         console.warn("Utilizzo del backup locale: impossibile raggiungere il server di salvataggio permanente.", err);
-        showToast('Modifiche salvate in locale nel browser (compatibile con GitHub)!', 'success');
+        showToast('File guides.json aggiornato localmente nel browser (scarica lo ZIP per GitHub)!', 'success');
       });
     }
 
