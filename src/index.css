@@ -60,7 +60,6 @@ h1, h2, h3, h4, h5, h6 {
     radial-gradient(circle at 30% 95%, #00f0ff 1.2px, transparent 1.2px),
     radial-gradient(circle at 70% 55%, #26ff5e 1.2px, transparent 1.2px);
   background-size: 400px 400px;
-  animation: space-drift 100s linear infinite;
   opacity: 0.85;
   position: absolute;
   top: 0;
@@ -69,6 +68,12 @@ h1, h2, h3, h4, h5, h6 {
   bottom: 0;
   pointer-events: none;
   z-index: 0;
+}
+
+@media (min-width: 1024px) {
+  .space-bg {
+    animation: space-drift 100s linear infinite;
+  }
 }
 
 /* Plumbob & Neon glow effects */
