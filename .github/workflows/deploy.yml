@@ -42,7 +42,7 @@ jobs:
       - name: Carica l'artefatto di build (dist)
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './dist'
+          path: '.'
 
       - name: Deploy su GitHub Pages
         id: deployment
