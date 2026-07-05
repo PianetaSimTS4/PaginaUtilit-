@@ -731,10 +731,10 @@
       });
 
       // 2. Parse Bold: **text**
-      html = html.replace(/\*\*(.*?)\*\*/g, '<strong class="font-extrabold text-white text-shadow-sm">$1</strong>');
+      html = html.replace(/\*\*(.*?)\*\*/g, '<strong class="font-extrabold text-shadow-sm">$1</strong>');
 
       // 3. Parse Italic: *text*
-      html = html.replace(/\*(.*?)\*/g, '<em class="italic text-slate-100">$1</em>');
+      html = html.replace(/\*(.*?)\*/g, '<em class="italic">$1</em>');
 
       // 4. Parse Links: [label](url)
       html = html.replace(/\[(.*?)\]\((https?:\/\/.*?)\)/g, (match, label, url) => {
@@ -747,6 +747,136 @@
       return html;
     }
 
+    function renderGuideContentBlock(block, idx) {
+      // Normalize legacy text string to paragraph block
+      const b = typeof block === 'string' ? { type: 'paragraph', value: block } : block;
+      const type = b.type || 'paragraph';
+      const value = b.value || '';
+
+      const getHeadingStyles = (blockObj) => {
+        let style = '';
+        let classes = '';
+        if (blockObj.color) {
+          style += `color: ${blockObj.color};`;
+        }
+        if (blockObj.bold === false) {
+          classes += ' font-normal';
+        } else if (blockObj.bold === true) {
+          classes += ' font-bold';
+        } else {
+          // Default bold weight based on type if not explicitly set
+          if (blockObj.type === 'heading1') classes += ' font-bold';
+          else classes += ' font-semibold';
+        }
+        if (blockObj.italic === true) {
+          classes += ' italic';
+        }
+        return { style, classes };
+      };
+
+      switch (type) {
+        case 'paragraph':
+          return `
+            <div class="my-4 text-slate-200 text-sm md:text-base leading-relaxed font-sans">
+              ${formatParagraphText(value)}
+            </div>
+          `;
+        case 'quote':
+          return `
+            <div class="py-2.5 my-5 italic text-slate-300 bg-slate-900/20 px-6 rounded-2xl font-sans relative">
+              <span class="text-fluo-purple text-4xl font-serif absolute top-1 left-2 opacity-60">“</span>
+              <div class="pl-6 text-sm md:text-base leading-relaxed">${formatParagraphText(value)}</div>
+            </div>
+          `;
+        case 'tip':
+          return `
+            <div class="p-5 md:p-6 bg-purple-500/5 border border-fluo-purple/20 rounded-2xl space-y-3 my-6">
+              <h4 class="text-sm md:text-base font-bold text-fluo-purple flex items-center gap-1.5 font-sans">
+                <i data-lucide="lightbulb" class="w-5 h-5 text-fluo-purple"></i>
+                Consiglio di PianetaSim
+              </h4>
+              <div class="flex items-start gap-2.5 text-xs md:text-sm text-slate-300 leading-relaxed font-sans">
+                <i data-lucide="corner-down-right" class="w-4 h-4 text-fluo-green shrink-0 mt-0.5"></i>
+                <div class="text-xs md:text-sm text-slate-300 leading-relaxed font-normal">
+                  ${formatParagraphText(value)}
+                </div>
+              </div>
+            </div>
+          `;
+        case 'list':
+          const items = value.split('\n').map(item => item.trim()).filter(item => item.length > 0);
+          const isOrdered = b.listType === 'number';
+          const listTag = isOrdered ? 'ol' : 'ul';
+          const listClass = isOrdered ? 'list-decimal pl-6 space-y-2 text-slate-200 my-4' : 'list-disc pl-6 space-y-2 text-slate-200 my-4';
+          return `
+            <div class="my-4 font-sans">
+              <${listTag} class="${listClass}">
+                ${items.map(item => `<li class="pl-1">${formatParagraphText(item)}</li>`).join('')}
+              </${listTag}>
+            </div>
+          `;
+        case 'heading1': {
+          const hStyles = getHeadingStyles(b);
+          const colorClass = b.color ? '' : 'text-slate-100';
+          return `
+            <h2 class="text-xl md:text-2xl mt-8 mb-4 tracking-tight border-b border-slate-800/80 pb-2 font-sans ${colorClass} ${hStyles.classes}" style="${hStyles.style}">
+              ${formatParagraphText(value)}
+            </h2>
+          `;
+        }
+        case 'heading2': {
+          const hStyles = getHeadingStyles(b);
+          const colorClass = b.color ? '' : 'text-slate-200';
+          return `
+            <h3 class="text-base md:text-lg mt-6 mb-3 tracking-tight font-sans ${colorClass} ${hStyles.classes}" style="${hStyles.style}">
+              ${formatParagraphText(value)}
+            </h3>
+          `;
+        }
+        case 'heading3': {
+          const hStyles = getHeadingStyles(b);
+          const colorClass = b.color ? '' : 'text-slate-300';
+          return `
+            <h4 class="text-xs md:text-sm uppercase tracking-wider mt-5 mb-2 font-sans ${colorClass} ${hStyles.classes}" style="${hStyles.style}">
+              ${formatParagraphText(value)}
+            </h4>
+          `;
+        }
+        case 'divider': {
+          const isColorType = b.dividerType === 'color';
+          const divColor = b.dividerColor || '#10b981'; // default emerald green
+          if (isColorType) {
+            return `
+              <div class="flex justify-center my-8">
+                <div class="w-24 h-1 rounded-full" style="background-color: ${divColor}; box-shadow: 0 0 10px ${divColor}40;"></div>
+              </div>
+            `;
+          } else {
+            return `
+              <div class="border-b border-slate-800/60 my-8"></div>
+            `;
+          }
+        }
+        case 'button':
+          const btnUrl = b.buttonUrl || '#';
+          return `
+            <div class="my-6">
+              <a
+                href="${btnUrl}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-2 px-5 py-2.5 bg-fluo-purple hover:bg-opacity-90 text-white font-black text-xs rounded-xl shadow-[0_0_15px_rgba(176,38,255,0.4)] transition-all cursor-pointer"
+              >
+                <span>${formatParagraphText(value || 'Clicca Qui')}</span>
+                <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+              </a>
+            </div>
+          `;
+        default:
+          return `<p class="text-slate-200 my-4">${formatParagraphText(value)}</p>`;
+      }
+    }
+
     // State Managers
     let activeTab = 'guides'; // 'guides' or 'admin'
     let selectedCategory = 'all';
@@ -756,6 +886,7 @@
     window.editingCategoryId = null;
 
     // Configurable site layout & alert properties
+    let adminPassword = 'sticazzi';
     let siteTitle = '<span class="animate-title-color">Guide & Utilità</span>';
     let siteDescription = 'Benvenuto nella sezione delle guide di PianetaSim! Impara nuove tecniche di costruzione, installa mod tradotte e copia trucchi con un solo click.';
     let siteLogo = 'images/logo.png';
@@ -1114,9 +1245,12 @@
       if (id === 'admin-edit-desc') {
         updateEditingField('description', textarea.value);
       } else {
-        const idx = parseInt(id.replace('admin-paragraph-', ''));
+        let idx = parseInt(id.replace('admin-paragraph-', ''));
+        if (isNaN(idx)) {
+          idx = parseInt(id.replace('admin-block-', ''));
+        }
         if (!isNaN(idx)) {
-          updateEditingParagraph(idx, textarea.value);
+          updateEditingBlockValue(idx, textarea.value);
         }
       }
     }
@@ -1151,6 +1285,22 @@
       if (typedKeys.length > 25) typedKeys = typedKeys.slice(-12);
     });
 
+    function migrateAllGuidesTips() {
+      if (!Array.isArray(guides)) return;
+      guides.forEach(g => {
+        if (g && g.tips && g.tips.length > 0) {
+          if (!g.content) g.content = [];
+          g.content = g.content.map(b => typeof b === 'string' ? { type: 'paragraph', value: b } : b);
+          g.tips.forEach(tipVal => {
+            if (tipVal && tipVal.trim()) {
+              g.content.push({ type: 'tip', value: tipVal });
+            }
+          });
+          g.tips = [];
+        }
+      });
+    }
+
     // Load dynamic guides and categories from external JSON file or browser local storage
     document.addEventListener('DOMContentLoaded', () => {
       // Self-healing: clear or fix any legacy localstorage data that contains the pin
@@ -1175,6 +1325,10 @@
           if (parsed.categories && parsed.guides) {
             categories = parsed.categories;
             guides = parsed.guides;
+            migrateAllGuidesTips();
+            if (parsed.adminPassword) {
+              adminPassword = parsed.adminPassword;
+            }
             if (parsed.siteTitle) {
               siteTitle = parsed.siteTitle;
               if (siteTitle.includes('Guide & Utilità') || siteTitle.includes('Tutto quello che devi sapere su The Sims 4') || siteTitle.includes('pin-glow') || siteTitle.includes('svg')) {
@@ -1190,7 +1344,7 @@
               }
             }
             updateLogoSrc();
-            renderApp();
+            handleHashRouting();
             checkAndShowAlertPopup();
             return; // Skip fetching guides.json if we have local customizations
           }
@@ -1206,6 +1360,7 @@
           if (data.categories && data.guides) {
             categories = data.categories;
             guides = data.guides;
+            if (data.adminPassword) adminPassword = data.adminPassword;
             if (data.siteTitle) siteTitle = data.siteTitle;
             if (data.siteDescription) siteDescription = data.siteDescription;
             if (data.alertPopup) alertPopup = data.alertPopup;
@@ -1220,8 +1375,9 @@
             ];
             guides = data;
           }
+          migrateAllGuidesTips();
           updateLogoSrc();
-          renderApp();
+          handleHashRouting();
           checkAndShowAlertPopup();
         })
         .catch(error => {
@@ -1241,6 +1397,7 @@
               tips: []
             }
           ];
+          migrateAllGuidesTips();
           renderApp();
         });
     });
@@ -1487,7 +1644,7 @@
 
     function handleAdminLogin() {
       const input = document.getElementById('admin-password-input');
-      if (input && input.value === 'sticazzi') {
+      if (input && input.value === adminPassword) {
         window.isAdminAuthenticated = true;
         sessionStorage.setItem('pianetasim-admin', 'true');
         showToast('Accesso effettuato con successo!', 'success');
@@ -1621,9 +1778,12 @@
       if (id === 'admin-edit-desc') {
         updateEditingField('description', textarea.value);
       } else {
-        const idx = parseInt(id.replace('admin-paragraph-', ''));
+        let idx = parseInt(id.replace('admin-paragraph-', ''));
+        if (isNaN(idx)) {
+          idx = parseInt(id.replace('admin-block-', ''));
+        }
         if (!isNaN(idx)) {
-          updateEditingParagraph(idx, textarea.value);
+          updateEditingBlockValue(idx, textarea.value);
         }
       }
     }
@@ -1730,14 +1890,29 @@
           title: '',
           description: '',
           category: categories[0]?.id || 'gameplay',
+          categories: [categories[0]?.id || 'gameplay'],
           tags: [],
-          content: [''],
+          content: [{ type: 'paragraph', value: '' }],
           tips: []
         };
       } else {
         const guide = guides.find(g => g.id === guideId);
         if (guide) {
           window.editingGuide = JSON.parse(JSON.stringify(guide));
+          // Backward compatibility mapping for categories
+          if (!window.editingGuide.categories) {
+            window.editingGuide.categories = window.editingGuide.category ? [window.editingGuide.category] : [];
+          }
+          if (window.editingGuide.categories.length === 0 && window.editingGuide.category) {
+            window.editingGuide.categories.push(window.editingGuide.category);
+          }
+          // Normalize content items to block objects:
+          window.editingGuide.content = window.editingGuide.content.map(block => {
+            if (typeof block === 'string') {
+              return { type: 'paragraph', value: block };
+            }
+            return block;
+          });
         }
       }
       renderApp();
@@ -1753,20 +1928,155 @@
       }
     }
 
-    function addEditingParagraph() {
+    function toggleEditingGuideCategory(catId) {
       if (!window.editingGuide) return;
-      window.editingGuide.content.push('');
+      if (!window.editingGuide.categories) {
+        window.editingGuide.categories = window.editingGuide.category ? [window.editingGuide.category] : [];
+      }
+      const idx = window.editingGuide.categories.indexOf(catId);
+      if (idx >= 0) {
+        if (window.editingGuide.categories.length > 1) {
+          window.editingGuide.categories.splice(idx, 1);
+        } else {
+          showToast('La guida deve avere almeno una categoria!', 'info');
+        }
+      } else {
+        window.editingGuide.categories.push(catId);
+      }
       renderApp();
     }
 
-    function updateEditingParagraph(idx, val) {
+    function addEditingBlock(type = 'paragraph') {
       if (!window.editingGuide) return;
-      window.editingGuide.content[idx] = val;
+      const newBlock = { type: type, value: '' };
+      if (type === 'list') {
+        newBlock.listType = 'bullet';
+      } else if (type === 'button') {
+        newBlock.buttonUrl = '';
+      }
+      window.editingGuide.content.push(newBlock);
+      renderApp();
+    }
+
+    function updateEditingBlockValue(idx, val) {
+      if (!window.editingGuide) return;
+      const block = window.editingGuide.content[idx];
+      if (block) {
+        if (typeof block === 'string') {
+          window.editingGuide.content[idx] = { type: 'paragraph', value: val };
+        } else {
+          block.value = val;
+        }
+      }
+    }
+
+    function updateEditingBlockType(idx, type) {
+      if (!window.editingGuide) return;
+      let block = window.editingGuide.content[idx];
+      if (typeof block === 'string') {
+        block = { type: 'paragraph', value: block };
+      }
+      block.type = type;
+      if (type === 'list' && !block.listType) {
+        block.listType = 'bullet';
+      }
+      if (type === 'button' && !block.buttonUrl) {
+        block.buttonUrl = '';
+      }
+      window.editingGuide.content[idx] = block;
+      renderApp();
+    }
+
+    function updateEditingBlockListType(idx, listType) {
+      if (!window.editingGuide) return;
+      const block = window.editingGuide.content[idx];
+      if (block && block.type === 'list') {
+        block.listType = listType;
+      }
+    }
+
+    function updateEditingBlockButtonUrl(idx, buttonUrl) {
+      if (!window.editingGuide) return;
+      const block = window.editingGuide.content[idx];
+      if (block && block.type === 'button') {
+        block.buttonUrl = buttonUrl;
+      }
+    }
+
+    function updateEditingBlockColor(idx, color) {
+      if (!window.editingGuide) return;
+      const block = window.editingGuide.content[idx];
+      if (block) {
+        block.color = color;
+      }
+    }
+
+    function updateEditingBlockBold(idx, bold) {
+      if (!window.editingGuide) return;
+      const block = window.editingGuide.content[idx];
+      if (block) {
+        block.bold = bold;
+      }
+      renderApp();
+    }
+
+    function updateEditingBlockItalic(idx, italic) {
+      if (!window.editingGuide) return;
+      const block = window.editingGuide.content[idx];
+      if (block) {
+        block.italic = italic;
+      }
+      renderApp();
+    }
+
+    function updateEditingBlockDividerType(idx, dividerType) {
+      if (!window.editingGuide) return;
+      const block = window.editingGuide.content[idx];
+      if (block && block.type === 'divider') {
+        block.dividerType = dividerType;
+      }
+      renderApp();
+    }
+
+    function updateEditingBlockDividerColor(idx, color) {
+      if (!window.editingGuide) return;
+      const block = window.editingGuide.content[idx];
+      if (block && block.type === 'divider') {
+        block.dividerColor = color;
+      }
+    }
+
+    // Keep legacy fallback function wrappers to prevent reference errors during transitional states
+    function addEditingParagraph() {
+      addEditingBlock('paragraph');
+    }
+
+    function updateEditingParagraph(idx, val) {
+      updateEditingBlockValue(idx, val);
     }
 
     function removeEditingParagraph(idx) {
+      removeEditingBlock(idx);
+    }
+
+    function removeEditingBlock(idx) {
       if (!window.editingGuide) return;
       window.editingGuide.content.splice(idx, 1);
+      renderApp();
+    }
+
+    function moveEditingBlock(idx, direction) {
+      if (!window.editingGuide) return;
+      const content = window.editingGuide.content;
+      if (direction === 'up' && idx > 0) {
+        const temp = content[idx];
+        content[idx] = content[idx - 1];
+        content[idx - 1] = temp;
+      } else if (direction === 'down' && idx < content.length - 1) {
+        const temp = content[idx];
+        content[idx] = content[idx + 1];
+        content[idx + 1] = temp;
+      }
       renderApp();
     }
 
@@ -1792,6 +2102,7 @@
       const payload = {
         categories: categories,
         guides: guides,
+        adminPassword: adminPassword,
         siteTitle: siteTitle,
         siteDescription: siteDescription,
         alertPopup: alertPopup,
@@ -1812,6 +2123,7 @@
           if (data.categories && data.guides) {
             categories = data.categories;
             guides = data.guides;
+            adminPassword = data.adminPassword || 'sticazzi';
             if (data.siteTitle) siteTitle = data.siteTitle;
             if (data.siteDescription) siteDescription = data.siteDescription;
             if (data.alertPopup) alertPopup = data.alertPopup;
@@ -1862,13 +2174,40 @@
         }
       }
 
-      g.content = g.content.map(p => p.trim()).filter(p => p.length > 0);
+      // Filter and clean content blocks
+      g.content = g.content.map(block => {
+        if (typeof block === 'string') {
+          return { type: 'paragraph', value: block.trim() };
+        }
+        const b = { ...block };
+        if (b.type === 'divider') {
+          b.value = '';
+        } else {
+          b.value = (b.value || '').trim();
+        }
+        if (b.type === 'button') {
+          b.buttonUrl = (b.buttonUrl || '').trim();
+        }
+        return b;
+      }).filter(block => {
+        if (block.type === 'divider') return true;
+        if (block.type === 'button') return block.value.length > 0;
+        return block.value.length > 0;
+      });
+
       if (g.content.length === 0) {
-        g.content = ['Scrivi qui il contenuto del primo paragrafo della guida...'];
+        g.content = [{ type: 'paragraph', value: 'Scrivi qui il contenuto...' }];
       }
+
       if (g.tips) {
         g.tips = g.tips.map(t => t.trim()).filter(t => t.length > 0);
       }
+
+      // Handle categories backward compatibility
+      if (!g.categories || g.categories.length === 0) {
+        g.categories = [g.category || categories[0]?.id || 'gameplay'];
+      }
+      g.category = g.categories[0]; // legacy fallback string
 
       const existingIdx = guides.findIndex(item => item.id === g.id);
       if (existingIdx >= 0) {
@@ -1932,6 +2271,7 @@
       const payload = {
         categories: categories,
         guides: guides,
+        adminPassword: adminPassword,
         siteTitle: siteTitle,
         siteDescription: siteDescription,
         siteLogo: siteLogo,
@@ -1962,6 +2302,7 @@
       const fullObj = {
         categories: categories,
         guides: guides,
+        adminPassword: adminPassword,
         siteTitle: siteTitle,
         siteDescription: siteDescription,
         siteLogo: siteLogo,
@@ -1990,6 +2331,7 @@
       const fullObj = {
         categories: categories,
         guides: guides,
+        adminPassword: adminPassword,
         siteTitle: siteTitle,
         siteDescription: siteDescription,
         siteLogo: siteLogo,
@@ -2042,23 +2384,70 @@
         });
     }
 
-    // Tab switcher
-    function switchTab(tab) {
-      activeTab = tab;
-      activeGuideId = null;
-      selectedCategory = 'all';
-      
-      if (tab === 'admin') {
+    // Hash Routing & Navigation Engine
+    function navigateToGuide(id) {
+      window.location.hash = `#guida-${id}`;
+    }
+
+    function navigateToGuidesList() {
+      window.location.hash = '#guides';
+    }
+
+    function navigateToAdmin() {
+      window.location.hash = '#admin';
+    }
+
+    function copyGuideLink(guideId) {
+      const url = `${window.location.origin}${window.location.pathname}#guida-${guideId}`;
+      navigator.clipboard.writeText(url).then(() => {
+        showToast("Link della guida copiato negli appunti!", "success");
+      }).catch(err => {
+        console.error("Errore copia link:", err);
+        showToast("Impossibile copiare il link automaticamente.", "info");
+      });
+    }
+
+    function handleHashRouting() {
+      const hash = window.location.hash;
+      if (hash && hash.startsWith('#guida-')) {
+        const guideId = hash.replace('#guida-', '');
+        const found = guides.find(g => g.id === guideId);
+        if (found) {
+          activeGuideId = found.id;
+          activeTab = 'guides';
+        } else {
+          activeGuideId = null;
+          activeTab = 'guides';
+        }
+      } else if (hash === '#admin') {
+        activeTab = 'admin';
+        activeGuideId = null;
+      } else {
+        activeGuideId = null;
+        activeTab = 'guides';
+      }
+
+      if (activeTab === 'admin') {
         fetchUploadedImages();
       }
       renderApp();
     }
 
+    window.addEventListener('hashchange', handleHashRouting);
+
+    // Tab switcher
+    function switchTab(tab) {
+      if (tab === 'admin') {
+        navigateToAdmin();
+      } else {
+        selectedCategory = 'all';
+        navigateToGuidesList();
+      }
+    }
+
     function toggleBookmarksOnly() {
-      activeTab = 'guides';
-      activeGuideId = null;
       selectedCategory = 'preferiti';
-      renderApp();
+      navigateToGuidesList();
     }
 
     function getCategoryCount(catId) {
@@ -2156,27 +2545,48 @@
           return;
         }
 
-        const catObj = categories.find(c => c.id === guide.category) || { label: 'Generale', color: 'purple' };
-        const catStyles = getCategoryStyles(catObj.color);
+        // Support multiple categories
+        const guideCats = guide.categories || (guide.category ? [guide.category] : []);
+        const primaryCatId = guideCats[0] || 'gameplay';
+        const primaryCatObj = categories.find(c => c.id === primaryCatId) || { label: 'Generale', color: 'purple' };
+        const primaryCatStyles = getCategoryStyles(primaryCatObj.color);
+
+        // Render all category badges
+        const badgesHtml = guideCats.map(catId => {
+          const catObj = categories.find(c => c.id === catId);
+          if (!catObj) return '';
+          const catStyles = getCategoryStyles(catObj.color);
+          return `
+            <span class="inline-block text-xs font-bold px-3 py-1 rounded-full border ${catStyles.badge}">
+              ${catObj.label}
+            </span>
+          `;
+        }).join('');
 
         container.innerHTML = `
           <div class="max-w-3xl mx-auto space-y-6">
-            <div>
+            <div class="flex flex-wrap items-center justify-between gap-3">
               <button
-                onclick="activeGuideId = null; renderApp();"
+                onclick="navigateToGuidesList()"
                 class="inline-flex items-center gap-2 text-xs font-bold text-slate-400 hover:text-fluo-green bg-slate-900/80 hover:bg-slate-800/80 border border-slate-800 px-4 py-2.5 rounded-xl cursor-pointer transition-all duration-200"
               >
                 <i data-lucide="arrow-left" class="w-4 h-4"></i>
                 Torna all'elenco delle guide
               </button>
+
+              <button
+                onclick="copyGuideLink('${guide.id}')"
+                class="inline-flex items-center gap-2 text-xs font-bold text-slate-400 hover:text-fluo-blue bg-slate-900/80 hover:bg-slate-800/80 border border-slate-800 px-4 py-2.5 rounded-xl cursor-pointer transition-all duration-200"
+              >
+                <i data-lucide="share-2" class="w-4 h-4 text-fluo-blue"></i>
+                Copia Link della Guida
+              </button>
             </div>
 
             <!-- Guide Main Board -->
-            <div class="bg-space-card rounded-2xl border border-slate-800 p-6 md:p-8 shadow-2xl ${catStyles.shadow}">
-              <div class="flex items-center gap-2 mb-4">
-                <span class="inline-block text-xs font-bold px-3 py-1 rounded-full border ${catStyles.badge}">
-                  ${catObj.label}
-                </span>
+            <div class="bg-space-card rounded-2xl border border-slate-800 p-6 md:p-8 shadow-2xl ${primaryCatStyles.shadow}">
+              <div class="flex flex-wrap items-center gap-1.5 mb-4">
+                ${badgesHtml}
               </div>
 
               <h1 class="text-2xl md:text-4xl font-black text-white tracking-tight mb-4 leading-tight">
@@ -2191,17 +2601,8 @@
               </p>
 
               <!-- Render formatted paragraphs dynamically -->
-              <div class="space-y-6 mb-8 font-sans text-slate-200 text-sm md:text-base leading-relaxed">
-                ${guide.content.map((paragraph, idx) => `
-                  <div class="flex gap-4 items-start">
-                    <span class="w-7 h-7 bg-emerald-500/10 text-fluo-green border border-fluo-green/20 rounded-full flex items-center justify-center text-sm font-bold shrink-0 mt-0.5 shadow-[0_0_8px_rgba(38,255,94,0.1)] font-display">
-                      ${idx + 1}
-                    </span>
-                    <div class="flex-grow pt-0.5 space-y-2">
-                      ${formatParagraphText(paragraph)}
-                    </div>
-                  </div>
-                `).join('')}
+              <div class="space-y-4 mb-8 font-sans">
+                ${guide.content.map((block, idx) => renderGuideContentBlock(block, idx)).join('')}
               </div>
 
               <!-- Render Tips/Consigli area if populated -->
@@ -2251,7 +2652,8 @@
           if (selectedCategory === 'preferiti') {
             matchesCategory = bookmarks.includes(guide.id);
           } else if (selectedCategory !== 'all') {
-            matchesCategory = guide.category === selectedCategory;
+            const guideCats = guide.categories || (guide.category ? [guide.category] : []);
+            matchesCategory = guideCats.includes(selectedCategory);
           }
           return matchesSearch && matchesCategory;
         });
@@ -2270,42 +2672,51 @@
           ` : `
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               ${filteredGuides.map(guide => {
-                const catObj = categories.find(c => c.id === guide.category) || { label: 'Generale', color: 'purple' };
-                const catStyles = getCategoryStyles(catObj.color);
+                const guideCats = guide.categories || (guide.category ? [guide.category] : []);
+                const primaryCatId = guideCats[0] || 'gameplay';
+                const primaryCatObj = categories.find(c => c.id === primaryCatId) || { label: 'Generale', color: 'purple' };
+                const primaryCatStyles = getCategoryStyles(primaryCatObj.color);
                 const isBookmarked = bookmarks.includes(guide.id);
+
+                const badgesHtml = guideCats.map(catId => {
+                  const catObj = categories.find(c => c.id === catId);
+                  if (!catObj) return '';
+                  const catStyles = getCategoryStyles(catObj.color);
+                  return `<span class="text-[9px] font-bold px-2 py-0.5 rounded-full border ${catStyles.badge}">${catObj.label}</span>`;
+                }).join('');
                 
                 return `
                   <div
-                    onclick="activeGuideId = '${guide.id}'; renderApp();"
+                    onclick="navigateToGuide('${guide.id}')"
                     class="bg-space-card rounded-2xl border border-slate-800/80 p-5 cursor-pointer hover:border-slate-700/80 transition-all duration-300 hover:-translate-y-1 shadow-md hover:shadow-2xl flex flex-col justify-between group relative overflow-hidden h-[240px]"
                   >
                     <div class="space-y-3">
                       <!-- Row badge category & Bookmark button -->
-                      <div class="flex items-center justify-between">
-                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full border ${catStyles.badge}">
-                          ${catObj.label}
-                        </span>
+                      <div class="flex items-center justify-between gap-2 overflow-hidden">
+                        <div class="flex flex-wrap gap-1 items-center overflow-hidden">
+                          ${badgesHtml}
+                        </div>
                         
                         <button
                           onclick="handleToggleBookmark('${guide.id}', event)"
-                          class="text-slate-500 hover:text-amber-400 p-1 rounded-lg hover:bg-slate-900 transition-colors cursor-pointer"
+                          class="text-slate-500 hover:text-amber-400 p-1 rounded-lg hover:bg-slate-900 transition-colors cursor-pointer shrink-0"
                           title="${isBookmarked ? 'Rimuovi dai preferiti' : 'Aggiungi ai preferiti'}"
                         >
                           <i data-lucide="star" class="w-4 h-4 ${isBookmarked ? 'text-amber-400 fill-current' : ''}"></i>
                         </button>
                       </div>
-
+ 
                       <!-- Title of guide -->
                       <h3 class="text-base md:text-lg font-black text-slate-100 group-hover:text-white transition-colors line-clamp-2 leading-tight">
                         ${guide.title}
                       </h3>
-
+ 
                       <!-- Short description preview -->
                       <p class="text-xs text-slate-400 line-clamp-3 leading-relaxed font-sans">
                         ${guide.description.replace(/\[image\]\(.*?\)/g, '[Immagine]')}
                       </p>
                     </div>
-
+ 
                     <!-- bottom action indicator with tags (Author and read-time fully removed) -->
                     <div class="pt-3 border-t border-slate-900 flex items-center justify-between text-[11px]">
                       <span class="text-slate-500 truncate max-w-[60%] font-mono">
@@ -2450,28 +2861,37 @@
                 ` : `
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     ${filteredGuides.map(guide => {
-                      const catObj = categories.find(c => c.id === guide.category) || { label: 'Generale', color: 'purple' };
-                      const catStyles = getCategoryStyles(catObj.color);
+                      const guideCats = guide.categories || (guide.category ? [guide.category] : []);
+                      const primaryCatId = guideCats[0] || 'gameplay';
+                      const primaryCatObj = categories.find(c => c.id === primaryCatId) || { label: 'Generale', color: 'purple' };
+                      const primaryCatStyles = getCategoryStyles(primaryCatObj.color);
                       const isBookmarked = bookmarks.includes(guide.id);
+
+                      const badgesHtml = guideCats.map(catId => {
+                        const catObj = categories.find(c => c.id === catId);
+                        if (!catObj) return '';
+                        const catStyles = getCategoryStyles(catObj.color);
+                        return `<span class="text-[9px] font-bold px-2 py-0.5 rounded-full border ${catStyles.badge}">${catObj.label}</span>`;
+                      }).join('');
                       
                       return `
                         <div
-                          onclick="activeGuideId = '${guide.id}'; renderApp();"
+                          onclick="navigateToGuide('${guide.id}')"
                           class="bg-space-card rounded-2xl border border-slate-800/80 p-5 cursor-pointer hover:border-slate-700/80 transition-all duration-300 hover:-translate-y-1 shadow-md hover:shadow-2xl flex flex-col justify-between group relative overflow-hidden h-[240px]"
                         >
                           <div class="space-y-3">
                             <!-- Row badge category & Bookmark button -->
-                            <div class="flex items-center justify-between">
-                              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full border ${catStyles.badge}">
-                                ${catObj.label}
-                              </span>
+                            <div class="flex items-center justify-between gap-2 overflow-hidden">
+                              <div class="flex flex-wrap gap-1 items-center overflow-hidden">
+                                ${badgesHtml}
+                              </div>
                               
                               <button
                                 onclick="handleToggleBookmark('${guide.id}', event)"
-                                class="text-slate-500 hover:text-amber-400 p-1 rounded-lg hover:bg-slate-900 transition-colors cursor-pointer"
+                                class="text-slate-500 hover:text-amber-400 p-1 rounded-lg hover:bg-slate-900 transition-colors cursor-pointer shrink-0"
                                 title="${isBookmarked ? 'Rimuovi dai preferiti' : 'Aggiungi ai preferiti'}"
                               >
-                                <i data-lucide="star" class="w-4 h-4 ${isBookmarked ? 'text-amber-400 fill-current' : ''}"></i>
+                               <i data-lucide="star" class="w-4 h-4 ${isBookmarked ? 'text-amber-400 fill-current' : ''}"></i>
                               </button>
                             </div>
 
@@ -2590,22 +3010,40 @@
                     value="${g.id}"
                     oninput="updateEditingField('id', this.value)"
                     placeholder="es: guide-costruzioni-avanzate"
-                    class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:ring-2 focus:ring-fluo-purple outline-none"
+                    class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:ring-2 focus:ring-fluo-purple outline-none font-mono"
                   />
+                  <div class="text-[10px] text-slate-500 font-mono mt-1 flex flex-wrap items-center gap-1">
+                    <span>Link diretto della guida:</span>
+                    <span class="text-fluo-blue select-all bg-slate-950/40 px-1.5 py-0.5 rounded border border-slate-800/40">${window.location.origin}${window.location.pathname}#guida-${g.id}</span>
+                  </div>
                 </div>
               </div>
 
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="space-y-1.5">
-                  <label class="text-xs font-bold text-slate-400 uppercase font-sans">Categoria</label>
-                  <select
-                    onchange="updateEditingField('category', this.value)"
-                    class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:ring-2 focus:ring-fluo-purple outline-none"
-                  >
-                    ${categories.map(c => `
-                      <option value="${c.id}" ${g.category === c.id ? 'selected' : ''}>${c.label}</option>
-                    `).join('')}
-                  </select>
+                  <label class="text-xs font-bold text-slate-400 uppercase font-sans">Assegna Categorie (Seleziona una o più)</label>
+                  <div class="flex flex-wrap gap-1.5 p-2 bg-slate-900 border border-slate-800 rounded-xl min-h-[42px] items-center">
+                    ${categories.map(c => {
+                      const isSelected = g.categories && g.categories.includes(c.id);
+                      const catStyles = getCategoryStyles(c.color);
+                      return `
+                        <button
+                          type="button"
+                          onclick="toggleEditingGuideCategory('${c.id}')"
+                          class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold transition-all duration-200 cursor-pointer border"
+                          style="${
+                            isSelected
+                              ? `background-color: ${catStyles.colorCode}15; color: #ffffff; border-color: ${catStyles.colorCode}; box-shadow: 0 0 10px ${catStyles.colorCode}25;`
+                              : 'background-color: rgba(15,23,42,0.4); color: #94a3b8; border-color: rgba(30,41,59,0.8);'
+                          }"
+                        >
+                          <span class="w-1.5 h-1.5 rounded-full" style="background-color: ${catStyles.colorCode}"></span>
+                          <span>${c.label}</span>
+                          ${isSelected ? '<span class="text-fluo-green text-[10px] font-black">✓</span>' : ''}
+                        </button>
+                      `;
+                    }).join('')}
+                  </div>
                 </div>
 
                 <div class="space-y-1.5">
@@ -2682,100 +3120,283 @@
               <!-- Content Paragraphs Dynamic Blocks -->
               <div class="space-y-4">
                 <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-                  <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Paragrafi e Contenuto della Guida</h4>
-                  <button
-                    onclick="addEditingParagraph()"
-                    class="px-2.5 py-1 bg-fluo-purple/10 hover:bg-fluo-purple/20 text-fluo-purple border border-fluo-purple/30 rounded-lg text-[11px] font-bold cursor-pointer"
-                  >
-                    + Aggiungi Paragrafo
-                  </button>
+                  <div class="space-y-1">
+                    <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Blocchi di Contenuto</h4>
+                    <p class="text-[10px] text-slate-500">Componi la tua guida combinando titoli, paragrafi, citazioni, consigli, elenchi, divisori e pulsanti.</p>
+                  </div>
+                  <div class="flex gap-1.5 flex-wrap max-w-md sm:max-w-none">
+                    <button
+                      type="button"
+                      onclick="addEditingBlock('paragraph')"
+                      class="px-2 py-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-fluo-green border border-emerald-500/30 rounded-lg text-[10px] font-bold cursor-pointer transition-colors"
+                    >
+                      + Paragrafo
+                    </button>
+                    <button
+                      type="button"
+                      onclick="addEditingBlock('heading1')"
+                      class="px-2 py-1 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 rounded-lg text-[10px] font-bold cursor-pointer transition-colors"
+                    >
+                      + Titolo H1
+                    </button>
+                    <button
+                      type="button"
+                      onclick="addEditingBlock('heading2')"
+                      class="px-2 py-1 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-lg text-[10px] font-bold cursor-pointer transition-colors"
+                    >
+                      + Sottotitolo H2
+                    </button>
+                    <button
+                      type="button"
+                      onclick="addEditingBlock('quote')"
+                      class="px-2 py-1 bg-teal-500/10 hover:bg-teal-500/20 text-teal-400 border border-teal-500/30 rounded-lg text-[10px] font-bold cursor-pointer transition-colors"
+                    >
+                      + Citazione
+                    </button>
+                    <button
+                      type="button"
+                      onclick="addEditingBlock('tip')"
+                      class="px-2 py-1 bg-purple-500/10 hover:bg-purple-500/20 text-fluo-purple border border-fluo-purple/30 rounded-lg text-[10px] font-bold cursor-pointer transition-colors"
+                    >
+                      + Consiglio
+                    </button>
+                    <button
+                      type="button"
+                      onclick="addEditingBlock('list')"
+                      class="px-2 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-lg text-[10px] font-bold cursor-pointer transition-colors"
+                    >
+                      + Elenco
+                    </button>
+                    <button
+                      type="button"
+                      onclick="addEditingBlock('divider')"
+                      class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700/60 rounded-lg text-[10px] font-bold cursor-pointer transition-colors"
+                    >
+                      + Divisore
+                    </button>
+                    <button
+                      type="button"
+                      onclick="addEditingBlock('button')"
+                      class="px-2 py-1 bg-fuchsia-500/10 hover:bg-fuchsia-500/20 text-fluo-fuchsia border border-fluo-fuchsia/30 rounded-lg text-[10px] font-bold cursor-pointer transition-colors"
+                    >
+                      + Pulsante
+                    </button>
+                  </div>
                 </div>
 
                 <div class="space-y-4">
-                  ${g.content.map((p, idx) => `
-                    <div class="p-4 bg-slate-950/60 border border-slate-900 rounded-xl space-y-3 relative">
-                      <div class="flex items-center justify-between">
-                        <span class="text-xs font-extrabold text-fluo-green">Paragrafo #${idx + 1}</span>
-                        
-                        <!-- Toolbar Formatting buttons -->
-                        <div class="flex items-center gap-1">
-                          <button type="button" onclick="insertFormat('admin-paragraph-${idx}', 'bold')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-white font-bold rounded" title="Grassetto">B</button>
-                          <button type="button" onclick="insertFormat('admin-paragraph-${idx}', 'italic')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-white italic rounded" title="Corsivo">I</button>
-                          <button type="button" onclick="insertFormat('admin-paragraph-${idx}', 'link')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-fluo-blue rounded" title="Aggiungi Link">Link</button>
-                          
-                          <!-- Dropdown Palette for Text Colors -->
-                          <div class="relative inline-block text-left">
-                            <button type="button" onclick="toggleTextColorPalette('admin-paragraph-${idx}')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-fluo-fuchsia rounded flex items-center gap-0.5" title="Colore Personalizzato">
-                              <span>Colore</span>
-                              <span class="text-[8px] opacity-70">▼</span>
-                            </button>
-                            <div id="color-palette-admin-paragraph-${idx}" class="hidden absolute right-0 mt-1.5 p-2 bg-slate-950 border border-slate-800 rounded-xl shadow-2xl z-50 w-[140px] grid grid-cols-4 gap-1.5">
-                              ${textColorsList.map(hex => `
-                                <button
-                                  type="button"
-                                  onclick="applyTextColor('admin-paragraph-${idx}', '${hex}')"
-                                  class="w-6 h-6 rounded-md border border-slate-800 cursor-pointer transition-transform hover:scale-110"
-                                  style="background-color: ${hex}"
-                                  title="${hex}"
-                                ></button>
-                              `).join('')}
-                            </div>
+                  ${g.content.map((block, idx) => {
+                    const b = typeof block === 'string' ? { type: 'paragraph', value: block } : block;
+                    const type = b.type || 'paragraph';
+                    const value = b.value || '';
+
+                    return `
+                      <div class="p-4 bg-slate-950/60 border border-slate-900 rounded-xl space-y-3 relative group/block">
+                        <div class="flex flex-wrap items-center justify-between gap-3">
+                          <div class="flex items-center gap-2">
+                            <span class="text-xs font-extrabold text-fluo-green">Blocco #${idx + 1}</span>
+                            
+                            <!-- Block Type Selector -->
+                            <select
+                              onchange="updateEditingBlockType(${idx}, this.value)"
+                              class="px-2 py-1 bg-slate-900 border border-slate-800 rounded-lg text-[10px] text-slate-300 font-bold focus:ring-1 focus:ring-fluo-purple outline-none cursor-pointer"
+                            >
+                              <option value="paragraph" ${type === 'paragraph' ? 'selected' : ''}>📝 Paragrafo</option>
+                              <option value="quote" ${type === 'quote' ? 'selected' : ''}>💬 Citazione</option>
+                              <option value="tip" ${type === 'tip' ? 'selected' : ''}>💡 Consiglio / Tip Pro</option>
+                              <option value="list" ${type === 'list' ? 'selected' : ''}>📋 Elenco Puntato/Numerato</option>
+                              <option value="heading1" ${type === 'heading1' ? 'selected' : ''}>H1 - Titolo Principale</option>
+                              <option value="heading2" ${type === 'heading2' ? 'selected' : ''}>H2 - Sottotitolo</option>
+                              <option value="heading3" ${type === 'heading3' ? 'selected' : ''}>H3 - Terzo Sottotitolo</option>
+                              <option value="divider" ${type === 'divider' ? 'selected' : ''}>➖ Divisore</option>
+                              <option value="button" ${type === 'button' ? 'selected' : ''}>🔗 Pulsante Link</option>
+                            </select>
                           </div>
-
-                          <button type="button" onclick="triggerImageUpload('admin-paragraph-${idx}')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-fluo-green rounded flex items-center gap-0.5" title="Carica un'immagine in questo paragrafo">📷 Carica Immagine</button>
                           
-                          <button
-                            onclick="removeEditingParagraph(${idx})"
-                            class="ml-3 p-1 text-red-500 hover:text-red-400 hover:bg-red-500/10 rounded cursor-pointer transition-colors"
-                            title="Elimina paragrafo"
-                          >
-                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                          </button>
+                          <!-- Toolbar Formatting buttons and Reordering -->
+                          <div class="flex items-center gap-1.5 flex-wrap">
+                            <!-- Reorder buttons -->
+                            <button
+                              type="button"
+                              onclick="moveEditingBlock(${idx}, 'up')"
+                              class="p-1 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-slate-400 rounded cursor-pointer transition-colors"
+                              title="Sposta Su"
+                              ${idx === 0 ? 'disabled style="opacity: 0.3; cursor: not-allowed;"' : ''}
+                            >
+                              ▲
+                            </button>
+                            <button
+                              type="button"
+                              onclick="moveEditingBlock(${idx}, 'down')"
+                              class="p-1 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-slate-400 rounded cursor-pointer transition-colors"
+                              title="Sposta Giù"
+                              ${idx === g.content.length - 1 ? 'disabled style="opacity: 0.3; cursor: not-allowed;"' : ''}
+                            >
+                              ▼
+                            </button>
+
+                            <!-- Rich text formatting toolbar (hidden for divider block) -->
+                            ${type !== 'divider' ? `
+                              <button type="button" onclick="insertFormat('admin-block-${idx}', 'bold')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-white font-bold rounded" title="Grassetto">B</button>
+                              <button type="button" onclick="insertFormat('admin-block-${idx}', 'italic')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-white italic rounded" title="Corsivo">I</button>
+                              <button type="button" onclick="insertFormat('admin-block-${idx}', 'link')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-fluo-blue rounded" title="Aggiungi Link">Link</button>
+                              
+                              <!-- Dropdown Palette for Text Colors -->
+                              <div class="relative inline-block text-left">
+                                <button type="button" onclick="toggleTextColorPalette('admin-block-${idx}')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-fluo-fuchsia rounded flex items-center gap-0.5" title="Colore Personalizzato">
+                                  <span>Colore</span>
+                                  <span class="text-[8px] opacity-70">▼</span>
+                                </button>
+                                <div id="color-palette-admin-block-${idx}" class="hidden absolute right-0 mt-1.5 p-2 bg-slate-950 border border-slate-800 rounded-xl shadow-2xl z-50 w-[140px] grid grid-cols-4 gap-1.5">
+                                  ${textColorsList.map(hex => `
+                                    <button
+                                      type="button"
+                                      onclick="applyTextColor('admin-block-${idx}', '${hex}')"
+                                      class="w-6 h-6 rounded-md border border-slate-800 cursor-pointer transition-transform hover:scale-110"
+                                      style="background-color: ${hex}"
+                                      title="${hex}"
+                                    ></button>
+                                  `).join('')}
+                                </div>
+                              </div>
+
+                              <button type="button" onclick="triggerImageUpload('admin-block-${idx}')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-fluo-green rounded flex items-center gap-0.5" title="Carica Immagine">📷 Immagine</button>
+                            ` : ''}
+                            
+                            <button
+                              type="button"
+                              onclick="removeEditingBlock(${idx})"
+                              class="ml-2 p-1 text-red-500 hover:text-red-400 hover:bg-red-500/10 rounded cursor-pointer transition-colors"
+                              title="Elimina blocco"
+                            >
+                              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                            </button>
+                          </div>
                         </div>
+
+                        <!-- Specific subconfigurations for lists or buttons -->
+                        ${type === 'list' ? `
+                          <div class="flex items-center gap-3 bg-slate-900/60 p-2 rounded-lg border border-slate-900 text-[11px] text-slate-300 font-sans">
+                            <span class="font-bold">Tipo Elenco:</span>
+                            <label class="inline-flex items-center gap-1 cursor-pointer">
+                              <input type="radio" name="list-type-${idx}" value="bullet" ${b.listType !== 'number' ? 'checked' : ''} onchange="updateEditingBlockListType(${idx}, 'bullet')" class="text-fluo-purple focus:ring-0" /> Puntato
+                            </label>
+                            <label class="inline-flex items-center gap-1 cursor-pointer">
+                              <input type="radio" name="list-type-${idx}" value="number" ${b.listType === 'number' ? 'checked' : ''} onchange="updateEditingBlockListType(${idx}, 'number')" class="text-fluo-purple focus:ring-0" /> Numerato
+                            </label>
+                            <span class="text-slate-500 ml-auto italic text-[10px]">Scrivi ogni elemento su una nuova riga (invio).</span>
+                          </div>
+                        ` : ''}
+
+                        ${type === 'button' ? `
+                          <div class="space-y-1.5 p-2 bg-slate-900/60 rounded-lg border border-slate-900 font-sans">
+                            <label class="text-[10px] font-bold text-slate-400 uppercase">Indirizzo di Destinazione Link (URL del Pulsante)</label>
+                            <input
+                              type="url"
+                              value="${b.buttonUrl || ''}"
+                              oninput="updateEditingBlockButtonUrl(${idx}, this.value)"
+                              placeholder="es: https://www.pianetasim.it/downloads/mod"
+                              class="w-full px-3 py-1.5 bg-slate-950 border border-slate-800 rounded-lg text-[11px] text-white focus:ring-1 focus:ring-fluo-purple outline-none font-mono"
+                            />
+                          </div>
+                        ` : ''}
+
+                        ${type === 'heading1' || type === 'heading2' || type === 'heading3' ? `
+                          <div class="flex flex-wrap items-center gap-4 bg-slate-900/60 p-2.5 rounded-xl border border-slate-900 text-xs text-slate-300 font-sans">
+                            <div class="flex items-center gap-2">
+                              <span class="font-bold text-[10px] uppercase text-slate-400">Colore Titolo:</span>
+                              <input
+                                type="color"
+                                value="${b.color || '#ffffff'}"
+                                oninput="updateEditingBlockColor(${idx}, this.value)"
+                                class="w-6 h-6 rounded border border-slate-800 bg-transparent cursor-pointer p-0"
+                              />
+                            </div>
+                            <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                ${b.bold !== false ? 'checked' : ''}
+                                onchange="updateEditingBlockBold(${idx}, this.checked)"
+                                class="rounded border-slate-800 text-fluo-purple focus:ring-0 bg-slate-950 w-3.5 h-3.5"
+                              />
+                              <span class="text-[11px] font-bold">Grassetto</span>
+                            </label>
+                            <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                ${b.italic === true ? 'checked' : ''}
+                                onchange="updateEditingBlockItalic(${idx}, this.checked)"
+                                class="rounded border-slate-800 text-fluo-purple focus:ring-0 bg-slate-950 w-3.5 h-3.5"
+                              />
+                              <span class="text-[11px] italic">Corsivo</span>
+                            </label>
+                          </div>
+                        ` : ''}
+
+                        ${type === 'divider' ? `
+                          <div class="space-y-3 bg-slate-900/60 p-3 rounded-xl border border-slate-900 font-sans">
+                            <div class="flex flex-wrap items-center gap-4">
+                              <span class="font-bold text-[10px] uppercase text-slate-400">Tipo Divisore:</span>
+                              <label class="inline-flex items-center gap-1 cursor-pointer text-xs text-slate-300">
+                                <input
+                                  type="radio"
+                                  name="divider-type-${idx}"
+                                  value="standard"
+                                  ${b.dividerType !== 'color' ? 'checked' : ''}
+                                  onchange="updateEditingBlockDividerType(${idx}, 'standard')"
+                                  class="text-fluo-purple focus:ring-0"
+                                /> Standard (Sottile)
+                              </label>
+                              <label class="inline-flex items-center gap-1 cursor-pointer text-xs text-slate-300">
+                                <input
+                                  type="radio"
+                                  name="divider-type-${idx}"
+                                  value="color"
+                                  ${b.dividerType === 'color' ? 'checked' : ''}
+                                  onchange="updateEditingBlockDividerType(${idx}, 'color')"
+                                  class="text-fluo-purple focus:ring-0"
+                                /> Colorato (Corto e Spesso)
+                              </label>
+                            </div>
+                            
+                            ${b.dividerType === 'color' ? `
+                              <div class="flex items-center gap-2 pt-1">
+                                <span class="font-bold text-[10px] uppercase text-slate-400">Colore Linea:</span>
+                                <input
+                                  type="color"
+                                  value="${b.dividerColor || '#10b981'}"
+                                  oninput="updateEditingBlockDividerColor(${idx}, this.value)"
+                                  class="w-6 h-6 rounded border border-slate-800 bg-transparent cursor-pointer p-0"
+                                />
+                                <span class="text-[10px] text-slate-400 font-mono">${b.dividerColor || '#10b981'}</span>
+                              </div>
+                            ` : ''}
+                          </div>
+                        ` : ''}
+
+                        <!-- Textarea for editing value -->
+                        ${type !== 'divider' ? `
+                          <textarea
+                            id="admin-block-${idx}"
+                            rows="${type === 'paragraph' || type === 'quote' || type === 'list' ? '4' : '2'}"
+                            oninput="updateEditingBlockValue(${idx}, this.value)"
+                            placeholder="${
+                              type === 'list'
+                                ? 'Primo elemento dell\'elenco\nSecondo elemento dell\'elenco\nTerzo elemento dell\'elenco...'
+                                : type === 'button'
+                                  ? 'Scrivi qui l\'etichetta visibile sul pulsante (es: Scarica la Traduzione)'
+                                  : 'Scrivi qui il testo del blocco...'
+                            }"
+                            class="w-full px-3 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:ring-2 focus:ring-fluo-purple outline-none font-sans"
+                          >${value}</textarea>
+                        ` : `
+                          <div class="h-8 flex items-center justify-center border-y border-dashed border-slate-800/80 text-[10px] text-slate-500 tracking-widest uppercase bg-slate-900/10 font-mono">
+                            Separatore Orizzontale Visivo
+                          </div>
+                        `}
                       </div>
-
-                      <textarea
-                        id="admin-paragraph-${idx}"
-                        rows="4"
-                        oninput="updateEditingParagraph(${idx}, this.value)"
-                        placeholder="Inserisci il testo dettagliato. Puoi usare i pulsanti in alto per formattare al volo o inserire immagini caricandole direttamente."
-                        class="w-full px-3 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:ring-2 focus:ring-fluo-purple outline-none font-sans"
-                      >${p}</textarea>
-                    </div>
-                  `).join('')}
-                </div>
-              </div>
-
-              <!-- Extra Tips Section -->
-              <div class="space-y-4">
-                <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-                  <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Consigli Extra / Tips Pro (Opzionali)</h4>
-                  <button
-                    onclick="addEditingTip()"
-                    class="px-2.5 py-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-fluo-green border border-emerald-500/30 rounded-lg text-[11px] font-bold cursor-pointer"
-                  >
-                    + Aggiungi Consiglio
-                  </button>
-                </div>
-
-                <div class="space-y-3">
-                  ${(g.tips || []).map((tip, idx) => `
-                    <div class="flex gap-2 items-center">
-                      <input
-                        type="text"
-                        value="${tip}"
-                        oninput="updateEditingTip(${idx}, this.value)"
-                        placeholder="es: Ricorda di attivare bb.moveobjects prima di procedere"
-                        class="flex-grow px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:ring-2 focus:ring-fluo-purple outline-none"
-                      />
-                      <button
-                        onclick="removeEditingTip(${idx})"
-                        class="p-2 text-red-500 hover:text-red-400 bg-red-500/5 hover:bg-red-500/10 border border-red-500/10 rounded-xl cursor-pointer"
-                      >
-                        <i data-lucide="trash-2" class="w-4 h-4"></i>
-                      </button>
-                    </div>
-                  `).join('')}
+                    `;
+                  }).join('')}
                 </div>
               </div>
 
@@ -3232,25 +3853,36 @@
 
                   <div class="space-y-2.5 max-h-[600px] overflow-y-auto scrollbar-none pr-1">
                     ${guides.map(g => {
-                      const catObj = categories.find(c => c.id === g.category) || { label: 'Nessuna', color: 'purple' };
+                      const guideCats = g.categories || (g.category ? [g.category] : []);
                       return `
                         <div class="p-3 bg-slate-950/60 border border-slate-900 rounded-2xl flex items-center justify-between gap-4 hover:border-slate-800/80 transition-colors">
-                          <div class="space-y-1 truncate">
-                            <span class="text-[9px] font-bold px-2 py-0.5 rounded bg-slate-900 text-slate-400 border border-slate-800">${catObj.label}</span>
+                          <div class="space-y-1.5 truncate">
+                            <div class="flex flex-wrap gap-1">
+                              ${guideCats.map(catId => {
+                                const cObj = categories.find(c => c.id === catId);
+                                if (!cObj) return '';
+                                const catStyles = getCategoryStyles(cObj.color);
+                                return `
+                                  <span class="text-[9px] font-extrabold px-1.5 py-0.5 rounded-md font-sans uppercase tracking-wider" style="background-color: ${catStyles.colorCode}15; color: ${catStyles.colorCode}; border: 1px solid ${catStyles.colorCode}30">
+                                    ${cObj.label}
+                                  </span>
+                                `;
+                              }).join('')}
+                            </div>
                             <h4 class="text-xs font-bold text-white truncate">${g.title}</h4>
                           </div>
 
                           <div class="flex items-center gap-1.5 shrink-0">
                             <button
                               onclick="selectGuideForEdit('${g.id}')"
-                              class="p-2 text-fluo-green bg-emerald-500/5 hover:bg-emerald-500/10 border border-emerald-500/10 rounded-xl cursor-pointer"
+                              class="p-2 text-fluo-green bg-emerald-500/5 hover:bg-emerald-500/10 border border-emerald-500/10 rounded-xl cursor-pointer transition-colors"
                               title="Modifica guida"
                             >
                               <i data-lucide="edit-3" class="w-4 h-4"></i>
                             </button>
                             <button
                               onclick="deleteGuideFromAdmin('${g.id}', event)"
-                              class="p-2 text-red-500 bg-red-500/5 hover:bg-red-500/10 border border-red-500/10 rounded-xl cursor-pointer"
+                              class="p-2 text-red-500 bg-red-500/5 hover:bg-red-500/10 border border-red-500/10 rounded-xl cursor-pointer transition-colors"
                               title="Elimina guida"
                             >
                               <i data-lucide="trash-2" class="w-4 h-4"></i>
