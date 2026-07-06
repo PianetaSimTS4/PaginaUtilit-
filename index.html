@@ -88,10 +88,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-  <!-- Lucide Icons CDN -->
+ 
   <script src="https://unpkg.com/lucide@latest"></script>
 
-  <!-- JSZip CDN for creating ZIP archives directly in browser -->
+  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
   <style>
@@ -99,7 +99,7 @@
       font-size: 112.5%;
     }
 
-    /* Increase font sizes slightly inside main body content, footer, and modals for readability (except header) */
+    
     main .text-xs, footer .text-xs, [id$="modal"] .text-xs, .toast .text-xs { font-size: 0.85rem !important; }
     main .text-sm, footer .text-sm, [id$="modal"] .text-sm, .toast .text-sm { font-size: 0.98rem !important; }
     main .text-base, footer .text-base, [id$="modal"] .text-base, .toast .text-base { font-size: 1.12rem !important; }
@@ -126,7 +126,7 @@
       font-family: 'Outfit', sans-serif;
     }
 
-    /* Custom space background animations */
+    
     @keyframes space-drift {
       0% { background-position: 0% 0%; }
       50% { background-position: 50% 50%; }
@@ -165,7 +165,7 @@
       }
     }
 
-    /* Plumbob & Neon glow effects */
+    
     .neon-shadow-green {
       box-shadow: 0 0 15px rgba(38, 255, 94, 0.25);
       border-color: rgba(38, 255, 94, 0.3);
@@ -233,7 +233,7 @@
       display: inline-block;
     }
 
-    /* Hide scrollbars but keep functionality */
+    
     .scrollbar-none::-webkit-scrollbar { display: none; }
     .scrollbar-none {
       -ms-overflow-style: none;
@@ -243,21 +243,21 @@
 </head>
 <body class="flex flex-col min-h-full selection:bg-fluo-green selection:text-black">
 
-  <!-- Animated Constellations Background -->
+  <!-- Background -->
   <canvas id="constellations-canvas" class="fixed inset-0 pointer-events-none z-0"></canvas>
 
-  <!-- Ambient Space Background -->
+ 
   <div class="space-bg"></div>
 
-  <!-- Decorative light shapes -->
+  
   <div class="absolute top-20 left-1/4 w-96 h-96 bg-fluo-purple/10 rounded-full filter blur-[120px] pointer-events-none z-0"></div>
   <div class="absolute top-80 right-1/4 w-96 h-96 bg-slate-800/10 rounded-full filter blur-[120px] pointer-events-none z-0"></div>
 
-  <!-- 1. Header Navigation Bar -->
+  <!-- 1. Header  -->
   <header class="bg-space-card/85 backdrop-blur-md border-b border-slate-900 sticky top-0 z-50">
     <div class="max-w-[95%] mx-auto px-2 md:px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
       
-      <!-- Brand Logo & Fallback -->
+      <!-- Logo -->
       <div class="flex items-center gap-3 cursor-pointer select-none" onclick="switchTab('guides')">
         <img 
           id="logo-img" 
@@ -272,7 +272,7 @@
         </div>
       </div>
 
-      <!-- Navigation tabs inside Header (Admin Link completely hidden by default to keep it a secret) -->
+      
       <nav class="flex items-center gap-2 sm:gap-3 overflow-x-auto max-w-full pb-1 sm:pb-0 scrollbar-none">
         <a
           id="btn-tab-home"
@@ -338,10 +338,10 @@
     </div>
   </header>
 
-  <!-- Main Content Stage -->
+  
   <main class="flex-grow max-w-7xl w-full mx-auto px-4 md:px-8 py-8 relative z-10">
 
-    <!-- 2. Hero Section / Banner -->
+    <!-- 2. Banner -->
     <section class="relative py-12 px-4 md:px-8 mb-4 flex flex-col items-center text-center">
       <div class="max-w-3xl space-y-4 flex flex-col items-center">
         <h2 id="site-hero-title" class="text-3xl md:text-5xl font-black text-white tracking-tight leading-tight">
@@ -350,7 +350,7 @@
         <p id="site-hero-desc" class="text-slate-300 text-sm max-w-xl leading-relaxed text-center">
           Benvenuto nella sezione delle guide di PianetaSim! Impara nuove tecniche di costruzione, installa mod tradotte e copia trucchi con un solo click.
         </p>
-        <!-- Dynamic Custom Alert Box (Embedded inline instead of full screen modal overlay) -->
+        
         <div id="inline-alert-box" class="w-full max-w-2xl mt-4 hidden text-left border rounded-2xl p-4 relative transition-all duration-300">
           <div class="flex items-start gap-3">
             <div id="inline-alert-icon-container" class="p-2 rounded-xl shrink-0">
@@ -363,7 +363,7 @@
           </div>
         </div>>
         
-        <!-- Bookmarks banner indicator -->
+        
         <div id="quick-bookmarks-banner" class="pt-2 hidden">
           <button
             onclick="toggleBookmarksOnly()"
@@ -376,14 +376,14 @@
       </div>
     </section>
 
-    <!-- 3. Dynamic Application Body View Container -->
+    <!-- 3. Body View Container -->
     <div id="app-body" class="w-full">
-      <!-- Content loaded dynamically via Javascript -->
+      
     </div>
 
   </main>
 
-  <!-- 4. Customized Footer section (Backup / Panel link completely removed as requested) -->
+  <!-- 4. Footer -->
   <footer class="bg-transparent border-t border-slate-900/40 text-slate-400 py-10 px-4 md:px-8 mt-12 text-xs relative z-10">
     <div class="max-w-xl mx-auto text-center space-y-6">
       <p class="text-sm md:text-base font-semibold text-slate-200 leading-relaxed">
@@ -408,17 +408,17 @@
     </div>
   </footer>
 
-  <!-- Instant Toasts Banner Notification -->
+   
   <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
-  <!-- Dynamic Custom Alert Popup Modal -->
+  
   <div id="alert-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4">
     <!-- Backdrop -->
     <div onclick="closeAlertModal()" class="absolute inset-0 bg-black/80 backdrop-blur-md"></div>
 
-    <!-- Alert Modal Box -->
+    
     <div id="alert-modal-box" class="bg-space-card border rounded-3xl w-full max-w-lg p-6 md:p-8 relative z-10 transition-all transform scale-95 opacity-0 duration-300">
-      <!-- Close button -->
+      
       <button
         onclick="closeAlertModal()"
         class="absolute top-4 right-4 text-slate-400 hover:text-white bg-slate-900 hover:bg-slate-850 p-2 rounded-full cursor-pointer transition-colors"
@@ -427,7 +427,7 @@
       </button>
 
       <div class="space-y-6">
-        <!-- Header / Icon -->
+        
         <div class="flex items-center gap-3">
           <div id="alert-modal-icon-container" class="p-3 rounded-2xl float-animation">
             <i id="alert-modal-icon" data-lucide="alert-triangle" class="w-7 h-7"></i>
@@ -438,12 +438,12 @@
           </div>
         </div>
 
-        <!-- Message Content -->
+        
         <div id="alert-modal-text" class="text-xs md:text-sm text-slate-300 leading-relaxed font-sans space-y-2">
-          <!-- Text with formatting support -->
+          
         </div>
 
-        <!-- Action / Okay Button -->
+        
         <div class="pt-4 border-t border-slate-900 flex justify-end">
           <button
             onclick="closeAlertModal()"
@@ -457,14 +457,14 @@
     </div>
   </div>
 
-  <!-- Supporto Modal -->
+  
   <div id="help-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
-    <!-- Backdrop -->
+    
     <div onclick="toggleHelpModal(false)" class="absolute inset-0 bg-black/85 backdrop-blur-md"></div>
 
-    <!-- Modal Box -->
+    
     <div class="bg-space-card border border-slate-800 rounded-3xl w-full max-w-xl max-h-[90vh] overflow-y-auto p-6 md:p-8 shadow-[0_0_50px_rgba(38,255,94,0.15)] relative z-10 neon-shadow-green transition-all transform scale-95 opacity-0 duration-300" id="help-modal-box">
-      <!-- Close button -->
+      
       <button
         onclick="toggleHelpModal(false)"
         class="absolute top-4 right-4 text-slate-400 hover:text-white bg-slate-900 hover:bg-slate-850 p-2 rounded-full cursor-pointer transition-colors"
@@ -473,7 +473,7 @@
       </button>
 
       <div class="space-y-6">
-        <!-- Header -->
+        
         <div class="flex items-center gap-3">
           <div class="p-3 bg-fluo-green/10 rounded-2xl text-fluo-green shadow-[0_0_15px_rgba(38,255,94,0.2)] float-animation">
             <i data-lucide="help-circle" class="w-7 h-7"></i>
@@ -530,7 +530,7 @@
           </div>
         </div>
 
-        <!-- Actions -->
+        
         <div class="pt-2 flex flex-col sm:flex-row gap-2.5">
           <a
             href="https://t.me/TheSims4ItaliaPianetaSim"
@@ -554,7 +554,7 @@
 
   <!-- APPLICATION CODE AND DATABASES -->
   <script>
-    // Databases loaded from JSON
+    
     let guides = [];
     let categories = [];
 
@@ -585,7 +585,7 @@
       });
     }
 
-    // Global Constants for Color Selections
+    
     const catColorsList = ['nero', 'grigio', 'bianco', 'rosso', 'arancione', 'giallo', 'lime', 'verde', 'verdeacqua', 'azzurro', 'blu', 'viola', 'fucsia', 'rosa'];
     
     const textColorsList = [
@@ -699,18 +699,18 @@
       return presets[colorPreset] || presets['viola'];
     }
 
-    // Text formatting engine for rich paragraph styling (Images, Bold, Italic, Link, Color)
+    
     function formatParagraphText(text) {
       if (!text) return "";
       let html = text;
       
-      // Escape HTML to prevent raw injection, except we parse our custom safe patterns
+      
       html = html
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;");
 
-      // 1. Parse custom images: [image] or [image|size](url)
+      
       html = html.replace(/\[image(?:\|([^\]]+))?\]\((.*?)\)/g, (match, size, url) => {
         let sizeStyle = "max-height: 450px; width: 100%; max-width: 100%;";
         if (size) {
@@ -730,25 +730,25 @@
         return `<img src="${url}" style="${sizeStyle}" class="rounded-xl border border-slate-800/80 my-5 bg-slate-950/40 p-1.5 shadow-xl block mx-auto transition-transform hover:scale-[1.02]" alt="Immagine della guida" onerror="this.src='https://placehold.co/600x400/121424/e2e8f0?text=Immagine+non+trovata';" />`;
       });
 
-      // 2. Parse Bold: **text**
+      
       html = html.replace(/\*\*(.*?)\*\*/g, '<strong class="font-extrabold text-shadow-sm">$1</strong>');
 
-      // 3. Parse Italic: *text*
+      
       html = html.replace(/\*(.*?)\*/g, '<em class="italic">$1</em>');
 
-      // 4. Parse Links: [label](url)
+      
       html = html.replace(/\[(.*?)\]\((https?:\/\/.*?)\)/g, (match, label, url) => {
         return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="text-fluo-blue hover:text-cyan-300 hover:underline font-bold inline-flex items-center gap-0.5">${label} <svg class="w-3 h-3 inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></a>`;
       });
 
-      // 5. Parse Custom color text blocks: [color:#ff00aa](text to color)
+      
       html = html.replace(/\[color:(.*?)\]\((.*?)\)/g, '<span style="color: $1">$2</span>');
 
       return html;
     }
 
     function renderGuideContentBlock(block, idx) {
-      // Normalize legacy text string to paragraph block
+      
       const b = typeof block === 'string' ? { type: 'paragraph', value: block } : block;
       const type = b.type || 'paragraph';
       const value = b.value || '';
@@ -844,7 +844,7 @@
         }
         case 'divider': {
           const isColorType = b.dividerType === 'color';
-          const divColor = b.dividerColor || '#10b981'; // default emerald green
+          const divColor = b.dividerColor || '#10b981';
           if (isColorType) {
             return `
               <div class="flex justify-center my-8">
@@ -877,15 +877,15 @@
       }
     }
 
-    // State Managers
-    let activeTab = 'guides'; // 'guides' or 'admin'
+    
+    let activeTab = 'guides';
     let selectedCategory = 'all';
     let searchQuery = '';
-    let activeGuideId = null; // When selected, opens the separate detail view page
+    let activeGuideId = null;
     let bookmarks = JSON.parse(localStorage.getItem('pianetasim-bookmarks') || '[]');
     window.editingCategoryId = null;
 
-    // Configurable site layout & alert properties
+    
     let adminPassword = 'sticazzi';
     let siteTitle = '<span class="animate-title-color">Guide & Utilità</span>';
     let siteDescription = 'Benvenuto nella sezione delle guide di PianetaSim! Impara nuove tecniche di costruzione, installa mod tradotte e copia trucchi con un solo click.';
@@ -974,7 +974,7 @@
             renderApp();
           };
 
-          // Send request to server
+          
           fetch('./api/upload-image', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -996,7 +996,7 @@
             console.warn("Utilizzo del fallback locale Base64 per il logo:", err);
             showToast('Logo caricato in modalità locale (compatibile con GitHub)!', 'success');
             
-            // Add to locally uploaded images list so it shows in the media library
+            
             let localImgs = [];
             try {
               const storedLocalImgs = localStorage.getItem('pianetasim-local-images');
@@ -1022,7 +1022,7 @@
       fileInput.click();
     }
 
-    // Media library handlers
+    
     function fetchUploadedImages() {
       fetch('./api/list-images')
         .then(res => res.json())
@@ -1061,14 +1061,14 @@
     function deleteImage(filename) {
       if (!confirm(`Sei sicuro di voler eliminare definitivamente l'immagine "${filename}"?`)) return;
       
-      // Instant UI removal
+      
       uploadedImages = uploadedImages.filter(img => {
         const name = typeof img === 'object' && img !== null ? img.name : img;
         return name !== filename;
       });
       renderUploadedImagesGrid();
 
-      // Clean local storage cache
+      
       let localImgs = [];
       try {
         const storedLocalImgs = localStorage.getItem('pianetasim-local-images');
@@ -1081,7 +1081,7 @@
       localImgs = localImgs.filter(img => img.name !== filename);
       localStorage.setItem('pianetasim-local-images', JSON.stringify(localImgs));
 
-      // Server call
+      
       fetch('./api/delete-image', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1093,7 +1093,7 @@
           showToast('Immagine eliminata correttamente!', 'success');
           fetchUploadedImages();
         } else {
-          // Fallback if server returned non-success but we deleted locally anyway
+          
           console.warn("Server delete-image status not success, keeping local change.");
         }
       })
@@ -1154,7 +1154,7 @@
             const imgUrl = isObj ? img.url : `images/${img}`;
             const isLocal = isObj && img.local;
             
-            // For copying or using in text
+            
             const copyValue = isLocal ? imgUrl : `images/${imgName}`;
             
             return `
@@ -1212,7 +1212,7 @@
       lucide.createIcons();
     }
 
-    // Interactive Formatting functions
+    
     function toggleTextColorPalette(id) {
       const palette = document.getElementById(`color-palette-${id}`);
       if (!palette) return;
@@ -1255,7 +1255,7 @@
       }
     }
 
-    // Category Color Preset square updater
+    
     function selectCategoryColorPreset(colorName) {
       selectedCategoryColor = colorName;
       const hiddenInput = document.getElementById('new-cat-color');
@@ -1272,7 +1272,7 @@
       });
     }
 
-    // Secret typed word combo anywhere on page to access Admin
+    
     let typedKeys = '';
     document.addEventListener('keydown', (e) => {
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
@@ -1301,9 +1301,9 @@
       });
     }
 
-    // Load dynamic guides and categories from external JSON file or browser local storage
+    
     document.addEventListener('DOMContentLoaded', () => {
-      // Self-healing: clear or fix any legacy localstorage data that contains the pin
+      
       const cachedData = localStorage.getItem('pianetasim-custom-data');
       if (cachedData) {
         try {
@@ -1318,7 +1318,7 @@
       updateLogoSrc();
       updateBookmarksCountBanner();
       
-      // Load local changes if they exist (crucial for GitHub / Static Hosting)
+      
       if (cachedData) {
         try {
           const parsed = JSON.parse(cachedData);
@@ -1346,14 +1346,14 @@
             updateLogoSrc();
             handleHashRouting();
             checkAndShowAlertPopup();
-            return; // Skip fetching guides.json if we have local customizations
+            return;
           }
         } catch(e) {
           console.error("Errore nel caricamento dei dati personalizzati da localStorage:", e);
         }
       }
       
-      // Load from external guides.json file (with timestamp cache buster)
+      
       fetch('./guides.json?t=' + Date.now())
         .then(response => response.json())
         .then(data => {
@@ -1366,7 +1366,7 @@
             if (data.alertPopup) alertPopup = data.alertPopup;
             if (data.siteLogo) siteLogo = data.siteLogo;
           } else {
-            // Fallback for old guides schema
+            
             categories = [
               { id: 'mod_cc', label: 'Mod e CC', color: 'cyan' },
               { id: 'costruzione', label: 'Costruzione', color: 'green' },
@@ -1382,7 +1382,7 @@
         })
         .catch(error => {
           console.error('Errore nel caricamento delle guide:', error);
-          // High-level fallback in case of connection failure
+         
           categories = [{ id: 'costruzione', label: 'Generali', color: 'green' }];
           guides = [
             {
@@ -1402,7 +1402,7 @@
         });
     });
 
-    // Save bookmarks
+    
     function saveBookmarks() {
       localStorage.setItem('pianetasim-bookmarks', JSON.stringify(bookmarks));
       updateBookmarksCountBanner();
@@ -1434,7 +1434,7 @@
       renderApp();
     }
 
-    // Toggle Help Modal
+    
     function toggleHelpModal(show) {
       const modal = document.getElementById('help-modal');
       const box = document.getElementById('help-modal-box');
@@ -1458,7 +1458,7 @@
       lucide.createIcons();
     }
 
-    // Custom Warning Alert Popup functions
+    
     function checkAndShowAlertPopup() {
       if (!alertPopup || !alertPopup.enabled) {
         const box = document.getElementById('inline-alert-box');
@@ -1492,14 +1492,14 @@
 
       if (!box) return;
 
-      // Set text
+      
       titleEl.textContent = alertPopup.title || 'Avviso';
       textEl.innerHTML = formatParagraphText(alertPopup.text || '');
 
-      // Apply color styles
+      
       const col = alertPopup.color || 'rosso';
       
-      // Reset classes
+      
       box.className = "w-full max-w-2xl mt-4 text-left border rounded-2xl p-4 relative transition-all duration-300 bg-space-card/80";
       iconContainer.className = "p-2 rounded-xl shrink-0";
 
@@ -1534,7 +1534,7 @@
       iconContainer.classList.add(bgClass, textClass);
       if (iconEl) iconEl.className = `w-5 h-5 ${textClass}`;
 
-      // Show alert box
+      
       box.classList.remove('hidden');
       
       lucide.createIcons();
@@ -1579,14 +1579,14 @@
         sessionStorage.removeItem('pianetasim-alert-closed');
       }
 
-      // Set content
+      
       titleEl.textContent = alertPopup.title || 'Avviso';
       textEl.innerHTML = formatParagraphText(alertPopup.text || '');
 
-      // Apply color styles
+      
       const col = alertPopup.color || 'rosso';
       
-      // Reset classes
+      
       box.className = "bg-space-card border rounded-3xl w-full max-w-lg p-6 md:p-8 relative z-10 transition-all transform scale-95 opacity-0 duration-300";
       iconContainer.className = "p-3 rounded-2xl float-animation shrink-0";
 
@@ -1627,7 +1627,7 @@
       okBtn.className = `px-5 py-2.5 rounded-xl text-xs font-extrabold cursor-pointer transition-all duration-200 ${btnClass}`;
       if (iconEl) iconEl.className = `w-7 h-7 ${textClass}`;
 
-      // Open Modal
+      
       modal.classList.remove('hidden');
       modal.classList.add('flex');
       setTimeout(() => {
@@ -1638,7 +1638,7 @@
       lucide.createIcons();
     }
 
-    // Admin authentication & editing state
+    
     window.isAdminAuthenticated = sessionStorage.getItem('pianetasim-admin') === 'true';
     window.editingGuide = null;
 
@@ -1663,7 +1663,7 @@
       switchTab('guides');
     }
 
-    // Dynamic direct image uploader function
+    
     function triggerImageUpload(textareaId) {
       const fileInput = document.createElement('input');
       fileInput.type = 'file';
@@ -1691,7 +1691,7 @@
                 textarea.focus();
                 textarea.setSelectionRange(start + replacement.length, start + replacement.length);
                 
-                // Trigger update in memory
+                
                 const idx = parseInt(textareaId.replace('admin-paragraph-', ''));
                 if (!isNaN(idx)) {
                   updateEditingParagraph(idx, textarea.value);
@@ -1702,7 +1702,7 @@
             }
           };
 
-          // Send request to server
+          
           fetch('./api/upload-image', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -1724,7 +1724,7 @@
             console.warn("Utilizzo del fallback locale Base64 (Hosting statico / GitHub):", err);
             showToast('Immagine caricata in modalità locale (compatibile con GitHub)!', 'success');
             
-            // Add to locally uploaded images list so it shows in the media library
+            
             let localImgs = [];
             try {
               const storedLocalImgs = localStorage.getItem('pianetasim-local-images');
@@ -1750,7 +1750,7 @@
       fileInput.click();
     }
 
-    // Formatting button utility
+    
     function insertFormat(id, type) {
       const textarea = document.getElementById(id);
       if (!textarea) return;
@@ -1774,7 +1774,7 @@
       textarea.focus();
       textarea.setSelectionRange(start + replacement.length, start + replacement.length);
 
-      // Save typed content directly back into active editor state
+      
       if (id === 'admin-edit-desc') {
         updateEditingField('description', textarea.value);
       } else {
@@ -1788,7 +1788,7 @@
       }
     }
 
-    // Add / Edit Categories Management
+    
     function handleAddCategory() {
       const labelInput = document.getElementById('new-cat-label');
       const colorSelect = document.getElementById('new-cat-color');
@@ -1882,7 +1882,7 @@
       renderApp();
     }
 
-    // Guides administration handlers
+    
     function selectGuideForEdit(guideId) {
       if (guideId === 'new') {
         window.editingGuide = {
@@ -1899,14 +1899,14 @@
         const guide = guides.find(g => g.id === guideId);
         if (guide) {
           window.editingGuide = JSON.parse(JSON.stringify(guide));
-          // Backward compatibility mapping for categories
+          
           if (!window.editingGuide.categories) {
             window.editingGuide.categories = window.editingGuide.category ? [window.editingGuide.category] : [];
           }
           if (window.editingGuide.categories.length === 0 && window.editingGuide.category) {
             window.editingGuide.categories.push(window.editingGuide.category);
           }
-          // Normalize content items to block objects:
+          
           window.editingGuide.content = window.editingGuide.content.map(block => {
             if (typeof block === 'string') {
               return { type: 'paragraph', value: block };
@@ -2046,7 +2046,7 @@
       }
     }
 
-    // Keep legacy fallback function wrappers to prevent reference errors during transitional states
+    
     function addEditingParagraph() {
       addEditingBlock('paragraph');
     }
@@ -2174,7 +2174,7 @@
         }
       }
 
-      // Filter and clean content blocks
+      
       g.content = g.content.map(block => {
         if (typeof block === 'string') {
           return { type: 'paragraph', value: block.trim() };
@@ -2203,11 +2203,11 @@
         g.tips = g.tips.map(t => t.trim()).filter(t => t.length > 0);
       }
 
-      // Handle categories backward compatibility
+      
       if (!g.categories || g.categories.length === 0) {
         g.categories = [g.category || categories[0]?.id || 'gameplay'];
       }
-      g.category = g.categories[0]; // legacy fallback string
+      g.category = g.categories[0];
 
       const existingIdx = guides.findIndex(item => item.id === g.id);
       if (existingIdx >= 0) {
@@ -2264,7 +2264,7 @@
       renderApp();
     }
 
-    // Permanent JSON Saving to Python Backend
+    
     function saveAllGuidesToServer() {
       persistDataLocally();
       showToast('Salvataggio del file guides.json in corso...', 'info');
@@ -2327,7 +2327,7 @@
       showToast("Preparazione dell'archivio ZIP in corso...", "info");
       const zip = new JSZip();
 
-      // 1. Add guides.json
+      
       const fullObj = {
         categories: categories,
         guides: guides,
@@ -2339,7 +2339,7 @@
       };
       zip.file("guides.json", JSON.stringify(fullObj, null, 2));
 
-      // 2. Add local images from localstorage
+      
       let localImgs = [];
       try {
         const storedLocalImgs = localStorage.getItem('pianetasim-local-images');
@@ -2362,7 +2362,7 @@
         }
       });
 
-      // 3. Generate ZIP and trigger browser download
+      
       zip.generateAsync({ type: "blob" })
         .then(function(content) {
           const downloadAnchor = document.createElement('a');
@@ -2384,7 +2384,7 @@
         });
     }
 
-    // Hash Routing & Navigation Engine
+    
     function navigateToGuide(id) {
       window.location.hash = `#guida-${id}`;
     }
@@ -2435,7 +2435,7 @@
 
     window.addEventListener('hashchange', handleHashRouting);
 
-    // Tab switcher
+    
     function switchTab(tab) {
       if (tab === 'admin') {
         navigateToAdmin();
@@ -2456,7 +2456,7 @@
       return guides.filter(g => g.category === catId).length;
     }
 
-    // Toast Notifications Engine
+    
     function showToast(message, type = 'success') {
       const container = document.getElementById('toast-container');
       if (!container) return;
@@ -2500,15 +2500,15 @@
       renderApp();
     }
 
-    // Render engine router
+    
     function renderApp() {
-      // Set dynamic Site configuration
+      
       const heroTitle = document.getElementById('site-hero-title');
       const heroDesc = document.getElementById('site-hero-desc');
       if (heroTitle) heroTitle.innerHTML = siteTitle;
       if (heroDesc) heroDesc.innerHTML = siteDescription;
 
-      // Update header navigation active states and visibility
+      
       const btnGuides = document.getElementById('btn-tab-guides');
       const btnAdmin = document.getElementById('btn-tab-admin');
 
@@ -2536,7 +2536,7 @@
       const container = document.getElementById('app-body');
       if (!container) return;
 
-      // 1. DETAIL PAGE (Author and Read Time elements fully removed as requested)
+      
       if (activeGuideId) {
         const guide = guides.find(g => g.id === activeGuideId);
         if (!guide) {
@@ -2545,13 +2545,13 @@
           return;
         }
 
-        // Support multiple categories
+        
         const guideCats = guide.categories || (guide.category ? [guide.category] : []);
         const primaryCatId = guideCats[0] || 'gameplay';
         const primaryCatObj = categories.find(c => c.id === primaryCatId) || { label: 'Generale', color: 'purple' };
         const primaryCatStyles = getCategoryStyles(primaryCatObj.color);
 
-        // Render all category badges
+        
         const badgesHtml = guideCats.map(catId => {
           const catObj = categories.find(c => c.id === catId);
           if (!catObj) return '';
@@ -2640,7 +2640,7 @@
         return;
       }
 
-      // 2. GUIDES GENERAL DIRECTORY
+      
       if (activeTab === 'guides') {
         const filteredGuides = guides.filter(guide => {
           const matchesSearch = 
@@ -2658,7 +2658,7 @@
           return matchesSearch && matchesCategory;
         });
 
-        // FAST-PATH DOM UPDATE: If list wrapper is already in DOM, just update the grid and count badge
+        
         const listWrapperEl = document.getElementById('guides-list-grid-wrapper');
         const countBadgeEl = document.getElementById('guides-count-badge');
         if (listWrapperEl && countBadgeEl) {
@@ -2931,7 +2931,7 @@
         return;
       }
 
-      // 3. SECRETS ADMIN PANEL VIEW
+      
       if (activeTab === 'admin') {
         if (!window.isAdminAuthenticated) {
           container.innerHTML = `
@@ -2969,9 +2969,9 @@
           return;
         }
 
-        // 3B. ADMIN IS AUTHENTICATED
+        
         if (window.editingGuide) {
-          // ADMIN IS EDITING OR CREATING A GUIDE
+          
           const g = window.editingGuide;
           container.innerHTML = `
             <div class="max-w-4xl mx-auto space-y-6 bg-space-card border border-slate-800 p-6 md:p-8 rounded-3xl shadow-2xl">
@@ -3904,7 +3904,7 @@
     }
   </script>
 
-  <!-- Constellations Background Animation Runner -->
+  
   <script>
     (function() {
       const canvas = document.getElementById('constellations-canvas');
@@ -3917,26 +3917,26 @@
       let constellations = [];
       let time = 0;
 
-      // Real Constellation Templates (normalized from -1 to 1)
+      
       const blueprints = [
         {
-          name: "URSA MAJOR", // Grande Carro / Big Dipper
+          name: "URSA MAJOR", 
           stars: [
-            { x: -0.7, y: 0.4 },  // Merak
-            { x: -0.6, y: -0.1 }, // Dubhe
-            { x: -0.2, y: 0.05 }, // Megrez
-            { x: -0.25, y: 0.45 },// Phecda
-            { x: 0.15, y: 0.0 },  // Alioth
-            { x: 0.5, y: -0.15 }, // Mizar
-            { x: 0.85, y: -0.4 }  // Alkaid
+            { x: -0.7, y: 0.4 },
+            { x: -0.6, y: -0.1 }, 
+            { x: -0.2, y: 0.05 }, 
+            { x: -0.25, y: 0.45 },
+            { x: 0.15, y: 0.0 },  
+            { x: 0.5, y: -0.15 }, 
+            { x: 0.85, y: -0.4 }  
           ],
           connections: [
-            [0, 1], [1, 2], [2, 3], [3, 0], // Bowl
-            [2, 4], [4, 5], [5, 6]          // Handle
+            [0, 1], [1, 2], [2, 3], [3, 0], 
+            [2, 4], [4, 5], [5, 6]          
           ]
         },
         {
-          name: "CASSIOPEIA", // Cassiopea (W shape)
+          name: "CASSIOPEIA", 
           stars: [
             { x: -0.8, y: -0.2 },
             { x: -0.4, y: 0.3 },
@@ -3951,68 +3951,68 @@
         {
           name: "ORION", // Orione
           stars: [
-            { x: -0.35, y: -0.6 }, // Betelgeuse (top left)
-            { x: 0.0, y: -0.7 },   // Meissa (head)
-            { x: 0.35, y: -0.6 },  // Bellatrix (top right)
-            { x: -0.12, y: -0.1 }, // Mintaka (belt L)
-            { x: 0.0, y: -0.1 },   // Alnilam (belt M)
-            { x: 0.12, y: -0.1 },  // Alnitak (belt R)
-            { x: -0.4, y: 0.5 },   // Rigel (bottom L)
-            { x: 0.3, y: 0.5 }     // Saiph (bottom R)
+            { x: -0.35, y: -0.6 }, 
+            { x: 0.0, y: -0.7 },   
+            { x: 0.35, y: -0.6 },  
+            { x: -0.12, y: -0.1 }, 
+            { x: 0.0, y: -0.1 },   
+            { x: 0.12, y: -0.1 },  
+            { x: -0.4, y: 0.5 },   
+            { x: 0.3, y: 0.5 }     
           ],
           connections: [
-            [0, 1], [1, 2],       // Shoulders
-            [0, 3], [2, 5],       // Sides to belt
-            [3, 4], [4, 5],       // Belt
-            [3, 6], [5, 7],       // To legs
-            [6, 7]                // Bottom line
+            [0, 1], [1, 2],       
+            [0, 3], [2, 5],       
+            [3, 4], [4, 5],       
+            [3, 6], [5, 7],       
+            [6, 7]                
           ]
         },
         {
-          name: "CYGNUS", // Cigno (Northern Cross)
+          name: "CYGNUS", 
           stars: [
-            { x: 0.0, y: -0.7 },  // Deneb (tail)
-            { x: 0.0, y: -0.1 },  // Sadr (center)
-            { x: 0.0, y: 0.6 },   // Albireo (head)
-            { x: -0.55, y: -0.2 },// Wing L
-            { x: 0.55, y: -0.2 } // Wing R
+            { x: 0.0, y: -0.7 },  
+            { x: 0.0, y: -0.1 },  
+            { x: 0.0, y: 0.6 },   
+            { x: -0.55, y: -0.2 },
+            { x: 0.55, y: -0.2 } 
           ],
           connections: [
-            [0, 1], [1, 2],       // Body
-            [1, 3], [1, 4]        // Wings
+            [0, 1], [1, 2],       
+            [1, 3], [1, 4]        
           ]
         },
         {
-          name: "CRUX", // Croce del Sud
+          name: "CRUX", 
           stars: [
-            { x: 0.0, y: -0.6 },  // Gacrux (top)
-            { x: 0.0, y: 0.6 },   // Acrux (bottom)
-            { x: -0.45, y: 0.05 },// Mimosa (left)
-            { x: 0.45, y: 0.1 }   // Delta Crucis (right)
+            { x: 0.0, y: -0.6 },  
+            { x: 0.0, y: 0.6 },   
+            { x: -0.45, y: 0.05 },
+            { x: 0.45, y: 0.1 }   
           ],
           connections: [
             [0, 1], [2, 3]
           ]
         },
         {
-          name: "LEO", // Leone
+          name: "LEO", 
           stars: [
-            { x: 0.5, y: 0.35 },  // Regulus
-            { x: 0.3, y: 0.0 },   // Algieba
-            { x: 0.1, y: -0.2 },  // Adhafera
-            { x: -0.1, y: -0.1 }, // Rasalas
-            { x: 0.0, y: 0.1 },   // Alterf
-            { x: 0.25, y: 0.3 },  // Eta Leo
-            { x: 0.8, y: 0.15 },  // Chertan
-            { x: 0.7, y: -0.25 }  // Denebola
+            { x: 0.5, y: 0.35 },  
+            { x: 0.3, y: 0.0 },   
+            { x: 0.1, y: -0.2 },  
+            { x: -0.1, y: -0.1 }, 
+            { x: 0.0, y: 0.1 },   
+            { x: 0.25, y: 0.3 },  
+            { x: 0.8, y: 0.15 },  
+            { x: 0.7, y: -0.25 }  
           ],
           connections: [
-            [0, 5], [5, 1], [1, 2], [2, 3], [3, 4], [4, 1], // Sickle/Head
-            [0, 6], [6, 7], [7, 1]                          // Body/Triangle
+            [0, 5], [5, 1], [1, 2], [2, 3], [3, 4], [4, 1], 
+            [0, 6], [6, 7], [7, 1]                          
           ]
         },
         {
-          name: "URSA MINOR", // Piccolo Carro
+          name: "URSA MINOR", 
           stars: [
             { x: -0.6, y: -0.5 },
             { x: -0.3, y: -0.4 },
@@ -4027,7 +4027,7 @@
           ]
         },
         {
-          name: "GEMINI", // I Gemelli
+          name: "GEMINI", 
           stars: [
             { x: -0.4, y: -0.5 },
             { x: -0.1, y: -0.55 },
@@ -4043,7 +4043,7 @@
           ]
         },
         {
-          name: "TAURUS", // Il Toro
+          name: "TAURUS", 
           stars: [
             { x: -0.5, y: -0.5 },
             { x: -0.6, y: 0.1 },
@@ -4057,7 +4057,7 @@
           ]
         },
         {
-          name: "PEGASUS", // Pegaso
+          name: "PEGASUS", 
           stars: [
             { x: -0.4, y: -0.4 },
             { x: -0.4, y: 0.4 },
@@ -4070,7 +4070,7 @@
           ]
         },
         {
-          name: "SCORPIUS", // Scorpione
+          name: "SCORPIUS", 
           stars: [
             { x: -0.6, y: -0.5 },
             { x: -0.5, y: -0.3 },
@@ -4086,7 +4086,7 @@
           ]
         },
         {
-          name: "BOOTES", // Boote
+          name: "BOOTES", 
           stars: [
             { x: 0.0, y: 0.6 },
             { x: -0.3, y: 0.1 },
@@ -4100,7 +4100,7 @@
           ]
         },
         {
-          name: "ANDROMEDA", // Andromeda
+          name: "ANDROMEDA", 
           stars: [
             { x: -0.6, y: -0.4 },
             { x: -0.2, y: -0.1 },
@@ -4114,7 +4114,7 @@
           ]
         },
         {
-          name: "HERCULES", // Ercole
+          name: "HERCULES", 
           stars: [
             { x: -0.3, y: -0.4 },
             { x: 0.2, y: -0.4 },
@@ -4133,8 +4133,7 @@
       function resize() {
         const newWidth = window.innerWidth;
         const newHeight = window.innerHeight;
-        // Solo se la larghezza cambia in modo significativo (>50px) ricreiamo la mappa,
-        // evitando sfarfallii e movimenti delle stelle sullo scrollbar dei dispositivi mobile
+        
         const widthChanged = Math.abs(newWidth - lastWidth) > 50;
         
         width = newWidth;
@@ -4149,11 +4148,11 @@
       }
 
       function initMap() {
-        // Clear previous configurations
+        
         backgroundStars = [];
         constellations = [];
 
-        // Fills the sky with subtle twinkling stars
+        
         const numBgStars = Math.floor((width * height) / 10000);
         for (let i = 0; i < numBgStars; i++) {
           backgroundStars.push({
@@ -4166,38 +4165,38 @@
           });
         }
 
-        // Spawn real constellation groups at random scales and angles (more constellations!)
+        
         const numConstellations = width < 768 ? 6 : 12;
         const availableBlueprints = [...blueprints];
         
-        // Shuffle blueprints randomly
+        
         for (let i = availableBlueprints.length - 1; i > 0; i--) {
           const j = Math.floor(Math.random() * (i + 1));
           [availableBlueprints[i], availableBlueprints[j]] = [availableBlueprints[j], availableBlueprints[i]];
         }
 
-        // Highly random placement across the entire canvas with dynamic depth of field scale
+        
         let attempts = 0;
         while (constellations.length < numConstellations && attempts < 300) {
           attempts++;
           const bp = availableBlueprints[constellations.length % availableBlueprints.length];
           
-          // Random coordinates anywhere on the screen (peeking off-screen is fine for realistic astronomical charts!)
+          
           const x = Math.random() * width;
           const y = Math.random() * height;
           
-          // Dynamic scale: larger size variations for extra depth and high visibility
+          
           const baseScale = Math.min(width, height) * 0.13;
-          const scaleMult = 0.75 + Math.random() * 1.05; // Varying from 0.75x to 1.80x (making them generally larger and more prominent!)
+          const scaleMult = 0.75 + Math.random() * 1.05; 
           const scale = baseScale * scaleMult;
           
-          // Check for overlapping centers
+          
           let overlap = false;
           for (let other of constellations) {
             const dx = x - other.x;
             const dy = y - other.y;
             const dist = Math.sqrt(dx * dx + dy * dy);
-            const minDist = (scale + other.scale) * 1.05; // margin to prevent overlap
+            const minDist = (scale + other.scale) * 1.05; 
             if (dist < minDist) {
               overlap = true;
               break;
@@ -4213,13 +4212,13 @@
               scale: scale,
               angle: angle,
               blueprint: bp,
-              opacity: 0.08 + Math.random() * 0.22, // Size-dependent / random opacity
+              opacity: 0.08 + Math.random() * 0.22, 
               pulseSpeed: 0.0008 + Math.random() * 0.0024
             });
           }
         }
         
-        // If we still need more constellations but are running out of space, place remaining randomly
+        
         while (constellations.length < numConstellations) {
           const bp = availableBlueprints[constellations.length % availableBlueprints.length];
           const x = Math.random() * width;
@@ -4245,7 +4244,7 @@
       resize();
 
       function drawCartographyGrid() {
-        // Faint, authentic coordinate gridlines
+        
         ctx.strokeStyle = 'rgba(148, 163, 184, 0.02)';
         ctx.lineWidth = 0.5;
 
@@ -4253,13 +4252,13 @@
         const gridCenterY = height * 0.5;
         const maxRadius = Math.max(width, height) * 0.85;
         
-        // Circular coordinate parallels
+        
         for (let r = 120; r < maxRadius; r += 220) {
           ctx.beginPath();
           ctx.arc(gridCenterX, gridCenterY, r, 0, Math.PI * 2);
           ctx.stroke();
           
-          // Tiny coordinate angle numbers
+          
           if (r < 700) {
             ctx.fillStyle = 'rgba(148, 163, 184, 0.04)';
             ctx.font = '6.5px "JetBrains Mono", monospace';
@@ -4272,7 +4271,7 @@
           }
         }
 
-        // Standard cardinal astronomical axes
+        
         ctx.beginPath();
         ctx.moveTo(0, height * 0.5); ctx.lineTo(width, height * 0.5);
         ctx.moveTo(width * 0.5, 0); ctx.lineTo(width * 0.5, height);
@@ -4283,10 +4282,10 @@
         ctx.clearRect(0, 0, width, height);
         time += 0.04;
 
-        // Render backplane details
+        
         drawCartographyGrid();
 
-        // 1. Draw Background Stars
+        
         for (let i = 0; i < backgroundStars.length; i++) {
           const s = backgroundStars[i];
           s.opacity += s.twinkleSpeed * s.twinkleDir;
@@ -4304,16 +4303,16 @@
           ctx.fill();
         }
 
-        // 2. Draw Constellations
+        
         for (let i = 0; i < constellations.length; i++) {
           const c = constellations[i];
           
-          // Subtle breathing opacity shift for the astronomical lines & label
+          
           const currentOpacity = c.opacity + Math.sin(time * c.pulseSpeed * 80) * 0.05;
           const cos = Math.cos(c.angle);
           const sin = Math.sin(c.angle);
           
-          // Calculate physical locations of stars based on template rotation & scaling
+          
           const projectedStars = c.blueprint.stars.map(star => {
             const rx = star.x * cos - star.y * sin;
             const ry = star.x * sin + star.y * cos;
@@ -4323,8 +4322,8 @@
             };
           });
 
-          // Draw the connection edges
-          ctx.strokeStyle = `rgba(168, 85, 247, ${currentOpacity * 0.45})`; // subtle elegant violet lines
+          
+          ctx.strokeStyle = `rgba(168, 85, 247, ${currentOpacity * 0.45})`; 
           ctx.lineWidth = 0.7;
           c.blueprint.connections.forEach(conn => {
             const s1 = projectedStars[conn[0]];
@@ -4335,15 +4334,15 @@
             ctx.stroke();
           });
 
-          // Draw stars with slow-pulsing neon center points (alternating green & purple) and starburst lens flares
+          
           projectedStars.forEach((star, idx) => {
             const isGreen = idx % 2 === 0;
-            const pulse = Math.sin(time * 0.45 + idx) * 0.22 + 0.78; // pulsing between 0.56 and 1.0
+            const pulse = Math.sin(time * 0.45 + idx) * 0.22 + 0.78; 
             
-            // Neon color codes
+            
             const glowColor = isGreen ? 'rgba(38, 255, 94, ' : 'rgba(176, 38, 255, ';
             
-            // 1. Outer Neon Aura (Glow)
+            
             const glowRadius = 14 * pulse;
             const grad = ctx.createRadialGradient(star.x, star.y, 0, star.x, star.y, glowRadius);
             grad.addColorStop(0, `${glowColor}${currentOpacity * 0.8 * pulse})`);
@@ -4354,43 +4353,43 @@
             ctx.fillStyle = grad;
             ctx.fill();
 
-            // 2. Elegant Astronomical Starburst Cross Flare
+            
             ctx.strokeStyle = `${glowColor}${currentOpacity * 0.85 * pulse})`;
             ctx.lineWidth = 0.8;
             
-            // Horizontal flare spike
+            
             ctx.beginPath();
             ctx.moveTo(star.x - 11 * pulse, star.y);
             ctx.lineTo(star.x + 11 * pulse, star.y);
             ctx.stroke();
 
-            // Vertical flare spike
+            
             ctx.beginPath();
             ctx.moveTo(star.x, star.y - 11 * pulse);
             ctx.lineTo(star.x, star.y + 11 * pulse);
             ctx.stroke();
 
-            // 3. Extra outer halo ring for high-contrast visibility
+            
             ctx.strokeStyle = `${glowColor}${currentOpacity * 0.4})`;
             ctx.lineWidth = 0.5;
             ctx.beginPath();
             ctx.arc(star.x, star.y, 4.5 * pulse, 0, Math.PI * 2);
             ctx.stroke();
 
-            // 4. Middle White Core (for intense light center)
+            
             ctx.beginPath();
             ctx.arc(star.x, star.y, 2.0, 0, Math.PI * 2);
             ctx.fillStyle = `rgba(255, 255, 255, ${currentOpacity * 1.8 * pulse})`;
             ctx.fill();
             
-            // 5. Vibrant Inner Neon Core
+            
             ctx.beginPath();
             ctx.arc(star.x, star.y, 1.0, 0, Math.PI * 2);
             ctx.fillStyle = `${glowColor}${currentOpacity * 2.0})`;
             ctx.fill();
           });
 
-          // Render Constellation Label
+          
           ctx.fillStyle = `rgba(148, 163, 184, ${currentOpacity * 0.6})`;
           ctx.font = '9px "JetBrains Mono", Courier, monospace';
           ctx.textAlign = 'center';
