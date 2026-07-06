@@ -1,10 +1,10 @@
-# Workflow per il deploy automatico su GitHub Pages
+
 name: Deploy PianetaSim su GitHub Pages
 
 on:
   push:
-    branches: ["main", "master"] # Esegui il deploy ad ogni push su main o master
-  workflow_dispatch: # Permette di avviare il deploy manualmente dalla tab Actions
+    branches: ["main", "master"] 
+  workflow_dispatch: 
 
 permissions:
   contents: read
