@@ -1,7 +1,7 @@
-# Forza Git a gestire i fine riga in modo automatico e coerente
+
 * text=auto
 
-# Assicura che i file di codice usino sempre LF nel repository (standard multipiattaforma)
+
 *.html text eol=lf
 *.ts text eol=lf
 *.tsx text eol=lf
@@ -9,7 +9,7 @@
 *.json text eol=lf
 *.js text eol=lf
 
-# Lascia i file binari (immagini, ecc.) inalterati
+
 *.png binary
 *.jpg binary
 *.jpeg binary
