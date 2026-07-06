@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Guide & Utilità</title>
   
-  <!-- Tailwind CSS CDN -->
+  
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -43,7 +43,7 @@
     }
   </script>
 
-  <!-- Logo Load Helper Scripts -->
+  
   <script>
     var logoPaths = [
       'images/logo.png',
@@ -74,7 +74,7 @@
       if (img) {
         console.log("Logo successfully loaded from: " + img.src);
         img.classList.remove('hidden');
-        // Keep the brand name text visible next to the logo image
+        
         var fallback = document.getElementById('logo-fallback');
         if (fallback) {
           fallback.classList.remove('hidden');
@@ -83,7 +83,7 @@
     }
   </script>
 
-  <!-- Google Fonts -->
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -243,7 +243,7 @@
 </head>
 <body class="flex flex-col min-h-full selection:bg-fluo-green selection:text-black">
 
-  <!-- Background -->
+  
   <canvas id="constellations-canvas" class="fixed inset-0 pointer-events-none z-0"></canvas>
 
  
@@ -253,11 +253,11 @@
   <div class="absolute top-20 left-1/4 w-96 h-96 bg-fluo-purple/10 rounded-full filter blur-[120px] pointer-events-none z-0"></div>
   <div class="absolute top-80 right-1/4 w-96 h-96 bg-slate-800/10 rounded-full filter blur-[120px] pointer-events-none z-0"></div>
 
-  <!-- 1. Header  -->
+  
   <header class="bg-space-card/85 backdrop-blur-md border-b border-slate-900 sticky top-0 z-50">
     <div class="max-w-[95%] mx-auto px-2 md:px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
       
-      <!-- Logo -->
+      
       <div class="flex items-center gap-3 cursor-pointer select-none" onclick="switchTab('guides')">
         <img 
           id="logo-img" 
@@ -341,7 +341,7 @@
   
   <main class="flex-grow max-w-7xl w-full mx-auto px-4 md:px-8 py-8 relative z-10">
 
-    <!-- 2. Banner -->
+    
     <section class="relative py-12 px-4 md:px-8 mb-4 flex flex-col items-center text-center">
       <div class="max-w-3xl space-y-4 flex flex-col items-center">
         <h2 id="site-hero-title" class="text-3xl md:text-5xl font-black text-white tracking-tight leading-tight">
@@ -376,14 +376,14 @@
       </div>
     </section>
 
-    <!-- 3. Body View Container -->
+    
     <div id="app-body" class="w-full">
       
     </div>
 
   </main>
 
-  <!-- 4. Footer -->
+  
   <footer class="bg-transparent border-t border-slate-900/40 text-slate-400 py-10 px-4 md:px-8 mt-12 text-xs relative z-10">
     <div class="max-w-xl mx-auto text-center space-y-6">
       <p class="text-sm md:text-base font-semibold text-slate-200 leading-relaxed">
@@ -413,7 +413,7 @@
 
   
   <div id="alert-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4">
-    <!-- Backdrop -->
+    
     <div onclick="closeAlertModal()" class="absolute inset-0 bg-black/80 backdrop-blur-md"></div>
 
     
@@ -490,7 +490,7 @@
 
         <hr class="border-slate-800" />
 
-        <!-- Body Content -->
+        
         <div class="space-y-4 text-slate-300 text-xs md:text-sm leading-relaxed">
           <div class="space-y-2">
             <h4 class="font-extrabold text-white text-sm flex items-center gap-1.5 text-fluo-green">
@@ -552,7 +552,7 @@
     </div>
   </div>
 
-  <!-- APPLICATION CODE AND DATABASES -->
+  
   <script>
     
     let guides = [];
@@ -589,26 +589,26 @@
     const catColorsList = ['nero', 'grigio', 'bianco', 'rosso', 'arancione', 'giallo', 'lime', 'verde', 'verdeacqua', 'azzurro', 'blu', 'viola', 'fucsia', 'rosa'];
     
     const textColorsList = [
-      '#ef4444', // rosso
-      '#f97316', // arancione
-      '#eab308', // giallo
-      '#84cc16', // lime
-      '#26ff5e', // verde
-      '#14b8a6', // verdeacqua
-      '#38bdf8', // azzurro
-      '#2563eb', // blu
-      '#b026ff', // viola
-      '#ff007f', // fucsia
-      '#ec4899', // rosa
-      '#ffffff', // bianco
-      '#64748b', // grigio
-      '#090d16'  // nero
+      '#ef4444', 
+      '#f97316', 
+      '#eab308', 
+      '#84cc16', 
+      '#26ff5e', 
+      '#14b8a6', 
+      '#38bdf8', 
+      '#2563eb', 
+      '#b026ff', 
+      '#ff007f', 
+      '#ec4899', 
+      '#ffffff', 
+      '#64748b', 
+      '#090d16'  
     ];
 
     let selectedCategoryColor = 'azzurro';
     let uploadedImages = [];
 
-    // Colors mapping helper for dynamic categories
+    
     function getCategoryStyles(colorPreset) {
       const presets = {
         nero: {
@@ -764,7 +764,7 @@
         } else if (blockObj.bold === true) {
           classes += ' font-bold';
         } else {
-          // Default bold weight based on type if not explicitly set
+          
           if (blockObj.type === 'heading1') classes += ' font-bold';
           else classes += ' font-semibold';
         }
@@ -1159,11 +1159,11 @@
             
             return `
               <div class="bg-slate-950/60 border border-slate-900 rounded-xl p-1.5 flex flex-col justify-between gap-1 group relative overflow-hidden">
-                <!-- Image preview with direct insert or copy -->
+                
                 <div class="w-full aspect-video rounded-lg overflow-hidden bg-slate-900 border border-slate-800 relative">
                   <img src="${imgUrl}" class="w-full h-full object-cover" alt="preview" />
                   
-                  <!-- Copy and delete overlay actions -->
+                  
                   <div class="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 p-1">
                     <button
                       onclick="copyImageValue('${copyValue.replace(/'/g, "\\'")}')"
@@ -1199,7 +1199,7 @@
                     `}
                   </div>
                 </div>
-                <!-- Filename label -->
+                
                 <div class="text-[9px] text-slate-400 truncate px-1 flex items-center justify-between" title="${imgName}">
                   <span class="truncate">${imgName}</span>
                   ${isLocal ? `<span class="text-[8px] text-fluo-green shrink-0 ml-1">Local</span>` : ''}
@@ -2318,6 +2318,92 @@
       showToast('File guides.json esportato!', 'success');
     }
 
+    function importGuidesJson() {
+      const fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.accept = '.json';
+      fileInput.onchange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        showToast('Lettura del file JSON...', 'info');
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          try {
+            const data = JSON.parse(evt.target.result);
+            
+            let importedGuides = null;
+            let importedCategories = null;
+            
+            if (data.guides && data.categories) {
+              importedGuides = data.guides;
+              importedCategories = data.categories;
+              if (data.adminPassword) adminPassword = data.adminPassword;
+              if (data.siteTitle) siteTitle = data.siteTitle;
+              if (data.siteDescription) siteDescription = data.siteDescription;
+              if (data.alertPopup) alertPopup = data.alertPopup;
+              if (data.siteLogo) siteLogo = data.siteLogo;
+            } else if (Array.isArray(data)) {
+              importedGuides = data;
+              importedCategories = [
+                { id: 'mod_cc', label: 'Mod e CC', color: 'cyan' },
+                { id: 'costruzione', label: 'Costruzione', color: 'green' },
+                { id: 'gameplay', label: 'Gameplay', color: 'purple' },
+                { id: 'espansioni', label: 'Espansioni', color: 'rose' }
+              ];
+            } else {
+              throw new Error("Formato del file JSON non riconosciuto. Deve contenere un oggetto con 'guides' e 'categories' o un array di guide.");
+            }
+            
+            categories = importedCategories;
+            guides = importedGuides;
+            migrateAllGuidesTips();
+            
+            persistDataLocally();
+            
+            const payload = {
+              categories: categories,
+              guides: guides,
+              adminPassword: adminPassword,
+              siteTitle: siteTitle,
+              siteDescription: siteDescription,
+              alertPopup: alertPopup,
+              siteLogo: siteLogo
+            };
+            
+            fetch('./api/save-guides', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(payload)
+            })
+            .then(response => {
+              if (response.ok) {
+                showToast('Dati importati e salvati sul server con successo!', 'success');
+              } else {
+                showToast('Dati importati nel browser (salvataggio server non riuscito)!', 'success');
+              }
+              updateLogoSrc();
+              renderApp();
+            })
+            .catch(error => {
+              console.warn("Utilizzo del backup locale per l'importazione:", error);
+              showToast('Dati importati localmente nel browser (scarica lo ZIP per GitHub)!', 'success');
+              updateLogoSrc();
+              renderApp();
+            });
+            
+          } catch (err) {
+            console.error(err);
+            showToast('Errore durante l\'importazione: ' + err.message, 'error');
+          }
+        };
+        reader.readAsText(file);
+      };
+      fileInput.click();
+    }
+
     function downloadAllModifiedFilesZip() {
       if (typeof JSZip === 'undefined') {
         showToast("Libreria JSZip non ancora caricata. Riprova tra un istante!", "info");
@@ -2583,7 +2669,7 @@
               </button>
             </div>
 
-            <!-- Guide Main Board -->
+            
             <div class="bg-space-card rounded-2xl border border-slate-800 p-6 md:p-8 shadow-2xl ${primaryCatStyles.shadow}">
               <div class="flex flex-wrap items-center gap-1.5 mb-4">
                 ${badgesHtml}
@@ -2595,17 +2681,17 @@
 
               <div class="border-b border-slate-800/80 my-6"></div>
 
-              <!-- Brief Description with formatting support -->
+              
               <p class="p-4 bg-slate-900/50 border-l-4 border-fluo-green rounded-r-lg text-slate-300 text-sm md:text-base leading-relaxed italic mb-8 block font-sans">
                 ${formatParagraphText(guide.description)}
               </p>
 
-              <!-- Render formatted paragraphs dynamically -->
+              
               <div class="space-y-4 mb-8 font-sans">
                 ${guide.content.map((block, idx) => renderGuideContentBlock(block, idx)).join('')}
               </div>
 
-              <!-- Render Tips/Consigli area if populated -->
+              
               ${guide.tips && guide.tips.length > 0 ? `
                 <div class="p-5 md:p-6 bg-purple-500/5 border border-fluo-purple/20 rounded-2xl space-y-3 mb-8">
                   <h4 class="text-sm md:text-base font-bold text-fluo-purple flex items-center gap-1.5">
@@ -2625,7 +2711,7 @@
                 </div>
               ` : ''}
 
-              <!-- Tags container -->
+              
               <div class="pt-6 border-t border-slate-800/80 flex flex-wrap gap-1.5">
                 ${guide.tags.map(tag => `
                   <span class="inline-block text-xs text-slate-400 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-md font-mono">
@@ -2691,7 +2777,7 @@
                     class="bg-space-card rounded-2xl border border-slate-800/80 p-5 cursor-pointer hover:border-slate-700/80 transition-all duration-300 hover:-translate-y-1 shadow-md hover:shadow-2xl flex flex-col justify-between group relative overflow-hidden h-[240px]"
                   >
                     <div class="space-y-3">
-                      <!-- Row badge category & Bookmark button -->
+                      
                       <div class="flex items-center justify-between gap-2 overflow-hidden">
                         <div class="flex flex-wrap gap-1 items-center overflow-hidden">
                           ${badgesHtml}
@@ -2706,18 +2792,18 @@
                         </button>
                       </div>
  
-                      <!-- Title of guide -->
+                      
                       <h3 class="text-base md:text-lg font-black text-slate-100 group-hover:text-white transition-colors line-clamp-2 leading-tight">
                         ${guide.title}
                       </h3>
  
-                      <!-- Short description preview -->
+                      
                       <p class="text-xs text-slate-400 line-clamp-3 leading-relaxed font-sans">
                         ${guide.description.replace(/\[image\]\(.*?\)/g, '[Immagine]')}
                       </p>
                     </div>
  
-                    <!-- bottom action indicator with tags (Author and read-time fully removed) -->
+                    
                     <div class="pt-3 border-t border-slate-900 flex items-center justify-between text-[11px]">
                       <span class="text-slate-500 truncate max-w-[60%] font-mono">
                         #${guide.tags.slice(0, 2).join(' #')}
@@ -2740,10 +2826,10 @@
         container.innerHTML = `
           <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start w-full">
             
-            <!-- Dynamic Category and Search Sidebar Menu -->
+            
             <div class="lg:col-span-3 space-y-6">
               
-              <!-- Search box -->
+              
               <div class="bg-space-card p-5 rounded-2xl border border-slate-800 shadow-xl space-y-3 neon-shadow-purple">
                 <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest">
                   Cerca Guida
@@ -2761,7 +2847,7 @@
                 </div>
               </div>
 
-              <!-- Categories selector -->
+              
               <div class="bg-space-card p-5 rounded-2xl border border-slate-800 shadow-xl space-y-3.5 neon-shadow-blue">
                 <h4 class="text-xs font-extrabold text-slate-400 uppercase tracking-widest">
                   Filtra per Categoria
@@ -2814,7 +2900,7 @@
                 </div>
               </div>
 
-              <!-- Community Support Guide Trigger Box -->
+              
               <div class="p-5 bg-space-card border border-slate-800 rounded-2xl text-slate-200 shadow-md relative overflow-hidden space-y-3">
                 <h4 class="text-xs font-extrabold uppercase tracking-widest text-fluo-green flex items-center gap-1.5">
                   <i data-lucide="help-circle" class="w-4 h-4 text-fluo-green"></i>
@@ -2835,7 +2921,7 @@
 
             </div>
 
-            <!-- List Content column -->
+            
             <div class="lg:col-span-9 space-y-6">
               
               <div class="flex items-center justify-between border-b border-slate-800 pb-3">
@@ -2880,7 +2966,7 @@
                           class="bg-space-card rounded-2xl border border-slate-800/80 p-5 cursor-pointer hover:border-slate-700/80 transition-all duration-300 hover:-translate-y-1 shadow-md hover:shadow-2xl flex flex-col justify-between group relative overflow-hidden h-[240px]"
                         >
                           <div class="space-y-3">
-                            <!-- Row badge category & Bookmark button -->
+                            
                             <div class="flex items-center justify-between gap-2 overflow-hidden">
                               <div class="flex flex-wrap gap-1 items-center overflow-hidden">
                                 ${badgesHtml}
@@ -2895,18 +2981,18 @@
                               </button>
                             </div>
 
-                            <!-- Title of guide -->
+                            
                             <h3 class="text-base md:text-lg font-black text-slate-100 group-hover:text-white transition-colors line-clamp-2 leading-tight">
                               ${guide.title}
                             </h3>
 
-                            <!-- Short description preview -->
+                            
                             <p class="text-xs text-slate-400 line-clamp-3 leading-relaxed font-sans">
                               ${guide.description.replace(/\[image\]\(.*?\)/g, '[Immagine]')}
                             </p>
                           </div>
 
-                          <!-- bottom action indicator with tags (Author and read-time fully removed) -->
+                          
                           <div class="pt-3 border-t border-slate-900 flex items-center justify-between text-[11px]">
                             <span class="text-slate-500 truncate max-w-[60%] font-mono">
                               #${guide.tags.slice(0, 2).join(' #')}
@@ -2990,7 +3076,7 @@
                 </button>
               </div>
 
-              <!-- Main Fields row -->
+              
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="space-y-1.5">
                   <label class="text-xs font-bold text-slate-400 uppercase">Titolo della Guida</label>
@@ -3056,7 +3142,7 @@
                     placeholder="es: costruzione, trucchi, mobili"
                     class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:ring-2 focus:ring-fluo-purple outline-none"
                   />
-                  <!-- Clickable tags to remove easily -->
+                  
                   ${g.tags && g.tags.length > 0 ? `
                   <div class="flex flex-wrap gap-1 mt-1.5">
                     ${g.tags.map((tag, tIdx) => `
@@ -3077,7 +3163,7 @@
                 </div>
               </div>
 
-              <!-- Brief Description text area with standard formatting toolbar -->
+              
               <div class="space-y-2">
                 <div class="flex items-center justify-between">
                   <label class="text-xs font-bold text-slate-400 uppercase font-sans">Breve Descrizione / Introduzione</label>
@@ -3086,7 +3172,7 @@
                     <button type="button" onclick="insertFormat('admin-edit-desc', 'italic')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-white italic rounded">I</button>
                     <button type="button" onclick="insertFormat('admin-edit-desc', 'link')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-fluo-blue rounded">Link</button>
                     
-                    <!-- Dropdown Palette for Text Colors -->
+                    
                     <div class="relative inline-block text-left">
                       <button type="button" onclick="toggleTextColorPalette('admin-edit-desc')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-fluo-fuchsia rounded flex items-center gap-0.5">
                         <span>Colore</span>
@@ -3117,7 +3203,7 @@
                 >${g.description}</textarea>
               </div>
 
-              <!-- Content Paragraphs Dynamic Blocks -->
+              
               <div class="space-y-4">
                 <div class="flex items-center justify-between border-b border-slate-800 pb-2">
                   <div class="space-y-1">
@@ -3196,7 +3282,7 @@
                           <div class="flex items-center gap-2">
                             <span class="text-xs font-extrabold text-fluo-green">Blocco #${idx + 1}</span>
                             
-                            <!-- Block Type Selector -->
+                            
                             <select
                               onchange="updateEditingBlockType(${idx}, this.value)"
                               class="px-2 py-1 bg-slate-900 border border-slate-800 rounded-lg text-[10px] text-slate-300 font-bold focus:ring-1 focus:ring-fluo-purple outline-none cursor-pointer"
@@ -3213,9 +3299,9 @@
                             </select>
                           </div>
                           
-                          <!-- Toolbar Formatting buttons and Reordering -->
+                          
                           <div class="flex items-center gap-1.5 flex-wrap">
-                            <!-- Reorder buttons -->
+                            
                             <button
                               type="button"
                               onclick="moveEditingBlock(${idx}, 'up')"
@@ -3235,13 +3321,13 @@
                               ▼
                             </button>
 
-                            <!-- Rich text formatting toolbar (hidden for divider block) -->
+                            
                             ${type !== 'divider' ? `
                               <button type="button" onclick="insertFormat('admin-block-${idx}', 'bold')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-white font-bold rounded" title="Grassetto">B</button>
                               <button type="button" onclick="insertFormat('admin-block-${idx}', 'italic')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-white italic rounded" title="Corsivo">I</button>
                               <button type="button" onclick="insertFormat('admin-block-${idx}', 'link')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-fluo-blue rounded" title="Aggiungi Link">Link</button>
                               
-                              <!-- Dropdown Palette for Text Colors -->
+                              
                               <div class="relative inline-block text-left">
                                 <button type="button" onclick="toggleTextColorPalette('admin-block-${idx}')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-fluo-fuchsia rounded flex items-center gap-0.5" title="Colore Personalizzato">
                                   <span>Colore</span>
@@ -3274,7 +3360,7 @@
                           </div>
                         </div>
 
-                        <!-- Specific subconfigurations for lists or buttons -->
+                        
                         ${type === 'list' ? `
                           <div class="flex items-center gap-3 bg-slate-900/60 p-2 rounded-lg border border-slate-900 text-[11px] text-slate-300 font-sans">
                             <span class="font-bold">Tipo Elenco:</span>
@@ -3374,7 +3460,7 @@
                           </div>
                         ` : ''}
 
-                        <!-- Textarea for editing value -->
+                        
                         ${type !== 'divider' ? `
                           <textarea
                             id="admin-block-${idx}"
@@ -3400,7 +3486,7 @@
                 </div>
               </div>
 
-              <!-- Form Buttons -->
+              
               <div class="pt-6 border-t border-slate-800 flex flex-col sm:flex-row gap-3">
                 <button
                   onclick="saveEditingGuide()"
@@ -3421,11 +3507,11 @@
           return;
         }
 
-        // 3C. GENERAL ADMIN PANEL VIEW (Manage guides, categories, export/import, server sync)
+        
         container.innerHTML = `
           <div class="space-y-8 w-full">
             
-            <!-- System Status header (No unrequested metrics) -->
+            
             <div class="bg-space-card p-6 rounded-3xl border border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xl">
               <div class="space-y-1">
                 <h3 class="text-xl font-black text-white flex items-center gap-2">
@@ -3445,14 +3531,6 @@
                   Scarica Modifiche per GitHub (ZIP) 📦
                 </button>
                 <button
-                  onclick="downloadGuidesJson()"
-                  class="px-3 py-2 bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white rounded-xl border border-slate-800 text-xs font-bold cursor-pointer flex items-center gap-1.5"
-                  title="Esporta solo il file guides.json locale"
-                >
-                  <i data-lucide="download" class="w-3.5 h-3.5"></i>
-                  Esporta solo JSON
-                </button>
-                <button
                   onclick="resetGuidesToDefault()"
                   class="px-3 py-2 bg-slate-900 hover:bg-slate-850 text-slate-300 hover:text-white rounded-xl border border-slate-800 text-xs font-bold cursor-pointer flex items-center gap-1.5"
                   title="Svuota la cache locale del browser e ricarica i dati originari dal file guides.json del server (GitHub)"
@@ -3469,7 +3547,7 @@
               </div>
             </div>
 
-            <!-- GUIDA AL DEPLOY GITHUB PAGES -->
+            
             <div class="bg-gradient-to-r from-slate-900 to-slate-950 p-6 rounded-3xl border border-slate-800 shadow-xl space-y-4">
               <div class="flex items-center gap-2">
                 <div class="p-2 bg-fluo-blue/10 text-fluo-blue rounded-xl">
@@ -3509,7 +3587,7 @@
               </div>
             </div>
 
-            <!-- Site Customization & Alert Popup Controls Card -->
+            
             <div class="bg-space-card p-6 rounded-3xl border border-slate-800 shadow-xl space-y-6">
               <div class="border-b border-slate-800 pb-4">
                 <h3 class="text-base font-black text-white flex items-center gap-2">
@@ -3519,9 +3597,9 @@
                 <p class="text-xs text-slate-400">Modifica il titolo principale del sito, la descrizione della hero e configura il pop-up di avviso per i visitatori.</p>
               </div>
 
-              <!-- Main Fields row -->
+              
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Title & Description of Site -->
+                
                 <div class="space-y-4">
                   <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Testata del Sito</h4>
                   
@@ -3547,7 +3625,7 @@
                     >${siteDescription}</textarea>
                   </div>
 
-                  <!-- Dynamic Logo Field -->
+                  
                   <div class="space-y-1.5">
                     <label class="text-[10px] uppercase font-bold text-slate-400">Percorso Immagine Logo</label>
                     <div class="flex gap-2">
@@ -3572,7 +3650,7 @@
                   </div>
                 </div>
 
-                <!-- Warning Alert Popup Settings -->
+                
                 <div class="space-y-4">
                   <div class="flex items-center justify-between">
                     <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
@@ -3643,7 +3721,7 @@
                 </div>
               </div>
 
-              <!-- Save customized config button -->
+              
               <div class="pt-4 border-t border-slate-800 flex justify-end">
                 <button
                   onclick="saveSiteConfiguration()"
@@ -3657,7 +3735,7 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
               
-              <!-- Left Column: Manage Categories dynamic creator -->
+              
               <div class="lg:col-span-4 space-y-6">
                 <div class="bg-space-card p-6 rounded-3xl border border-slate-800 shadow-xl space-y-4 neon-shadow-blue">
                   ${(() => {
@@ -3778,7 +3856,7 @@
 
                   <hr class="border-slate-800/80 my-3" />
 
-                  <!-- Current categories list -->
+                  
                   <div class="space-y-2">
                     <h5 class="text-[11px] font-bold text-slate-400 uppercase">Categorie Esistenti:</h5>
                     <div class="space-y-1.5 max-h-[200px] overflow-y-auto scrollbar-none pr-1">
@@ -3810,7 +3888,7 @@
                   </div>
                 </div>
 
-                <!-- Media Upload Panel (Media center) -->
+                
                 <div class="bg-space-card p-6 rounded-3xl border border-slate-800 shadow-xl space-y-4 neon-shadow-green">
                   <h4 class="text-sm font-black text-white flex items-center gap-1.5">
                     <i data-lucide="image" class="w-4 h-4 text-fluo-green"></i>
@@ -3824,17 +3902,17 @@
                     <div class="text-[10px] text-slate-500 font-mono">Trascina o clicca per caricare</div>
                   </div>
 
-                  <!-- Quick Media Library Gallery Grid Container -->
+                  
                   <div class="space-y-1.5 pt-2">
                     <h5 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Libreria Immagini</h5>
                     <div id="uploaded-images-grid-container">
-                      <!-- Loaded dynamically via renderUploadedImagesGrid -->
+                      
                     </div>
                   </div>
                 </div>
               </div>
 
-              <!-- Right Column: List of current guides with management actions -->
+              
               <div class="lg:col-span-8 space-y-6">
                 <div class="bg-space-card p-6 rounded-3xl border border-slate-800 shadow-xl space-y-4">
                   <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800 pb-3">
@@ -3949,7 +4027,7 @@
           ]
         },
         {
-          name: "ORION", // Orione
+          name: "ORION", 
           stars: [
             { x: -0.35, y: -0.6 }, 
             { x: 0.0, y: -0.7 },   
@@ -4130,6 +4208,83 @@
       ];
 
       let lastWidth = window.innerWidth;
+      
+      
+      const greenGlowCanvas = document.createElement('canvas');
+      const purpleGlowCanvas = document.createElement('canvas');
+      const gridCanvas = document.createElement('canvas');
+      
+      function updateGlowCaches() {
+        const size = 64; 
+        greenGlowCanvas.width = size;
+        greenGlowCanvas.height = size;
+        purpleGlowCanvas.width = size;
+        purpleGlowCanvas.height = size;
+        
+        
+        const gCtx = greenGlowCanvas.getContext('2d');
+        if (gCtx) {
+          const grad = gCtx.createRadialGradient(size/2, size/2, 0, size/2, size/2, size/2);
+          grad.addColorStop(0, 'rgba(38, 255, 94, 0.8)');
+          grad.addColorStop(0.3, 'rgba(38, 255, 94, 0.35)');
+          grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+          gCtx.fillStyle = grad;
+          gCtx.beginPath();
+          gCtx.arc(size/2, size/2, size/2, 0, Math.PI * 2);
+          gCtx.fill();
+        }
+        
+        
+        const pCtx = purpleGlowCanvas.getContext('2d');
+        if (pCtx) {
+          const grad = pCtx.createRadialGradient(size/2, size/2, 0, size/2, size/2, size/2);
+          grad.addColorStop(0, 'rgba(176, 38, 255, 0.8)');
+          grad.addColorStop(0.3, 'rgba(176, 38, 255, 0.35)');
+          grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+          pCtx.fillStyle = grad;
+          pCtx.beginPath();
+          pCtx.arc(size/2, size/2, size/2, 0, Math.PI * 2);
+          pCtx.fill();
+        }
+      }
+      
+      updateGlowCaches();
+
+      function renderCartographyGridToCache() {
+        gridCanvas.width = Math.max(1, width || 1);
+        gridCanvas.height = Math.max(1, height || 1);
+        const gridCtx = gridCanvas.getContext('2d');
+        if (!gridCtx) return;
+
+        gridCtx.strokeStyle = 'rgba(148, 163, 184, 0.015)';
+        gridCtx.lineWidth = 0.5;
+        const gridCenterX = width * 0.5;
+        const gridCenterY = height * 0.5;
+        const maxRadius = Math.max(width, height) * 0.85;
+        
+        for (let r = 120; r < maxRadius; r += 220) {
+          gridCtx.beginPath();
+          gridCtx.arc(gridCenterX, gridCenterY, r, 0, Math.PI * 2);
+          gridCtx.stroke();
+          
+          if (r < 700) {
+            gridCtx.fillStyle = 'rgba(148, 163, 184, 0.035)';
+            gridCtx.font = '6.5px "JetBrains Mono", monospace';
+            gridCtx.textAlign = 'center';
+            for (let angle = 0; angle < Math.PI * 2; angle += Math.PI / 4) {
+              const tx = gridCenterX + Math.cos(angle) * r;
+              const ty = gridCenterY + Math.sin(angle) * r;
+              gridCtx.fillText(`${Math.round((angle * 180) / Math.PI)}°`, tx, ty);
+            }
+          }
+        }
+
+        gridCtx.beginPath();
+        gridCtx.moveTo(0, height * 0.5); gridCtx.lineTo(width, height * 0.5);
+        gridCtx.moveTo(width * 0.5, 0); gridCtx.lineTo(width * 0.5, height);
+        gridCtx.stroke();
+      }
+
       function resize() {
         const newWidth = window.innerWidth;
         const newHeight = window.innerHeight;
@@ -4145,15 +4300,18 @@
           lastWidth = newWidth;
           initMap();
         }
+        
+        renderCartographyGridToCache();
       }
 
       function initMap() {
-        
         backgroundStars = [];
         constellations = [];
 
         
-        const numBgStars = Math.floor((width * height) / 10000);
+        const densityDivisor = width < 768 ? 16000 : 10000;
+        const numBgStars = Math.min(200, Math.floor((width * height) / densityDivisor));
+        
         for (let i = 0; i < numBgStars; i++) {
           backgroundStars.push({
             x: Math.random() * width,
@@ -4166,30 +4324,24 @@
         }
 
         
-        const numConstellations = width < 768 ? 6 : 12;
+        const numConstellations = width < 768 ? 4 : 10;
         const availableBlueprints = [...blueprints];
-        
         
         for (let i = availableBlueprints.length - 1; i > 0; i--) {
           const j = Math.floor(Math.random() * (i + 1));
           [availableBlueprints[i], availableBlueprints[j]] = [availableBlueprints[j], availableBlueprints[i]];
         }
 
-        
         let attempts = 0;
         while (constellations.length < numConstellations && attempts < 300) {
           attempts++;
           const bp = availableBlueprints[constellations.length % availableBlueprints.length];
-          
-          
           const x = Math.random() * width;
           const y = Math.random() * height;
-          
           
           const baseScale = Math.min(width, height) * 0.13;
           const scaleMult = 0.75 + Math.random() * 1.05; 
           const scale = baseScale * scaleMult;
-          
           
           let overlap = false;
           for (let other of constellations) {
@@ -4218,7 +4370,6 @@
           }
         }
         
-        
         while (constellations.length < numConstellations) {
           const bp = availableBlueprints[constellations.length % availableBlueprints.length];
           const x = Math.random() * width;
@@ -4243,47 +4394,25 @@
       window.addEventListener('resize', resize);
       resize();
 
-      function drawCartographyGrid() {
-        
-        ctx.strokeStyle = 'rgba(148, 163, 184, 0.02)';
-        ctx.lineWidth = 0.5;
-
-        const gridCenterX = width * 0.5;
-        const gridCenterY = height * 0.5;
-        const maxRadius = Math.max(width, height) * 0.85;
-        
-        
-        for (let r = 120; r < maxRadius; r += 220) {
-          ctx.beginPath();
-          ctx.arc(gridCenterX, gridCenterY, r, 0, Math.PI * 2);
-          ctx.stroke();
-          
-          
-          if (r < 700) {
-            ctx.fillStyle = 'rgba(148, 163, 184, 0.04)';
-            ctx.font = '6.5px "JetBrains Mono", monospace';
-            ctx.textAlign = 'center';
-            for (let angle = 0; angle < Math.PI * 2; angle += Math.PI / 4) {
-              const tx = gridCenterX + Math.cos(angle) * r;
-              const ty = gridCenterY + Math.sin(angle) * r;
-              ctx.fillText(`${Math.round((angle * 180) / Math.PI)}°`, tx, ty);
-            }
-          }
-        }
-
-        
-        ctx.beginPath();
-        ctx.moveTo(0, height * 0.5); ctx.lineTo(width, height * 0.5);
-        ctx.moveTo(width * 0.5, 0); ctx.lineTo(width * 0.5, height);
-        ctx.stroke();
-      }
+      
+      let isTabActive = true;
+      document.addEventListener('visibilitychange', () => {
+        isTabActive = !document.hidden;
+      });
 
       function animate() {
+        if (!isTabActive) {
+          requestAnimationFrame(animate);
+          return;
+        }
+
         ctx.clearRect(0, 0, width, height);
         time += 0.04;
 
         
-        drawCartographyGrid();
+        if (gridCanvas.width > 1 && gridCanvas.height > 1 && width > 0 && height > 0) {
+          ctx.drawImage(gridCanvas, 0, 0);
+        }
 
         
         for (let i = 0; i < backgroundStars.length; i++) {
@@ -4297,21 +4426,18 @@
             s.twinkleDir = 1;
           }
 
-          ctx.beginPath();
-          ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+          
           ctx.fillStyle = `rgba(255, 255, 255, ${s.opacity})`;
-          ctx.fill();
+          const size = s.radius * 2;
+          ctx.fillRect(s.x - s.radius, s.y - s.radius, size, size);
         }
 
         
         for (let i = 0; i < constellations.length; i++) {
           const c = constellations[i];
-          
-          
           const currentOpacity = c.opacity + Math.sin(time * c.pulseSpeed * 80) * 0.05;
           const cos = Math.cos(c.angle);
           const sin = Math.sin(c.angle);
-          
           
           const projectedStars = c.blueprint.stars.map(star => {
             const rx = star.x * cos - star.y * sin;
@@ -4323,54 +4449,44 @@
           });
 
           
-          ctx.strokeStyle = `rgba(168, 85, 247, ${currentOpacity * 0.45})`; 
+          ctx.strokeStyle = `rgba(168, 85, 247, ${currentOpacity * 0.4})`; 
           ctx.lineWidth = 0.7;
+          ctx.beginPath();
           c.blueprint.connections.forEach(conn => {
             const s1 = projectedStars[conn[0]];
             const s2 = projectedStars[conn[1]];
-            ctx.beginPath();
             ctx.moveTo(s1.x, s1.y);
             ctx.lineTo(s2.x, s2.y);
-            ctx.stroke();
           });
+          ctx.stroke();
 
           
           projectedStars.forEach((star, idx) => {
             const isGreen = idx % 2 === 0;
             const pulse = Math.sin(time * 0.45 + idx) * 0.22 + 0.78; 
-            
-            
             const glowColor = isGreen ? 'rgba(38, 255, 94, ' : 'rgba(176, 38, 255, ';
-            
-            
             const glowRadius = 14 * pulse;
-            const grad = ctx.createRadialGradient(star.x, star.y, 0, star.x, star.y, glowRadius);
-            grad.addColorStop(0, `${glowColor}${currentOpacity * 0.8 * pulse})`);
-            grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
             
-            ctx.beginPath();
-            ctx.arc(star.x, star.y, glowRadius, 0, Math.PI * 2);
-            ctx.fillStyle = grad;
-            ctx.fill();
+            
+            const glowCanvas = isGreen ? greenGlowCanvas : purpleGlowCanvas;
+            ctx.globalAlpha = Math.max(0, Math.min(1.0, currentOpacity * 1.1 * pulse));
+            if (glowCanvas.width > 0 && glowCanvas.height > 0 && glowRadius > 0) {
+              ctx.drawImage(glowCanvas, star.x - glowRadius, star.y - glowRadius, glowRadius * 2, glowRadius * 2);
+            }
+            ctx.globalAlpha = 1.0;
 
             
-            ctx.strokeStyle = `${glowColor}${currentOpacity * 0.85 * pulse})`;
+            ctx.strokeStyle = `${glowColor}${currentOpacity * 0.8 * pulse})`;
             ctx.lineWidth = 0.8;
-            
-            
             ctx.beginPath();
             ctx.moveTo(star.x - 11 * pulse, star.y);
             ctx.lineTo(star.x + 11 * pulse, star.y);
-            ctx.stroke();
-
-            
-            ctx.beginPath();
             ctx.moveTo(star.x, star.y - 11 * pulse);
             ctx.lineTo(star.x, star.y + 11 * pulse);
             ctx.stroke();
 
             
-            ctx.strokeStyle = `${glowColor}${currentOpacity * 0.4})`;
+            ctx.strokeStyle = `${glowColor}${currentOpacity * 0.35})`;
             ctx.lineWidth = 0.5;
             ctx.beginPath();
             ctx.arc(star.x, star.y, 4.5 * pulse, 0, Math.PI * 2);
@@ -4379,9 +4495,8 @@
             
             ctx.beginPath();
             ctx.arc(star.x, star.y, 2.0, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(255, 255, 255, ${currentOpacity * 1.8 * pulse})`;
+            ctx.fillStyle = `rgba(255, 255, 255, ${Math.min(1.0, currentOpacity * 1.8 * pulse)})`;
             ctx.fill();
-            
             
             ctx.beginPath();
             ctx.arc(star.x, star.y, 1.0, 0, Math.PI * 2);
@@ -4390,7 +4505,7 @@
           });
 
           
-          ctx.fillStyle = `rgba(148, 163, 184, ${currentOpacity * 0.6})`;
+          ctx.fillStyle = `rgba(148, 163, 184, ${currentOpacity * 0.5})`;
           ctx.font = '9px "JetBrains Mono", Courier, monospace';
           ctx.textAlign = 'center';
           ctx.textBaseline = 'top';
