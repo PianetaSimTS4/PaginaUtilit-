@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Guide & Utilità</title>
+  <link rel="icon" type="image/png" href="images/logo.png">
   
   
   <script src="https://cdn.tailwindcss.com"></script>
@@ -101,7 +102,7 @@
     }
   </script>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://unpkg.com" crossorigin>
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
@@ -275,37 +276,10 @@
       
       <div class="flex items-center gap-3 cursor-pointer select-none" onclick="switchTab('guides')">
         <div id="logo-container" class="h-10 w-10 shrink-0 flex items-center justify-center">
-          <svg id="logo-img" class="h-10 w-10 shrink-0" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="50" cy="50" r="32" fill="url(#planet-glow)" opacity="0.3"/>
-            <circle cx="50" cy="50" r="24" fill="url(#planet-grad)" stroke="#1e293b" stroke-width="2"/>
-            <path d="M26 50h48M29.5 38h41M29.5 62h41" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" opacity="0.15"/>
-            <path d="M50 26c10 0 16 10 16 24s-6 24-16 24-16-10-16-24 6-24 16-24z" stroke="#ffffff" stroke-width="1.5" opacity="0.15"/>
-            <path d="M12 58 C 15 42, 85 42, 88 58" stroke="url(#ring-grad)" stroke-width="4.5" stroke-linecap="round" opacity="0.5"/>
-            <path d="M12 58 C 15 74, 85 74, 88 58" stroke="url(#ring-grad)" stroke-width="5" stroke-linecap="round"/>
-            <circle cx="40" cy="40" r="2" fill="#ffffff" opacity="0.8"/>
-            <circle cx="62" cy="58" r="1.5" fill="#ffffff" opacity="0.6"/>
-            <circle cx="34" cy="60" r="1" fill="#00f0ff" opacity="0.9"/>
-            <circle cx="64" cy="38" r="1.2" fill="#26ff5e" opacity="0.9"/>
-            <defs>
-              <radialGradient id="planet-glow" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stop-color="#26ff5e"/>
-                <stop offset="100%" stop-color="#26ff5e" stop-opacity="0"/>
-              </radialGradient>
-              <linearGradient id="planet-grad" x1="26" y1="26" x2="74" y2="74" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stop-color="#26ff5e"/>
-                <stop offset="50%" stop-color="#10b981"/>
-                <stop offset="100%" stop-color="#0c1218"/>
-              </linearGradient>
-              <linearGradient id="ring-grad" x1="12" y1="58" x2="88" y2="58" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stop-color="#00f0ff"/>
-                <stop offset="50%" stop-color="#b026ff"/>
-                <stop offset="100%" stop-color="#ff007f"/>
-              </linearGradient>
-            </defs>
-          </svg>
+          <img id="logo-img" src="images/logo.png" alt="PianetaSim Logo" class="h-10 w-10 object-contain shrink-0" onerror="tryNextLogo()">
         </div>
         <div id="logo-fallback" class="flex items-center">
-          <h2 class="font-black text-xl tracking-wider text-white m-0">PIANETA<span class="animate-sim-color">SIM</span></h2>
+          <div class="font-black text-xl tracking-wider text-white m-0">PIANETA<span class="animate-sim-color">SIM</span></div>
         </div>
       </div>
 
@@ -320,32 +294,24 @@
         </a>
         <a
           href="https://pianetasimts.github.io/PianetaSim/mod.html"
-          target="_blank"
-          rel="noopener noreferrer"
           class="px-4 py-2 sm:px-5 sm:py-3 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-300 bg-slate-900/60 border border-slate-800 hover:text-white hover:border-fluo-green flex items-center justify-center shadow-sm"
         >
           Mod & Traduzioni
         </a>
         <a
           href="https://pianetasimts.github.io/PianetaSim/mod18.html"
-          target="_blank"
-          rel="noopener noreferrer"
           class="px-4 py-2 sm:px-5 sm:py-3 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-300 bg-slate-900/60 border border-slate-800 hover:text-white hover:border-fluo-green flex items-center justify-center shadow-sm"
         >
           Mod & Traduzioni 18+
         </a>
         <a
           href="https://pianetasimts.github.io/PianetaSim/animazioniww18.html"
-          target="_blank"
-          rel="noopener noreferrer"
           class="px-4 py-2 sm:px-5 sm:py-3 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-300 bg-slate-900/60 border border-slate-800 hover:text-white hover:border-fluo-green flex items-center justify-center shadow-sm"
         >
           Animazioni
         </a>
         <a
           href="https://pianetasimts.github.io/PianetaSim/storie.html"
-          target="_blank"
-          rel="noopener noreferrer"
           class="px-4 py-2 sm:px-5 sm:py-3 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-300 bg-slate-900/60 border border-slate-800 hover:text-white hover:border-fluo-green flex items-center justify-center shadow-sm"
         >
           Racconti
@@ -381,9 +347,9 @@
     
     <section class="relative py-12 px-4 md:px-8 mb-4 flex flex-col items-center text-center">
       <div class="max-w-3xl space-y-4 flex flex-col items-center">
-        <h2 id="site-hero-title" class="text-3xl md:text-5xl font-black text-white tracking-tight leading-tight">
+        <h1 id="site-hero-title" class="text-3xl md:text-5xl font-black text-white tracking-tight leading-tight">
           <span class="animate-title-color">Guide & Utilità</span>
-        </h2>
+        </h1>
         <p id="site-hero-desc" class="text-slate-300 text-sm max-w-xl leading-relaxed text-center">
           Benvenuto nella sezione delle guide di PianetaSim! Impara nuove tecniche di costruzione, installa mod tradotte e copia trucchi con un solo click.
         </p>
@@ -394,7 +360,7 @@
               <i id="inline-alert-icon" data-lucide="alert-triangle" class="w-5 h-5"></i>
             </div>
             <div class="space-y-1">
-              <h4 id="inline-alert-title" class="text-xs font-black uppercase tracking-wider text-white"></h4>
+              <div id="inline-alert-title" class="text-xs font-black uppercase tracking-wider text-white"></div>
               <div id="inline-alert-text" class="text-xs text-slate-300 leading-relaxed font-sans"></div>
             </div>
           </div>
@@ -544,9 +510,9 @@
             <i data-lucide="help-circle" class="w-7 h-7"></i>
           </div>
           <div>
-            <h3 class="text-xl font-black text-white leading-tight">
+            <h2 class="text-xl font-black text-white leading-tight">
               Supporto & FAQ
-            </h3>
+            </h2>
             <p class="text-xs text-slate-400">
               Supporto & Risorse per la Community di PianetaSim
             </p>
@@ -558,10 +524,10 @@
         
         <div class="space-y-4 text-slate-300 text-xs md:text-sm leading-relaxed">
           <div class="space-y-2">
-            <h4 class="font-extrabold text-white text-sm flex items-center gap-1.5 text-fluo-green">
+            <h3 class="font-extrabold text-white text-sm flex items-center gap-1.5 text-fluo-green">
               <i data-lucide="wrench" class="w-4 h-4"></i>
               Come installare Mod & Traduzioni?
-            </h4>
+            </h3>
             <p class="text-slate-400 text-xs">
               Installare mod e traduzioni in The Sims 4 è facilissimo. Segui questi passi:
             </p>
@@ -574,10 +540,10 @@
           </div>
 
           <div class="space-y-2">
-            <h4 class="font-extrabold text-white text-sm flex items-center gap-1.5 text-fluo-blue">
+            <h3 class="font-extrabold text-white text-sm flex items-center gap-1.5 text-fluo-blue">
               <i data-lucide="alert-circle" class="w-4 h-4"></i>
               Problemi comuni (Risoluzione Problemi)
-            </h4>
+            </h3>
             <ul class="list-disc list-inside text-xs text-slate-400 space-y-1 font-sans">
               <li><span class="text-slate-300 font-semibold">Le mod non compaiono?</span> Assicurati che non siano inserite in più di una sottocartella all'interno della cartella Mods (massimo 1 livello di profondità per file .ts4script).</li>
               <li><span class="text-slate-300 font-semibold">Dopo un aggiornamento del gioco?</span> The Sims 4 disattiva automaticamente le mod ad ogni aggiornamento. Ricordati di riattivarle dalle opzioni e riavviare il gioco.</li>
@@ -585,10 +551,10 @@
           </div>
 
           <div class="space-y-2 pt-2">
-            <h4 class="font-extrabold text-white text-sm flex items-center gap-1.5 text-fluo-fuchsia">
+            <h3 class="font-extrabold text-white text-sm flex items-center gap-1.5 text-fluo-fuchsia">
               <i data-lucide="message-circle" class="w-4 h-4"></i>
               Hai ancora bisogno di supporto diretto?
-            </h4>
+            </h3>
             <p class="text-slate-400 text-xs font-sans">
               Se hai problemi tecnici o dubbi con le mod, unisciti al nostro gruppo Telegram attivo. Ci sono centinaia di appassionati e moderatori pronti ad aiutarti in tempo reale!
             </p>
@@ -856,10 +822,10 @@
         case 'tip':
           return `
             <div class="p-5 md:p-6 bg-purple-500/5 border border-fluo-purple/20 rounded-2xl space-y-3 my-6">
-              <h4 class="text-sm md:text-base font-bold text-fluo-purple flex items-center gap-1.5 font-sans">
+              <div class="text-sm md:text-base font-bold text-fluo-purple flex items-center gap-1.5 font-sans">
                 <i data-lucide="lightbulb" class="w-5 h-5 text-fluo-purple"></i>
                 Consiglio di PianetaSim
-              </h4>
+              </div>
               <div class="flex items-start gap-2.5 text-xs md:text-sm text-slate-300 leading-relaxed font-sans">
                 <i data-lucide="corner-down-right" class="w-4 h-4 text-fluo-green shrink-0 mt-0.5"></i>
                 <div class="text-xs md:text-sm text-slate-300 leading-relaxed font-normal">
@@ -1008,43 +974,11 @@
     function updateLogoSrc() {
       const container = document.getElementById('logo-container');
       if (container) {
-        if (siteLogo) {
-          container.innerHTML = `<img id="logo-img" src="${siteLogo}" alt="PianetaSim Logo" class="h-10 w-10 object-contain shrink-0" onerror="tryNextLogo()" />`;
-          logoIndex = 0;
-          if (!logoPaths.includes(siteLogo)) {
-            logoPaths.unshift(siteLogo);
-          }
-        } else {
-          container.innerHTML = `
-          <svg id="logo-img" class="h-10 w-10 shrink-0" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="50" cy="50" r="32" fill="url(#planet-glow-dynamic)" opacity="0.3"/>
-            <circle cx="50" cy="50" r="24" fill="url(#planet-grad-dynamic)" stroke="#1e293b" stroke-width="2"/>
-            <path d="M26 50h48M29.5 38h41M29.5 62h41" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" opacity="0.15"/>
-            <path d="M50 26c10 0 16 10 16 24s-6 24-16 24-16-10-16-24 6-24 16-24z" stroke="#ffffff" stroke-width="1.5" opacity="0.15"/>
-            <path d="M12 58 C 15 42, 85 42, 88 58" stroke="url(#ring-grad-dynamic)" stroke-width="4.5" stroke-linecap="round" opacity="0.5"/>
-            <path d="M12 58 C 15 74, 85 74, 88 58" stroke="url(#ring-grad-dynamic)" stroke-width="5" stroke-linecap="round"/>
-            <circle cx="40" cy="40" r="2" fill="#ffffff" opacity="0.8"/>
-            <circle cx="62" cy="58" r="1.5" fill="#ffffff" opacity="0.6"/>
-            <circle cx="34" cy="60" r="1" fill="#00f0ff" opacity="0.9"/>
-            <circle cx="64" cy="38" r="1.2" fill="#26ff5e" opacity="0.9"/>
-            <defs>
-              <radialGradient id="planet-glow-dynamic" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stop-color="#26ff5e"/>
-                <stop offset="100%" stop-color="#26ff5e" stop-opacity="0"/>
-              </radialGradient>
-              <linearGradient id="planet-grad-dynamic" x1="26" y1="26" x2="74" y2="74" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stop-color="#26ff5e"/>
-                <stop offset="50%" stop-color="#10b981"/>
-                <stop offset="100%" stop-color="#0c1218"/>
-              </linearGradient>
-              <linearGradient id="ring-grad-dynamic" x1="12" y1="58" x2="88" y2="58" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stop-color="#00f0ff"/>
-                <stop offset="50%" stop-color="#b026ff"/>
-                <stop offset="100%" stop-color="#ff007f"/>
-              </linearGradient>
-            </defs>
-          </svg>
-          `;
+        const logoUrl = siteLogo || 'images/logo.png';
+        container.innerHTML = `<img id="logo-img" src="${logoUrl}" alt="PianetaSim Logo" class="h-10 w-10 object-contain shrink-0" onerror="tryNextLogo()" />`;
+        logoIndex = 0;
+        if (!logoPaths.includes(logoUrl)) {
+          logoPaths.unshift(logoUrl);
         }
       }
     }
@@ -2808,10 +2742,10 @@
               
               ${guide.tips && guide.tips.length > 0 ? `
                 <div class="p-5 md:p-6 bg-purple-500/5 border border-fluo-purple/20 rounded-2xl space-y-3 mb-8">
-                  <h4 class="text-sm md:text-base font-bold text-fluo-purple flex items-center gap-1.5">
+                  <div class="text-sm md:text-base font-bold text-fluo-purple flex items-center gap-1.5">
                     <i data-lucide="award" class="w-5 h-5 text-fluo-purple"></i>
                     Consigli Extra di PianetaSim
-                  </h4>
+                  </div>
                   <ul class="space-y-2.5">
                     ${guide.tips.map(tip => `
                       <li class="flex items-start gap-2 text-xs md:text-sm text-slate-300 leading-relaxed">
@@ -2945,9 +2879,9 @@
               
               
               <div class="bg-space-card p-5 rounded-2xl border border-slate-800 shadow-xl space-y-3 neon-shadow-purple">
-                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest">
+                <h2 class="text-xs font-bold text-slate-400 uppercase tracking-widest">
                   Cerca Guida
-                </h4>
+                </h2>
                 <div class="relative">
                   <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500"></i>
                   <input
@@ -2963,9 +2897,9 @@
 
               
               <div class="bg-space-card p-5 rounded-2xl border border-slate-800 shadow-xl space-y-3.5 neon-shadow-blue">
-                <h4 class="text-xs font-extrabold text-slate-400 uppercase tracking-widest">
+                <h2 class="text-xs font-extrabold text-slate-400 uppercase tracking-widest">
                   Filtra per Categoria
-                </h4>
+                </h2>
                 <div class="flex flex-wrap gap-2">
                   <button
                     onclick="selectedCategory = 'all'; renderApp();"
@@ -3016,10 +2950,10 @@
 
               
               <div class="p-5 bg-space-card border border-slate-800 rounded-2xl text-slate-200 shadow-md relative overflow-hidden space-y-3">
-                <h4 class="text-xs font-extrabold uppercase tracking-widest text-fluo-green flex items-center gap-1.5">
+                <h2 class="text-xs font-extrabold uppercase tracking-widest text-fluo-green flex items-center gap-1.5">
                   <i data-lucide="help-circle" class="w-4 h-4 text-fluo-green"></i>
                   Serve aiuto?
-                </h4>
+                </h2>
                 <p class="text-[11px] text-slate-300 leading-relaxed">
                   Hai dubbi sull'installazione delle mod tradotte o cerchi risposte a bug noti del gioco?
                 </p>
@@ -3039,24 +2973,24 @@
             <div class="lg:col-span-9 space-y-6">
               
               <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                <h3 class="text-base font-extrabold text-white">
+                <h2 class="text-base font-extrabold text-white">
                   ${selectedCategory === 'preferiti' 
                     ? 'I Miei Preferiti' 
                     : selectedCategory === 'all' 
                       ? 'Tutte le Guide' 
                       : categories.find(c => c.id === selectedCategory)?.label || 'Elenco Guide'}
-                </h3>
-                <span id="guides-count-badge" class="text-xs text-slate-400 font-semibold font-mono">
+                </h2>
+                <span id="guides-count-badge" class="text-xs text-slate-400 font-semibold font-mono font-sans">
                   Trovate ${filteredGuides.length} guide
                 </span>
               </div>
 
               <div id="guides-list-grid-wrapper">
                 ${filteredGuides.length === 0 ? `
-                  <div class="bg-space-card border border-slate-900/60 rounded-3xl p-12 text-center space-y-4">
-                    <i data-lucide="folder-open" class="w-12 h-12 text-slate-600 mx-auto"></i>
-                    <h4 class="text-slate-400 text-sm font-semibold">Nessuna guida corrisponde ai filtri selezionati.</h4>
-                    <button onclick="selectedCategory='all'; searchQuery=''; renderApp();" class="text-xs text-fluo-purple hover:underline font-bold">Resetta tutti i filtri</button>
+                  <div class="bg-space-card border border-slate-900/60 rounded-3xl p-12 text-center space-y-4 font-sans">
+                    <i data-lucide="folder-open" class="w-12 h-12 text-slate-600 mx-auto font-sans"></i>
+                    <p class="text-slate-400 text-sm font-semibold">Nessuna guida corrisponde ai filtri selezionati.</p>
+                    <button onclick="selectedCategory='all'; searchQuery=''; renderApp();" class="text-xs text-fluo-purple hover:underline font-bold cursor-pointer">Resetta tutti i filtri</button>
                   </div>
                 ` : `
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -3140,7 +3074,7 @@
                 <div class="w-12 h-12 bg-fluo-purple/10 text-fluo-purple border border-fluo-purple/20 rounded-2xl flex items-center justify-center mx-auto shadow-lg">
                   <i data-lucide="lock" class="w-6 h-6"></i>
                 </div>
-                <h3 class="text-xl font-black text-white">Area Riservata Amministratore</h3>
+                <h2 class="text-xl font-black text-white">Area Riservata Amministratore</h2>
                 <p class="text-xs text-slate-400">Inserisci la password segreta per gestire le guide del sito.</p>
               </div>
 
@@ -3177,9 +3111,9 @@
             <div class="max-w-4xl mx-auto space-y-6 bg-space-card border border-slate-800 p-6 md:p-8 rounded-3xl shadow-2xl">
               <div class="flex items-center justify-between border-b border-slate-800 pb-4">
                 <div>
-                  <h3 class="text-lg font-black text-white">
+                  <h2 class="text-lg font-black text-white">
                     ${g.id.startsWith('nuova-guida-') ? 'Crea Nuova Guida' : 'Modifica Guida'}
-                  </h3>
+                  </h2>
                   <p class="text-xs text-slate-400">Supporta tag di formattazione avanzati per immagini, grassetto, corsivo, link e colori.</p>
                 </div>
                 <button
@@ -3321,7 +3255,7 @@
               <div class="space-y-4">
                 <div class="flex items-center justify-between border-b border-slate-800 pb-2">
                   <div class="space-y-1">
-                    <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Blocchi di Contenuto</h4>
+                    <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Blocchi di Contenuto</h3>
                     <p class="text-[10px] text-slate-500">Componi la tua guida combinando titoli, paragrafi, citazioni, consigli, elenchi, divisori e pulsanti.</p>
                   </div>
                   <div class="flex gap-1.5 flex-wrap max-w-md sm:max-w-none">
@@ -3628,10 +3562,10 @@
             
             <div class="bg-space-card p-6 rounded-3xl border border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xl">
               <div class="space-y-1">
-                <h3 class="text-xl font-black text-white flex items-center gap-2">
+                <h2 class="text-xl font-black text-white flex items-center gap-2">
                   <span class="w-2.5 h-2.5 rounded-full bg-fluo-green shadow-[0_0_8px_#26ff5e]"></span>
                   Pannello Gestione PianetaSim
-                </h3>
+                </h2>
                 <p class="text-xs text-slate-400">Inserisci nuove guide, cancella articoli vecchi o personalizza le categorie.</p>
               </div>
 
@@ -3668,17 +3602,17 @@
                   <i data-lucide="github" class="w-5 h-5"></i>
                 </div>
                 <div>
-                  <h4 class="text-sm font-black text-white">Guida al Salvataggio e Deploy su GitHub Pages</h4>
+                  <h3 class="text-sm font-black text-white">Guida al Salvataggio e Deploy su GitHub Pages</h3>
                   <p class="text-[11px] text-slate-400">Il tuo sito su GitHub è interamente statico e non dipende da AI Studio. Ecco come applicare le modifiche per tutti i visitatori:</p>
                 </div>
               </div>
               
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
                 <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-850 space-y-2">
-                  <h5 class="font-extrabold text-fluo-green flex items-center gap-1.5 font-sans">
+                  <h4 class="font-extrabold text-fluo-green flex items-center gap-1.5 font-sans">
                     <span class="w-2.5 h-2.5 rounded-full bg-fluo-green"></span>
                     1. Scarica il Pacchetto Modificato
-                  </h5>
+                  </h4>
                   <ol class="list-decimal pl-4 space-y-1.5 text-slate-300 font-sans">
                     <li>Modifica le guide, le categorie o carica le immagini qui sul pannello.</li>
                     <li>Le modifiche vengono salvate in automatico localmente sul tuo browser mentre lavori.</li>
@@ -3688,10 +3622,10 @@
                 </div>
                 
                 <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-850 space-y-2">
-                  <h5 class="font-extrabold text-fluo-purple flex items-center gap-1.5 font-sans">
+                  <h4 class="font-extrabold text-fluo-purple flex items-center gap-1.5 font-sans">
                     <span class="w-2.5 h-2.5 rounded-full bg-fluo-purple"></span>
                     2. Aggiorna GitHub
-                  </h5>
+                  </h4>
                   <ol class="list-decimal pl-4 space-y-1.5 text-slate-300 font-sans">
                     <li>Trascina i file estratti (il file <code class="font-mono bg-slate-950 px-1 py-0.5 rounded text-[10px]">guides.json</code> e il contenuto di <code class="font-mono bg-slate-950 px-1 py-0.5 rounded text-[10px]">images/</code>) all'interno del tuo repository su GitHub, sostituendo i vecchi file.</li>
                     <li>Fai il <strong class="text-white">Commit</strong> e <strong class="text-white">Push</strong> su GitHub.</li>
@@ -3704,10 +3638,10 @@
             
             <div class="bg-space-card p-6 rounded-3xl border border-slate-800 shadow-xl space-y-6">
               <div class="border-b border-slate-800 pb-4">
-                <h3 class="text-base font-black text-white flex items-center gap-2">
+                <h2 class="text-base font-black text-white flex items-center gap-2">
                   <i data-lucide="settings" class="w-4 h-4 text-fluo-purple"></i>
                   Personalizzazione Sito & Avviso Pop-up
-                </h3>
+                </h2>
                 <p class="text-xs text-slate-400">Modifica il titolo principale del sito, la descrizione della hero e configura il pop-up di avviso per i visitatori.</p>
               </div>
 
@@ -3715,7 +3649,7 @@
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 
                 <div class="space-y-4">
-                  <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Testata del Sito</h4>
+                  <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Testata del Sito</h3>
                   
                   <div class="space-y-1.5">
                     <label class="text-[10px] uppercase font-bold text-slate-400">Titolo Hero (supporta HTML/Colori)</label>
@@ -3767,9 +3701,9 @@
                 
                 <div class="space-y-4">
                   <div class="flex items-center justify-between">
-                    <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                    <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
                       Pop-up Avviso Visitatori
-                    </h4>
+                    </h3>
                     
                     <label class="relative inline-flex items-center cursor-pointer">
                       <input
@@ -3857,10 +3791,10 @@
                       const catToEdit = categories.find(c => c.id === window.editingCategoryId);
                       if (catToEdit) {
                         return `
-                          <h4 class="text-sm font-black text-white flex items-center gap-1.5">
+                          <h3 class="text-sm font-black text-white flex items-center gap-1.5">
                             <i data-lucide="edit" class="w-4 h-4 text-fluo-blue"></i>
                             Modifica Categoria
-                          </h4>
+                          </h3>
                           <p class="text-xs text-slate-400">Modifica il nome e il colore della categoria esistente.</p>
 
                           <div class="space-y-3">
@@ -3918,10 +3852,10 @@
                     }
                     
                     return `
-                      <h4 class="text-sm font-black text-white flex items-center gap-1.5">
+                      <h3 class="text-sm font-black text-white flex items-center gap-1.5">
                         <i data-lucide="layers" class="w-4 h-4 text-fluo-blue"></i>
                         Gestione Categorie
-                      </h4>
+                      </h3>
                       <p class="text-xs text-slate-400">Crea nuove categorie personalizzate per organizzare le guide.</p>
 
                       <div class="space-y-3">
@@ -4004,10 +3938,10 @@
 
                 
                 <div class="bg-space-card p-6 rounded-3xl border border-slate-800 shadow-xl space-y-4 neon-shadow-green">
-                  <h4 class="text-sm font-black text-white flex items-center gap-1.5">
+                  <h3 class="text-sm font-black text-white flex items-center gap-1.5">
                     <i data-lucide="image" class="w-4 h-4 text-fluo-green"></i>
                     Caricamento Media Rapido
-                  </h4>
+                  </h3>
                   <p class="text-xs text-slate-400">Carica file dal computer per ottenere l'indirizzo dell'immagine da usare nel testo.</p>
 
                   <div class="p-4 border-2 border-dashed border-slate-800 rounded-2xl text-center space-y-3 bg-slate-900/20 hover:border-fluo-green/40 transition-colors cursor-pointer relative" onclick="triggerImageUpload('admin-edit-desc')">
@@ -4018,7 +3952,7 @@
 
                   
                   <div class="space-y-1.5 pt-2">
-                    <h5 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Libreria Immagini</h5>
+                    <h4 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Libreria Immagini</h4>
                     <div id="uploaded-images-grid-container">
                       
                     </div>
@@ -4031,7 +3965,7 @@
                 <div class="bg-space-card p-6 rounded-3xl border border-slate-800 shadow-xl space-y-4">
                   <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800 pb-3">
                     <div>
-                      <h4 class="text-base font-black text-white">Elenco delle Guide Presenti</h4>
+                      <h3 class="text-base font-black text-white">Elenco delle Guide Presenti</h3>
                       <p class="text-xs text-slate-400">Modifica il contenuto, cambia i tag o rimuovi gli articoli.</p>
                     </div>
                     
@@ -4560,6 +4494,10 @@
         }
 
         
+        ctx.font = '9px "JetBrains Mono", Courier, monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+
         for (let i = 0; i < constellations.length; i++) {
           const c = constellations[i];
           const currentOpacity = c.opacity + Math.sin(time * c.pulseSpeed * 80) * 0.05;
@@ -4633,9 +4571,6 @@
 
           
           ctx.fillStyle = `rgba(148, 163, 184, ${currentOpacity * 0.5})`;
-          ctx.font = '9px "JetBrains Mono", Courier, monospace';
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'top';
           ctx.fillText(c.name, c.x, c.y + c.scale * 1.05);
         }
 
