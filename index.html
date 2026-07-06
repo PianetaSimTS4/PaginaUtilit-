@@ -90,25 +90,24 @@
       lucideTimeout = requestAnimationFrame(function() {
         if (typeof lucide !== 'undefined' && lucide.createIcons) {
           try {
-            lazyCreateIcons();
+            lucide.createIcons();
           } catch(e) {
             console.warn("Lucide icons failed to render", e);
           }
+        } else {
+          lucideTimeout = requestAnimationFrame(lazyCreateIcons);
         }
       });
     }
   </script>
 
-  
-  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://unpkg.com" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
- 
-  <script src="https://unpkg.com/lucide@latest"></script>
-
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest" defer></script>
 
   <style>
     html {
@@ -275,16 +274,36 @@
       
       
       <div class="flex items-center gap-3 cursor-pointer select-none" onclick="switchTab('guides')">
-        <img 
-          id="logo-img" 
-          src="images/logo.png" 
-          alt="PianetaSim Logo" 
-          width="40"
-          height="40"
-          class="h-10 w-10 object-contain shrink-0"
-          onload="onLogoLoad()"
-          onerror="tryNextLogo()"
-        />
+        <div id="logo-container" class="h-10 w-10 shrink-0 flex items-center justify-center">
+          <svg id="logo-img" class="h-10 w-10 shrink-0" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="32" fill="url(#planet-glow)" opacity="0.3"/>
+            <circle cx="50" cy="50" r="24" fill="url(#planet-grad)" stroke="#1e293b" stroke-width="2"/>
+            <path d="M26 50h48M29.5 38h41M29.5 62h41" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" opacity="0.15"/>
+            <path d="M50 26c10 0 16 10 16 24s-6 24-16 24-16-10-16-24 6-24 16-24z" stroke="#ffffff" stroke-width="1.5" opacity="0.15"/>
+            <path d="M12 58 C 15 42, 85 42, 88 58" stroke="url(#ring-grad)" stroke-width="4.5" stroke-linecap="round" opacity="0.5"/>
+            <path d="M12 58 C 15 74, 85 74, 88 58" stroke="url(#ring-grad)" stroke-width="5" stroke-linecap="round"/>
+            <circle cx="40" cy="40" r="2" fill="#ffffff" opacity="0.8"/>
+            <circle cx="62" cy="58" r="1.5" fill="#ffffff" opacity="0.6"/>
+            <circle cx="34" cy="60" r="1" fill="#00f0ff" opacity="0.9"/>
+            <circle cx="64" cy="38" r="1.2" fill="#26ff5e" opacity="0.9"/>
+            <defs>
+              <radialGradient id="planet-glow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#26ff5e"/>
+                <stop offset="100%" stop-color="#26ff5e" stop-opacity="0"/>
+              </radialGradient>
+              <linearGradient id="planet-grad" x1="26" y1="26" x2="74" y2="74" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#26ff5e"/>
+                <stop offset="50%" stop-color="#10b981"/>
+                <stop offset="100%" stop-color="#0c1218"/>
+              </linearGradient>
+              <linearGradient id="ring-grad" x1="12" y1="58" x2="88" y2="58" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#00f0ff"/>
+                <stop offset="50%" stop-color="#b026ff"/>
+                <stop offset="100%" stop-color="#ff007f"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
         <div id="logo-fallback" class="flex items-center">
           <h2 class="font-black text-xl tracking-wider text-white m-0">PIANETA<span class="animate-sim-color">SIM</span></h2>
         </div>
@@ -987,12 +1006,45 @@
     }
 
     function updateLogoSrc() {
-      const img = document.getElementById('logo-img');
-      if (img) {
-        img.src = siteLogo || 'images/logo.png';
-        logoIndex = 0;
-        if (siteLogo && !logoPaths.includes(siteLogo)) {
-          logoPaths.unshift(siteLogo);
+      const container = document.getElementById('logo-container');
+      if (container) {
+        if (siteLogo) {
+          container.innerHTML = `<img id="logo-img" src="${siteLogo}" alt="PianetaSim Logo" class="h-10 w-10 object-contain shrink-0" onerror="tryNextLogo()" />`;
+          logoIndex = 0;
+          if (!logoPaths.includes(siteLogo)) {
+            logoPaths.unshift(siteLogo);
+          }
+        } else {
+          container.innerHTML = `
+          <svg id="logo-img" class="h-10 w-10 shrink-0" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="32" fill="url(#planet-glow-dynamic)" opacity="0.3"/>
+            <circle cx="50" cy="50" r="24" fill="url(#planet-grad-dynamic)" stroke="#1e293b" stroke-width="2"/>
+            <path d="M26 50h48M29.5 38h41M29.5 62h41" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" opacity="0.15"/>
+            <path d="M50 26c10 0 16 10 16 24s-6 24-16 24-16-10-16-24 6-24 16-24z" stroke="#ffffff" stroke-width="1.5" opacity="0.15"/>
+            <path d="M12 58 C 15 42, 85 42, 88 58" stroke="url(#ring-grad-dynamic)" stroke-width="4.5" stroke-linecap="round" opacity="0.5"/>
+            <path d="M12 58 C 15 74, 85 74, 88 58" stroke="url(#ring-grad-dynamic)" stroke-width="5" stroke-linecap="round"/>
+            <circle cx="40" cy="40" r="2" fill="#ffffff" opacity="0.8"/>
+            <circle cx="62" cy="58" r="1.5" fill="#ffffff" opacity="0.6"/>
+            <circle cx="34" cy="60" r="1" fill="#00f0ff" opacity="0.9"/>
+            <circle cx="64" cy="38" r="1.2" fill="#26ff5e" opacity="0.9"/>
+            <defs>
+              <radialGradient id="planet-glow-dynamic" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#26ff5e"/>
+                <stop offset="100%" stop-color="#26ff5e" stop-opacity="0"/>
+              </radialGradient>
+              <linearGradient id="planet-grad-dynamic" x1="26" y1="26" x2="74" y2="74" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#26ff5e"/>
+                <stop offset="50%" stop-color="#10b981"/>
+                <stop offset="100%" stop-color="#0c1218"/>
+              </linearGradient>
+              <linearGradient id="ring-grad-dynamic" x1="12" y1="58" x2="88" y2="58" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#00f0ff"/>
+                <stop offset="50%" stop-color="#b026ff"/>
+                <stop offset="100%" stop-color="#ff007f"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          `;
         }
       }
     }
@@ -2452,7 +2504,16 @@
 
     function downloadAllModifiedFilesZip() {
       if (typeof JSZip === 'undefined') {
-        showToast("Libreria JSZip non ancora caricata. Riprova tra un istante!", "info");
+        showToast("Caricamento del modulo ZIP in corso...", "info");
+        const script = document.createElement('script');
+        script.src = "https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js";
+        script.onload = function() {
+          downloadAllModifiedFilesZip();
+        };
+        script.onerror = function() {
+          showToast("Impossibile caricare il modulo ZIP. Verifica la tua connessione.", "error");
+        };
+        document.head.appendChild(script);
         return;
       }
 
@@ -4453,11 +4514,24 @@
         isTabActive = !document.hidden;
       });
 
-      function animate() {
+      const fpsInterval = 1000 / 30; // 30 FPS throttling for background canvas animation
+      let lastFrameTime = performance.now();
+
+      function animate(timestamp) {
+        requestAnimationFrame(animate);
+
         if (!isTabActive) {
-          requestAnimationFrame(animate);
           return;
         }
+
+        // Keep lastFrameTime accurate if timestamp is not passed
+        const now = timestamp || performance.now();
+        const elapsed = now - lastFrameTime;
+        if (elapsed < fpsInterval) {
+          return;
+        }
+        
+        lastFrameTime = now - (elapsed % fpsInterval);
 
         ctx.clearRect(0, 0, width, height);
         time += 0.04;
