@@ -740,6 +740,9 @@
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;");
 
+      // Replace newlines with HTML line breaks to allow going to a new line
+      html = html.replace(/\r?\n/g, '<br />');
+
       
       html = html.replace(/\[image(?:\|([^\]]+))?\]\((.*?)\)/g, (match, size, url) => {
         let sizeStyle = "max-height: 450px; width: 100%; max-width: 100%;";
@@ -823,7 +826,7 @@
             <div class="p-5 md:p-6 bg-purple-500/5 border border-fluo-purple/20 rounded-2xl space-y-3 my-6">
               <div class="text-sm md:text-base font-bold text-fluo-purple flex items-center gap-1.5 font-sans">
                 <i data-lucide="lightbulb" class="w-5 h-5 text-fluo-purple"></i>
-                Consiglio di PianetaSim
+                Consiglio
               </div>
               <div class="flex items-start gap-2.5 text-xs md:text-sm text-slate-300 leading-relaxed font-sans">
                 <i data-lucide="corner-down-right" class="w-4 h-4 text-fluo-green shrink-0 mt-0.5"></i>
@@ -914,6 +917,237 @@
     let activeGuideId = null;
     let bookmarks = JSON.parse(localStorage.getItem('pianetasim-bookmarks') || '[]');
     window.editingCategoryId = null;
+    window.showAdvancedSettings = false;
+
+    // History stack for undo/redo in editor
+    window.editorHistory = {
+      undoStack: [],
+      redoStack: [],
+      
+      pushState(state) {
+        if (!state) return;
+        const clone = JSON.parse(JSON.stringify(state));
+        
+        // If the last state is identical to the current, don't duplicate
+        if (this.undoStack.length > 0) {
+          const last = this.undoStack[this.undoStack.length - 1];
+          if (JSON.stringify(last) === JSON.stringify(clone)) {
+            return;
+          }
+        }
+        
+        this.undoStack.push(clone);
+        this.redoStack = []; // Clear redo stack on new action
+        this.updateArrowButtons();
+      },
+      
+      undo() {
+        if (this.undoStack.length <= 1) return; // Need at least the current and previous to revert
+        const current = this.undoStack.pop();
+        this.redoStack.push(current);
+        
+        const prev = this.undoStack[this.undoStack.length - 1];
+        window.editingGuide = JSON.parse(JSON.stringify(prev));
+        
+        if (window.editingGuide.tags && window.editingGuide._rawTags === undefined) {
+          window.editingGuide._rawTags = window.editingGuide.tags.join(', ');
+        }
+        
+        renderApp();
+        this.updateArrowButtons();
+        showToast('Azione annullata ↩️', 'info');
+      },
+      
+      redo() {
+        if (this.redoStack.length === 0) return;
+        const next = this.redoStack.pop();
+        this.undoStack.push(next);
+        
+        window.editingGuide = JSON.parse(JSON.stringify(next));
+        
+        if (window.editingGuide.tags && window.editingGuide._rawTags === undefined) {
+          window.editingGuide._rawTags = window.editingGuide.tags.join(', ');
+        }
+        
+        renderApp();
+        this.updateArrowButtons();
+        showToast('Azione ripristinata ↪️', 'info');
+      },
+      
+      updateArrowButtons() {
+        const undoBtn = document.getElementById('btn-editor-undo');
+        const redoBtn = document.getElementById('btn-editor-redo');
+        if (undoBtn) {
+          const canUndo = this.undoStack.length > 1;
+          undoBtn.disabled = !canUndo;
+          undoBtn.style.opacity = canUndo ? '1' : '0.4';
+          undoBtn.style.cursor = canUndo ? 'pointer' : 'not-allowed';
+        }
+        if (redoBtn) {
+          const canRedo = this.redoStack.length > 0;
+          redoBtn.disabled = !canRedo;
+          redoBtn.style.opacity = canRedo ? '1' : '0.4';
+          redoBtn.style.cursor = canRedo ? 'pointer' : 'not-allowed';
+        }
+      }
+    };
+
+    let historyTimeout = null;
+    function pushHistoryDebounced() {
+      if (historyTimeout) clearTimeout(historyTimeout);
+      historyTimeout = setTimeout(() => {
+        if (window.editingGuide) {
+          window.editorHistory.pushState(window.editingGuide);
+        }
+      }, 500);
+    }
+
+    function pushHistoryImmediate() {
+      if (historyTimeout) clearTimeout(historyTimeout);
+      if (window.editingGuide) {
+        window.editorHistory.pushState(window.editingGuide);
+      }
+    }
+
+    // Inline insertion methods
+    function insertEditingBlockAt(idx, type) {
+      if (!window.editingGuide) return;
+      const newBlock = { type: type, value: '' };
+      if (type === 'list') {
+        newBlock.listType = 'bullet';
+      } else if (type === 'button') {
+        newBlock.buttonUrl = '';
+      }
+      window.editingGuide.content.splice(idx, 0, newBlock);
+      pushHistoryImmediate();
+      renderApp();
+    }
+
+    function toggleInsertMenu(idx) {
+      const menu = document.getElementById(`insert-menu-${idx}`);
+      if (!menu) return;
+      const wasHidden = menu.classList.contains('hidden');
+      
+      // Close all other open insert menus first
+      document.querySelectorAll('[id^="insert-menu-"]').forEach(m => m.classList.add('hidden'));
+      
+      if (wasHidden) {
+        menu.classList.remove('hidden');
+      }
+    }
+
+    function renderInlineInserter(idx) {
+      return `
+        <div class="relative group/insert flex items-center justify-center py-1.5 my-1">
+          <!-- Linia tratteggiata -->
+          <div class="absolute inset-x-0 h-px border-t border-dashed border-slate-800/60 group-hover/insert:border-fluo-purple/40 transition-colors pointer-events-none"></div>
+          
+          <!-- Bottone rotondo -->
+          <button
+            type="button"
+            onclick="toggleInsertMenu(${idx})"
+            class="relative z-10 w-6 h-6 rounded-full bg-slate-950 border border-slate-800 hover:border-fluo-purple hover:bg-slate-900 text-slate-400 hover:text-white flex items-center justify-center text-xs font-bold shadow-md hover:scale-110 active:scale-95 transition-all cursor-pointer"
+            title="Inserisci blocco qui"
+          >
+            +
+          </button>
+          
+          <!-- Menu fluttuante inserimento -->
+          <div id="insert-menu-${idx}" class="hidden absolute top-8 z-30 bg-slate-950 border border-slate-800 p-2 rounded-2xl shadow-2xl flex flex-wrap gap-1 max-w-sm sm:max-w-none justify-center">
+            <button type="button" onclick="insertEditingBlockAt(${idx}, 'paragraph')" class="px-2 py-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-fluo-green border border-emerald-500/30 rounded-lg text-[10px] font-bold cursor-pointer font-sans">📝 Paragrafo</button>
+            <button type="button" onclick="insertEditingBlockAt(${idx}, 'heading1')" class="px-2 py-1 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 rounded-lg text-[10px] font-bold cursor-pointer font-sans">H1</button>
+            <button type="button" onclick="insertEditingBlockAt(${idx}, 'heading2')" class="px-2 py-1 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-lg text-[10px] font-bold cursor-pointer font-sans">H2</button>
+            <button type="button" onclick="insertEditingBlockAt(${idx}, 'quote')" class="px-2 py-1 bg-teal-500/10 hover:bg-teal-500/20 text-teal-400 border border-teal-500/30 rounded-lg text-[10px] font-bold cursor-pointer font-sans">💬 Citazione</button>
+            <button type="button" onclick="insertEditingBlockAt(${idx}, 'tip')" class="px-2 py-1 bg-purple-500/10 hover:bg-purple-500/20 text-fluo-purple border border-fluo-purple/30 rounded-lg text-[10px] font-bold cursor-pointer font-sans">💡 Consiglio</button>
+            <button type="button" onclick="insertEditingBlockAt(${idx}, 'list')" class="px-2 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-lg text-[10px] font-bold cursor-pointer font-sans">📋 Elenco</button>
+            <button type="button" onclick="insertEditingBlockAt(${idx}, 'divider')" class="px-2 py-1 bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700/60 rounded-lg text-[10px] font-bold cursor-pointer font-sans">➖ Divisore</button>
+            <button type="button" onclick="insertEditingBlockAt(${idx}, 'button')" class="px-2 py-1 bg-fuchsia-500/10 hover:bg-fuchsia-500/20 text-fluo-fuchsia border border-fluo-fuchsia/30 rounded-lg text-[10px] font-bold cursor-pointer font-sans">🔗 Pulsante</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function toggleAdvancedSettings() {
+      window.showAdvancedSettings = !window.showAdvancedSettings;
+      const content = document.getElementById('advanced-settings-content');
+      const arrow = document.getElementById('advanced-settings-arrow');
+      if (content) {
+        content.classList.toggle('hidden');
+      }
+      if (arrow) {
+        arrow.textContent = window.showAdvancedSettings ? '▲' : '▼';
+      }
+    }
+
+    // Drag and drop handlers for guide reordering
+    let draggedGuideId = null;
+
+    function handleDragStart(e, id) {
+      draggedGuideId = id;
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', id);
+      const el = e.currentTarget;
+      el.classList.add('opacity-40', 'border-fluo-purple', 'bg-purple-950/20');
+    }
+
+    function handleDragOver(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      e.currentTarget.classList.add('border-dashed', 'border-fluo-purple', 'scale-[1.01]');
+    }
+
+    function handleDragLeave(e) {
+      e.currentTarget.classList.remove('border-dashed', 'border-fluo-purple', 'scale-[1.01]');
+    }
+
+    function handleDragEnd(e) {
+      e.currentTarget.classList.remove('opacity-40', 'border-fluo-purple', 'bg-purple-950/20', 'border-dashed', 'scale-[1.01]');
+    }
+
+    function handleDrop(e, targetId) {
+      e.preventDefault();
+      e.currentTarget.classList.remove('border-dashed', 'border-fluo-purple', 'scale-[1.01]');
+      
+      if (!draggedGuideId || draggedGuideId === targetId) return;
+      
+      const draggedIdx = guides.findIndex(g => g.id === draggedGuideId);
+      const targetIdx = guides.findIndex(g => g.id === targetId);
+      
+      if (draggedIdx !== -1 && targetIdx !== -1) {
+        // Move guide in array
+        const [draggedItem] = guides.splice(draggedIdx, 1);
+        guides.splice(targetIdx, 0, draggedItem);
+        
+        persistDataLocally();
+        saveAllGuidesToServer();
+        renderApp();
+        showToast('Ordine salvato con successo! ↕️', 'success');
+      }
+      
+      draggedGuideId = null;
+    }
+
+    // Global keyboard listener for Undo / Redo (Ctrl+Z / Ctrl+Y)
+    window.addEventListener('keydown', (e) => {
+      if (!window.editingGuide) return;
+      
+      // Undo: Ctrl+Z or Cmd+Z
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+        if (e.shiftKey) {
+          // Redo: Ctrl+Shift+Z
+          e.preventDefault();
+          window.editorHistory.redo();
+        } else {
+          e.preventDefault();
+          window.editorHistory.undo();
+        }
+      }
+      // Redo: Ctrl+Y or Cmd+Y
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') {
+        e.preventDefault();
+        window.editorHistory.redo();
+      }
+    });
 
     
     let adminPassword = 'sticazzi';
@@ -1915,6 +2149,7 @@
 
     
     function selectGuideForEdit(guideId) {
+      window.showAdvancedSettings = false;
       if (guideId === 'new') {
         window.editingGuide = {
           id: 'nuova-guida-' + Math.floor(Math.random() * 10000),
@@ -1925,8 +2160,14 @@
           tags: [],
           content: [{ type: 'paragraph', value: '' }],
           tips: [],
-          authorName: '',
-          authorColor: '#a855f7'
+          authorName: 'Lidia',
+          authorColor: '#cbd5e1',
+          authors: [{
+            name: 'Lidia',
+            color: '#cbd5e1',
+            diamondColor: '#26ff5e',
+            level: 'Amministratore'
+          }]
         };
       } else {
         const guide = guides.find(g => g.id === guideId);
@@ -1947,25 +2188,261 @@
             return block;
           });
 
+          if (!window.editingGuide.authors) {
+            window.editingGuide.authors = getGuideAuthorsList(window.editingGuide);
+          }
+          if (window.editingGuide.authors.length === 0) {
+            window.editingGuide.authors = [{
+              name: window.editingGuide.authorName || 'Lidia',
+              color: window.editingGuide.authorColor || '#cbd5e1',
+              diamondColor: window.editingGuide.authorDiamondColor || '#26ff5e',
+              level: window.editingGuide.authorLevel || 'Amministratore'
+            }];
+          }
+
           if (!window.editingGuide.authorName) {
-            window.editingGuide.authorName = '';
+            window.editingGuide.authorName = window.editingGuide.authors[0].name;
           }
           if (!window.editingGuide.authorColor) {
-            window.editingGuide.authorColor = '#a855f7';
+            window.editingGuide.authorColor = window.editingGuide.authors[0].color;
           }
         }
       }
+
+      if (window.editingGuide) {
+        window.editingOriginalId = window.editingGuide.id;
+      } else {
+        window.editingOriginalId = null;
+      }
+
+      // Inizializza la cronologia per l'editor
+      if (window.editingGuide) {
+        window.editorHistory.undoStack = [JSON.parse(JSON.stringify(window.editingGuide))];
+        window.editorHistory.redoStack = [];
+        // Delay update per assicurare il rendering dei bottoni
+        setTimeout(() => window.editorHistory.updateArrowButtons(), 10);
+      }
+
+      renderApp();
+    }
+
+    function toggleAdvancedSettings() {
+      window.showAdvancedSettings = !window.showAdvancedSettings;
       renderApp();
     }
 
     function updateEditingField(field, val) {
       if (!window.editingGuide) return;
+      
+      if (field === 'id') {
+        val = val.toLowerCase().replace(/[^a-z0-9_-]+/g, '-');
+        const idInput = document.getElementById('admin-edit-id');
+        if (idInput && idInput.value !== val) {
+          idInput.value = val;
+        }
+      }
+
       window.editingGuide[field] = val;
+
       if (field === 'title' && window.editingGuide.id.startsWith('nuova-guida-')) {
-        window.editingGuide.id = val.toLowerCase()
+        const generatedId = val.toLowerCase()
           .replace(/[^a-z0-9]+/g, '-')
           .replace(/(^-|-$)+/g, '');
+        window.editingGuide.id = generatedId;
+        const idInput = document.getElementById('admin-edit-id');
+        if (idInput) {
+          idInput.value = generatedId;
+        }
       }
+
+      const linkText = document.getElementById('admin-direct-link-preview');
+      if (linkText) {
+        linkText.textContent = `${window.location.origin}${window.location.pathname}#guida-${window.editingGuide.id}`;
+      }
+      updateLivePreview();
+
+      if (field === 'authorColor') {
+        pushHistoryImmediate();
+      } else {
+        pushHistoryDebounced();
+      }
+    }
+
+    function updateLivePreview() {
+      const container = document.getElementById('guide-live-preview-container');
+      if (!container || !window.editingGuide) return;
+
+      const g = window.editingGuide;
+      
+      const guideCats = g.categories || (g.category ? [g.category] : []);
+      const primaryCatId = guideCats[0] || 'gameplay';
+      const primaryCatObj = categories.find(c => c.id === primaryCatId) || { label: 'Generale', color: 'purple' };
+      const primaryCatStyles = getCategoryStyles(primaryCatObj.color);
+
+      const badgesHtml = guideCats.map(catId => {
+        const catObj = categories.find(c => c.id === catId);
+        if (!catObj) return '';
+        const catStyles = getCategoryStyles(catObj.color);
+        return `
+          <span class="inline-block text-[10px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full border ${catStyles.badge}">
+            ${catObj.label}
+          </span>
+        `;
+      }).join('');
+
+      const contentHtml = g.content.map((block, idx) => {
+        return renderGuideContentBlock(block, idx);
+      }).join('');
+
+      container.innerHTML = `
+        <div class="bg-slate-950/80 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-2xl ${primaryCatStyles.shadow} space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-900 pb-2">
+            <span class="text-[10px] font-bold text-fluo-green tracking-wider uppercase flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-fluo-green animate-pulse"></span>
+              Anteprima Real-Time
+            </span>
+            <span class="text-[9px] font-mono text-slate-500">ID: #guida-${g.id || '...'}</span>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-1.5">
+            ${badgesHtml || '<span class="text-[10px] text-slate-500 italic">Nessuna categoria</span>'}
+          </div>
+
+          <h1 class="text-xl md:text-2xl font-black text-white tracking-tight leading-tight">
+            ${g.title || '<span class="text-slate-600 italic">Senza Titolo</span>'}
+          </h1>
+
+          ${getGuideAuthorsList(g).length > 0 ? `
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="text-[9px] text-slate-500 font-sans font-medium">Autori:</span>
+            ${getGuideAuthorsList(g).map(author => `
+              <span class="inline-flex items-center gap-1.5 text-[10px] bg-slate-900/45 px-2.5 py-1 rounded-lg border border-slate-800/40 relative group/preview-author">
+                <span style="color: ${author.color || '#cbd5e1'}; font-weight: 700;">
+                  ${author.name}
+                </span>
+                <span class="text-[10px] select-none cursor-help" style="color: ${author.diamondColor || '#26ff5e'};" title="${author.level || 'Autore'}">
+                  ◆
+                </span>
+                <span class="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-1.5 py-0.5 bg-slate-950 border border-slate-850 text-[9px] text-slate-300 rounded opacity-0 group-hover/preview-author:opacity-100 transition-opacity whitespace-nowrap shadow-md z-30 font-sans">
+                  ${author.level || 'Autore'}
+                </span>
+              </span>
+            `).join('')}
+          </div>
+          ` : ''}
+
+          <div class="border-b border-slate-900/80 my-3"></div>
+
+          <div class="space-y-3 font-sans">
+            ${contentHtml || '<p class="text-slate-500 italic text-xs">Nessun contenuto aggiunto.</p>'}
+          </div>
+
+          ${g.tags && g.tags.length > 0 ? `
+            <div class="pt-4 border-t border-slate-900 flex flex-wrap gap-1.5">
+              ${g.tags.map(tag => `
+                <span class="inline-block text-[9px] text-slate-400 bg-slate-900 border border-slate-850 px-2 py-0.5 rounded font-mono">
+                  #${tag}
+                </span>
+              `).join('')}
+            </div>
+          ` : ''}
+        </div>
+      `;
+      lazyCreateIcons();
+    }
+
+    function getGuideAuthorsList(guide) {
+      if (!guide) return [];
+      if (guide.authors && Array.isArray(guide.authors) && guide.authors.length > 0) {
+        return guide.authors;
+      }
+      // Fallback to legacy single author properties if exists
+      if (guide.authorName) {
+        return [{
+          name: guide.authorName,
+          color: guide.authorColor || '#cbd5e1',
+          diamondColor: guide.authorDiamondColor || '#26ff5e',
+          level: guide.authorLevel || 'Moderatore'
+        }];
+      }
+      return [];
+    }
+
+    function addAuthorToEditingGuide() {
+      if (!window.editingGuide) return;
+      if (!window.editingGuide.authors) {
+        window.editingGuide.authors = getGuideAuthorsList(window.editingGuide);
+      }
+      window.editingGuide.authors.push({
+        name: 'Nuovo Autore',
+        color: '#cbd5e1',
+        diamondColor: '#26ff5e',
+        level: 'Collaboratore'
+      });
+      syncLegacyAuthorFields();
+      updateLivePreview();
+      pushHistoryImmediate();
+      renderApp();
+    }
+
+    function updateEditingAuthorField(idx, field, value) {
+      if (!window.editingGuide) return;
+      if (!window.editingGuide.authors) {
+        window.editingGuide.authors = getGuideAuthorsList(window.editingGuide);
+      }
+      if (window.editingGuide.authors[idx]) {
+        window.editingGuide.authors[idx][field] = value;
+      }
+      syncLegacyAuthorFields();
+      updateLivePreview();
+      pushHistoryDebounced();
+    }
+
+    function removeAuthorFromEditingGuide(idx) {
+      if (!window.editingGuide) return;
+      if (!window.editingGuide.authors) {
+        window.editingGuide.authors = getGuideAuthorsList(window.editingGuide);
+      }
+      window.editingGuide.authors.splice(idx, 1);
+      syncLegacyAuthorFields();
+      updateLivePreview();
+      pushHistoryImmediate();
+      renderApp();
+    }
+
+    function syncLegacyAuthorFields() {
+      if (!window.editingGuide) return;
+      const authors = window.editingGuide.authors || [];
+      if (authors.length > 0) {
+        window.editingGuide.authorName = authors[0].name;
+        window.editingGuide.authorColor = authors[0].color;
+        window.editingGuide.authorDiamondColor = authors[0].diamondColor;
+        window.editingGuide.authorLevel = authors[0].level;
+      } else {
+        window.editingGuide.authorName = '';
+        window.editingGuide.authorColor = '';
+        window.editingGuide.authorDiamondColor = '';
+        window.editingGuide.authorLevel = '';
+      }
+    }
+
+    function updateEditingTags(val) {
+      if (!window.editingGuide) return;
+      window.editingGuide._rawTags = val;
+      window.editingGuide.tags = val.split(',')
+        .map(t => t.trim().toLowerCase())
+        .filter(t => t.length > 0);
+      updateLivePreview();
+      pushHistoryDebounced();
+    }
+
+    function deleteTagFromEditingGuide(idx) {
+      if (!window.editingGuide) return;
+      if (!window.editingGuide.tags) window.editingGuide.tags = [];
+      window.editingGuide.tags.splice(idx, 1);
+      window.editingGuide._rawTags = window.editingGuide.tags.join(', ');
+      pushHistoryImmediate();
+      renderApp();
     }
 
     function toggleEditingGuideCategory(catId) {
@@ -1983,6 +2460,7 @@
       } else {
         window.editingGuide.categories.push(catId);
       }
+      pushHistoryImmediate();
       renderApp();
     }
 
@@ -1995,6 +2473,7 @@
         newBlock.buttonUrl = '';
       }
       window.editingGuide.content.push(newBlock);
+      pushHistoryImmediate();
       renderApp();
     }
 
@@ -2008,6 +2487,8 @@
           block.value = val;
         }
       }
+      updateLivePreview();
+      pushHistoryDebounced();
     }
 
     function updateEditingBlockType(idx, type) {
@@ -2024,6 +2505,7 @@
         block.buttonUrl = '';
       }
       window.editingGuide.content[idx] = block;
+      pushHistoryImmediate();
       renderApp();
     }
 
@@ -2033,6 +2515,8 @@
       if (block && block.type === 'list') {
         block.listType = listType;
       }
+      updateLivePreview();
+      pushHistoryImmediate();
     }
 
     function updateEditingBlockButtonUrl(idx, buttonUrl) {
@@ -2041,6 +2525,8 @@
       if (block && block.type === 'button') {
         block.buttonUrl = buttonUrl;
       }
+      updateLivePreview();
+      pushHistoryDebounced();
     }
 
     function updateEditingBlockColor(idx, color) {
@@ -2049,6 +2535,8 @@
       if (block) {
         block.color = color;
       }
+      updateLivePreview();
+      pushHistoryDebounced();
     }
 
     function updateEditingBlockBold(idx, bold) {
@@ -2057,6 +2545,7 @@
       if (block) {
         block.bold = bold;
       }
+      pushHistoryImmediate();
       renderApp();
     }
 
@@ -2066,6 +2555,7 @@
       if (block) {
         block.italic = italic;
       }
+      pushHistoryImmediate();
       renderApp();
     }
 
@@ -2075,6 +2565,7 @@
       if (block && block.type === 'divider') {
         block.dividerType = dividerType;
       }
+      pushHistoryImmediate();
       renderApp();
     }
 
@@ -2084,9 +2575,10 @@
       if (block && block.type === 'divider') {
         block.dividerColor = color;
       }
+      updateLivePreview();
+      pushHistoryDebounced();
     }
 
-    
     function addEditingParagraph() {
       addEditingBlock('paragraph');
     }
@@ -2102,6 +2594,7 @@
     function removeEditingBlock(idx) {
       if (!window.editingGuide) return;
       window.editingGuide.content.splice(idx, 1);
+      pushHistoryImmediate();
       renderApp();
     }
 
@@ -2117,6 +2610,7 @@
         content[idx] = content[idx + 1];
         content[idx + 1] = temp;
       }
+      pushHistoryImmediate();
       renderApp();
     }
 
@@ -2124,17 +2618,21 @@
       if (!window.editingGuide) return;
       if (!window.editingGuide.tips) window.editingGuide.tips = [];
       window.editingGuide.tips.push('');
+      pushHistoryImmediate();
       renderApp();
     }
 
     function updateEditingTip(idx, val) {
       if (!window.editingGuide) return;
       window.editingGuide.tips[idx] = val;
+      updateLivePreview();
+      pushHistoryDebounced();
     }
 
     function removeEditingTip(idx) {
       if (!window.editingGuide) return;
       window.editingGuide.tips.splice(idx, 1);
+      pushHistoryImmediate();
       renderApp();
     }
 
@@ -2249,13 +2747,21 @@
       }
       g.category = g.categories[0];
 
-      const existingIdx = guides.findIndex(item => item.id === g.id);
+      // Trova la guida usando il suo ID originale (se presente) per aggiornarla in-place, prevenendo duplicati se l'ID è cambiato.
+      const originalId = window.editingOriginalId || g.id;
+      const existingIdx = guides.findIndex(item => item.id === originalId);
       if (existingIdx >= 0) {
         guides[existingIdx] = g;
       } else {
-        guides.push(g);
+        const currentIdx = guides.findIndex(item => item.id === g.id);
+        if (currentIdx >= 0) {
+          guides[currentIdx] = g;
+        } else {
+          guides.push(g);
+        }
       }
 
+      window.editingOriginalId = null;
       window.editingGuide = null;
       persistDataLocally();
       saveAllGuidesToServer();
@@ -2735,22 +3241,29 @@
                 ${guide.title}
               </h1>
 
-              ${guide.authorName ? `
-              <div class="flex items-center gap-2 text-xs text-slate-400 mb-2 font-sans font-medium bg-slate-900/45 px-3 py-1.5 rounded-xl border border-slate-800/40 w-fit">
-                <i data-lucide="user" class="w-3.5 h-3.5 text-slate-500"></i>
-                <span class="text-slate-500">Autore:</span>
-                <span class="font-extrabold uppercase tracking-widest text-[10px]" style="color: ${guide.authorColor || '#a855f7'}; text-shadow: 0 0 10px ${guide.authorColor}20;">
-                  ${guide.authorName}
-                </span>
+              ${getGuideAuthorsList(guide).length > 0 ? `
+              <div class="flex flex-wrap items-center gap-2 mb-4">
+                <span class="text-xs text-slate-500 font-sans font-medium">Autori:</span>
+                ${getGuideAuthorsList(guide).map(author => `
+                  <span class="inline-flex items-center gap-1.5 text-xs bg-slate-900/45 px-3 py-1.5 rounded-xl border border-slate-800/40 relative group/author">
+                    <span style="color: ${author.color || '#cbd5e1'}; font-weight: 700;" class="tracking-wide">
+                      ${author.name}
+                    </span>
+                    <span class="cursor-help inline-block text-[11px] select-none transition-transform hover:scale-125" style="color: ${author.diamondColor || '#26ff5e'};" title="${author.level || 'Nessun livello'}">
+                      ◆
+                    </span>
+                    <span class="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1.5 bg-slate-950 border border-slate-850 text-[10px] text-slate-200 rounded-lg opacity-0 group-hover/author:opacity-100 transition-opacity whitespace-nowrap shadow-xl z-30 font-sans tracking-wide">
+                      ${author.level || 'Autore'}
+                    </span>
+                  </span>
+                `).join('')}
               </div>
               ` : ''}
 
               <div class="border-b border-slate-800/80 my-6"></div>
 
               
-              <p class="p-4 bg-slate-900/50 border-l-4 border-fluo-green rounded-r-lg text-slate-300 text-sm md:text-base leading-relaxed italic mb-8 block font-sans">
-                ${formatParagraphText(guide.description)}
-              </p>
+              <!-- Descrizione rimossa dalla vista di dettaglio per mostrarla solo nella homepage (riquadro) -->
 
               
               <div class="space-y-4 mb-8 font-sans">
@@ -2762,7 +3275,7 @@
                 <div class="p-5 md:p-6 bg-purple-500/5 border border-fluo-purple/20 rounded-2xl space-y-3 mb-8">
                   <div class="text-sm md:text-base font-bold text-fluo-purple flex items-center gap-1.5">
                     <i data-lucide="award" class="w-5 h-5 text-fluo-purple"></i>
-                    Consigli Extra di PianetaSim
+                    Consigli Extra
                   </div>
                   <ul class="space-y-2.5">
                     ${guide.tips.map(tip => `
@@ -2872,11 +3385,18 @@
                     
                     <div class="pt-3 border-t border-slate-900 flex items-center justify-between text-[11px]">
                       <div class="flex flex-col gap-0.5 max-w-[60%] overflow-hidden">
-                        ${guide.authorName ? `
-                          <span class="text-[10px] text-slate-400 font-sans truncate font-medium flex items-center gap-1">
-                            <i data-lucide="user" class="w-3 h-3 text-slate-500 shrink-0"></i>
-                            <span style="color: ${guide.authorColor || '#cbd5e1'}">${guide.authorName}</span>
-                          </span>
+                        ${getGuideAuthorsList(guide).length > 0 ? `
+                          <div class="flex flex-wrap items-center gap-1.5 overflow-hidden">
+                            ${getGuideAuthorsList(guide).map(author => `
+                              <span class="text-[10px] font-sans font-medium flex items-center gap-1 relative group/list-author-1" title="${author.level || 'Autore'}">
+                                <span style="color: ${author.color || '#cbd5e1'}">${author.name}</span>
+                                <span class="text-[9px] select-none" style="color: ${author.diamondColor || '#26ff5e'}">◆</span>
+                                <span class="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-1.5 py-0.5 bg-slate-950 border border-slate-850 text-[9px] text-slate-300 rounded opacity-0 group-hover/list-author-1:opacity-100 transition-opacity whitespace-nowrap shadow-md z-30 font-sans">
+                                  ${author.level || 'Autore'}
+                                </span>
+                              </span>
+                            `).join('')}
+                          </div>
                         ` : ''}
                         <span class="text-slate-500 truncate font-mono">
                           #${guide.tags.slice(0, 2).join(' #')}
@@ -3068,9 +3588,24 @@
 
                           
                           <div class="pt-3 border-t border-slate-900 flex items-center justify-between text-[11px]">
-                            <span class="text-slate-500 truncate max-w-[60%] font-mono">
-                              #${guide.tags.slice(0, 2).join(' #')}
-                            </span>
+                            <div class="flex flex-col gap-0.5 max-w-[60%] overflow-hidden">
+                              ${getGuideAuthorsList(guide).length > 0 ? `
+                                <div class="flex flex-wrap items-center gap-1.5 overflow-hidden">
+                                  ${getGuideAuthorsList(guide).map(author => `
+                                    <span class="text-[10px] font-sans font-medium flex items-center gap-1 relative group/list-author-2" title="${author.level || 'Autore'}">
+                                      <span style="color: ${author.color || '#cbd5e1'}">${author.name}</span>
+                                      <span class="text-[9px] select-none" style="color: ${author.diamondColor || '#26ff5e'}">◆</span>
+                                      <span class="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-1.5 py-0.5 bg-slate-950 border border-slate-850 text-[9px] text-slate-300 rounded opacity-0 group-hover/list-author-2:opacity-100 transition-opacity whitespace-nowrap shadow-md z-30 font-sans">
+                                        ${author.level || 'Autore'}
+                                      </span>
+                                    </span>
+                                  `).join('')}
+                                </div>
+                              ` : ''}
+                              <span class="text-slate-500 truncate font-mono">
+                                #${guide.tags.slice(0, 2).join(' #')}
+                              </span>
+                            </div>
                             
                             <span class="text-fluo-purple font-bold flex items-center gap-1 group-hover:text-white transition-colors">
                               Leggi Guida
@@ -3129,493 +3664,654 @@
           return;
         }
 
-        
         if (window.editingGuide) {
           
           const g = window.editingGuide;
           container.innerHTML = `
-            <div class="max-w-4xl mx-auto space-y-6 bg-space-card border border-slate-800 p-6 md:p-8 rounded-3xl shadow-2xl">
-              <div class="flex items-center justify-between border-b border-slate-800 pb-4">
-                <div>
-                  <h2 class="text-lg font-black text-white">
-                    ${g.id.startsWith('nuova-guida-') ? 'Crea Nuova Guida' : 'Modifica Guida'}
-                  </h2>
-                  <p class="text-xs text-slate-400">Supporta tag di formattazione avanzati per immagini, grassetto, corsivo, link e colori.</p>
-                </div>
-                <button
-                  onclick="window.editingGuide = null; renderApp();"
-                  class="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white rounded-xl border border-slate-800 text-xs font-bold cursor-pointer transition-colors"
-                >
-                  Annulla
-                </button>
-              </div>
-
-              
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="space-y-1.5">
-                  <label class="text-xs font-bold text-slate-400 uppercase">Titolo della Guida</label>
-                  <input
-                    type="text"
-                    value="${g.title}"
-                    oninput="updateEditingField('title', this.value)"
-                    placeholder="es: Trucchi di Costruzione Avanzati"
-                    class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:ring-2 focus:ring-fluo-purple outline-none"
-                  />
-                </div>
-
-                <div class="space-y-1.5">
-                  <label class="text-xs font-bold text-slate-400 uppercase">ID Unico Guida (Senza Spazi)</label>
-                  <input
-                    type="text"
-                    value="${g.id}"
-                    oninput="updateEditingField('id', this.value)"
-                    placeholder="es: guide-costruzioni-avanzate"
-                    class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:ring-2 focus:ring-fluo-purple outline-none font-mono"
-                  />
-                  <div class="text-[10px] text-slate-500 font-mono mt-1 flex flex-wrap items-center gap-1">
-                    <span>Link diretto della guida:</span>
-                    <span class="text-fluo-blue select-all bg-slate-950/40 px-1.5 py-0.5 rounded border border-slate-800/40">${window.location.origin}${window.location.pathname}#guida-${g.id}</span>
+            <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+              <!-- Pannello Edit -->
+              <div class="lg:col-span-7 space-y-6 bg-space-card border border-slate-800 p-6 md:p-8 rounded-3xl shadow-2xl">
+                
+                <!-- Intestazione Editor con pulsanti Undo/Redo -->
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+                  <div>
+                    <h2 class="text-lg font-black text-white">
+                      ${g.id.startsWith('nuova-guida-') ? 'Crea Nuova Guida' : 'Modifica Guida'}
+                    </h2>
+                    <p class="text-[10px] text-slate-400 font-sans">Usa il tasto "+" tra i blocchi per inserire contenuti in qualsiasi punto.</p>
                   </div>
-                </div>
-              </div>
-
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="space-y-1.5">
-                  <label class="text-xs font-bold text-slate-400 uppercase font-sans">Assegna Categorie (Seleziona una o più)</label>
-                  <div class="flex flex-wrap gap-1.5 p-2 bg-slate-900 border border-slate-800 rounded-xl min-h-[42px] items-center">
-                    ${categories.map(c => {
-                      const isSelected = g.categories && g.categories.includes(c.id);
-                      const catStyles = getCategoryStyles(c.color);
-                      return `
-                        <button
-                          type="button"
-                          onclick="toggleEditingGuideCategory('${c.id}')"
-                          class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold transition-all duration-200 cursor-pointer border"
-                          style="${
-                            isSelected
-                              ? `background-color: ${catStyles.colorCode}15; color: #ffffff; border-color: ${catStyles.colorCode}; box-shadow: 0 0 10px ${catStyles.colorCode}25;`
-                              : 'background-color: rgba(15,23,42,0.4); color: #94a3b8; border-color: rgba(30,41,59,0.8);'
-                          }"
-                        >
-                          <span class="w-1.5 h-1.5 rounded-full" style="background-color: ${catStyles.colorCode}"></span>
-                          <span>${c.label}</span>
-                          ${isSelected ? '<span class="text-fluo-green text-[10px] font-black">✓</span>' : ''}
-                        </button>
-                      `;
-                    }).join('')}
-                  </div>
-                </div>
-
-                <div class="space-y-1.5">
-                  <label class="text-xs font-bold text-slate-400 uppercase">Tags (Separati da Virgola)</label>
-                  <input
-                    type="text"
-                    id="admin-edit-tags"
-                    value="${g._rawTags !== undefined ? g._rawTags : g.tags.join(', ')}"
-                    oninput="updateEditingTags(this.value)"
-                    placeholder="es: costruzione, trucchi, mobili"
-                    class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:ring-2 focus:ring-fluo-purple outline-none"
-                  />
                   
-                  ${g.tags && g.tags.length > 0 ? `
-                  <div class="flex flex-wrap gap-1 mt-1.5">
-                    ${g.tags.map((tag, tIdx) => `
-                      <span class="inline-flex items-center gap-1 text-[10px] bg-slate-800 text-slate-300 border border-slate-700/60 px-2 py-0.5 rounded-md font-mono">
-                        #${tag}
+                  <div class="flex items-center gap-2">
+                    <!-- Undo / Redo Arrow Buttons -->
+                    <div class="flex items-center bg-slate-900 border border-slate-800 rounded-xl p-1 gap-1">
+                      <button
+                        type="button"
+                        id="btn-editor-undo"
+                        onclick="window.editorHistory.undo()"
+                        class="p-2 hover:bg-slate-850 text-slate-300 hover:text-white rounded-lg transition-all"
+                        title="Annulla Modifica (Ctrl+Z)"
+                      >
+                        <i data-lucide="corner-up-left" class="w-4 h-4"></i>
+                      </button>
+                      <button
+                        type="button"
+                        id="btn-editor-redo"
+                        onclick="window.editorHistory.redo()"
+                        class="p-2 hover:bg-slate-850 text-slate-300 hover:text-white rounded-lg transition-all"
+                        title="Ripristina Modifica (Ctrl+Y)"
+                      >
+                        <i data-lucide="corner-up-right" class="w-4 h-4"></i>
+                      </button>
+                    </div>
+
+                    <button
+                      onclick="window.editingGuide = null; renderApp();"
+                      class="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white rounded-xl border border-slate-800 text-xs font-bold cursor-pointer transition-colors"
+                    >
+                      Annulla
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Campi Base dell'Editor per un'esperienza d'uso Semplice e Intuitiva -->
+                <div class="space-y-4">
+                  <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-slate-300 uppercase">Titolo della Guida</label>
+                    <input
+                      type="text"
+                      value="${g.title}"
+                      oninput="updateEditingField('title', this.value)"
+                      placeholder="es: Trucchi di Costruzione Avanzati"
+                      class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:ring-2 focus:ring-fluo-purple outline-none font-sans"
+                    />
+                  </div>
+
+                  <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-slate-300 uppercase font-sans">Assegna Categorie (Seleziona una o più)</label>
+                    <div class="flex flex-wrap gap-1.5 p-2 bg-slate-900 border border-slate-800 rounded-xl min-h-[42px] items-center">
+                      ${categories.map(c => {
+                        const isSelected = g.categories && g.categories.includes(c.id);
+                        const catStyles = getCategoryStyles(c.color);
+                        return `
+                          <button
+                            type="button"
+                            onclick="toggleEditingGuideCategory('${c.id}')"
+                            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold transition-all duration-200 cursor-pointer border"
+                            style="${
+                              isSelected
+                                ? `background-color: ${catStyles.colorCode}15; color: #ffffff; border-color: ${catStyles.colorCode}; box-shadow: 0 0 10px ${catStyles.colorCode}25;`
+                                : 'background-color: rgba(15,23,42,0.4); color: #94a3b8; border-color: rgba(30,41,59,0.8);'
+                            }"
+                          >
+                            <span class="w-1.5 h-1.5 rounded-full" style="background-color: ${catStyles.colorCode}"></span>
+                            <span>${c.label}</span>
+                            ${isSelected ? '<span class="text-fluo-green text-[10px] font-black">✓</span>' : ''}
+                          </button>
+                        `;
+                      }).join('')}
+                    </div>
+                  </div>
+
+                  <div class="space-y-2">
+                    <div class="flex items-center justify-between">
+                      <label class="text-xs font-bold text-slate-300 uppercase font-sans">Breve Descrizione / Introduzione</label>
+                      <div class="flex gap-1 items-center">
+                        <button type="button" onclick="insertFormat('admin-edit-desc', 'bold')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-white font-bold rounded" title="Grassetto">B</button>
+                        <button type="button" onclick="insertFormat('admin-edit-desc', 'italic')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-white italic rounded" title="Corsivo">I</button>
+                        <button type="button" onclick="insertFormat('admin-edit-desc', 'link')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-fluo-blue rounded" title="Aggiungi Link">Link</button>
+                        
+                        <div class="relative inline-block text-left">
+                          <button type="button" onclick="toggleTextColorPalette('admin-edit-desc')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-fluo-fuchsia rounded flex items-center gap-0.5" title="Seleziona Colore">
+                            <span>Colore</span>
+                            <span class="text-[8px] opacity-70">▼</span>
+                          </button>
+                          <div id="color-palette-admin-edit-desc" class="hidden absolute right-0 mt-1.5 p-2 bg-slate-950 border border-slate-800 rounded-xl shadow-2xl z-50 w-[140px] grid grid-cols-4 gap-1.5">
+                            ${textColorsList.map(hex => `
+                              <button
+                                type="button"
+                                onclick="applyTextColor('admin-edit-desc', '${hex}')"
+                                class="w-6 h-6 rounded-md border border-slate-800 cursor-pointer transition-transform hover:scale-110"
+                                style="background-color: ${hex}"
+                                title="${hex}"
+                              ></button>
+                            `).join('')}
+                          </div>
+                        </div>
+
+                        <button type="button" onclick="triggerImageUpload('admin-edit-desc')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-fluo-green rounded flex items-center gap-0.5" title="Carica Immagine">📷 Immagine</button>
+                      </div>
+                    </div>
+                    <textarea
+                      id="admin-edit-desc"
+                      rows="3"
+                      oninput="updateEditingField('description', this.value)"
+                      placeholder="Scrivi qui la descrizione riassuntiva..."
+                      class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:ring-2 focus:ring-fluo-purple outline-none font-sans"
+                    >${g.description}</textarea>
+                  </div>
+                </div>
+
+                <!-- Impostazioni Avanzate Collassabili per una UI Semplice -->
+                <div class="border border-slate-800/80 rounded-2xl bg-slate-900/10 overflow-hidden transition-colors">
+                  <button
+                    type="button"
+                    onclick="toggleAdvancedSettings()"
+                    class="w-full px-4 py-3.5 bg-slate-900/40 hover:bg-slate-900/60 text-xs font-black text-slate-300 flex items-center justify-between cursor-pointer transition-colors"
+                  >
+                    <span class="flex items-center gap-2">
+                      <i data-lucide="settings" class="w-4 h-4 text-fluo-purple animate-pulse"></i>
+                      Impostazioni Avanzate Guida (ID, Autore, Tags)
+                    </span>
+                    <span id="advanced-settings-arrow" class="text-xs text-slate-500 font-bold font-mono">${window.showAdvancedSettings ? '▲' : '▼'}</span>
+                  </button>
+                  <div id="advanced-settings-content" class="${window.showAdvancedSettings ? '' : 'hidden'} p-4 space-y-4 border-t border-slate-900 bg-slate-950/20">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div class="space-y-1.5">
+                        <label class="text-xs font-bold text-slate-400 uppercase">ID Unico Guida (Generatore URL)</label>
+                        <input
+                          type="text"
+                          id="admin-edit-id"
+                          value="${g.id}"
+                          oninput="updateEditingField('id', this.value)"
+                          placeholder="es: guide-costruzioni-avanzate"
+                          class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:ring-2 focus:ring-fluo-purple outline-none font-mono"
+                        />
+                      </div>
+
+                      <div class="space-y-1.5">
+                        <label class="text-xs font-bold text-slate-400 uppercase">Tags (Separati da Virgola)</label>
+                        <input
+                          type="text"
+                          id="admin-edit-tags"
+                          value="${g._rawTags !== undefined ? g._rawTags : g.tags.join(', ')}"
+                          oninput="updateEditingTags(this.value)"
+                          placeholder="es: costruzione, trucchi, mobili"
+                          class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:ring-2 focus:ring-fluo-purple outline-none"
+                        />
+                        ${g.tags && g.tags.length > 0 ? `
+                        <div class="flex flex-wrap gap-1 mt-1.5">
+                          ${g.tags.map((tag, tIdx) => `
+                            <span class="inline-flex items-center gap-1 text-[10px] bg-slate-900 text-slate-300 border border-slate-800 px-2 py-0.5 rounded-md font-mono">
+                              #${tag}
+                              <button
+                                type="button"
+                                onclick="deleteTagFromEditingGuide(${tIdx})"
+                                class="hover:text-red-400 text-slate-500 cursor-pointer text-[10px] font-black"
+                              >✕</button>
+                            </span>
+                          `).join('')}
+                        </div>
+                        ` : ''}
+                      </div>
+                    </div>
+
+                    <!-- Gestione Autori dell'Articolo (Nuova Sezione Avanzata per Autori Multipli) -->
+                    <div class="space-y-3.5 border-t border-slate-900 pt-4 mt-4">
+                      <div class="flex items-center justify-between">
+                        <label class="text-xs font-bold text-slate-300 uppercase tracking-wider font-sans flex items-center gap-1.5">
+                          <i data-lucide="users" class="w-4 h-4 text-fluo-purple"></i>
+                          Gestione Autori dell'Articolo
+                        </label>
                         <button
                           type="button"
-                          onclick="deleteTagFromEditingGuide(${tIdx})"
-                          class="hover:text-red-400 text-slate-500 cursor-pointer text-[10px] font-black"
-                          title="Elimina tag"
+                          onclick="addAuthorToEditingGuide()"
+                          class="px-2.5 py-1.5 bg-fluo-purple hover:bg-opacity-90 text-white rounded-lg text-[10px] font-black cursor-pointer transition-all flex items-center gap-1 shadow-md shadow-purple-950/20"
                         >
-                          ✕
+                          <i data-lucide="user-plus" class="w-3 h-3"></i>
+                          Aggiungi Autore
                         </button>
-                      </span>
-                    `).join('')}
-                  </div>
-                  ` : ''}
-                </div>
-              </div>
-
-              <!-- Sezione Autore e Colore Autore -->
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-slate-900/30 border border-slate-800/80 rounded-2xl">
-                <div class="space-y-1.5">
-                  <label class="text-xs font-bold text-slate-400 uppercase font-sans">Nome Creatore / Autore</label>
-                  <input
-                    type="text"
-                    value="${g.authorName || ''}"
-                    oninput="updateEditingField('authorName', this.value)"
-                    placeholder="es: Lidia, Sha, ecc."
-                    class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:ring-2 focus:ring-fluo-purple outline-none font-sans"
-                  />
-                </div>
-
-                <div class="space-y-1.5">
-                  <label class="text-xs font-bold text-slate-400 uppercase font-sans">Colore Nome Autore</label>
-                  <div class="flex items-center gap-3">
-                    <input
-                      type="color"
-                      value="${g.authorColor || '#a855f7'}"
-                      oninput="updateEditingField('authorColor', this.value)"
-                      class="w-9 h-9 p-0 bg-transparent border-0 rounded-lg cursor-pointer shrink-0"
-                    />
-                    <div class="flex-1">
-                      <div class="flex gap-1.5 flex-wrap">
-                        ${[ '#a855f7', '#3b82f6', '#10b981', '#f43f5e', '#eab308', '#06b6d4', '#f97316', '#cbd5e1' ].map(hex => `
-                          <button
-                            type="button"
-                            onclick="updateEditingField('authorColor', '${hex}'); renderApp();"
-                            class="w-5 h-5 rounded-md border transition-all hover:scale-110 cursor-pointer"
-                            style="background-color: ${hex}; border-color: ${(g.authorColor || '#a855f7').toLowerCase() === hex.toLowerCase() ? '#ffffff' : 'rgba(255,255,255,0.1)'}; box-shadow: ${(g.authorColor || '#a855f7').toLowerCase() === hex.toLowerCase() ? '0 0 8px ' + hex : 'none'};"
-                            title="${hex}"
-                          ></button>
-                        `).join('')}
                       </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
 
-              
-              <div class="space-y-2">
-                <div class="flex items-center justify-between">
-                  <label class="text-xs font-bold text-slate-400 uppercase font-sans">Breve Descrizione / Introduzione</label>
-                  <div class="flex gap-1 items-center">
-                    <button type="button" onclick="insertFormat('admin-edit-desc', 'bold')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-white font-bold rounded">B</button>
-                    <button type="button" onclick="insertFormat('admin-edit-desc', 'italic')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-white italic rounded">I</button>
-                    <button type="button" onclick="insertFormat('admin-edit-desc', 'link')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-fluo-blue rounded">Link</button>
-                    
-                    
-                    <div class="relative inline-block text-left">
-                      <button type="button" onclick="toggleTextColorPalette('admin-edit-desc')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-fluo-fuchsia rounded flex items-center gap-0.5">
-                        <span>Colore</span>
-                        <span class="text-[8px] opacity-70">▼</span>
-                      </button>
-                      <div id="color-palette-admin-edit-desc" class="hidden absolute right-0 mt-1.5 p-2 bg-slate-950 border border-slate-800 rounded-xl shadow-2xl z-50 w-[140px] grid grid-cols-4 gap-1.5">
-                        ${textColorsList.map(hex => `
-                          <button
-                            type="button"
-                            onclick="applyTextColor('admin-edit-desc', '${hex}')"
-                            class="w-6 h-6 rounded-md border border-slate-800 cursor-pointer transition-transform hover:scale-110"
-                            style="background-color: ${hex}"
-                            title="${hex}"
-                          ></button>
-                        `).join('')}
-                      </div>
-                    </div>
-
-                    <button type="button" onclick="triggerImageUpload('admin-edit-desc')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-fluo-green rounded flex items-center gap-0.5">📷 Immagine</button>
-                  </div>
-                </div>
-                <textarea
-                  id="admin-edit-desc"
-                  rows="3"
-                  oninput="updateEditingField('description', this.value)"
-                  placeholder="Scrivi qui la descrizione riassuntiva..."
-                  class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:ring-2 focus:ring-fluo-purple outline-none font-sans"
-                >${g.description}</textarea>
-              </div>
-
-              
-              <div class="space-y-4">
-                <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-                  <div class="space-y-1">
-                    <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Blocchi di Contenuto</h3>
-                    <p class="text-[10px] text-slate-500">Componi la tua guida combinando titoli, paragrafi, citazioni, consigli, elenchi, divisori e pulsanti.</p>
-                  </div>
-                  <div class="flex gap-1.5 flex-wrap max-w-md sm:max-w-none">
-                    <button
-                      type="button"
-                      onclick="addEditingBlock('paragraph')"
-                      class="px-2 py-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-fluo-green border border-emerald-500/30 rounded-lg text-[10px] font-bold cursor-pointer transition-colors"
-                    >
-                      + Paragrafo
-                    </button>
-                    <button
-                      type="button"
-                      onclick="addEditingBlock('heading1')"
-                      class="px-2 py-1 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 rounded-lg text-[10px] font-bold cursor-pointer transition-colors"
-                    >
-                      + Titolo H1
-                    </button>
-                    <button
-                      type="button"
-                      onclick="addEditingBlock('heading2')"
-                      class="px-2 py-1 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-lg text-[10px] font-bold cursor-pointer transition-colors"
-                    >
-                      + Sottotitolo H2
-                    </button>
-                    <button
-                      type="button"
-                      onclick="addEditingBlock('quote')"
-                      class="px-2 py-1 bg-teal-500/10 hover:bg-teal-500/20 text-teal-400 border border-teal-500/30 rounded-lg text-[10px] font-bold cursor-pointer transition-colors"
-                    >
-                      + Citazione
-                    </button>
-                    <button
-                      type="button"
-                      onclick="addEditingBlock('tip')"
-                      class="px-2 py-1 bg-purple-500/10 hover:bg-purple-500/20 text-fluo-purple border border-fluo-purple/30 rounded-lg text-[10px] font-bold cursor-pointer transition-colors"
-                    >
-                      + Consiglio
-                    </button>
-                    <button
-                      type="button"
-                      onclick="addEditingBlock('list')"
-                      class="px-2 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-lg text-[10px] font-bold cursor-pointer transition-colors"
-                    >
-                      + Elenco
-                    </button>
-                    <button
-                      type="button"
-                      onclick="addEditingBlock('divider')"
-                      class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700/60 rounded-lg text-[10px] font-bold cursor-pointer transition-colors"
-                    >
-                      + Divisore
-                    </button>
-                    <button
-                      type="button"
-                      onclick="addEditingBlock('button')"
-                      class="px-2 py-1 bg-fuchsia-500/10 hover:bg-fuchsia-500/20 text-fluo-fuchsia border border-fluo-fuchsia/30 rounded-lg text-[10px] font-bold cursor-pointer transition-colors"
-                    >
-                      + Pulsante
-                    </button>
-                  </div>
-                </div>
-
-                <div class="space-y-4">
-                  ${g.content.map((block, idx) => {
-                    const b = typeof block === 'string' ? { type: 'paragraph', value: block } : block;
-                    const type = b.type || 'paragraph';
-                    const value = b.value || '';
-
-                    return `
-                      <div class="p-4 bg-slate-950/60 border border-slate-900 rounded-xl space-y-3 relative group/block">
-                        <div class="flex flex-wrap items-center justify-between gap-3">
-                          <div class="flex items-center gap-2">
-                            <span class="text-xs font-extrabold text-fluo-green">Blocco #${idx + 1}</span>
-                            
-                            
-                            <select
-                              onchange="updateEditingBlockType(${idx}, this.value)"
-                              class="px-2 py-1 bg-slate-900 border border-slate-800 rounded-lg text-[10px] text-slate-300 font-bold focus:ring-1 focus:ring-fluo-purple outline-none cursor-pointer"
-                            >
-                              <option value="paragraph" ${type === 'paragraph' ? 'selected' : ''}>📝 Paragrafo</option>
-                              <option value="quote" ${type === 'quote' ? 'selected' : ''}>💬 Citazione</option>
-                              <option value="tip" ${type === 'tip' ? 'selected' : ''}>💡 Consiglio / Tip Pro</option>
-                              <option value="list" ${type === 'list' ? 'selected' : ''}>📋 Elenco Puntato/Numerato</option>
-                              <option value="heading1" ${type === 'heading1' ? 'selected' : ''}>H1 - Titolo Principale</option>
-                              <option value="heading2" ${type === 'heading2' ? 'selected' : ''}>H2 - Sottotitolo</option>
-                              <option value="heading3" ${type === 'heading3' ? 'selected' : ''}>H3 - Terzo Sottotitolo</option>
-                              <option value="divider" ${type === 'divider' ? 'selected' : ''}>➖ Divisore</option>
-                              <option value="button" ${type === 'button' ? 'selected' : ''}>🔗 Pulsante Link</option>
-                            </select>
-                          </div>
-                          
-                          
-                          <div class="flex items-center gap-1.5 flex-wrap">
-                            
-                            <button
-                              type="button"
-                              onclick="moveEditingBlock(${idx}, 'up')"
-                              class="p-1 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-slate-400 rounded cursor-pointer transition-colors"
-                              title="Sposta Su"
-                              ${idx === 0 ? 'disabled style="opacity: 0.3; cursor: not-allowed;"' : ''}
-                            >
-                              ▲
-                            </button>
-                            <button
-                              type="button"
-                              onclick="moveEditingBlock(${idx}, 'down')"
-                              class="p-1 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-slate-400 rounded cursor-pointer transition-colors"
-                              title="Sposta Giù"
-                              ${idx === g.content.length - 1 ? 'disabled style="opacity: 0.3; cursor: not-allowed;"' : ''}
-                            >
-                              ▼
-                            </button>
-
-                            
-                            ${type !== 'divider' ? `
-                              <button type="button" onclick="insertFormat('admin-block-${idx}', 'bold')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-white font-bold rounded" title="Grassetto">B</button>
-                              <button type="button" onclick="insertFormat('admin-block-${idx}', 'italic')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-white italic rounded" title="Corsivo">I</button>
-                              <button type="button" onclick="insertFormat('admin-block-${idx}', 'link')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-fluo-blue rounded" title="Aggiungi Link">Link</button>
-                              
-                              
-                              <div class="relative inline-block text-left">
-                                <button type="button" onclick="toggleTextColorPalette('admin-block-${idx}')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-fluo-fuchsia rounded flex items-center gap-0.5" title="Colore Personalizzato">
-                                  <span>Colore</span>
-                                  <span class="text-[8px] opacity-70">▼</span>
+                      <div class="space-y-3">
+                        ${getGuideAuthorsList(g).map((author, authorIdx) => `
+                          <div class="p-3 bg-slate-900/40 border border-slate-900 rounded-2xl flex flex-col gap-3 relative group/author-row transition-all hover:border-slate-800">
+                            <!-- Header autore con delete button -->
+                            <div class="flex items-center justify-between border-b border-slate-950 pb-1.5">
+                              <span class="text-[10px] font-black uppercase text-slate-500 font-mono flex items-center gap-1">
+                                <span class="w-1.5 h-1.5 rounded-full" style="background-color: ${author.color || '#cbd5e1'}"></span>
+                                Autore #${authorIdx + 1}
+                              </span>
+                              ${getGuideAuthorsList(g).length > 1 ? `
+                                <button
+                                  type="button"
+                                  onclick="removeAuthorFromEditingGuide(${authorIdx})"
+                                  class="text-[10px] text-red-500 hover:text-red-400 hover:bg-red-500/10 px-1.5 py-0.5 rounded cursor-pointer transition-colors font-bold"
+                                  title="Rimuovi questo autore"
+                                >
+                                  Elimina ✕
                                 </button>
-                                <div id="color-palette-admin-block-${idx}" class="hidden absolute right-0 mt-1.5 p-2 bg-slate-950 border border-slate-800 rounded-xl shadow-2xl z-50 w-[140px] grid grid-cols-4 gap-1.5">
+                              ` : ''}
+                            </div>
+
+                            <!-- Form campi autore in grid responsive -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                              <!-- Campo Nome Autore -->
+                              <div class="space-y-1">
+                                <span class="text-[9px] font-bold text-slate-400 uppercase font-sans">Nome Autore</span>
+                                <input
+                                  type="text"
+                                  value="${author.name || ''}"
+                                  oninput="updateEditingAuthorField(${authorIdx}, 'name', this.value)"
+                                  placeholder="es: Lidia"
+                                  class="w-full px-2.5 py-1.5 bg-slate-950 border border-slate-850 rounded-lg text-[11px] text-white focus:ring-1 focus:ring-fluo-purple outline-none"
+                                />
+                              </div>
+
+                              <!-- Campo Livello Autore -->
+                              <div class="space-y-1">
+                                <span class="text-[9px] font-bold text-slate-400 uppercase font-sans">Livello Autore (Tooltip)</span>
+                                <input
+                                  type="text"
+                                  value="${author.level || ''}"
+                                  oninput="updateEditingAuthorField(${authorIdx}, 'level', this.value)"
+                                  placeholder="es: Amministratore, Moderatore"
+                                  class="w-full px-2.5 py-1.5 bg-slate-950 border border-slate-850 rounded-lg text-[11px] text-white focus:ring-1 focus:ring-fluo-purple outline-none"
+                                />
+                              </div>
+
+                              <!-- Campo Colore Nome -->
+                              <div class="space-y-1.5">
+                                <span class="text-[9px] font-bold text-slate-400 uppercase font-sans block">Colore Nome</span>
+                                <div class="flex items-center gap-2">
+                                  <input
+                                    type="color"
+                                    value="${author.color || '#cbd5e1'}"
+                                    oninput="updateEditingAuthorField(${authorIdx}, 'color', this.value); renderApp();"
+                                    class="w-6 h-6 p-0 bg-transparent border-0 rounded cursor-pointer shrink-0"
+                                  />
+                                  <span class="text-[10px] text-slate-500 font-mono">${author.color || '#cbd5e1'}</span>
+                                </div>
+                                <div class="flex flex-wrap gap-1 mt-1.5">
                                   ${textColorsList.map(hex => `
                                     <button
                                       type="button"
-                                      onclick="applyTextColor('admin-block-${idx}', '${hex}')"
-                                      class="w-6 h-6 rounded-md border border-slate-800 cursor-pointer transition-transform hover:scale-110"
-                                      style="background-color: ${hex}"
+                                      onclick="updateEditingAuthorField(${authorIdx}, 'color', '${hex}'); renderApp();"
+                                      class="w-4 h-4 rounded-md border transition-all hover:scale-125 cursor-pointer shrink-0"
+                                      style="background-color: ${hex}; border-color: ${(author.color || '#cbd5e1').toLowerCase() === hex.toLowerCase() ? '#ffffff' : 'rgba(255,255,255,0.1)'}; box-shadow: ${(author.color || '#cbd5e1').toLowerCase() === hex.toLowerCase() ? '0 0 5px ' + hex : 'none'};"
                                       title="${hex}"
                                     ></button>
                                   `).join('')}
                                 </div>
                               </div>
 
-                              <button type="button" onclick="triggerImageUpload('admin-block-${idx}')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-fluo-green rounded flex items-center gap-0.5" title="Carica Immagine">📷 Immagine</button>
-                            ` : ''}
-                            
-                            <button
-                              type="button"
-                              onclick="removeEditingBlock(${idx})"
-                              class="ml-2 p-1 text-red-500 hover:text-red-400 hover:bg-red-500/10 rounded cursor-pointer transition-colors"
-                              title="Elimina blocco"
-                            >
-                              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                            </button>
+                              <!-- Campo Colore Rombo -->
+                              <div class="space-y-1.5">
+                                <span class="text-[9px] font-bold text-slate-400 uppercase font-sans block">Colore Rombo (◆)</span>
+                                <div class="flex items-center gap-2">
+                                  <input
+                                    type="color"
+                                    value="${author.diamondColor || '#26ff5e'}"
+                                    oninput="updateEditingAuthorField(${authorIdx}, 'diamondColor', this.value); renderApp();"
+                                    class="w-6 h-6 p-0 bg-transparent border-0 rounded cursor-pointer shrink-0"
+                                  />
+                                  <span class="text-[10px] text-slate-500 font-mono">${author.diamondColor || '#26ff5e'}</span>
+                                </div>
+                                <div class="flex flex-wrap gap-1 mt-1.5">
+                                  ${textColorsList.map(hex => `
+                                    <button
+                                      type="button"
+                                      onclick="updateEditingAuthorField(${authorIdx}, 'diamondColor', '${hex}'); renderApp();"
+                                      class="w-4 h-4 rounded-md border transition-all hover:scale-125 cursor-pointer shrink-0"
+                                      style="background-color: ${hex}; border-color: ${(author.diamondColor || '#26ff5e').toLowerCase() === hex.toLowerCase() ? '#ffffff' : 'rgba(255,255,255,0.1)'}; box-shadow: ${(author.diamondColor || '#26ff5e').toLowerCase() === hex.toLowerCase() ? '0 0 5px ' + hex : 'none'};"
+                                      title="${hex}"
+                                    ></button>
+                                  `).join('')}
+                                </div>
+                              </div>
+                            </div>
                           </div>
+                        `).join('')}
+                      </div>
+                    </div>
+
+                    <div class="text-[10px] text-slate-500 font-mono mt-1 pt-1 border-t border-slate-900/60 flex flex-col gap-2">
+                      <div class="flex items-center gap-1.5">
+                        <span class="font-bold text-slate-400">ID Attuale:</span>
+                        <code class="text-cyan-400 bg-slate-950 px-1.5 py-0.5 rounded border border-slate-900/50">${g.id}</code>
+                      </div>
+                      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-slate-950/60 p-2.5 rounded-xl border border-slate-900/60 mt-1">
+                        <div class="flex flex-col gap-0.5 overflow-hidden">
+                          <span class="text-[9px] font-black uppercase text-slate-400 tracking-wider font-sans">Link di Condivisione Diretto</span>
+                          <span id="admin-direct-link-preview" class="text-[11px] text-fluo-blue select-all break-all pr-2">${window.location.origin}${window.location.pathname}#guida-${g.id}</span>
                         </div>
+                        <button
+                          type="button"
+                          onclick="copyGuideLink('${g.id}')"
+                          class="px-2.5 py-1.5 bg-fluo-blue/15 hover:bg-fluo-blue hover:text-black border border-fluo-blue/30 text-fluo-blue font-extrabold rounded-lg text-[9px] cursor-pointer transition-all flex items-center gap-1 shrink-0 justify-center shadow-md shadow-cyan-950/20 uppercase"
+                        >
+                          <i data-lucide="copy" class="w-3 h-3"></i>
+                          Copia
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
-                        
-                        ${type === 'list' ? `
-                          <div class="flex items-center gap-3 bg-slate-900/60 p-2 rounded-lg border border-slate-900 text-[11px] text-slate-300 font-sans">
-                            <span class="font-bold">Tipo Elenco:</span>
-                            <label class="inline-flex items-center gap-1 cursor-pointer">
-                              <input type="radio" name="list-type-${idx}" value="bullet" ${b.listType !== 'number' ? 'checked' : ''} onchange="updateEditingBlockListType(${idx}, 'bullet')" class="text-fluo-purple focus:ring-0" /> Puntato
-                            </label>
-                            <label class="inline-flex items-center gap-1 cursor-pointer">
-                              <input type="radio" name="list-type-${idx}" value="number" ${b.listType === 'number' ? 'checked' : ''} onchange="updateEditingBlockListType(${idx}, 'number')" class="text-fluo-purple focus:ring-0" /> Numerato
-                            </label>
-                            <span class="text-slate-500 ml-auto italic text-[10px]">Scrivi ogni elemento su una nuova riga (invio).</span>
-                          </div>
-                        ` : ''}
+                <!-- Sezione Blocchi di Contenuto -->
+                <div class="space-y-4">
+                  <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                    <div class="space-y-1">
+                      <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Blocchi di Contenuto</h3>
+                      <p class="text-[10px] text-slate-500">Crea la struttura. Trascina i blocchi o inseriscili direttamente con il tasto "+".</p>
+                    </div>
+                    
+                    <!-- Barra rapida di aggiunta a fondo lista -->
+                    <div class="flex gap-1.5 flex-wrap justify-end">
+                      <button
+                        type="button"
+                        onclick="addEditingBlock('paragraph')"
+                        class="px-2 py-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-fluo-green border border-emerald-500/30 rounded-lg text-[10px] font-bold cursor-pointer transition-colors"
+                      >
+                        + Paragrafo
+                      </button>
+                      <button
+                        type="button"
+                        onclick="addEditingBlock('heading1')"
+                        class="px-2 py-1 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 rounded-lg text-[10px] font-bold cursor-pointer transition-colors"
+                      >
+                        + H1
+                      </button>
+                      <button
+                        type="button"
+                        onclick="addEditingBlock('heading2')"
+                        class="px-2 py-1 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-lg text-[10px] font-bold cursor-pointer transition-colors"
+                      >
+                        + H2
+                      </button>
+                      <button
+                        type="button"
+                        onclick="addEditingBlock('quote')"
+                        class="px-2 py-1 bg-teal-500/10 hover:bg-teal-500/20 text-teal-400 border border-teal-500/30 rounded-lg text-[10px] font-bold cursor-pointer transition-colors"
+                      >
+                        + Citazione
+                      </button>
+                      <button
+                        type="button"
+                        onclick="addEditingBlock('tip')"
+                        class="px-2 py-1 bg-purple-500/10 hover:bg-purple-500/20 text-fluo-purple border border-fluo-purple/30 rounded-lg text-[10px] font-bold cursor-pointer transition-colors"
+                      >
+                        + Consiglio
+                      </button>
+                      <button
+                        type="button"
+                        onclick="addEditingBlock('list')"
+                        class="px-2 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-lg text-[10px] font-bold cursor-pointer transition-colors"
+                      >
+                        + Elenco
+                      </button>
+                      <button
+                        type="button"
+                        onclick="addEditingBlock('divider')"
+                        class="px-2 py-1 bg-slate-850 hover:bg-slate-800 text-slate-300 border border-slate-750 rounded-lg text-[10px] font-bold cursor-pointer transition-colors"
+                      >
+                        + Divisore
+                      </button>
+                      <button
+                        type="button"
+                        onclick="addEditingBlock('button')"
+                        class="px-2 py-1 bg-fuchsia-500/10 hover:bg-fuchsia-500/20 text-fluo-fuchsia border border-fluo-fuchsia/30 rounded-lg text-[10px] font-bold cursor-pointer transition-colors"
+                      >
+                        + Pulsante
+                      </button>
+                    </div>
+                  </div>
 
-                        ${type === 'button' ? `
-                          <div class="space-y-1.5 p-2 bg-slate-900/60 rounded-lg border border-slate-900 font-sans">
-                            <label class="text-[10px] font-bold text-slate-400 uppercase">Indirizzo di Destinazione Link (URL del Pulsante)</label>
-                            <input
-                              type="url"
-                              value="${b.buttonUrl || ''}"
-                              oninput="updateEditingBlockButtonUrl(${idx}, this.value)"
-                              placeholder="es: https://www.pianetasim.it/downloads/mod"
-                              class="w-full px-3 py-1.5 bg-slate-950 border border-slate-800 rounded-lg text-[11px] text-white focus:ring-1 focus:ring-fluo-purple outline-none font-mono"
-                            />
-                          </div>
-                        ` : ''}
+                  <!-- Dynamic block rendering with inline insertion points -->
+                  <div class="space-y-2">
+                    ${renderInlineInserter(0)}
 
-                        ${type === 'heading1' || type === 'heading2' || type === 'heading3' ? `
-                          <div class="flex flex-wrap items-center gap-4 bg-slate-900/60 p-2.5 rounded-xl border border-slate-900 text-xs text-slate-300 font-sans">
+                    ${g.content.map((block, idx) => {
+                      const b = typeof block === 'string' ? { type: 'paragraph', value: block } : block;
+                      const type = b.type || 'paragraph';
+                      const value = b.value || '';
+
+                      // Decide visually descriptive left border color
+                      let borderClass = 'border-l-4 border-l-emerald-500/60';
+                      if (type === 'quote') borderClass = 'border-l-4 border-l-teal-500/60';
+                      else if (type === 'tip') borderClass = 'border-l-4 border-l-purple-500/60';
+                      else if (type === 'list') borderClass = 'border-l-4 border-l-amber-500/60';
+                      else if (type === 'heading1' || type === 'heading2' || type === 'heading3') borderClass = 'border-l-4 border-l-blue-500/60';
+                      else if (type === 'divider') borderClass = 'border-l-4 border-l-slate-700/40';
+                      else if (type === 'button') borderClass = 'border-l-4 border-l-fuchsia-500/60';
+
+                      return `
+                        <div class="p-4 bg-slate-950/60 border border-slate-900 rounded-xl space-y-3 relative group/block transition-all hover:border-slate-800 ${borderClass}">
+                          <div class="flex flex-wrap items-center justify-between gap-3">
                             <div class="flex items-center gap-2">
-                              <span class="font-bold text-[10px] uppercase text-slate-400">Colore Titolo:</span>
-                              <input
-                                type="color"
-                                value="${b.color || '#ffffff'}"
-                                oninput="updateEditingBlockColor(${idx}, this.value)"
-                                class="w-6 h-6 rounded border border-slate-800 bg-transparent cursor-pointer p-0"
-                              />
+                              <span class="text-[10px] font-black uppercase text-slate-500 tracking-wider">Blocco #${idx + 1}</span>
+                              
+                              <select
+                                onchange="updateEditingBlockType(${idx}, this.value)"
+                                class="px-2 py-1 bg-slate-900 border border-slate-800 rounded-lg text-[10px] text-slate-300 font-bold focus:ring-1 focus:ring-fluo-purple outline-none cursor-pointer"
+                              >
+                                <option value="paragraph" ${type === 'paragraph' ? 'selected' : ''}>📝 Paragrafo</option>
+                                <option value="quote" ${type === 'quote' ? 'selected' : ''}>💬 Citazione</option>
+                                <option value="tip" ${type === 'tip' ? 'selected' : ''}>💡 Consiglio / Tip Pro</option>
+                                <option value="list" ${type === 'list' ? 'selected' : ''}>📋 Elenco Puntato/Numerato</option>
+                                <option value="heading1" ${type === 'heading1' ? 'selected' : ''}>H1 - Titolo Principale</option>
+                                <option value="heading2" ${type === 'heading2' ? 'selected' : ''}>H2 - Sottotitolo</option>
+                                <option value="heading3" ${type === 'heading3' ? 'selected' : ''}>H3 - Terzo Sottotitolo</option>
+                                <option value="divider" ${type === 'divider' ? 'selected' : ''}>➖ Divisore</option>
+                                <option value="button" ${type === 'button' ? 'selected' : ''}>🔗 Pulsante Link</option>
+                              </select>
                             </div>
-                            <label class="inline-flex items-center gap-1.5 cursor-pointer">
-                              <input
-                                type="checkbox"
-                                ${b.bold !== false ? 'checked' : ''}
-                                onchange="updateEditingBlockBold(${idx}, this.checked)"
-                                class="rounded border-slate-800 text-fluo-purple focus:ring-0 bg-slate-950 w-3.5 h-3.5"
-                              />
-                              <span class="text-[11px] font-bold">Grassetto</span>
-                            </label>
-                            <label class="inline-flex items-center gap-1.5 cursor-pointer">
-                              <input
-                                type="checkbox"
-                                ${b.italic === true ? 'checked' : ''}
-                                onchange="updateEditingBlockItalic(${idx}, this.checked)"
-                                class="rounded border-slate-800 text-fluo-purple focus:ring-0 bg-slate-950 w-3.5 h-3.5"
-                              />
-                              <span class="text-[11px] italic">Corsivo</span>
-                            </label>
-                          </div>
-                        ` : ''}
 
-                        ${type === 'divider' ? `
-                          <div class="space-y-3 bg-slate-900/60 p-3 rounded-xl border border-slate-900 font-sans">
-                            <div class="flex flex-wrap items-center gap-4">
-                              <span class="font-bold text-[10px] uppercase text-slate-400">Tipo Divisore:</span>
-                              <label class="inline-flex items-center gap-1 cursor-pointer text-xs text-slate-300">
-                                <input
-                                  type="radio"
-                                  name="divider-type-${idx}"
-                                  value="standard"
-                                  ${b.dividerType !== 'color' ? 'checked' : ''}
-                                  onchange="updateEditingBlockDividerType(${idx}, 'standard')"
-                                  class="text-fluo-purple focus:ring-0"
-                                /> Standard (Sottile)
-                              </label>
-                              <label class="inline-flex items-center gap-1 cursor-pointer text-xs text-slate-300">
-                                <input
-                                  type="radio"
-                                  name="divider-type-${idx}"
-                                  value="color"
-                                  ${b.dividerType === 'color' ? 'checked' : ''}
-                                  onchange="updateEditingBlockDividerType(${idx}, 'color')"
-                                  class="text-fluo-purple focus:ring-0"
-                                /> Colorato (Corto e Spesso)
-                              </label>
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                              <!-- Order selectors -->
+                              <button
+                                type="button"
+                                onclick="moveEditingBlock(${idx}, 'up')"
+                                class="p-1 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-slate-400 rounded cursor-pointer transition-colors"
+                                title="Sposta Su"
+                                ${idx === 0 ? 'disabled style="opacity: 0.3; cursor: not-allowed;"' : ''}
+                              >
+                                ▲
+                              </button>
+                              <button
+                                type="button"
+                                onclick="moveEditingBlock(${idx}, 'down')"
+                                class="p-1 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-slate-400 rounded cursor-pointer transition-colors"
+                                title="Sposta Giù"
+                                ${idx === g.content.length - 1 ? 'disabled style="opacity: 0.3; cursor: not-allowed;"' : ''}
+                              >
+                                ▼
+                              </button>
+
+                              ${type !== 'divider' ? `
+                                <button type="button" onclick="insertFormat('admin-block-${idx}', 'bold')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-white font-bold rounded" title="Grassetto">B</button>
+                                <button type="button" onclick="insertFormat('admin-block-${idx}', 'italic')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-white italic rounded" title="Corsivo">I</button>
+                                <button type="button" onclick="insertFormat('admin-block-${idx}', 'link')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-fluo-blue rounded" title="Aggiungi Link">Link</button>
+                                
+                                <div class="relative inline-block text-left">
+                                  <button type="button" onclick="toggleTextColorPalette('admin-block-${idx}')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-fluo-fuchsia rounded flex items-center gap-0.5" title="Colore Personalizzato">
+                                    <span>Colore</span>
+                                    <span class="text-[8px] opacity-70">▼</span>
+                                  </button>
+                                  <div id="color-palette-admin-block-${idx}" class="hidden absolute right-0 mt-1.5 p-2 bg-slate-950 border border-slate-800 rounded-xl shadow-2xl z-50 w-[140px] grid grid-cols-4 gap-1.5">
+                                    ${textColorsList.map(hex => `
+                                      <button
+                                        type="button"
+                                        onclick="applyTextColor('admin-block-${idx}', '${hex}')"
+                                        class="w-6 h-6 rounded-md border border-slate-800 cursor-pointer transition-transform hover:scale-110"
+                                        style="background-color: ${hex}"
+                                        title="${hex}"
+                                      ></button>
+                                    `).join('')}
+                                  </div>
+                                </div>
+
+                                <button type="button" onclick="triggerImageUpload('admin-block-${idx}')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-fluo-green rounded flex items-center gap-0.5" title="Carica Immagine">📷 Immagine</button>
+                              ` : ''}
+
+                              <button
+                                type="button"
+                                onclick="removeEditingBlock(${idx})"
+                                class="ml-2 p-1 text-red-500 hover:text-red-400 hover:bg-red-500/10 rounded cursor-pointer transition-colors"
+                                title="Elimina blocco"
+                              >
+                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                              </button>
                             </div>
-                            
-                            ${b.dividerType === 'color' ? `
-                              <div class="flex items-center gap-2 pt-1">
-                                <span class="font-bold text-[10px] uppercase text-slate-400">Colore Linea:</span>
+                          </div>
+
+                          ${type === 'list' ? `
+                            <div class="flex items-center gap-3 bg-slate-900/60 p-2 rounded-lg border border-slate-900 text-[11px] text-slate-300 font-sans">
+                              <span class="font-bold">Tipo Elenco:</span>
+                              <label class="inline-flex items-center gap-1 cursor-pointer">
+                                <input type="radio" name="list-type-${idx}" value="bullet" ${b.listType !== 'number' ? 'checked' : ''} onchange="updateEditingBlockListType(${idx}, 'bullet')" class="text-fluo-purple focus:ring-0" /> Puntato
+                              </label>
+                              <label class="inline-flex items-center gap-1 cursor-pointer">
+                                <input type="radio" name="list-type-${idx}" value="number" ${b.listType === 'number' ? 'checked' : ''} onchange="updateEditingBlockListType(${idx}, 'number')" class="text-fluo-purple focus:ring-0" /> Numerato
+                              </label>
+                              <span class="text-slate-500 ml-auto italic text-[10px]">Scrivi ogni elemento su una nuova riga (invio).</span>
+                            </div>
+                          ` : ''}
+
+                          ${type === 'button' ? `
+                            <div class="space-y-1.5 p-2 bg-slate-900/60 rounded-lg border border-slate-900 font-sans">
+                              <label class="text-[10px] font-bold text-slate-400 uppercase">Indirizzo Link URL del Pulsante</label>
+                              <input
+                                type="url"
+                                value="${b.buttonUrl || ''}"
+                                oninput="updateEditingBlockButtonUrl(${idx}, this.value)"
+                                placeholder="es: https://www.pianetasim.it/downloads/mod"
+                                class="w-full px-3 py-1.5 bg-slate-950 border border-slate-800 rounded-lg text-[11px] text-white focus:ring-1 focus:ring-fluo-purple outline-none font-mono"
+                              />
+                            </div>
+                          ` : ''}
+
+                          ${type === 'heading1' || type === 'heading2' || type === 'heading3' ? `
+                            <div class="flex flex-wrap items-center gap-4 bg-slate-900/60 p-2.5 rounded-xl border border-slate-900 text-xs text-slate-300 font-sans">
+                              <div class="flex items-center gap-2">
+                                <span class="font-bold text-[10px] uppercase text-slate-400">Colore Titolo:</span>
                                 <input
                                   type="color"
-                                  value="${b.dividerColor || '#10b981'}"
-                                  oninput="updateEditingBlockDividerColor(${idx}, this.value)"
+                                  value="${b.color || '#ffffff'}"
+                                  oninput="updateEditingBlockColor(${idx}, this.value)"
                                   class="w-6 h-6 rounded border border-slate-800 bg-transparent cursor-pointer p-0"
                                 />
-                                <span class="text-[10px] text-slate-400 font-mono">${b.dividerColor || '#10b981'}</span>
                               </div>
-                            ` : ''}
-                          </div>
-                        ` : ''}
+                              <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                                <input
+                                  type="checkbox"
+                                  ${b.bold !== false ? 'checked' : ''}
+                                  onchange="updateEditingBlockBold(${idx}, this.checked)"
+                                  class="rounded border-slate-800 text-fluo-purple focus:ring-0 bg-slate-950 w-3.5 h-3.5"
+                                />
+                                <span class="text-[11px] font-bold">Grassetto</span>
+                              </label>
+                              <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                                <input
+                                  type="checkbox"
+                                  ${b.italic === true ? 'checked' : ''}
+                                  onchange="updateEditingBlockItalic(${idx}, this.checked)"
+                                  class="rounded border-slate-800 text-fluo-purple focus:ring-0 bg-slate-950 w-3.5 h-3.5"
+                                />
+                                <span class="text-[11px] italic">Corsivo</span>
+                              </label>
+                            </div>
+                          ` : ''}
 
-                        
-                        ${type !== 'divider' ? `
-                          <textarea
-                            id="admin-block-${idx}"
-                            rows="${type === 'paragraph' || type === 'quote' || type === 'list' ? '4' : '2'}"
-                            oninput="updateEditingBlockValue(${idx}, this.value)"
-                            placeholder="${
-                              type === 'list'
-                                ? 'Primo elemento dell\'elenco\nSecondo elemento dell\'elenco\nTerzo elemento dell\'elenco...'
-                                : type === 'button'
-                                  ? 'Scrivi qui l\'etichetta visibile sul pulsante (es: Scarica la Traduzione)'
-                                  : 'Scrivi qui il testo del blocco...'
-                            }"
-                            class="w-full px-3 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:ring-2 focus:ring-fluo-purple outline-none font-sans"
-                          >${value}</textarea>
-                        ` : `
-                          <div class="h-8 flex items-center justify-center border-y border-dashed border-slate-800/80 text-[10px] text-slate-500 tracking-widest uppercase bg-slate-900/10 font-mono">
-                            Separatore Orizzontale Visivo
-                          </div>
-                        `}
-                      </div>
-                    `;
-                  }).join('')}
+                          ${type === 'divider' ? `
+                            <div class="space-y-3 bg-slate-900/60 p-3 rounded-xl border border-slate-900 font-sans">
+                              <div class="flex flex-wrap items-center gap-4">
+                                <span class="font-bold text-[10px] uppercase text-slate-400">Tipo Divisore:</span>
+                                <label class="inline-flex items-center gap-1 cursor-pointer text-xs text-slate-300">
+                                  <input
+                                    type="radio"
+                                    name="divider-type-${idx}"
+                                    value="standard"
+                                    ${b.dividerType !== 'color' ? 'checked' : ''}
+                                    onchange="updateEditingBlockDividerType(${idx}, 'standard')"
+                                    class="text-fluo-purple focus:ring-0"
+                                  /> Standard (Sottile)
+                                </label>
+                                <label class="inline-flex items-center gap-1 cursor-pointer text-xs text-slate-300">
+                                  <input
+                                    type="radio"
+                                    name="divider-type-${idx}"
+                                    value="color"
+                                    ${b.dividerType === 'color' ? 'checked' : ''}
+                                    onchange="updateEditingBlockDividerType(${idx}, 'color')"
+                                    class="text-fluo-purple focus:ring-0"
+                                  /> Colorato (Corto e Spesso)
+                                </label>
+                              </div>
+                              
+                              ${b.dividerType === 'color' ? `
+                                <div class="flex items-center gap-2 pt-1">
+                                  <span class="font-bold text-[10px] uppercase text-slate-400">Colore Linea:</span>
+                                  <input
+                                    type="color"
+                                    value="${b.dividerColor || '#10b981'}"
+                                    oninput="updateEditingBlockDividerColor(${idx}, this.value)"
+                                    class="w-6 h-6 rounded border border-slate-800 bg-transparent cursor-pointer p-0"
+                                  />
+                                  <span class="text-[10px] text-slate-400 font-mono">${b.dividerColor || '#10b981'}</span>
+                                </div>
+                              ` : ''}
+                            </div>
+                          ` : ''}
+
+                          ${type !== 'divider' ? `
+                            <textarea
+                              id="admin-block-${idx}"
+                              rows="${type === 'paragraph' || type === 'quote' || type === 'list' ? '3' : '2'}"
+                              oninput="updateEditingBlockValue(${idx}, this.value)"
+                              placeholder="${
+                                type === 'list'
+                                  ? 'Primo elemento dell\'elenco\nSecondo elemento dell\'elenco\nTerzo elemento dell\'elenco...'
+                                  : type === 'button'
+                                    ? 'Etichetta visibile sul pulsante (es: Scarica la Traduzione)'
+                                    : 'Scrivi qui il testo del blocco...'
+                              }"
+                              class="w-full px-3 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:ring-2 focus:ring-fluo-purple outline-none font-sans"
+                            >${value}</textarea>
+                          ` : `
+                            <div class="h-8 flex items-center justify-center border-y border-dashed border-slate-800/80 text-[10px] text-slate-500 tracking-widest uppercase bg-slate-900/10 font-mono">
+                              Separatore Orizzontale Visivo
+                            </div>
+                          `}
+                        </div>
+
+                        ${renderInlineInserter(idx + 1)}
+                      `;
+                    }).join('')}
+                  </div>
+                </div>
+
+                <!-- Pulsantiera di salvataggio finale -->
+                <div class="pt-6 border-t border-slate-800 flex flex-col sm:flex-row gap-3">
+                  <button
+                    onclick="saveEditingGuide()"
+                    class="flex-grow py-3 bg-fluo-purple text-white font-extrabold rounded-xl text-xs cursor-pointer shadow-lg hover:bg-opacity-95 text-center transition-all"
+                  >
+                    Salva Localmente ed Esci
+                  </button>
+                  <button
+                    onclick="window.editingGuide = null; renderApp();"
+                    class="flex-grow py-3 bg-slate-900 hover:bg-slate-850 border border-slate-800 text-slate-300 rounded-xl text-xs font-bold cursor-pointer text-center transition-colors"
+                  >
+                    Annulla Modifiche
+                  </button>
                 </div>
               </div>
 
-              
-              <div class="pt-6 border-t border-slate-800 flex flex-col sm:flex-row gap-3">
-                <button
-                  onclick="saveEditingGuide()"
-                  class="flex-grow py-3 bg-fluo-purple text-white font-extrabold rounded-xl text-xs cursor-pointer shadow-lg hover:bg-opacity-95 text-center"
-                >
-                  Salva Localmente ed Esci
-                </button>
-                <button
-                  onclick="window.editingGuide = null; renderApp();"
-                  class="flex-grow py-3 bg-slate-900 hover:bg-slate-850 border border-slate-800 text-slate-300 rounded-xl text-xs font-bold cursor-pointer text-center"
-                >
-                  Annulla Modifiche
-                </button>
+              <!-- Colonna Anteprima Sticky -->
+              <div class="lg:col-span-5 lg:sticky lg:top-6 space-y-4">
+                <div class="bg-slate-900/40 p-4 rounded-3xl border border-slate-850/50 shadow-lg">
+                  <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-1.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-fluo-green animate-pulse"></span>
+                    Anteprima in Tempo Reale
+                  </h3>
+                  <div id="guide-live-preview-container" class="max-h-[80vh] overflow-y-auto pr-1 scrollbar-none">
+                    <!-- Iniezione dinamica della preview -->
+                  </div>
+                </div>
               </div>
             </div>
           `;
+          updateLivePreview();
           lazyCreateIcons();
           return;
         }
@@ -4031,12 +4727,12 @@
                   <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800 pb-3">
                     <div>
                       <h3 class="text-base font-black text-white">Elenco delle Guide Presenti</h3>
-                      <p class="text-xs text-slate-400">Modifica il contenuto, cambia i tag o rimuovi gli articoli.</p>
+                      <p class="text-xs text-slate-400">Modifica il contenuto, cambia i tag o rimuovi gli articoli. <span class="text-fluo-purple font-bold">Trascina le righe per riordinare la lista! ↕️</span></p>
                     </div>
                     
                     <button
                       onclick="selectGuideForEdit('new')"
-                      class="px-4 py-2 bg-fluo-purple text-white font-extrabold rounded-xl text-xs cursor-pointer shadow-[0_0_12px_rgba(176,38,255,0.4)]"
+                      class="px-4 py-2 bg-fluo-purple text-white font-extrabold rounded-xl text-xs cursor-pointer shadow-[0_0_12px_rgba(176,38,255,0.4)] hover:scale-105 active:scale-95 transition-all"
                     >
                       + Crea Nuova Guida
                     </button>
@@ -4046,21 +4742,36 @@
                     ${guides.map(g => {
                       const guideCats = g.categories || (g.category ? [g.category] : []);
                       return `
-                        <div class="p-3 bg-slate-950/60 border border-slate-900 rounded-2xl flex items-center justify-between gap-4 hover:border-slate-800/80 transition-colors">
-                          <div class="space-y-1.5 truncate">
-                            <div class="flex flex-wrap gap-1">
-                              ${guideCats.map(catId => {
-                                const cObj = categories.find(c => c.id === catId);
-                                if (!cObj) return '';
-                                const catStyles = getCategoryStyles(cObj.color);
-                                return `
-                                  <span class="text-[9px] font-extrabold px-1.5 py-0.5 rounded-md font-sans uppercase tracking-wider" style="background-color: ${catStyles.colorCode}15; color: ${catStyles.colorCode}; border: 1px solid ${catStyles.colorCode}30">
-                                    ${cObj.label}
-                                  </span>
-                                `;
-                              }).join('')}
+                        <div
+                          class="p-3 bg-slate-950/60 border border-slate-900 rounded-2xl flex items-center justify-between gap-4 hover:border-slate-800/80 transition-all duration-150 cursor-grab active:cursor-grabbing"
+                          draggable="true"
+                          ondragstart="handleDragStart(event, '${g.id}')"
+                          ondragover="handleDragOver(event)"
+                          ondragleave="handleDragLeave(event)"
+                          ondragend="handleDragEnd(event)"
+                          ondrop="handleDrop(event, '${g.id}')"
+                        >
+                          <div class="flex items-center gap-3 truncate">
+                            <!-- Drag Handle Icon -->
+                            <span class="text-slate-600 hover:text-slate-400 shrink-0 select-none">
+                              <i data-lucide="grip-vertical" class="w-4 h-4"></i>
+                            </span>
+                            
+                            <div class="space-y-1.5 truncate">
+                              <div class="flex flex-wrap gap-1">
+                                ${guideCats.map(catId => {
+                                  const cObj = categories.find(c => c.id === catId);
+                                  if (!cObj) return '';
+                                  const catStyles = getCategoryStyles(cObj.color);
+                                  return `
+                                    <span class="text-[9px] font-extrabold px-1.5 py-0.5 rounded-md font-sans uppercase tracking-wider" style="background-color: ${catStyles.colorCode}15; color: ${catStyles.colorCode}; border: 1px solid ${catStyles.colorCode}30">
+                                      ${cObj.label}
+                                    </span>
+                                  `;
+                                }).join('')}
+                              </div>
+                              <h4 class="text-xs font-bold text-white truncate">${g.title}</h4>
                             </div>
-                            <h4 class="text-xs font-bold text-white truncate">${g.title}</h4>
                           </div>
 
                           <div class="flex items-center gap-1.5 shrink-0">
