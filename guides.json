@@ -23,28 +23,166 @@
   ],
   "guides": [
     {
-      "id": "guide-moveobjects",
-      "title": "Lorem Ipsum Dolor Sit Amet",
-      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin elementum, lorem a scelerisque dictum, arcu nunc.",
-      "category": "costruzione",
+      "id": "installazione-mod",
+      "title": "COME INSTALLARE LE MOD",
+      "description": "La prima parte è composta da una guida veloce.\nLa seconda parte, invece, è una guida passo passo con immagini.",
+      "category": "mod_cc",
       "tags": [
-        "lorem",
-        "ipsum",
-        "dolor",
-        "sit"
+        "mod",
+        "installazione"
       ],
       "content": [
-        "Lorem ipsum dolor sit amet, **consectetur adipiscing elit**. Duis sed dapibus leo, nec finibus mi. Phasellus hendrerit vulputate dolor, sed convallis ex congue eget. Aliquam lorem nulla, pretium nec elit non, aliquet tristique lacus.",
-        "Aenean lobortis diam at interdum eleifend. Ut gravida rhoncus dolor, ac convallis enim hendrerit a. Proin congue, eros id dictum sodales, est ipsum lacinia ligula, sit amet rhoncus nunc felis non est.",
-        "Praesent at nunc a lectus eleifend elementum sit amet tristique mi. Sed vitae interdum erat, nec bibendum tellus. Curabitur sed nisl ut ligula cursus accumsan id sed velit. Ut egestas sapien elementum, eleifend est vel.",
-        "Vivamus vestibulum ligula sed nulla pharetra, vitae facilisis ex volutpat. Quisque hendrerit molestie magna. Pellentesque non justo a nibh finibus feugiat sed non nisl. Cras vulputate metus sem, et tempus lorem interdum ac.",
-        "Nam eleifend hendrerit massa, vitae congue tortor feugiat sed. Aliquam erat volutpat. Proin efficitur elit in purus rutrum molestie. In rhoncus, nulla varius eleifend lobortis, urna nibh convallis ex, sed tempor ex magna eu ex."
+        {
+          "type": "heading2",
+          "value": "[color:#b026ff](PREPARAZIONE)",
+          "bold": true
+        },
+        {
+          "type": "heading3",
+          "value": "[color:#f97316](SE INSTALLI MOD/CC PER LA PRIMA VOLTA:)",
+          "bold": true
+        },
+        {
+          "type": "paragraph",
+          "value": "Se è la prima volta che installi delle mod/cc allora dovrai Attivare le Impostazioni in Gioco:"
+        },
+        {
+          "type": "list",
+          "value": "Apri The Sims 4 \nImpostazioni \nOpzioni di Gioco \nAltro \nSpunta le opzioni: “Attiva il contenuto personalizzato” e “Mod dello script permesse”\nClicca Ok > Applica le modifiche (in basso a dx) > chiudi le Opzioni > Esci dal gioco",
+          "listType": "number"
+        },
+        {
+          "type": "paragraph",
+          "value": "**Al prossimo avvio del gioco Mod e CC saranno attivi!**"
+        },
+        {
+          "type": "paragraph",
+          "value": "[color:#b026ff](Hai bisogno di vedere le immagin passo passo sul \"Come attivare le Mod in Gioco\"?\nClicca il pulsante qui sotto:)"
+        },
+        {
+          "type": "button",
+          "value": "COME ATTIVARE LE MOD IN GIOCO",
+          "buttonUrl": ""
+        },
+        {
+          "type": "heading3",
+          "value": "[color:#f97316](PRIMA DI SCARICARE UNA MOD:)"
+        },
+        {
+          "type": "list",
+          "value": "Leggi attentamente la descrizione.\nControlla se sono stati riportati eventuali conflitti con altre mod.\nControlla se la mod richiede pacchetti (DLC) specifici.\nControlla se la mod richiede altre mod per il corretto funzionamento.",
+          "listType": "bullet"
+        },
+        {
+          "type": "heading3",
+          "value": "[color:#26ff5e](DOVE POSSO TROVARE DELLE MOD?)"
+        },
+        {
+          "type": "paragraph",
+          "value": "Clicca sul nome e verrai indirizzato al sito"
+        },
+        {
+          "type": "list",
+          "value": "[Sito Pianeta Sim](https://pianetasimts.github.io/PianetaSim/index.html)\n[Lista Scarlet](https://scarletsrealm.com/)\n[CurseForge](https://www.curseforge.com/sims4)\n[Patreon](https://www.patreon.com/)\n[Snootysims](https://snootysims.com/)\n[Wcif.cc](https://wcif.cc/)\nI siti personali dove i modder caricano le loro mod",
+          "listType": "bullet"
+        },
+        {
+          "type": "heading3",
+          "value": "[color:#26ff5e](CHE TIPO DI FILE SONO:)"
+        },
+        {
+          "type": "paragraph",
+          "value": "Essi possono essere:"
+        },
+        {
+          "type": "list",
+          "value": "Package (.package)\nScript (.ts4script)\nArchivio zip, rar, 7z (.zip/.rar/.7z)",
+          "listType": "bullet"
+        },
+        {
+          "type": "divider",
+          "value": ""
+        },
+        {
+          "type": "heading1",
+          "value": "[color:#b026ff](INSTALLAZIONE)"
+        },
+        {
+          "type": "list",
+          "value": "Scarica la Mod\nIn base alla tipologia del file:",
+          "listType": "number"
+        },
+        {
+          "type": "paragraph",
+          "value": "**File package/script singoli, non compressi** (quindi non inseriti in uno zip):"
+        },
+        {
+          "type": "list",
+          "value": "Crea una cartella in:",
+          "listType": "bullet"
+        },
+        {
+          "type": "quote",
+          "value": "Documenti > Electronic Arts > The Sims 4 > Mods\nnominandola con:\nNome Modder - Nome Mod - Versione (se conosciuta) e sposta il file qui dentro."
+        },
+        {
+          "type": "paragraph",
+          "value": "**File Zip: **"
+        },
+        {
+          "type": "list",
+          "value": "Estrailo (puoi usare l’estrattore di default di Windows oppure programmi esterni come 7zip, WinRar)\n\nApri la cartella estratta e controlla che all’interno ci siano solo file:\nPackage, Script o potresti trovare anche delle cartelle contenenti file package. In genere possono essere assets, medicinali, addons o altro, in questo caso le cartelle vanno lasciate così come sono. \nSe trovi dei file di testo con istruzioni o altro (prima leggili) e poi cancellali. Lo stesso se ci sono video tutorial o altri file che non siano package o script.\n\nSe dentro la cartella estratta trovi un’altra cartella con il nome della mod, allora devi usare quest’ultima e trascinarla o Taglia/incolla all’interno di: \nDocumenti > Electronic Arts > The Sims 4 > Mods\n\nSe invece hai estratto senza far creare una cartella e hai tutti i file sparsi, dovrai crearla tu e nominarla con: Nome Modder - Nome Mod – Versione (se conosciuta). Infine trascinala o taglia/incolla in: Documenti > Electronic Arts > The Sims 4 > Mods\nFai attenzione: non lasciare mai file zip nella cartella mods.",
+          "listType": "bullet"
+        },
+        {
+          "type": "paragraph",
+          "value": "[color:#38bdf8](**✔ Ora le tue Mod sono pronte! **)"
+        },
+        {
+          "type": "divider",
+          "value": ""
+        },
+        {
+          "type": "heading2",
+          "value": "[color:#ef4444](COSE DA SAPERE:)"
+        },
+        {
+          "type": "list",
+          "value": "Utilizzare mod è bellissimo, ma richiede anche lavoro, pazienza e attenzione nel Seguire gli aggiornamenti → Puoi utilizzare il sito di [[color:#b026ff](PIANETA SIM](https://pianetasimts.github.io/PianetaSim/index.html)) o la lista [[color:#ff007f](SCARLET)](https://scarletsrealm.com/)\n\nLe mod non vanno **mai** messe in **più di una sottocartella**, altrimenti non verranno lette correttamente in gioco, soprattutto i file script.\n\nUsare mod rotte, non aggiornate o sconosciute può corrompere salvataggi e/o problemi in gioco.\n\nPer poter mantenere le mod aggiornate correttamente e con facilità, consigliamo di tenere le mod ordinate in cartella e non tutti i file mischiati insieme in cartella mods.\n\nNon tutte le mod sono uguali: alcune volte i creatori aggiungono delle cartelle all’interno della cartella principale della mod. Spesso contengono materiale che serve per il corretto funzionamento di alcune opzioni della mod. \n\nAlcuni creatori creano zip con all’interno file di testo con spiegazioni, video tutorial o immagini, oltre la cartella della mod con all’interno i file. \nIn questi casi va utilizzata solo quest’ultima cartella, che va messa in cartella mods.",
+          "listType": "bullet"
+        },
+        {
+          "type": "paragraph",
+          "value": "[color:#38bdf8](SE HAI DUBBI O DIFFICOLTÀ, PUOI RICHIEDE ASSISTENZA NEL GRUPPO TELEGRAM)"
+        },
+        {
+          "type": "button",
+          "value": "ASSISTENZA TELEGRAM",
+          "buttonUrl": "https://t.me/TheSims4ItaliaPianetaSim"
+        }
       ],
-      "tips": [
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-        "Ut gravida rhoncus dolor, ac convallis enim hendrerit a.",
-        "Sed vitae interdum erat, nec bibendum tellus."
-      ]
+      "tips": [],
+      "categories": [
+        "mod_cc"
+      ],
+      "authors": [
+        {
+          "name": "LadyPsycoTrilly",
+          "color": "#b026ff",
+          "diamondColor": "#ffffff",
+          "level": "Admin"
+        },
+        {
+          "name": "Sha",
+          "color": "#38bdf8",
+          "diamondColor": "#ffffff",
+          "level": "Admin"
+        }
+      ],
+      "authorName": "LadyPsycoTrilly",
+      "authorColor": "#b026ff",
+      "authorDiamondColor": "#ffffff",
+      "authorLevel": "Admin"
     },
     {
       "id": "guide-mods-cc",
@@ -58,17 +196,40 @@
         "lorem"
       ],
       "content": [
-        "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-        "Mauris dictum tincidunt nisl, nec maximus libero consequat quis. Aliquam interdum urna sit amet massa pharetra, non vulputate libero tristique. Curabitur vel leo id erat auctor gravida in eget nulla.",
-        "Nullam hendrerit mi eu finibus feugiat. Vestibulum pretium scelerisque elit, id maximus diam feugiat ac. Curabitur accumsan, justo nec feugiat porttitor, ipsum diam facilisis nulla, sit amet rhoncus ante nisl vel tellus.",
-        "Quisque sodales scelerisque turpis, id condimentum dolor imperdiet vitae. Duis feugiat, elit quis aliquet varius, massa eros mattis ex, sed dictum nisl leo a mi. Aliquam gravida eleifend nibh rhoncus dictum.",
-        "Sed rhoncus lectus magna, quis facilisis leo tincidunt vitae. Nunc at pretium ante. Etiam quis egestas tellus. Curabitur lobortis mi sit amet mi iaculis, vel scelerisque magna congue. Cras eget tempor enim."
+        {
+          "type": "paragraph",
+          "value": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+        },
+        {
+          "type": "paragraph",
+          "value": "Mauris dictum tincidunt nisl, nec maximus libero consequat quis. Aliquam interdum urna sit amet massa pharetra, non vulputate libero tristique. Curabitur vel leo id erat auctor gravida in eget nulla."
+        },
+        {
+          "type": "paragraph",
+          "value": "Nullam hendrerit mi eu finibus feugiat. Vestibulum pretium scelerisque elit, id maximus diam feugiat ac. Curabitur accumsan, justo nec feugiat porttitor, ipsum diam facilisis nulla, sit amet rhoncus ante nisl vel tellus."
+        },
+        {
+          "type": "paragraph",
+          "value": "Quisque sodales scelerisque turpis, id condimentum dolor imperdiet vitae. Duis feugiat, elit quis aliquet varius, massa eros mattis ex, sed dictum nisl leo a mi. Aliquam gravida eleifend nibh rhoncus dictum."
+        },
+        {
+          "type": "paragraph",
+          "value": "Sed rhoncus lectus magna, quis facilisis leo tincidunt vitae. Nunc at pretium ante. Etiam quis egestas tellus. Curabitur lobortis mi sit amet mi iaculis, vel scelerisque magna congue. Cras eget tempor enim."
+        },
+        {
+          "type": "tip",
+          "value": "Excepteur sint occaecat cupidatat non proident, sunt in culpa."
+        },
+        {
+          "type": "tip",
+          "value": "Aliquam interdum urna sit amet massa pharetra, non vulputate."
+        },
+        {
+          "type": "tip",
+          "value": "Curabitur vel leo id erat auctor gravida in eget nulla."
+        }
       ],
-      "tips": [
-        "Excepteur sint occaecat cupidatat non proident, sunt in culpa.",
-        "Aliquam interdum urna sit amet massa pharetra, non vulputate.",
-        "Curabitur vel leo id erat auctor gravida in eget nulla."
-      ]
+      "tips": []
     },
     {
       "id": "guide-occulti-vampiri",
@@ -82,17 +243,40 @@
         "lorem"
       ],
       "content": [
-        "Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris. Integer in mauris eu nibh euismod gravida.",
-        "Aliquam sollicitudin, arcu a laoreet tempor, risus neque pretium ipsum, sed convallis risus ligula a tellus. Cras iaculis ultricies nulla. Donec quis dui at sem tempor varius. Ut nonummy convallis risus.",
-        "Morbi leo mi, nonummy eget, tristique non, rhoncus non, leo. Nullam tempor. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Vestibulum sapien.",
-        "Quisque cursus, metus vitae pharetra auctor, sem massa mattis sem, at interdum magna augue a odio. Nam nec ante. Sed lacinia, urna non volutpat tempor, tempor erat vehicula aliquet, nulla.",
-        "Aenean nec lorem. In porttitor. Donec laoreet nonummy augue. Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend."
+        {
+          "type": "paragraph",
+          "value": "Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris. Integer in mauris eu nibh euismod gravida."
+        },
+        {
+          "type": "paragraph",
+          "value": "Aliquam sollicitudin, arcu a laoreet tempor, risus neque pretium ipsum, sed convallis risus ligula a tellus. Cras iaculis ultricies nulla. Donec quis dui at sem tempor varius. Ut nonummy convallis risus."
+        },
+        {
+          "type": "paragraph",
+          "value": "Morbi leo mi, nonummy eget, tristique non, rhoncus non, leo. Nullam tempor. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Vestibulum sapien."
+        },
+        {
+          "type": "paragraph",
+          "value": "Quisque cursus, metus vitae pharetra auctor, sem massa mattis sem, at interdum magna augue a odio. Nam nec ante. Sed lacinia, urna non volutpat tempor, tempor erat vehicula aliquet, nulla."
+        },
+        {
+          "type": "paragraph",
+          "value": "Aenean nec lorem. In porttitor. Donec laoreet nonummy augue. Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend."
+        },
+        {
+          "type": "tip",
+          "value": "Morbi leo mi, nonummy eget, tristique non, rhoncus non, leo."
+        },
+        {
+          "type": "tip",
+          "value": "Quisque cursus, metus vitae pharetra auctor, sem massa mattis."
+        },
+        {
+          "type": "tip",
+          "value": "Donec laoreet nonummy augue, suspendisse dui purus."
+        }
       ],
-      "tips": [
-        "Morbi leo mi, nonummy eget, tristique non, rhoncus non, leo.",
-        "Quisque cursus, metus vitae pharetra auctor, sem massa mattis.",
-        "Donec laoreet nonummy augue, suspendisse dui purus."
-      ]
+      "tips": []
     },
     {
       "id": "guide-roofing",
@@ -106,44 +290,44 @@
         "lorem"
       ],
       "content": [
-        "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.",
-        "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet.",
-        "Consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam.",
-        "Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur. Temporibus autem quibusdam et aut officiis.",
-        "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident."
+        {
+          "type": "paragraph",
+          "value": "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo."
+        },
+        {
+          "type": "paragraph",
+          "value": "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet."
+        },
+        {
+          "type": "paragraph",
+          "value": "Consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam."
+        },
+        {
+          "type": "paragraph",
+          "value": "Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur. Temporibus autem quibusdam et aut officiis."
+        },
+        {
+          "type": "paragraph",
+          "value": "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident."
+        },
+        {
+          "type": "tip",
+          "value": "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit."
+        },
+        {
+          "type": "tip",
+          "value": "Neque porro quisquam est, qui dolorem ipsum quia dolor sit."
+        },
+        {
+          "type": "tip",
+          "value": "Consectetur, adipisci velit, sed quia non numquam eius modi."
+        }
       ],
-      "tips": [
-        "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit.",
-        "Neque porro quisquam est, qui dolorem ipsum quia dolor sit.",
-        "Consectetur, adipisci velit, sed quia non numquam eius modi."
-      ]
-    },
-    {
-      "id": "guide-affitti-luna",
-      "title": "Quis Autem Vel Eum Iure",
-      "description": "Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur.",
-      "category": "espansioni",
-      "tags": [
-        "quis",
-        "autem",
-        "eum",
-        "lorem"
-      ],
-      "content": [
-        "Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur. At vero eos et accusamus et iusto odio.",
-        "Dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt.",
-        "Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est.",
-        "Omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic.",
-        "Tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor."
-      ],
-      "tips": [
-        "Dignissimos ducimus qui blanditiis praesentium voluptatum deleniti.",
-        "Et harum quidem rerum facilis est et expedita distinctio.",
-        "Omnis dolor repellendus. Temporibus autem quibusdam et aut."
-      ]
+      "tips": []
     }
   ],
-  "siteTitle": "<span class=\"animate-title-color\">🗁 Guide & Utilità</span>",
+  "adminPassword": "sticazzi",
+  "siteTitle": "<span class=\"animate-title-color\">Guide & Utilità</span>",
   "siteDescription": "Benvenuto nella sezione delle guide di PianetaSim! Impara nuove tecniche di costruzione, installa mod tradotte e copia trucchi con un solo click.",
   "siteLogo": "images/logo.png",
   "alertPopup": {
