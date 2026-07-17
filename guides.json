@@ -6,19 +6,19 @@
       "color": "cyan"
     },
     {
-      "id": "costruzione",
-      "label": "Costruzione",
-      "color": "green"
-    },
-    {
       "id": "gameplay",
       "label": "Gameplay",
-      "color": "purple"
+      "color": "azzurro"
     },
     {
-      "id": "espansioni",
-      "label": "Espansioni",
-      "color": "rose"
+      "id": "guide-veloci",
+      "label": "Guide Veloci",
+      "color": "giallo"
+    },
+    {
+      "id": "guide-passo-passo",
+      "label": "Guide Passo Passo",
+      "color": "verde"
     }
   ],
   "guides": [
@@ -216,7 +216,8 @@
       ],
       "tips": [],
       "categories": [
-        "mod_cc"
+        "mod_cc",
+        "guide-veloci"
       ],
       "authors": [
         {
@@ -335,7 +336,7 @@
       "id": "guide-roofing",
       "title": "Nemo Enim Ipsam Voluptatem",
       "description": "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.",
-      "category": "costruzione",
+      "category": "mod_cc",
       "tags": [
         "nemo",
         "enim",
