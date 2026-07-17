@@ -33,7 +33,7 @@
       ],
       "content": [
         {
-          "type": "heading2",
+          "type": "heading1",
           "value": "[color:#b026ff](PREPARAZIONE)",
           "bold": true
         },
@@ -122,8 +122,21 @@
           "listType": "bullet"
         },
         {
-          "type": "quote",
-          "value": "Documenti > Electronic Arts > The Sims 4 > Mods\nnominandola con:\nNome Modder - Nome Mod - Versione (se conosciuta) e sposta il file qui dentro."
+          "type": "riquadro",
+          "value": "Documenti > Electronic Arts > The Sims 4 > Mods",
+          "align": "left",
+          "lineInvisible": false,
+          "borderColor": "#3b82f6"
+        },
+        {
+          "type": "list",
+          "value": "Nominandola con:",
+          "listType": "bullet"
+        },
+        {
+          "type": "riquadro",
+          "value": "Nome Modder - Nome Mod - Versione (se conosciuta) e sposta il file qui dentro.",
+          "borderColor": "#3b82f6"
         },
         {
           "type": "paragraph",
@@ -131,8 +144,47 @@
         },
         {
           "type": "list",
-          "value": "Estrailo (puoi usare l’estrattore di default di Windows oppure programmi esterni come 7zip, WinRar)\n\nApri la cartella estratta e controlla che all’interno ci siano solo file:\nPackage, Script o potresti trovare anche delle cartelle contenenti file package. In genere possono essere assets, medicinali, addons o altro, in questo caso le cartelle vanno lasciate così como sono. \nSe trovi dei file di testo con istruzioni o altro (prima leggili) e poi cancellali. Lo stesso se ci sono video tutorial o altri file che non siano package o script.\n\nSe dentro la cartella estratta trovi un’altra cartella con il nome della mod, allora devi usare quest’ultima e trascinarla o Taglia/incolla all’interno di: \nDocumenti > Electronic Arts > The Sims 4 > Mods\n\nSe invece hai estratto senza far creare una cartella e hai tutti i file sparsi, dovrai crearla tu e nominarla con: Nome Modder - Nome Mod – Versione (se conosciuta). Infine trascinala o taglia/incolla in: Documenti > Electronic Arts > The Sims 4 > Mods\nFai attenzione: non lasciare mai file zip nella cartella mods.",
+          "value": "Estrailo (puoi usare l’estrattore di default di Windows oppure programmi esterni come 7zip, WinRar)\n\nApri la cartella estratta e controlla che all’interno ci siano solo file:",
           "listType": "bullet"
+        },
+        {
+          "type": "riquadro",
+          "value": "Package, Script o potresti trovare anche delle cartelle contenenti file package. \n\n*In genere possono essere assets, medicinali, addons o altro, in questo caso le cartelle vanno lasciate così como sono. \nSe trovi dei file di testo con istruzioni o altro (prima leggili) e poi cancellali. Lo stesso se ci sono video tutorial o altri file che non siano package o script.*",
+          "borderColor": "#3b82f6"
+        },
+        {
+          "type": "list",
+          "value": "Se dentro la cartella estratta trovi un’altra cartella con il nome della mod, allora devi usare quest’ultima e trascinarla o Taglia/incolla all’interno di:",
+          "listType": "bullet"
+        },
+        {
+          "type": "riquadro",
+          "value": "Documenti > Electronic Arts > The Sims 4 > Mods",
+          "borderColor": "#3b82f6"
+        },
+        {
+          "type": "list",
+          "value": "Se invece hai estratto senza far creare una cartella e hai tutti i file sparsi, dovrai crearla tu e nominarla con:",
+          "listType": "bullet"
+        },
+        {
+          "type": "riquadro",
+          "value": "Nome Modder - Nome Mod – Versione (se conosciuta).",
+          "borderColor": "#3b82f6"
+        },
+        {
+          "type": "list",
+          "value": "Infine trascinala o taglia/incolla in:",
+          "listType": "bullet"
+        },
+        {
+          "type": "riquadro",
+          "value": "Documenti > Electronic Arts > The Sims 4 > Mods",
+          "borderColor": "#3b82f6"
+        },
+        {
+          "type": "tip",
+          "value": "[color:#eab308](**Fai attenzione:**) non lasciare mai file zip nella cartella mods!"
         },
         {
           "type": "paragraph",
@@ -153,12 +205,13 @@
         },
         {
           "type": "paragraph",
-          "value": "[color:#38bdf8](SE HAI DUBBI O DIFFICOLTÀ, PUOI RICHIEDE ASSISTENZA NEL GRUPPO TELEGRAM)"
+          "value": "**[color:#38bdf8](SE HAI DUBBI O DIFFICOLTÀ, PUOI RICHIEDE ASSISTENZA NEL GRUPPO TELEGRAM)**"
         },
         {
           "type": "button",
           "value": "ASSISTENZA TELEGRAM",
-          "buttonUrl": "https://t.me/TheSims4ItaliaPianetaSim"
+          "buttonUrl": "https://t.me/TheSims4ItaliaPianetaSim",
+          "buttonColor": "#0080ff"
         }
       ],
       "tips": [],
