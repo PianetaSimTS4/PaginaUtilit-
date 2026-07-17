@@ -780,6 +780,63 @@
       return html;
     }
 
+    function renderNestedList(value, listType) {
+      const lines = value.split('\n');
+      const isOrdered = listType === 'number';
+      const listTag = isOrdered ? 'ol' : 'ul';
+      const baseListClass = isOrdered ? 'list-decimal pl-6 space-y-2' : 'list-disc pl-6 space-y-2';
+      const subListClass = isOrdered ? 'list-decimal pl-5 mt-1.5 space-y-1' : 'list-[circle] pl-5 mt-1.5 space-y-1';
+      
+      let html = `<${listTag} class="${baseListClass} text-slate-200 my-4">`;
+      let inSubList = false;
+      let subListHtml = '';
+      
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        if (!line.trim()) continue;
+        
+        // A line is a sub-item if it starts with 2 or more spaces/tabs or bullet indicators with indentation
+        const isSubItem = /^[ \t]+/.test(line) || (/^\s*[-*+]/.test(line) && i > 0 && /^\s/.test(line));
+        
+        if (isSubItem) {
+          const cleanText = line.replace(/^[ \t]*[-*+ \t]*/, '').trim();
+          if (!cleanText) continue;
+          
+          if (!inSubList) {
+            inSubList = true;
+            subListHtml = `<ul class="${subListClass} text-slate-300">`;
+          }
+          subListHtml += `<li class="pl-1">${formatParagraphText(cleanText)}</li>`;
+        } else {
+          if (inSubList) {
+            subListHtml += `</ul>`;
+            if (html.endsWith('</li>')) {
+              html = html.substring(0, html.length - 5) + subListHtml + '</li>';
+            } else {
+              html += subListHtml;
+            }
+            inSubList = false;
+            subListHtml = '';
+          }
+          
+          const cleanText = line.replace(/^[-*+ \t]*/, '').trim();
+          html += `<li class="pl-1">${formatParagraphText(cleanText)}</li>`;
+        }
+      }
+      
+      if (inSubList) {
+        subListHtml += `</ul>`;
+        if (html.endsWith('</li>')) {
+          html = html.substring(0, html.length - 5) + subListHtml + '</li>';
+        } else {
+          html += subListHtml;
+        }
+      }
+      
+      html += `</${listTag}>`;
+      return html;
+    }
+
     function renderGuideContentBlock(block, idx) {
       
       const b = typeof block === 'string' ? { type: 'paragraph', value: block } : block;
@@ -797,7 +854,6 @@
         } else if (blockObj.bold === true) {
           classes += ' font-bold';
         } else {
-          
           if (blockObj.type === 'heading1') classes += ' font-bold';
           else classes += ' font-semibold';
         }
@@ -810,17 +866,34 @@
       switch (type) {
         case 'paragraph':
           return `
-            <div class="my-4 text-slate-200 text-sm md:text-base leading-relaxed font-sans">
+            <div class="my-4 text-slate-200 text-sm md:text-base leading-relaxed font-sans" style="text-align: ${b.align || 'left'};">
+              ${formatParagraphText(value)}
+            </div>
+          `;
+        case 'didascalia':
+          return `
+            <div class="my-3 text-slate-400/70 text-[11px] md:text-xs leading-relaxed font-sans italic opacity-80" style="text-align: ${b.align || 'left'};">
               ${formatParagraphText(value)}
             </div>
           `;
         case 'quote':
           return `
-            <div class="py-2.5 my-5 italic text-slate-300 bg-slate-900/20 px-6 rounded-2xl font-sans relative">
+            <div class="py-2.5 my-5 italic text-slate-300 bg-slate-900/20 px-6 rounded-2xl font-sans relative" style="text-align: ${b.align || 'left'};">
               <span class="text-fluo-purple text-4xl font-serif absolute top-1 left-2 opacity-60">“</span>
               <div class="pl-6 text-sm md:text-base leading-relaxed">${formatParagraphText(value)}</div>
             </div>
           `;
+        case 'citazione2': {
+          const lineColor = b.lineColor || '#10b981';
+          const hasLine = !b.lineInvisible;
+          const borderStyle = hasLine ? `border-right: 4px solid ${lineColor}; pr-4;` : 'pr-0;';
+          const inlineStyles = `text-align: ${b.align || 'left'}; ${borderStyle}`;
+          return `
+            <div class="py-2.5 my-5 italic text-slate-300 bg-slate-900/10 px-4 pl-4 pr-5 rounded-l-xl font-sans" style="${inlineStyles}">
+              <div class="text-sm md:text-base leading-relaxed">${formatParagraphText(value)}</div>
+            </div>
+          `;
+        }
         case 'tip':
           return `
             <div class="p-5 md:p-6 bg-purple-500/5 border border-fluo-purple/20 rounded-2xl space-y-3 my-6">
@@ -830,29 +903,23 @@
               </div>
               <div class="flex items-start gap-2.5 text-xs md:text-sm text-slate-300 leading-relaxed font-sans">
                 <i data-lucide="corner-down-right" class="w-4 h-4 text-fluo-green shrink-0 mt-0.5"></i>
-                <div class="text-xs md:text-sm text-slate-300 leading-relaxed font-normal">
+                <div class="text-xs md:text-sm text-slate-300 leading-relaxed font-normal" style="text-align: ${b.align || 'left'};">
                   ${formatParagraphText(value)}
                 </div>
               </div>
             </div>
           `;
         case 'list':
-          const items = value.split('\n').map(item => item.trim()).filter(item => item.length > 0);
-          const isOrdered = b.listType === 'number';
-          const listTag = isOrdered ? 'ol' : 'ul';
-          const listClass = isOrdered ? 'list-decimal pl-6 space-y-2 text-slate-200 my-4' : 'list-disc pl-6 space-y-2 text-slate-200 my-4';
           return `
             <div class="my-4 font-sans">
-              <${listTag} class="${listClass}">
-                ${items.map(item => `<li class="pl-1">${formatParagraphText(item)}</li>`).join('')}
-              </${listTag}>
+              ${renderNestedList(value, b.listType)}
             </div>
           `;
         case 'heading1': {
           const hStyles = getHeadingStyles(b);
           const colorClass = b.color ? '' : 'text-slate-100';
           return `
-            <h2 class="text-xl md:text-2xl mt-8 mb-4 tracking-tight border-b border-slate-800/80 pb-2 font-sans ${colorClass} ${hStyles.classes}" style="${hStyles.style}">
+            <h2 class="text-xl md:text-2xl mt-8 mb-4 tracking-tight border-b border-slate-800/80 pb-2 font-sans ${colorClass} ${hStyles.classes}" style="${hStyles.style} text-align: ${b.align || 'left'};">
               ${formatParagraphText(value)}
             </h2>
           `;
@@ -861,7 +928,7 @@
           const hStyles = getHeadingStyles(b);
           const colorClass = b.color ? '' : 'text-slate-200';
           return `
-            <h3 class="text-base md:text-lg mt-6 mb-3 tracking-tight font-sans ${colorClass} ${hStyles.classes}" style="${hStyles.style}">
+            <h3 class="text-base md:text-lg mt-6 mb-3 tracking-tight font-sans ${colorClass} ${hStyles.classes}" style="${hStyles.style} text-align: ${b.align || 'left'};">
               ${formatParagraphText(value)}
             </h3>
           `;
@@ -870,7 +937,7 @@
           const hStyles = getHeadingStyles(b);
           const colorClass = b.color ? '' : 'text-slate-300';
           return `
-            <h4 class="text-xs md:text-sm uppercase tracking-wider mt-5 mb-2 font-sans ${colorClass} ${hStyles.classes}" style="${hStyles.style}">
+            <h4 class="text-xs md:text-sm uppercase tracking-wider mt-5 mb-2 font-sans ${colorClass} ${hStyles.classes}" style="${hStyles.style} text-align: ${b.align || 'left'};">
               ${formatParagraphText(value)}
             </h4>
           `;
@@ -890,21 +957,40 @@
             `;
           }
         }
-        case 'button':
+        case 'button': {
           const btnUrl = b.buttonUrl || '#';
+          const btnColor = b.buttonColor || '#b026ff';
           return `
-            <div class="my-6">
+            <div class="my-6 text-center">
               <a
                 href="${btnUrl}"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="inline-flex items-center gap-2 px-5 py-2.5 bg-fluo-purple hover:bg-opacity-90 text-white font-black text-xs rounded-xl shadow-[0_0_15px_rgba(176,38,255,0.4)] transition-all cursor-pointer"
+                class="inline-flex items-center gap-2 px-5 py-2.5 hover:scale-[1.02] text-white font-black text-xs rounded-xl transition-all cursor-pointer"
+                style="background-color: ${btnColor}; box-shadow: 0 0 15px ${btnColor}50;"
               >
                 <span>${formatParagraphText(value || 'Clicca Qui')}</span>
                 <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
               </a>
             </div>
           `;
+        }
+        case 'riquadro': {
+          const boxColor = b.borderColor || '#3b82f6';
+          return `
+            <div class="p-5 md:p-6 border rounded-2xl my-6 font-sans" style="background-color: ${boxColor}0d; border-color: ${boxColor}33; text-align: ${b.align || 'left'};">
+              <div class="text-xs md:text-sm text-slate-200 leading-relaxed font-normal">
+                ${formatParagraphText(value)}
+              </div>
+            </div>
+          `;
+        }
+        case 'spacer': {
+          const spacerHeight = b.height || '24';
+          return `
+            <div class="w-full" style="height: ${spacerHeight}px;"></div>
+          `;
+        }
         default:
           return `<p class="text-slate-200 my-4">${formatParagraphText(value)}</p>`;
       }
@@ -1017,6 +1103,11 @@
         newBlock.listType = 'bullet';
       } else if (type === 'button') {
         newBlock.buttonUrl = '';
+        newBlock.buttonColor = '#b026ff';
+      } else if (type === 'riquadro') {
+        newBlock.borderColor = '#3b82f6';
+      } else if (type === 'spacer') {
+        newBlock.height = '24';
       }
       window.editingGuide.content.splice(idx, 0, newBlock);
       pushHistoryImmediate();
@@ -1055,12 +1146,16 @@
           <!-- Menu fluttuante inserimento -->
           <div id="insert-menu-${idx}" class="hidden absolute top-8 z-30 bg-slate-950 border border-slate-800 p-2 rounded-2xl shadow-2xl flex flex-wrap gap-1 max-w-sm sm:max-w-none justify-center">
             <button type="button" onclick="insertEditingBlockAt(${idx}, 'paragraph')" class="px-2 py-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-fluo-green border border-emerald-500/30 rounded-lg text-[10px] font-bold cursor-pointer font-sans">📝 Paragrafo</button>
+            <button type="button" onclick="insertEditingBlockAt(${idx}, 'didascalia')" class="px-2 py-1 bg-slate-500/10 hover:bg-slate-500/20 text-slate-400 border border-slate-500/30 rounded-lg text-[10px] font-bold cursor-pointer font-sans">✍️ Didascalia</button>
             <button type="button" onclick="insertEditingBlockAt(${idx}, 'heading1')" class="px-2 py-1 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 rounded-lg text-[10px] font-bold cursor-pointer font-sans">H1</button>
             <button type="button" onclick="insertEditingBlockAt(${idx}, 'heading2')" class="px-2 py-1 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-lg text-[10px] font-bold cursor-pointer font-sans">H2</button>
-            <button type="button" onclick="insertEditingBlockAt(${idx}, 'quote')" class="px-2 py-1 bg-teal-500/10 hover:bg-teal-500/20 text-teal-400 border border-teal-500/30 rounded-lg text-[10px] font-bold cursor-pointer font-sans">💬 Citazione</button>
+            <button type="button" onclick="insertEditingBlockAt(${idx}, 'quote')" class="px-2 py-1 bg-teal-500/10 hover:bg-teal-500/20 text-teal-400 border border-teal-500/30 rounded-lg text-[10px] font-bold cursor-pointer font-sans">💬 Citazione 1</button>
+            <button type="button" onclick="insertEditingBlockAt(${idx}, 'citazione2')" class="px-2 py-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-lg text-[10px] font-bold cursor-pointer font-sans">💬 Citazione 2</button>
             <button type="button" onclick="insertEditingBlockAt(${idx}, 'tip')" class="px-2 py-1 bg-purple-500/10 hover:bg-purple-500/20 text-fluo-purple border border-fluo-purple/30 rounded-lg text-[10px] font-bold cursor-pointer font-sans">💡 Consiglio</button>
+            <button type="button" onclick="insertEditingBlockAt(${idx}, 'riquadro')" class="px-2 py-1 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-lg text-[10px] font-bold cursor-pointer font-sans">📦 Riquadro</button>
             <button type="button" onclick="insertEditingBlockAt(${idx}, 'list')" class="px-2 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-lg text-[10px] font-bold cursor-pointer font-sans">📋 Elenco</button>
             <button type="button" onclick="insertEditingBlockAt(${idx}, 'divider')" class="px-2 py-1 bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700/60 rounded-lg text-[10px] font-bold cursor-pointer font-sans">➖ Divisore</button>
+            <button type="button" onclick="insertEditingBlockAt(${idx}, 'spacer')" class="px-2 py-1 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 rounded-lg text-[10px] font-bold cursor-pointer font-sans">↕️ Spazio</button>
             <button type="button" onclick="insertEditingBlockAt(${idx}, 'button')" class="px-2 py-1 bg-fuchsia-500/10 hover:bg-fuchsia-500/20 text-fluo-fuchsia border border-fluo-fuchsia/30 rounded-lg text-[10px] font-bold cursor-pointer font-sans">🔗 Pulsante</button>
           </div>
         </div>
@@ -2471,6 +2566,11 @@
         newBlock.listType = 'bullet';
       } else if (type === 'button') {
         newBlock.buttonUrl = '';
+        newBlock.buttonColor = '#b026ff';
+      } else if (type === 'riquadro') {
+        newBlock.borderColor = '#3b82f6';
+      } else if (type === 'spacer') {
+        newBlock.height = '24';
       }
       window.editingGuide.content.push(newBlock);
       pushHistoryImmediate();
@@ -2501,8 +2601,15 @@
       if (type === 'list' && !block.listType) {
         block.listType = 'bullet';
       }
-      if (type === 'button' && !block.buttonUrl) {
-        block.buttonUrl = '';
+      if (type === 'button') {
+        if (!block.buttonUrl) block.buttonUrl = '';
+        if (!block.buttonColor) block.buttonColor = '#b026ff';
+      }
+      if (type === 'riquadro' && !block.borderColor) {
+        block.borderColor = '#3b82f6';
+      }
+      if (type === 'spacer' && !block.height) {
+        block.height = '24';
       }
       window.editingGuide.content[idx] = block;
       pushHistoryImmediate();
@@ -2524,6 +2631,36 @@
       const block = window.editingGuide.content[idx];
       if (block && block.type === 'button') {
         block.buttonUrl = buttonUrl;
+      }
+      updateLivePreview();
+      pushHistoryDebounced();
+    }
+
+    function updateEditingBlockButtonColor(idx, color) {
+      if (!window.editingGuide) return;
+      const block = window.editingGuide.content[idx];
+      if (block && block.type === 'button') {
+        block.buttonColor = color;
+      }
+      updateLivePreview();
+      pushHistoryDebounced();
+    }
+
+    function updateEditingBlockHeight(idx, height) {
+      if (!window.editingGuide) return;
+      const block = window.editingGuide.content[idx];
+      if (block && block.type === 'spacer') {
+        block.height = height;
+      }
+      updateLivePreview();
+      pushHistoryDebounced();
+    }
+
+    function updateEditingBlockBorderColor(idx, color) {
+      if (!window.editingGuide) return;
+      const block = window.editingGuide.content[idx];
+      if (block && block.type === 'riquadro') {
+        block.borderColor = color;
       }
       updateLivePreview();
       pushHistoryDebounced();
@@ -2577,6 +2714,39 @@
       }
       updateLivePreview();
       pushHistoryDebounced();
+    }
+
+    function updateEditingBlockAlign(idx, align) {
+      if (!window.editingGuide) return;
+      const block = window.editingGuide.content[idx];
+      if (block) {
+        block.align = align;
+      }
+      updateLivePreview();
+      pushHistoryImmediate();
+      renderApp();
+    }
+
+    function updateEditingBlockLineColor(idx, color) {
+      if (!window.editingGuide) return;
+      const block = window.editingGuide.content[idx];
+      if (block) {
+        block.lineColor = color;
+      }
+      updateLivePreview();
+      pushHistoryDebounced();
+      renderApp();
+    }
+
+    function updateEditingBlockLineInvisible(idx, invisible) {
+      if (!window.editingGuide) return;
+      const block = window.editingGuide.content[idx];
+      if (block) {
+        block.lineInvisible = invisible;
+      }
+      updateLivePreview();
+      pushHistoryImmediate();
+      renderApp();
     }
 
     function addEditingParagraph() {
@@ -3353,7 +3523,7 @@
                 return `
                   <div
                     onclick="navigateToGuide('${guide.id}')"
-                    class="bg-space-card rounded-2xl border border-slate-800/80 p-5 cursor-pointer hover:border-slate-700/80 transition-all duration-300 hover:-translate-y-1 shadow-md hover:shadow-2xl flex flex-col justify-between group relative overflow-hidden h-[240px]"
+                    class="bg-space-card rounded-2xl border border-slate-800/80 p-5 cursor-pointer hover:border-slate-700/80 transition-all duration-300 hover:-translate-y-1 shadow-md hover:shadow-2xl flex flex-col justify-between group relative overflow-hidden min-h-[250px] h-full"
                   >
                     <div class="space-y-3">
                       
@@ -3385,7 +3555,7 @@
                     
                     <div class="pt-3 border-t border-slate-900 flex items-center justify-between text-[11px]">
                       <div class="flex flex-col gap-0.5 max-w-[60%] overflow-hidden">
-                        ${getGuideAuthorsList(guide).length > 0 ? `
+                        ${(getGuideAuthorsList(guide).length > 0 && !guide.hideAuthorsInPreview) ? `
                           <div class="flex flex-wrap items-center gap-1.5 overflow-hidden">
                             ${getGuideAuthorsList(guide).map(author => `
                               <span class="text-[10px] font-sans font-medium flex items-center gap-1 relative group/list-author-1" title="${author.level || 'Autore'}">
@@ -3845,6 +4015,18 @@
                       </div>
                     </div>
 
+                    <div class="p-3 bg-slate-900/30 rounded-xl border border-slate-900/60 flex items-center gap-2 mt-2">
+                      <label class="inline-flex items-center gap-2.5 cursor-pointer text-xs text-slate-300 font-sans select-none">
+                        <input
+                          type="checkbox"
+                          ${g.hideAuthorsInPreview ? 'checked' : ''}
+                          onchange="updateEditingField('hideAuthorsInPreview', this.checked)"
+                          class="rounded border-slate-800 text-fluo-purple focus:ring-0 bg-slate-950 w-4 h-4 cursor-pointer"
+                        />
+                        <span class="font-bold">Nascondi l'elenco degli autori nell'anteprima (Card in Home)</span>
+                      </label>
+                    </div>
+
                     <!-- Gestione Autori dell'Articolo (Nuova Sezione Avanzata per Autori Multipli) -->
                     <div class="space-y-3.5 border-t border-slate-900 pt-4 mt-4">
                       <div class="flex items-center justify-between">
@@ -4006,6 +4188,13 @@
                       </button>
                       <button
                         type="button"
+                        onclick="addEditingBlock('didascalia')"
+                        class="px-2 py-1 bg-slate-500/10 hover:bg-slate-500/20 text-slate-400 border border-slate-500/30 rounded-lg text-[10px] font-bold cursor-pointer transition-colors"
+                      >
+                        + Didascalia
+                      </button>
+                      <button
+                        type="button"
                         onclick="addEditingBlock('heading1')"
                         class="px-2 py-1 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 rounded-lg text-[10px] font-bold cursor-pointer transition-colors"
                       >
@@ -4027,10 +4216,24 @@
                       </button>
                       <button
                         type="button"
+                        onclick="addEditingBlock('citazione2')"
+                        class="px-2 py-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-lg text-[10px] font-bold cursor-pointer transition-colors"
+                      >
+                        + Citazione 2
+                      </button>
+                      <button
+                        type="button"
                         onclick="addEditingBlock('tip')"
                         class="px-2 py-1 bg-purple-500/10 hover:bg-purple-500/20 text-fluo-purple border border-fluo-purple/30 rounded-lg text-[10px] font-bold cursor-pointer transition-colors"
                       >
                         + Consiglio
+                      </button>
+                      <button
+                        type="button"
+                        onclick="addEditingBlock('riquadro')"
+                        class="px-2 py-1 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-lg text-[10px] font-bold cursor-pointer transition-colors"
+                      >
+                        + Riquadro
                       </button>
                       <button
                         type="button"
@@ -4045,6 +4248,13 @@
                         class="px-2 py-1 bg-slate-850 hover:bg-slate-800 text-slate-300 border border-slate-750 rounded-lg text-[10px] font-bold cursor-pointer transition-colors"
                       >
                         + Divisore
+                      </button>
+                      <button
+                        type="button"
+                        onclick="addEditingBlock('spacer')"
+                        class="px-2 py-1 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 rounded-lg text-[10px] font-bold cursor-pointer transition-colors"
+                      >
+                        + Spazio
                       </button>
                       <button
                         type="button"
@@ -4068,10 +4278,14 @@
                       // Decide visually descriptive left border color
                       let borderClass = 'border-l-4 border-l-emerald-500/60';
                       if (type === 'quote') borderClass = 'border-l-4 border-l-teal-500/60';
+                      else if (type === 'citazione2') borderClass = 'border-l-4 border-l-teal-600/70';
+                      else if (type === 'didascalia') borderClass = 'border-l-4 border-l-slate-500/50';
                       else if (type === 'tip') borderClass = 'border-l-4 border-l-purple-500/60';
+                      else if (type === 'riquadro') borderClass = 'border-l-4 border-l-blue-500/60';
                       else if (type === 'list') borderClass = 'border-l-4 border-l-amber-500/60';
-                      else if (type === 'heading1' || type === 'heading2' || type === 'heading3') borderClass = 'border-l-4 border-l-blue-500/60';
+                      else if (type === 'heading1' || type === 'heading2' || type === 'heading3') borderClass = 'border-l-4 border-l-blue-400/60';
                       else if (type === 'divider') borderClass = 'border-l-4 border-l-slate-700/40';
+                      else if (type === 'spacer') borderClass = 'border-l-4 border-l-indigo-500/40';
                       else if (type === 'button') borderClass = 'border-l-4 border-l-fuchsia-500/60';
 
                       return `
@@ -4085,13 +4299,17 @@
                                 class="px-2 py-1 bg-slate-900 border border-slate-800 rounded-lg text-[10px] text-slate-300 font-bold focus:ring-1 focus:ring-fluo-purple outline-none cursor-pointer"
                               >
                                 <option value="paragraph" ${type === 'paragraph' ? 'selected' : ''}>📝 Paragrafo</option>
-                                <option value="quote" ${type === 'quote' ? 'selected' : ''}>💬 Citazione</option>
+                                <option value="didascalia" ${type === 'didascalia' ? 'selected' : ''}>✍️ Didascalia (Piccolo e semitrasparente)</option>
+                                <option value="quote" ${type === 'quote' ? 'selected' : ''}>💬 Citazione 1 (Stile classico)</option>
+                                <option value="citazione2" ${type === 'citazione2' ? 'selected' : ''}>💬 Citazione 2 (Linea laterale dx)</option>
                                 <option value="tip" ${type === 'tip' ? 'selected' : ''}>💡 Consiglio / Tip Pro</option>
+                                <option value="riquadro" ${type === 'riquadro' ? 'selected' : ''}>📦 Riquadro Personalizzato</option>
                                 <option value="list" ${type === 'list' ? 'selected' : ''}>📋 Elenco Puntato/Numerato</option>
                                 <option value="heading1" ${type === 'heading1' ? 'selected' : ''}>H1 - Titolo Principale</option>
                                 <option value="heading2" ${type === 'heading2' ? 'selected' : ''}>H2 - Sottotitolo</option>
                                 <option value="heading3" ${type === 'heading3' ? 'selected' : ''}>H3 - Terzo Sottotitolo</option>
                                 <option value="divider" ${type === 'divider' ? 'selected' : ''}>➖ Divisore</option>
+                                <option value="spacer" ${type === 'spacer' ? 'selected' : ''}>↕️ Spazio Vuoto (Distanziatore)</option>
                                 <option value="button" ${type === 'button' ? 'selected' : ''}>🔗 Pulsante Link</option>
                               </select>
                             </div>
@@ -4121,6 +4339,14 @@
                                 <button type="button" onclick="insertFormat('admin-block-${idx}', 'bold')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-white font-bold rounded" title="Grassetto">B</button>
                                 <button type="button" onclick="insertFormat('admin-block-${idx}', 'italic')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-white italic rounded" title="Corsivo">I</button>
                                 <button type="button" onclick="insertFormat('admin-block-${idx}', 'link')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-fluo-blue rounded" title="Aggiungi Link">Link</button>
+                                
+                                ${type !== 'button' ? `
+                                  <div class="flex items-center gap-0.5 bg-slate-900 border border-slate-800 rounded p-0.5" title="Allineamento">
+                                    <button type="button" onclick="updateEditingBlockAlign(${idx}, 'left')" class="px-1.5 py-0.5 text-[9px] rounded-sm transition-colors ${(!b.align || b.align === 'left') ? 'bg-fluo-purple text-white font-black' : 'text-slate-500 hover:text-slate-300'}" title="Sinistra">Sx</button>
+                                    <button type="button" onclick="updateEditingBlockAlign(${idx}, 'center')" class="px-1.5 py-0.5 text-[9px] rounded-sm transition-colors ${(b.align === 'center') ? 'bg-fluo-purple text-white font-black' : 'text-slate-500 hover:text-slate-300'}" title="Centro">Centro</button>
+                                    <button type="button" onclick="updateEditingBlockAlign(${idx}, 'right')" class="px-1.5 py-0.5 text-[9px] rounded-sm transition-colors ${(b.align === 'right') ? 'bg-fluo-purple text-white font-black' : 'text-slate-500 hover:text-slate-300'}" title="Destra">Dx</button>
+                                  </div>
+                                ` : ''}
                                 
                                 <div class="relative inline-block text-left">
                                   <button type="button" onclick="toggleTextColorPalette('admin-block-${idx}')" class="px-2 py-0.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-[10px] text-fluo-fuchsia rounded flex items-center gap-0.5" title="Colore Personalizzato">
@@ -4155,25 +4381,112 @@
                           </div>
 
                           ${type === 'list' ? `
-                            <div class="flex items-center gap-3 bg-slate-900/60 p-2 rounded-lg border border-slate-900 text-[11px] text-slate-300 font-sans">
-                              <span class="font-bold">Tipo Elenco:</span>
-                              <label class="inline-flex items-center gap-1 cursor-pointer">
-                                <input type="radio" name="list-type-${idx}" value="bullet" ${b.listType !== 'number' ? 'checked' : ''} onchange="updateEditingBlockListType(${idx}, 'bullet')" class="text-fluo-purple focus:ring-0" /> Puntato
+                            <div class="flex flex-wrap items-center gap-3 bg-slate-900/60 p-2 rounded-lg border border-slate-900 text-[11px] text-slate-300 font-sans">
+                              <div class="flex items-center gap-3">
+                                <span class="font-bold">Tipo Elenco:</span>
+                                <label class="inline-flex items-center gap-1 cursor-pointer">
+                                  <input type="radio" name="list-type-${idx}" value="bullet" ${b.listType !== 'number' ? 'checked' : ''} onchange="updateEditingBlockListType(${idx}, 'bullet')" class="text-fluo-purple focus:ring-0" /> Puntato
+                                </label>
+                                <label class="inline-flex items-center gap-1 cursor-pointer">
+                                  <input type="radio" name="list-type-${idx}" value="number" ${b.listType === 'number' ? 'checked' : ''} onchange="updateEditingBlockListType(${idx}, 'number')" class="text-fluo-purple focus:ring-0" /> Numerato
+                                </label>
+                              </div>
+                              <span class="text-slate-400 ml-auto italic text-[10px] bg-slate-950/40 px-2 py-1 rounded border border-slate-900/60">💡 Tip: Inizia un rigo con spazi/tabulazione per creare un sotto-elenco annidato.</span>
+                            </div>
+                          ` : ''}
+
+                          ${type === 'citazione2' ? `
+                            <div class="flex flex-wrap items-center gap-4 bg-slate-900/60 p-2 rounded-lg border border-slate-900 text-[11px] text-slate-300 font-sans">
+                              <div class="flex items-center gap-2">
+                                <span class="font-bold text-[10px] uppercase text-slate-400">Colore Linea Destra:</span>
+                                <input
+                                  type="color"
+                                  value="${b.lineColor || '#10b981'}"
+                                  oninput="updateEditingBlockLineColor(${idx}, this.value)"
+                                  class="w-6 h-6 rounded border border-slate-800 bg-transparent cursor-pointer p-0"
+                                />
+                                <span class="text-[10px] text-slate-400 font-mono">${b.lineColor || '#10b981'}</span>
+                              </div>
+                              <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                                <input
+                                  type="checkbox"
+                                  ${b.lineInvisible === true ? 'checked' : ''}
+                                  onchange="updateEditingBlockLineInvisible(${idx}, this.checked)"
+                                  class="rounded border-slate-800 text-fluo-purple focus:ring-0 bg-slate-950 w-3.5 h-3.5"
+                                />
+                                <span class="font-bold">Rendi Linea Invisibile</span>
                               </label>
-                              <label class="inline-flex items-center gap-1 cursor-pointer">
-                                <input type="radio" name="list-type-${idx}" value="number" ${b.listType === 'number' ? 'checked' : ''} onchange="updateEditingBlockListType(${idx}, 'number')" class="text-fluo-purple focus:ring-0" /> Numerato
-                              </label>
-                              <span class="text-slate-500 ml-auto italic text-[10px]">Scrivi ogni elemento su una nuova riga (invio).</span>
                             </div>
                           ` : ''}
 
                           ${type === 'button' ? `
+                             <div class="grid grid-cols-1 md:grid-cols-2 gap-3 p-2.5 bg-slate-900/60 rounded-xl border border-slate-900 font-sans">
+                               <div class="space-y-1">
+                                 <label class="text-[10px] font-bold text-slate-400 uppercase">Indirizzo Link URL del Pulsante</label>
+                                 <input
+                                   type="url"
+                                   value="${b.buttonUrl || ''}"
+                                   oninput="updateEditingBlockButtonUrl(${idx}, this.value)"
+                                   placeholder="es: https://www.pianetasim.it/downloads/mod"
+                                   class="w-full px-3 py-1.5 bg-slate-950 border border-slate-800 rounded-lg text-[11px] text-white focus:ring-1 focus:ring-fluo-purple outline-none font-mono"
+                                 />
+                               </div>
+                               <div class="space-y-1">
+                                 <label class="text-[10px] font-bold text-slate-400 uppercase">Colore del Pulsante</label>
+                                 <div class="flex items-center gap-2 mt-1">
+                                   <input
+                                     type="color"
+                                     value="${b.buttonColor || '#b026ff'}"
+                                     oninput="updateEditingBlockButtonColor(${idx}, this.value)"
+                                     class="w-8 h-8 rounded border border-slate-800 bg-transparent cursor-pointer p-0"
+                                   />
+                                   <span class="text-[11px] text-slate-300 font-mono">${b.buttonColor || '#b026ff'}</span>
+                                 </div>
+                               </div>
+                             </div>
+                           ` : ''}
+
+                           ${type === 'riquadro' ? `
+                             <div class="flex flex-wrap items-center gap-4 bg-slate-900/60 p-2.5 rounded-xl border border-slate-900 text-[11px] text-slate-300 font-sans">
+                               <div class="flex items-center gap-2">
+                                 <span class="font-bold text-[10px] uppercase text-slate-400">Colore Bordo & Sfondo Riquadro:</span>
+                                 <input
+                                   type="color"
+                                   value="${b.borderColor || '#3b82f6'}"
+                                   oninput="updateEditingBlockBorderColor(${idx}, this.value)"
+                                   class="w-6 h-6 rounded border border-slate-800 bg-transparent cursor-pointer p-0"
+                                 />
+                                 <span class="text-[10px] text-slate-400 font-mono">${b.borderColor || '#3b82f6'}</span>
+                               </div>
+                               <span class="text-slate-400 ml-auto italic text-[10px] bg-slate-950/40 px-2 py-1 rounded border border-slate-900/60">💡 Tip: Puoi scrivere all'interno del riquadro usando il box di testo sottostante.</span>
+                             </div>
+                           ` : ''}
+
+                           ${type === 'spacer' ? `
+                             <div class="flex flex-wrap items-center gap-4 bg-slate-900/60 p-3 rounded-xl border border-slate-900 text-[11px] text-slate-300 font-sans">
+                               <div class="flex items-center gap-3 w-full sm:w-auto">
+                                 <span class="font-bold text-[10px] uppercase text-slate-400 font-sans">Altezza Spazio Vuoto (Distanziatore):</span>
+                                 <input
+                                   type="range"
+                                   min="10"
+                                   max="120"
+                                   step="5"
+                                   value="${b.height || '24'}"
+                                   oninput="updateEditingBlockHeight(${idx}, this.value); document.getElementById('spacer-val-${idx}').innerText = this.value + 'px';"
+                                   class="w-32 accent-fluo-purple cursor-pointer"
+                                 />
+                                 <span id="spacer-val-${idx}" class="text-[11px] text-fluo-purple font-black font-mono">${b.height || '24'}px</span>
+                               </div>
+                             </div>
+                           ` : ''}
+
+                           ${false ? `
                             <div class="space-y-1.5 p-2 bg-slate-900/60 rounded-lg border border-slate-900 font-sans">
                               <label class="text-[10px] font-bold text-slate-400 uppercase">Indirizzo Link URL del Pulsante</label>
                               <input
                                 type="url"
                                 value="${b.buttonUrl || ''}"
-                                oninput="updateEditingBlockButtonUrl(${idx}, this.value)"
+                                oninput="updateEditingBlockButtonUrl(${idx}, this.value)" data-btn-test="1"
                                 placeholder="es: https://www.pianetasim.it/downloads/mod"
                                 class="w-full px-3 py-1.5 bg-slate-950 border border-slate-800 rounded-lg text-[11px] text-white focus:ring-1 focus:ring-fluo-purple outline-none font-mono"
                               />
@@ -4253,23 +4566,25 @@
                             </div>
                           ` : ''}
 
-                          ${type !== 'divider' ? `
+                          ${(type !== 'divider' && type !== 'spacer') ? `
                             <textarea
                               id="admin-block-${idx}"
-                              rows="${type === 'paragraph' || type === 'quote' || type === 'list' ? '3' : '2'}"
+                              rows="${type === 'paragraph' || type === 'quote' || type === 'list' || type === 'riquadro' ? '3' : '2'}"
                               oninput="updateEditingBlockValue(${idx}, this.value)"
                               placeholder="${
                                 type === 'list'
                                   ? 'Primo elemento dell\'elenco\nSecondo elemento dell\'elenco\nTerzo elemento dell\'elenco...'
                                   : type === 'button'
                                     ? 'Etichetta visibile sul pulsante (es: Scarica la Traduzione)'
-                                    : 'Scrivi qui il testo del blocco...'
+                                    : type === 'riquadro'
+                                      ? 'Scrivi qui il testo all\'interno del riquadro...'
+                                      : 'Scrivi qui il testo del blocco...'
                               }"
                               class="w-full px-3 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:ring-2 focus:ring-fluo-purple outline-none font-sans"
                             >${value}</textarea>
                           ` : `
-                            <div class="h-8 flex items-center justify-center border-y border-dashed border-slate-800/80 text-[10px] text-slate-500 tracking-widest uppercase bg-slate-900/10 font-mono">
-                              Separatore Orizzontale Visivo
+                            <div class="h-10 flex items-center justify-center border border-dashed text-[10px] uppercase font-mono rounded-xl ${type === 'spacer' ? 'border-indigo-500/30 text-indigo-400 bg-indigo-500/5' : 'border-slate-800/80 text-slate-500 bg-slate-900/10 tracking-widest'}">
+                              ${type === 'spacer' ? '↕️ Spazio Vuoto Verticale: ' + (b.height || '24') + 'px' : 'Separatore Orizzontale Visivo'}
                             </div>
                           `}
                         </div>
