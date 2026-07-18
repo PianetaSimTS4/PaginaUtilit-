@@ -6,19 +6,19 @@
       "color": "cyan"
     },
     {
-      "id": "costruzione",
-      "label": "Costruzione",
-      "color": "green"
-    },
-    {
       "id": "gameplay",
       "label": "Gameplay",
-      "color": "purple"
+      "color": "azzurro"
     },
     {
-      "id": "espansioni",
-      "label": "Espansioni",
-      "color": "rose"
+      "id": "guide-veloci",
+      "label": "Guide Veloci",
+      "color": "giallo"
+    },
+    {
+      "id": "guide-passo-passo",
+      "label": "Guide Passo Passo",
+      "color": "verde"
     }
   ],
   "guides": [
@@ -33,7 +33,7 @@
       ],
       "content": [
         {
-          "type": "heading2",
+          "type": "heading1",
           "value": "[color:#b026ff](PREPARAZIONE)",
           "bold": true
         },
@@ -53,11 +53,12 @@
         },
         {
           "type": "paragraph",
-          "value": "**Al prossimo avvio del gioco Mod e CC saranno attivi!**"
+          "value": "[color:#38bdf8](**✔ Al prossimo avvio del gioco Mod e CC saranno attivi!**)"
         },
         {
           "type": "paragraph",
-          "value": "[color:#b026ff](Hai bisogno di vedere le immagin passo passo sul \"Come attivare le Mod in Gioco\"?\nClicca il pulsante qui sotto:)"
+          "value": "[color:#b026ff](Hai bisogno di vedere le immagin passo passo sul \"Come attivare le Mod in Gioco\"?\nClicca il pulsante qui sotto:)",
+          "align": "center"
         },
         {
           "type": "button",
@@ -122,8 +123,21 @@
           "listType": "bullet"
         },
         {
-          "type": "quote",
-          "value": "Documenti > Electronic Arts > The Sims 4 > Mods\nnominandola con:\nNome Modder - Nome Mod - Versione (se conosciuta) e sposta il file qui dentro."
+          "type": "riquadro",
+          "value": "Documenti > Electronic Arts > The Sims 4 > Mods",
+          "align": "left",
+          "lineInvisible": false,
+          "borderColor": "#3b82f6"
+        },
+        {
+          "type": "list",
+          "value": "Nominandola con:",
+          "listType": "bullet"
+        },
+        {
+          "type": "riquadro",
+          "value": "Nome Modder - Nome Mod - Versione (se conosciuta) e sposta il file qui dentro.",
+          "borderColor": "#3b82f6"
         },
         {
           "type": "paragraph",
@@ -131,8 +145,51 @@
         },
         {
           "type": "list",
-          "value": "Estrailo (puoi usare l’estrattore di default di Windows oppure programmi esterni come 7zip, WinRar)\n\nApri la cartella estratta e controlla che all’interno ci siano solo file:\nPackage, Script o potresti trovare anche delle cartelle contenenti file package. In genere possono essere assets, medicinali, addons o altro, in questo caso le cartelle vanno lasciate così como sono. \nSe trovi dei file di testo con istruzioni o altro (prima leggili) e poi cancellali. Lo stesso se ci sono video tutorial o altri file che non siano package o script.\n\nSe dentro la cartella estratta trovi un’altra cartella con il nome della mod, allora devi usare quest’ultima e trascinarla o Taglia/incolla all’interno di: \nDocumenti > Electronic Arts > The Sims 4 > Mods\n\nSe invece hai estratto senza far creare una cartella e hai tutti i file sparsi, dovrai crearla tu e nominarla con: Nome Modder - Nome Mod – Versione (se conosciuta). Infine trascinala o taglia/incolla in: Documenti > Electronic Arts > The Sims 4 > Mods\nFai attenzione: non lasciare mai file zip nella cartella mods.",
+          "value": "Estrailo (puoi usare l’estrattore di default di Windows oppure programmi esterni come 7zip, WinRar)\n\nApri la cartella estratta e controlla che all’interno ci siano solo file:",
           "listType": "bullet"
+        },
+        {
+          "type": "riquadro",
+          "value": "Package, Script o potresti trovare anche delle cartelle contenenti file package.",
+          "borderColor": "#3b82f6"
+        },
+        {
+          "type": "didascalia",
+          "value": "In genere possono essere assets, oggetti, addons o altro, in questo caso le cartelle vanno lasciate così como sono. \nSe trovi dei file di testo con istruzioni o altro (prima leggili) e poi cancellali. Lo stesso se ci sono video tutorial o altri file che non siano package o script."
+        },
+        {
+          "type": "list",
+          "value": "Se dentro la cartella estratta trovi un’altra cartella con il nome della mod, allora devi usare quest’ultima e trascinarla o Taglia/incolla all’interno di:",
+          "listType": "bullet"
+        },
+        {
+          "type": "riquadro",
+          "value": "Documenti > Electronic Arts > The Sims 4 > Mods",
+          "borderColor": "#3b82f6"
+        },
+        {
+          "type": "list",
+          "value": "Se invece hai estratto senza far creare una cartella e hai tutti i file sparsi, dovrai crearla tu e nominarla con:",
+          "listType": "bullet"
+        },
+        {
+          "type": "riquadro",
+          "value": "Nome Modder - Nome Mod – Versione (se conosciuta).",
+          "borderColor": "#3b82f6"
+        },
+        {
+          "type": "list",
+          "value": "Infine trascinala o taglia/incolla in:",
+          "listType": "bullet"
+        },
+        {
+          "type": "riquadro",
+          "value": "Documenti > Electronic Arts > The Sims 4 > Mods",
+          "borderColor": "#3b82f6"
+        },
+        {
+          "type": "tip",
+          "value": "[color:#eab308](**Fai attenzione:**) non lasciare mai file zip nella cartella mods!"
         },
         {
           "type": "paragraph",
@@ -148,22 +205,25 @@
         },
         {
           "type": "list",
-          "value": "Utilizzare mod è bellissimo, ma richiede anche lavoro, pazienza e attenzione nel Seguire gli aggiornamenti → Puoi utilizzare il sito di [[color:#b026ff](PIANETA SIM](https://pianetasimts.github.io/PianetaSim/index.html)) o la lista [[color:#ff007f](SCARLET)](https://scarletsrealm.com/)\n\nLe mod non vanno **mai** messe in **più di una sottocartella**, altrimenti non verranno lette correttamente in gioco, soprattutto i file script.\n\nUsare mod rotte, non aggiornate o sconosciute può corrompere salvataggi e/o problemi in gioco.\n\nPer poter mantenere le mod aggiornate correttamente e con facilità, consigliamo di tenere le mod ordinate in cartella e non tutti i file mischiati insieme in cartella mods.\n\nNon tutte le mod sono uguali: alcune volte i creatori aggiungono delle cartelle all’interno della cartella principale della mod. Spesso contengono materiale che serve per il corretto funzionamento di alcune opzioni della mod. \n\nAlcuni creatori creano zip con all’interno file di testo con spiegazioni, video tutorial o immagini, oltre la cartella della mod con all’interno i file. \nIn questi casi va utilizzata solo quest’ultima cartella, che va messa in cartella mods.",
+          "value": "Utilizzare mod è bellissimo, ma **richiede anche lavoro, pazienza e attenzione** nel Seguire gli aggiornamenti → Puoi utilizzare il sito di [[color:#b026ff](PIANETA SIM](https://pianetasimts.github.io/PianetaSim/index.html)) o la lista [[color:#ff007f](SCARLET)](https://scarletsrealm.com/)\n\nLe mod non vanno [color:#ef4444](**mai**) messe in [color:#ef4444](**più di una sottocartella**), altrimenti non verranno lette correttamente in gioco, soprattutto i file script.\n\n[color:#ef4444](**Usare mod rotte**), non aggiornate o sconosciute può [color:#ef4444](**può corrompere salvataggi**) e/o problemi in gioco.\n\nPer poter mantenere le mod aggiornate correttamente e con facilità, [color:#26ff5e](**consigliamo di tenere le mod ordinate**) in cartella e non tutti i file mischiati insieme in cartella mods.\n\n[color:#eab308](**Non tutte le mod sono uguali:**) alcune volte i creatori aggiungono delle cartelle all’interno della cartella principale della mod. Spesso contengono materiale che serve per il corretto funzionamento di alcune opzioni della mod. \n\nAlcuni creatori creano zip con all’interno **file** di testo con **spiegazioni**, video tutorial o immagini, oltre la cartella della mod con all’interno i file. In questi casi va utilizzata solo quest’ultima cartella, che va messa in cartella mods.",
           "listType": "bullet"
         },
         {
           "type": "paragraph",
-          "value": "[color:#38bdf8](SE HAI DUBBI O DIFFICOLTÀ, PUOI RICHIEDE ASSISTENZA NEL GRUPPO TELEGRAM)"
+          "value": "**[color:#38bdf8](SE HAI DUBBI O DIFFICOLTÀ, PUOI RICHIEDE ASSISTENZA NEL GRUPPO TELEGRAM)**",
+          "align": "center"
         },
         {
           "type": "button",
           "value": "ASSISTENZA TELEGRAM",
-          "buttonUrl": "https://t.me/TheSims4ItaliaPianetaSim"
+          "buttonUrl": "https://t.me/TheSims4ItaliaPianetaSim",
+          "buttonColor": "#0080ff"
         }
       ],
       "tips": [],
       "categories": [
-        "mod_cc"
+        "mod_cc",
+        "guide-veloci"
       ],
       "authors": [
         {
@@ -282,7 +342,7 @@
       "id": "guide-roofing",
       "title": "Nemo Enim Ipsam Voluptatem",
       "description": "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.",
-      "category": "costruzione",
+      "category": "mod_cc",
       "tags": [
         "nemo",
         "enim",
