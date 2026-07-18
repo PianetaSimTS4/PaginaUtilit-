@@ -876,20 +876,37 @@
               ${formatParagraphText(value)}
             </div>
           `;
-        case 'quote':
-          return `
-            <div class="py-2.5 my-5 italic text-slate-300 bg-slate-900/20 px-6 rounded-2xl font-sans relative" style="text-align: ${b.align || 'left'};">
-              <span class="text-fluo-purple text-4xl font-serif absolute top-1 left-2 opacity-60">“</span>
-              <div class="pl-6 text-sm md:text-base leading-relaxed">${formatParagraphText(value)}</div>
-            </div>
-          `;
+        case 'quote': {
+          const qType = b.quoteType || 'virgolette';
+          if (qType === 'virgolette') {
+            return `
+              <div class="py-2.5 my-5 italic text-slate-300 bg-slate-900/20 px-6 rounded-2xl font-sans relative" style="text-align: ${b.align || 'left'};">
+                <span class="text-fluo-purple text-4xl font-serif absolute top-1 left-2 opacity-60">“</span>
+                <div class="pl-6 text-sm md:text-base leading-relaxed">${formatParagraphText(value)}</div>
+              </div>
+            `;
+          } else {
+            const lineColorPreset = b.lineColor || 'verde';
+            const lineColor = lineColorPreset.startsWith('#') ? lineColorPreset : (getCategoryStyles(lineColorPreset).colorCode || '#26ff5e');
+            const hasLine = !b.lineInvisible;
+            const borderStyle = hasLine ? `border-left: 4px solid ${lineColor}; padding-left: 1rem;` : 'padding-left: 0;';
+            const inlineStyles = `text-align: ${b.align || 'left'}; ${borderStyle} margin-left: 1.5rem;`;
+            return `
+              <div class="py-2.5 my-5 italic text-slate-300 bg-slate-900/10 pr-5 rounded-r-xl font-sans" style="${inlineStyles}">
+                <div class="text-sm md:text-base leading-relaxed">${formatParagraphText(value)}</div>
+              </div>
+            `;
+          }
+        }
         case 'citazione2': {
-          const lineColor = b.lineColor || '#10b981';
+          // Legacy support for direct citazione2
+          const lineColorPreset = b.lineColor || 'verde';
+          const lineColor = lineColorPreset.startsWith('#') ? lineColorPreset : (getCategoryStyles(lineColorPreset).colorCode || '#26ff5e');
           const hasLine = !b.lineInvisible;
-          const borderStyle = hasLine ? `border-right: 4px solid ${lineColor}; pr-4;` : 'pr-0;';
-          const inlineStyles = `text-align: ${b.align || 'left'}; ${borderStyle}`;
+          const borderStyle = hasLine ? `border-left: 4px solid ${lineColor}; padding-left: 1rem;` : 'padding-left: 0;';
+          const inlineStyles = `text-align: ${b.align || 'left'}; ${borderStyle} margin-left: 1.5rem;`;
           return `
-            <div class="py-2.5 my-5 italic text-slate-300 bg-slate-900/10 px-4 pl-4 pr-5 rounded-l-xl font-sans" style="${inlineStyles}">
+            <div class="py-2.5 my-5 italic text-slate-300 bg-slate-900/10 pr-5 rounded-r-xl font-sans" style="${inlineStyles}">
               <div class="text-sm md:text-base leading-relaxed">${formatParagraphText(value)}</div>
             </div>
           `;
@@ -943,18 +960,26 @@
           `;
         }
         case 'divider': {
-          const isColorType = b.dividerType === 'color';
-          const divColor = b.dividerColor || '#10b981';
-          if (isColorType) {
+          const sType = b.separatorType || 'line';
+          if (sType === 'spacer') {
+            const spacerHeight = b.height || '24';
             return `
-              <div class="flex justify-center my-8">
-                <div class="w-24 h-1 rounded-full" style="background-color: ${divColor}; box-shadow: 0 0 10px ${divColor}40;"></div>
-              </div>
+              <div class="w-full" style="height: ${spacerHeight}px;"></div>
             `;
           } else {
-            return `
-              <div class="border-b border-slate-800/60 my-8"></div>
-            `;
+            const isColorType = b.dividerType === 'color';
+            const divColor = b.dividerColor || '#10b981';
+            if (isColorType) {
+              return `
+                <div class="flex justify-center my-8">
+                  <div class="w-24 h-1 rounded-full" style="background-color: ${divColor}; box-shadow: 0 0 10px ${divColor}40;"></div>
+                </div>
+              `;
+            } else {
+              return `
+                <div class="border-b border-slate-800/60 my-8"></div>
+              `;
+            }
           }
         }
         case 'button': {
@@ -1108,6 +1133,13 @@
         newBlock.borderColor = '#3b82f6';
       } else if (type === 'spacer') {
         newBlock.height = '24';
+      } else if (type === 'citazione2') {
+        newBlock.lineColor = 'verde';
+      } else if (type === 'quote') {
+        newBlock.quoteType = 'virgolette';
+      } else if (type === 'divider') {
+        newBlock.separatorType = 'line';
+        newBlock.dividerType = 'standard';
       }
       window.editingGuide.content.splice(idx, 0, newBlock);
       pushHistoryImmediate();
@@ -1149,13 +1181,11 @@
             <button type="button" onclick="insertEditingBlockAt(${idx}, 'didascalia')" class="px-2 py-1 bg-slate-500/10 hover:bg-slate-500/20 text-slate-400 border border-slate-500/30 rounded-lg text-[10px] font-bold cursor-pointer font-sans">✍️ Didascalia</button>
             <button type="button" onclick="insertEditingBlockAt(${idx}, 'heading1')" class="px-2 py-1 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 rounded-lg text-[10px] font-bold cursor-pointer font-sans">H1</button>
             <button type="button" onclick="insertEditingBlockAt(${idx}, 'heading2')" class="px-2 py-1 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-lg text-[10px] font-bold cursor-pointer font-sans">H2</button>
-            <button type="button" onclick="insertEditingBlockAt(${idx}, 'quote')" class="px-2 py-1 bg-teal-500/10 hover:bg-teal-500/20 text-teal-400 border border-teal-500/30 rounded-lg text-[10px] font-bold cursor-pointer font-sans">💬 Citazione 1</button>
-            <button type="button" onclick="insertEditingBlockAt(${idx}, 'citazione2')" class="px-2 py-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-lg text-[10px] font-bold cursor-pointer font-sans">💬 Citazione 2</button>
+            <button type="button" onclick="insertEditingBlockAt(${idx}, 'quote')" class="px-2 py-1 bg-teal-500/10 hover:bg-teal-500/20 text-teal-400 border border-teal-500/30 rounded-lg text-[10px] font-bold cursor-pointer font-sans">💬 Citazioni</button>
             <button type="button" onclick="insertEditingBlockAt(${idx}, 'tip')" class="px-2 py-1 bg-purple-500/10 hover:bg-purple-500/20 text-fluo-purple border border-fluo-purple/30 rounded-lg text-[10px] font-bold cursor-pointer font-sans">💡 Consiglio</button>
             <button type="button" onclick="insertEditingBlockAt(${idx}, 'riquadro')" class="px-2 py-1 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-lg text-[10px] font-bold cursor-pointer font-sans">📦 Riquadro</button>
             <button type="button" onclick="insertEditingBlockAt(${idx}, 'list')" class="px-2 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-lg text-[10px] font-bold cursor-pointer font-sans">📋 Elenco</button>
-            <button type="button" onclick="insertEditingBlockAt(${idx}, 'divider')" class="px-2 py-1 bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700/60 rounded-lg text-[10px] font-bold cursor-pointer font-sans">➖ Divisore</button>
-            <button type="button" onclick="insertEditingBlockAt(${idx}, 'spacer')" class="px-2 py-1 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 rounded-lg text-[10px] font-bold cursor-pointer font-sans">↕️ Spazio</button>
+            <button type="button" onclick="insertEditingBlockAt(${idx}, 'divider')" class="px-2 py-1 bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700/60 rounded-lg text-[10px] font-bold cursor-pointer font-sans">➖ Separatori</button>
             <button type="button" onclick="insertEditingBlockAt(${idx}, 'button')" class="px-2 py-1 bg-fuchsia-500/10 hover:bg-fuchsia-500/20 text-fluo-fuchsia border border-fluo-fuchsia/30 rounded-lg text-[10px] font-bold cursor-pointer font-sans">🔗 Pulsante</button>
           </div>
         </div>
@@ -2367,6 +2397,8 @@
       const container = document.getElementById('guide-live-preview-container');
       if (!container || !window.editingGuide) return;
 
+      const savedScrollTop = container.scrollTop;
+
       const g = window.editingGuide;
       
       const guideCats = g.categories || (g.category ? [g.category] : []);
@@ -2443,6 +2475,7 @@
           ` : ''}
         </div>
       `;
+      container.scrollTop = savedScrollTop;
       lazyCreateIcons();
     }
 
@@ -2571,6 +2604,13 @@
         newBlock.borderColor = '#3b82f6';
       } else if (type === 'spacer') {
         newBlock.height = '24';
+      } else if (type === 'citazione2') {
+        newBlock.lineColor = 'verde';
+      } else if (type === 'quote') {
+        newBlock.quoteType = 'virgolette';
+      } else if (type === 'divider') {
+        newBlock.separatorType = 'line';
+        newBlock.dividerType = 'standard';
       }
       window.editingGuide.content.push(newBlock);
       pushHistoryImmediate();
@@ -2611,6 +2651,13 @@
       if (type === 'spacer' && !block.height) {
         block.height = '24';
       }
+      if (type === 'quote' && !block.quoteType) {
+        block.quoteType = 'virgolette';
+      }
+      if (type === 'divider' && !block.separatorType) {
+        block.separatorType = 'line';
+        block.dividerType = 'standard';
+      }
       window.editingGuide.content[idx] = block;
       pushHistoryImmediate();
       renderApp();
@@ -2649,11 +2696,41 @@
     function updateEditingBlockHeight(idx, height) {
       if (!window.editingGuide) return;
       const block = window.editingGuide.content[idx];
-      if (block && block.type === 'spacer') {
+      if (block) {
         block.height = height;
       }
       updateLivePreview();
       pushHistoryDebounced();
+    }
+
+    function updateEditingBlockQuoteType(idx, quoteType) {
+      if (!window.editingGuide) return;
+      const block = window.editingGuide.content[idx];
+      if (block) {
+        block.quoteType = quoteType;
+        if (quoteType === 'linea') {
+          block.lineColor = block.lineColor || 'verde';
+        }
+      }
+      updateLivePreview();
+      pushHistoryImmediate();
+      renderApp();
+    }
+
+    function updateEditingBlockSeparatorType(idx, sepType) {
+      if (!window.editingGuide) return;
+      const block = window.editingGuide.content[idx];
+      if (block) {
+        block.separatorType = sepType;
+        if (sepType === 'spacer') {
+          block.height = block.height || '24';
+        } else {
+          block.dividerType = block.dividerType || 'standard';
+        }
+      }
+      updateLivePreview();
+      pushHistoryImmediate();
+      renderApp();
     }
 
     function updateEditingBlockBorderColor(idx, color) {
@@ -3318,8 +3395,35 @@
       }, 100);
     }
 
-    
     function renderApp() {
+      const savedWindowScroll = window.scrollY;
+      const previewEl = document.getElementById('guide-live-preview-container');
+      const savedPreviewScroll = previewEl ? previewEl.scrollTop : 0;
+
+      _actualRenderApp();
+
+      if (savedWindowScroll !== undefined) {
+        window.scrollTo(0, savedWindowScroll);
+      }
+      const newPreviewEl = document.getElementById('guide-live-preview-container');
+      if (newPreviewEl && savedPreviewScroll) {
+        newPreviewEl.scrollTop = savedPreviewScroll;
+      }
+      setTimeout(() => {
+        const pEl = document.getElementById('guide-live-preview-container');
+        if (pEl && savedPreviewScroll) {
+          pEl.scrollTop = savedPreviewScroll;
+        }
+      }, 0);
+      setTimeout(() => {
+        const pEl = document.getElementById('guide-live-preview-container');
+        if (pEl && savedPreviewScroll) {
+          pEl.scrollTop = savedPreviewScroll;
+        }
+      }, 50);
+    }
+
+    function _actualRenderApp() {
       
       const heroTitle = document.getElementById('site-hero-title');
       const heroDesc = document.getElementById('site-hero-desc');
@@ -4272,20 +4376,31 @@
 
                     ${g.content.map((block, idx) => {
                       const b = typeof block === 'string' ? { type: 'paragraph', value: block } : block;
-                      const type = b.type || 'paragraph';
+                      let type = b.type || 'paragraph';
+                      if (type === 'spacer') {
+                        b.type = 'divider';
+                        b.separatorType = 'spacer';
+                        type = 'divider';
+                      }
+                      if (type === 'citazione2') {
+                        b.type = 'quote';
+                        b.quoteType = 'linea';
+                        type = 'quote';
+                      }
                       const value = b.value || '';
 
                       // Decide visually descriptive left border color
                       let borderClass = 'border-l-4 border-l-emerald-500/60';
                       if (type === 'quote') borderClass = 'border-l-4 border-l-teal-500/60';
-                      else if (type === 'citazione2') borderClass = 'border-l-4 border-l-teal-600/70';
                       else if (type === 'didascalia') borderClass = 'border-l-4 border-l-slate-500/50';
                       else if (type === 'tip') borderClass = 'border-l-4 border-l-purple-500/60';
                       else if (type === 'riquadro') borderClass = 'border-l-4 border-l-blue-500/60';
                       else if (type === 'list') borderClass = 'border-l-4 border-l-amber-500/60';
                       else if (type === 'heading1' || type === 'heading2' || type === 'heading3') borderClass = 'border-l-4 border-l-blue-400/60';
-                      else if (type === 'divider') borderClass = 'border-l-4 border-l-slate-700/40';
-                      else if (type === 'spacer') borderClass = 'border-l-4 border-l-indigo-500/40';
+                      else if (type === 'divider') {
+                        const sType = b.separatorType || 'line';
+                        borderClass = sType === 'spacer' ? 'border-l-4 border-l-indigo-500/40' : 'border-l-4 border-l-slate-700/40';
+                      }
                       else if (type === 'button') borderClass = 'border-l-4 border-l-fuchsia-500/60';
 
                       return `
@@ -4300,16 +4415,14 @@
                               >
                                 <option value="paragraph" ${type === 'paragraph' ? 'selected' : ''}>📝 Paragrafo</option>
                                 <option value="didascalia" ${type === 'didascalia' ? 'selected' : ''}>✍️ Didascalia (Piccolo e semitrasparente)</option>
-                                <option value="quote" ${type === 'quote' ? 'selected' : ''}>💬 Citazione 1 (Stile classico)</option>
-                                <option value="citazione2" ${type === 'citazione2' ? 'selected' : ''}>💬 Citazione 2 (Linea laterale dx)</option>
+                                <option value="quote" ${type === 'quote' ? 'selected' : ''}>💬 Citazioni (Virgolette o Linea)</option>
                                 <option value="tip" ${type === 'tip' ? 'selected' : ''}>💡 Consiglio / Tip Pro</option>
                                 <option value="riquadro" ${type === 'riquadro' ? 'selected' : ''}>📦 Riquadro Personalizzato</option>
                                 <option value="list" ${type === 'list' ? 'selected' : ''}>📋 Elenco Puntato/Numerato</option>
                                 <option value="heading1" ${type === 'heading1' ? 'selected' : ''}>H1 - Titolo Principale</option>
                                 <option value="heading2" ${type === 'heading2' ? 'selected' : ''}>H2 - Sottotitolo</option>
                                 <option value="heading3" ${type === 'heading3' ? 'selected' : ''}>H3 - Terzo Sottotitolo</option>
-                                <option value="divider" ${type === 'divider' ? 'selected' : ''}>➖ Divisore</option>
-                                <option value="spacer" ${type === 'spacer' ? 'selected' : ''}>↕️ Spazio Vuoto (Distanziatore)</option>
+                                <option value="divider" ${type === 'divider' ? 'selected' : ''}>➖ Separatori (Divisore o Spazio)</option>
                                 <option value="button" ${type === 'button' ? 'selected' : ''}>🔗 Pulsante Link</option>
                               </select>
                             </div>
@@ -4395,27 +4508,52 @@
                             </div>
                           ` : ''}
 
-                          ${type === 'citazione2' ? `
-                            <div class="flex flex-wrap items-center gap-4 bg-slate-900/60 p-2 rounded-lg border border-slate-900 text-[11px] text-slate-300 font-sans">
-                              <div class="flex items-center gap-2">
-                                <span class="font-bold text-[10px] uppercase text-slate-400">Colore Linea Destra:</span>
-                                <input
-                                  type="color"
-                                  value="${b.lineColor || '#10b981'}"
-                                  oninput="updateEditingBlockLineColor(${idx}, this.value)"
-                                  class="w-6 h-6 rounded border border-slate-800 bg-transparent cursor-pointer p-0"
-                                />
-                                <span class="text-[10px] text-slate-400 font-mono">${b.lineColor || '#10b981'}</span>
+                          ${type === 'quote' ? `
+                            <div class="space-y-2 bg-slate-900/60 p-2.5 rounded-xl border border-slate-900 text-[11px] text-slate-300 font-sans">
+                              <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-900 pb-2">
+                                <div class="flex items-center gap-3">
+                                  <span class="font-bold font-sans text-slate-400">Stile Citazione:</span>
+                                  <label class="inline-flex items-center gap-1.5 cursor-pointer select-none">
+                                    <input type="radio" name="quote-style-${idx}" value="virgolette" ${b.quoteType !== 'linea' ? 'checked' : ''} onchange="updateEditingBlockQuoteType(${idx}, 'virgolette')" class="text-fluo-purple focus:ring-0 cursor-pointer" /> Virgolette
+                                  </label>
+                                  <label class="inline-flex items-center gap-1.5 cursor-pointer select-none">
+                                    <input type="radio" name="quote-style-${idx}" value="linea" ${b.quoteType === 'linea' ? 'checked' : ''} onchange="updateEditingBlockQuoteType(${idx}, 'linea')" class="text-fluo-purple focus:ring-0 cursor-pointer" /> Linea Laterale
+                                  </label>
+                                </div>
+                                ${b.quoteType === 'linea' ? `
+                                  <label class="inline-flex items-center gap-1.5 cursor-pointer select-none">
+                                    <input
+                                      type="checkbox"
+                                      ${b.lineInvisible === true ? 'checked' : ''}
+                                      onchange="updateEditingBlockLineInvisible(${idx}, this.checked)"
+                                      class="rounded border-slate-800 text-fluo-purple focus:ring-0 bg-slate-950 w-3.5 h-3.5 cursor-pointer"
+                                    />
+                                    <span class="font-bold text-[10px] text-slate-300">Rendi Linea Invisibile</span>
+                                  </label>
+                                ` : ''}
                               </div>
-                              <label class="inline-flex items-center gap-1.5 cursor-pointer">
-                                <input
-                                  type="checkbox"
-                                  ${b.lineInvisible === true ? 'checked' : ''}
-                                  onchange="updateEditingBlockLineInvisible(${idx}, this.checked)"
-                                  class="rounded border-slate-800 text-fluo-purple focus:ring-0 bg-slate-950 w-3.5 h-3.5"
-                                />
-                                <span class="font-bold">Rendi Linea Invisibile</span>
-                              </label>
+                              
+                              ${b.quoteType === 'linea' ? `
+                                <div class="space-y-1 pt-1">
+                                  <span class="font-bold text-[10px] uppercase text-slate-400">Colore Linea Sinistra:</span>
+                                  <div class="flex flex-wrap gap-1">
+                                    ${catColorsList.map(col => {
+                                      const catStylesObj = getCategoryStyles(col);
+                                      const isSelected = b.lineColor === col || (b.lineColor && b.lineColor.toLowerCase() === catStylesObj.colorCode.toLowerCase()) || (!b.lineColor && col === 'verde');
+                                      const activeClass = isSelected ? 'ring-2 ring-white scale-125 z-10 border-white' : 'border-slate-800';
+                                      return `
+                                        <button
+                                          type="button"
+                                          onclick="updateEditingBlockLineColor(${idx}, '${col}'); renderApp();"
+                                          class="w-4 h-4 rounded-md border cursor-pointer transition-all hover:scale-125 ${activeClass}"
+                                          style="background-color: ${catStylesObj.colorCode};"
+                                          title="${col}"
+                                        ></button>
+                                      `;
+                                    }).join('')}
+                                  </div>
+                                </div>
+                              ` : ''}
                             </div>
                           ` : ''}
 
@@ -4462,23 +4600,7 @@
                              </div>
                            ` : ''}
 
-                           ${type === 'spacer' ? `
-                             <div class="flex flex-wrap items-center gap-4 bg-slate-900/60 p-3 rounded-xl border border-slate-900 text-[11px] text-slate-300 font-sans">
-                               <div class="flex items-center gap-3 w-full sm:w-auto">
-                                 <span class="font-bold text-[10px] uppercase text-slate-400 font-sans">Altezza Spazio Vuoto (Distanziatore):</span>
-                                 <input
-                                   type="range"
-                                   min="10"
-                                   max="120"
-                                   step="5"
-                                   value="${b.height || '24'}"
-                                   oninput="updateEditingBlockHeight(${idx}, this.value); document.getElementById('spacer-val-${idx}').innerText = this.value + 'px';"
-                                   class="w-32 accent-fluo-purple cursor-pointer"
-                                 />
-                                 <span id="spacer-val-${idx}" class="text-[11px] text-fluo-purple font-black font-mono">${b.height || '24'}px</span>
-                               </div>
-                             </div>
-                           ` : ''}
+
 
                            ${false ? `
                             <div class="space-y-1.5 p-2 bg-slate-900/60 rounded-lg border border-slate-900 font-sans">
@@ -4526,47 +4648,93 @@
                           ` : ''}
 
                           ${type === 'divider' ? `
-                            <div class="space-y-3 bg-slate-900/60 p-3 rounded-xl border border-slate-900 font-sans">
-                              <div class="flex flex-wrap items-center gap-4">
-                                <span class="font-bold text-[10px] uppercase text-slate-400">Tipo Divisore:</span>
-                                <label class="inline-flex items-center gap-1 cursor-pointer text-xs text-slate-300">
-                                  <input
-                                    type="radio"
-                                    name="divider-type-${idx}"
-                                    value="standard"
-                                    ${b.dividerType !== 'color' ? 'checked' : ''}
-                                    onchange="updateEditingBlockDividerType(${idx}, 'standard')"
-                                    class="text-fluo-purple focus:ring-0"
-                                  /> Standard (Sottile)
-                                </label>
-                                <label class="inline-flex items-center gap-1 cursor-pointer text-xs text-slate-300">
-                                  <input
-                                    type="radio"
-                                    name="divider-type-${idx}"
-                                    value="color"
-                                    ${b.dividerType === 'color' ? 'checked' : ''}
-                                    onchange="updateEditingBlockDividerType(${idx}, 'color')"
-                                    class="text-fluo-purple focus:ring-0"
-                                  /> Colorato (Corto e Spesso)
-                                </label>
-                              </div>
-                              
-                              ${b.dividerType === 'color' ? `
-                                <div class="flex items-center gap-2 pt-1">
-                                  <span class="font-bold text-[10px] uppercase text-slate-400">Colore Linea:</span>
-                                  <input
-                                    type="color"
-                                    value="${b.dividerColor || '#10b981'}"
-                                    oninput="updateEditingBlockDividerColor(${idx}, this.value)"
-                                    class="w-6 h-6 rounded border border-slate-800 bg-transparent cursor-pointer p-0"
-                                  />
-                                  <span class="text-[10px] text-slate-400 font-mono">${b.dividerColor || '#10b981'}</span>
+                            <div class="space-y-3 bg-slate-900/60 p-3 rounded-xl border border-slate-900 font-sans text-[11px] text-slate-300">
+                              <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-900 pb-2">
+                                <div class="flex items-center gap-3">
+                                  <span class="font-bold text-[10px] uppercase text-slate-400">Tipo Separatore:</span>
+                                  <label class="inline-flex items-center gap-1.5 cursor-pointer select-none">
+                                    <input
+                                      type="radio"
+                                      name="separator-type-${idx}"
+                                      value="line"
+                                      ${b.separatorType !== 'spacer' ? 'checked' : ''}
+                                      onchange="updateEditingBlockSeparatorType(${idx}, 'line')"
+                                      class="text-fluo-purple focus:ring-0 cursor-pointer"
+                                    /> Linea Divisoria
+                                  </label>
+                                  <label class="inline-flex items-center gap-1.5 cursor-pointer select-none">
+                                    <input
+                                      type="radio"
+                                      name="separator-type-${idx}"
+                                      value="spacer"
+                                      ${b.separatorType === 'spacer' ? 'checked' : ''}
+                                      onchange="updateEditingBlockSeparatorType(${idx}, 'spacer')"
+                                      class="text-fluo-purple focus:ring-0 cursor-pointer"
+                                    /> Spazio Vuoto
+                                  </label>
                                 </div>
-                              ` : ''}
+                              </div>
+
+                              ${b.separatorType === 'spacer' ? `
+                                <!-- Spazio Vuoto Options -->
+                                <div class="flex items-center gap-3 w-full sm:w-auto py-1">
+                                  <span class="font-bold text-[10px] uppercase text-slate-400 font-sans">Altezza Spazio Vuoto:</span>
+                                  <input
+                                    type="range"
+                                    min="10"
+                                    max="120"
+                                    step="5"
+                                    value="${b.height || '24'}"
+                                    oninput="updateEditingBlockHeight(${idx}, this.value); document.getElementById('spacer-val-${idx}').innerText = this.value + 'px';"
+                                    class="w-32 accent-fluo-purple cursor-pointer"
+                                  />
+                                  <span id="spacer-val-${idx}" class="text-[11px] text-fluo-purple font-black font-mono">${b.height || '24'}px</span>
+                                </div>
+                              ` : `
+                                <!-- Linea Divisoria Options -->
+                                <div class="space-y-3 pt-1">
+                                  <div class="flex flex-wrap items-center gap-4">
+                                    <span class="font-bold text-[10px] uppercase text-slate-400">Stile Linea:</span>
+                                    <label class="inline-flex items-center gap-1.5 cursor-pointer text-xs text-slate-300 select-none">
+                                      <input
+                                        type="radio"
+                                        name="divider-type-${idx}"
+                                        value="standard"
+                                        ${b.dividerType !== 'color' ? 'checked' : ''}
+                                        onchange="updateEditingBlockDividerType(${idx}, 'standard')"
+                                        class="text-fluo-purple focus:ring-0 cursor-pointer"
+                                      /> Standard (Sottile)
+                                    </label>
+                                    <label class="inline-flex items-center gap-1.5 cursor-pointer text-xs text-slate-300 select-none">
+                                      <input
+                                        type="radio"
+                                        name="divider-type-${idx}"
+                                        value="color"
+                                        ${b.dividerType === 'color' ? 'checked' : ''}
+                                        onchange="updateEditingBlockDividerType(${idx}, 'color')"
+                                        class="text-fluo-purple focus:ring-0 cursor-pointer"
+                                      /> Colorato (Corto e Spesso)
+                                    </label>
+                                  </div>
+                                  
+                                  ${b.dividerType === 'color' ? `
+                                    <div class="flex items-center gap-2 pt-1">
+                                      <span class="font-bold text-[10px] uppercase text-slate-400 font-sans">Colore Linea:</span>
+                                      <input
+                                        type="color"
+                                        value="${b.dividerColor || '#10b981'}"
+                                        oninput="updateEditingBlockDividerColor(${idx}, this.value)"
+                                        class="w-6 h-6 rounded border border-slate-800 bg-transparent cursor-pointer p-0"
+                                      />
+                                      <span class="text-[10px] text-slate-400 font-mono">${b.dividerColor || '#10b981'}</span>
+                                    </div>
+                                  ` : ''}
+                                </div>
+                              `}
                             </div>
                           ` : ''}
 
-                          ${(type !== 'divider' && type !== 'spacer') ? `
+                          ${type !== 'divider' ? `
                             <textarea
                               id="admin-block-${idx}"
                               rows="${type === 'paragraph' || type === 'quote' || type === 'list' || type === 'riquadro' ? '3' : '2'}"
@@ -4583,8 +4751,8 @@
                               class="w-full px-3 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:ring-2 focus:ring-fluo-purple outline-none font-sans"
                             >${value}</textarea>
                           ` : `
-                            <div class="h-10 flex items-center justify-center border border-dashed text-[10px] uppercase font-mono rounded-xl ${type === 'spacer' ? 'border-indigo-500/30 text-indigo-400 bg-indigo-500/5' : 'border-slate-800/80 text-slate-500 bg-slate-900/10 tracking-widest'}">
-                              ${type === 'spacer' ? '↕️ Spazio Vuoto Verticale: ' + (b.height || '24') + 'px' : 'Separatore Orizzontale Visivo'}
+                            <div class="h-10 flex items-center justify-center border border-dashed text-[10px] uppercase font-mono rounded-xl ${b.separatorType === 'spacer' ? 'border-indigo-500/30 text-indigo-400 bg-indigo-500/5' : 'border-slate-800/80 text-slate-500 bg-slate-900/10 tracking-widest'}">
+                              ${b.separatorType === 'spacer' ? '↕️ Spazio Vuoto Verticale: ' + (b.height || '24') + 'px' : 'Separatore Orizzontale Visivo'}
                             </div>
                           `}
                         </div>
