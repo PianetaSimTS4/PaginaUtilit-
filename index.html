@@ -837,7 +837,61 @@
       return html;
     }
 
+    function makeBlockInteractive(html, idx) {
+      const firstCloseTagIndex = html.indexOf('>');
+      if (firstCloseTagIndex === -1) return html;
+      
+      const firstTagContent = html.substring(0, firstCloseTagIndex);
+      let newTagContent = firstTagContent;
+      const classMatch = firstTagContent.match(/class=["']([^"']*)["']/);
+      if (classMatch) {
+        const existingClasses = classMatch[1];
+        const newClasses = existingClasses + ' group/preview relative cursor-pointer select-none';
+        newTagContent = firstTagContent.replace(/class=["']([^"']*)["']/, `class="${newClasses}"`);
+      } else {
+        newTagContent += ' class="group/preview relative cursor-pointer select-none"';
+      }
+      
+      newTagContent += ` onclick="scrollToEditorBlock(${idx})" title="Clicca per modificare questo blocco"`;
+      
+      const lastOpenTagIndex = html.lastIndexOf('</');
+      if (lastOpenTagIndex === -1) {
+        return html;
+      }
+      
+      const overlays = `
+        <!-- Overlay di hover per bordo senza alterare il layout -->
+        <div class="absolute -inset-1 border border-transparent rounded-xl group-hover/preview:border-fluo-purple/30 group-hover/preview:bg-fluo-purple/[0.01] pointer-events-none transition-all z-0"></div>
+        
+        <!-- Badge indicatore blocco -->
+        <div class="absolute top-1 left-1 bg-slate-900 border border-slate-850 text-[8px] font-black uppercase text-slate-400 px-1.5 py-0.5 rounded shadow-lg opacity-0 group-hover/preview:opacity-100 transition-opacity z-10">
+          Blocco #${idx + 1}
+        </div>
+        
+        <!-- Icona modifica overlay -->
+        <div class="absolute top-1 right-1 p-1.5 bg-slate-900/90 border border-slate-850 rounded-lg text-fluo-purple shadow-lg opacity-0 group-hover/preview:opacity-100 transition-opacity z-10 pointer-events-none">
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+            <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+          </svg>
+        </div>
+      `;
+      
+      const beforeClose = html.substring(firstCloseTagIndex + 1, lastOpenTagIndex);
+      const closeTag = html.substring(lastOpenTagIndex);
+      
+      return newTagContent + '>' + beforeClose + overlays + closeTag;
+    }
+
     function renderGuideContentBlock(block, idx) {
+      const contentHtml = _originalRenderGuideContentBlock(block, idx);
+      if (window.editingGuide && activeTab === 'admin') {
+        return makeBlockInteractive(contentHtml, idx);
+      }
+      return contentHtml;
+    }
+
+    function _originalRenderGuideContentBlock(block, idx) {
       
       const b = typeof block === 'string' ? { type: 'paragraph', value: block } : block;
       const type = b.type || 'paragraph';
@@ -2422,7 +2476,7 @@
       }).join('');
 
       container.innerHTML = `
-        <div class="bg-slate-950/80 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-2xl ${primaryCatStyles.shadow} space-y-4">
+        <div class="bg-slate-950/80 rounded-2xl border border-slate-800 p-5 md:p-6 shadow-2xl ${primaryCatStyles.shadow} space-y-4 max-w-xl mx-auto w-full">
           <div class="flex items-center justify-between border-b border-slate-900 pb-2">
             <span class="text-[10px] font-bold text-fluo-green tracking-wider uppercase flex items-center gap-1">
               <span class="w-1.5 h-1.5 rounded-full bg-fluo-green animate-pulse"></span>
@@ -2445,7 +2499,7 @@
             ${getGuideAuthorsList(g).map(author => `
               <span class="inline-flex items-center gap-1.5 text-[10px] bg-slate-900/45 px-2.5 py-1 rounded-lg border border-slate-800/40 relative group/preview-author">
                 <span style="color: ${author.color || '#cbd5e1'}; font-weight: 700;">
-                  ${author.name}
+                  ${author.link ? `<a href="${author.link.startsWith('http') ? author.link : 'https://' + author.link}" target="_blank" rel="noopener noreferrer" class="hover:underline hover:text-fluo-purple transition-all" onclick="event.stopPropagation()">${author.name}</a>` : author.name}
                 </span>
                 <span class="text-[10px] select-none cursor-help" style="color: ${author.diamondColor || '#26ff5e'};" title="${author.level || 'Autore'}">
                   ◆
@@ -2490,7 +2544,8 @@
           name: guide.authorName,
           color: guide.authorColor || '#cbd5e1',
           diamondColor: guide.authorDiamondColor || '#26ff5e',
-          level: guide.authorLevel || 'Moderatore'
+          level: guide.authorLevel || 'Moderatore',
+          link: guide.authorLink || ''
         }];
       }
       return [];
@@ -2546,11 +2601,13 @@
         window.editingGuide.authorColor = authors[0].color;
         window.editingGuide.authorDiamondColor = authors[0].diamondColor;
         window.editingGuide.authorLevel = authors[0].level;
+        window.editingGuide.authorLink = authors[0].link || '';
       } else {
         window.editingGuide.authorName = '';
         window.editingGuide.authorColor = '';
         window.editingGuide.authorDiamondColor = '';
         window.editingGuide.authorLevel = '';
+        window.editingGuide.authorLink = '';
       }
     }
 
@@ -2615,6 +2672,20 @@
       window.editingGuide.content.push(newBlock);
       pushHistoryImmediate();
       renderApp();
+    }
+
+    function scrollToEditorBlock(idx) {
+      const el = document.getElementById(`editor-block-container-${idx}`);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Flash visual feedback
+        el.classList.add('ring-2', 'ring-fluo-purple', 'bg-slate-900', 'scale-[1.01]', 'border-fluo-purple');
+        el.classList.remove('bg-slate-950/60', 'border-slate-900');
+        setTimeout(() => {
+          el.classList.remove('ring-2', 'ring-fluo-purple', 'bg-slate-900', 'scale-[1.01]', 'border-fluo-purple');
+          el.classList.add('bg-slate-950/60', 'border-slate-900');
+        }, 1500);
+      }
     }
 
     function updateEditingBlockValue(idx, val) {
@@ -3521,7 +3592,7 @@
                 ${getGuideAuthorsList(guide).map(author => `
                   <span class="inline-flex items-center gap-1.5 text-xs bg-slate-900/45 px-3 py-1.5 rounded-xl border border-slate-800/40 relative group/author">
                     <span style="color: ${author.color || '#cbd5e1'}; font-weight: 700;" class="tracking-wide">
-                      ${author.name}
+                      ${author.link ? `<a href="${author.link.startsWith('http') ? author.link : 'https://' + author.link}" target="_blank" rel="noopener noreferrer" class="hover:underline hover:text-fluo-purple transition-all" onclick="event.stopPropagation()">${author.name}</a>` : author.name}
                     </span>
                     <span class="cursor-help inline-block text-[11px] select-none transition-transform hover:scale-125" style="color: ${author.diamondColor || '#26ff5e'};" title="${author.level || 'Nessun livello'}">
                       ◆
@@ -3663,7 +3734,9 @@
                           <div class="flex flex-wrap items-center gap-1.5 overflow-hidden">
                             ${getGuideAuthorsList(guide).map(author => `
                               <span class="text-[10px] font-sans font-medium flex items-center gap-1 relative group/list-author-1" title="${author.level || 'Autore'}">
-                                <span style="color: ${author.color || '#cbd5e1'}">${author.name}</span>
+                                <span style="color: ${author.color || '#cbd5e1'}">
+                                  ${author.link ? `<a href="${author.link.startsWith('http') ? author.link : 'https://' + author.link}" target="_blank" rel="noopener noreferrer" class="hover:underline hover:text-fluo-purple transition-all" onclick="event.stopPropagation()">${author.name}</a>` : author.name}
+                                </span>
                                 <span class="text-[9px] select-none" style="color: ${author.diamondColor || '#26ff5e'}">◆</span>
                                 <span class="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-1.5 py-0.5 bg-slate-950 border border-slate-850 text-[9px] text-slate-300 rounded opacity-0 group-hover/list-author-1:opacity-100 transition-opacity whitespace-nowrap shadow-md z-30 font-sans">
                                   ${author.level || 'Autore'}
@@ -3867,7 +3940,9 @@
                                 <div class="flex flex-wrap items-center gap-1.5 overflow-hidden">
                                   ${getGuideAuthorsList(guide).map(author => `
                                     <span class="text-[10px] font-sans font-medium flex items-center gap-1 relative group/list-author-2" title="${author.level || 'Autore'}">
-                                      <span style="color: ${author.color || '#cbd5e1'}">${author.name}</span>
+                                      <span style="color: ${author.color || '#cbd5e1'}">
+                                        ${author.link ? `<a href="${author.link.startsWith('http') ? author.link : 'https://' + author.link}" target="_blank" rel="noopener noreferrer" class="hover:underline hover:text-fluo-purple transition-all" onclick="event.stopPropagation()">${author.name}</a>` : author.name}
+                                      </span>
                                       <span class="text-[9px] select-none" style="color: ${author.diamondColor || '#26ff5e'}">◆</span>
                                       <span class="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-1.5 py-0.5 bg-slate-950 border border-slate-850 text-[9px] text-slate-300 rounded opacity-0 group-hover/list-author-2:opacity-100 transition-opacity whitespace-nowrap shadow-md z-30 font-sans">
                                         ${author.level || 'Autore'}
@@ -4195,6 +4270,20 @@
                                 />
                               </div>
 
+                              <!-- Campo Link Autore -->
+                              <div class="space-y-1 md:col-span-2">
+                                <span class="text-[9px] font-bold text-slate-400 uppercase font-sans flex items-center gap-1">
+                                  Link Profilo / Social Autore (Opzionale)
+                                </span>
+                                <input
+                                  type="text"
+                                  value="${author.link || ''}"
+                                  oninput="updateEditingAuthorField(${authorIdx}, 'link', this.value)"
+                                  placeholder="es: https://instagram.com/utente o https://pianetasim.it/lidia"
+                                  class="w-full px-2.5 py-1.5 bg-slate-950 border border-slate-850 rounded-lg text-[11px] text-white focus:ring-1 focus:ring-fluo-purple outline-none font-sans"
+                                />
+                              </div>
+
                               <!-- Campo Colore Nome -->
                               <div class="space-y-1.5">
                                 <span class="text-[9px] font-bold text-slate-400 uppercase font-sans block">Colore Nome</span>
@@ -4404,7 +4493,7 @@
                       else if (type === 'button') borderClass = 'border-l-4 border-l-fuchsia-500/60';
 
                       return `
-                        <div class="p-4 bg-slate-950/60 border border-slate-900 rounded-xl space-y-3 relative group/block transition-all hover:border-slate-800 ${borderClass}">
+                        <div id="editor-block-container-${idx}" class="p-4 bg-slate-950/60 border border-slate-900 rounded-xl space-y-3 relative group/block transition-all hover:border-slate-800 ${borderClass}">
                           <div class="flex flex-wrap items-center justify-between gap-3">
                             <div class="flex items-center gap-2">
                               <span class="text-[10px] font-black uppercase text-slate-500 tracking-wider">Blocco #${idx + 1}</span>
@@ -4782,17 +4871,27 @@
 
               <!-- Colonna Anteprima Sticky -->
               <div class="lg:col-span-5 lg:sticky lg:top-6 space-y-4">
-                <div class="bg-slate-900/40 p-4 rounded-3xl border border-slate-850/50 shadow-lg">
-                  <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-1.5">
+                <div class="bg-slate-900/40 p-4 rounded-3xl border border-slate-850/50 shadow-lg max-w-xl mx-auto w-full">
+                  <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-1.5 justify-center">
                     <span class="w-1.5 h-1.5 rounded-full bg-fluo-green animate-pulse"></span>
                     Anteprima in Tempo Reale
                   </h3>
-                  <div id="guide-live-preview-container" class="max-h-[80vh] overflow-y-auto pr-1 scrollbar-none">
+                  <div id="guide-live-preview-container" class="max-h-[80vh] overflow-y-auto pr-1 scrollbar-none w-full">
                     <!-- Iniezione dinamica della preview -->
                   </div>
                 </div>
               </div>
             </div>
+
+            <!-- Tasto Fluttuante per scorrere a fondo pagina -->
+            <button
+              id="btn-scroll-to-bottom"
+              onclick="window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })"
+              class="fixed bottom-6 right-6 z-50 p-3.5 bg-fluo-purple hover:bg-opacity-95 text-white rounded-full shadow-[0_0_20px_rgba(176,38,255,0.6)] border border-fluo-purple/40 cursor-pointer flex items-center justify-center hover:scale-110 active:scale-95 transition-all group animate-bounce"
+              title="Vai a fondo pagina"
+            >
+              <i data-lucide="chevrons-down" class="w-5 h-5 group-hover:translate-y-0.5 transition-transform"></i>
+            </button>
           `;
           updateLivePreview();
           lazyCreateIcons();
