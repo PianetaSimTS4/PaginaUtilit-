@@ -25,7 +25,7 @@
     {
       "id": "installazione-mod",
       "title": "COME INSTALLARE LE MOD",
-      "description": "La prima parte è composta da una guida veloce.\nLa seconda parte, invece, è una guida passo passo con immagini.",
+      "description": "Questa guida è fatta per chi è ha confidenza o ha già esperienze nelle installazioni e videogiochi.",
       "category": "mod_cc",
       "tags": [
         "mod",
@@ -66,6 +66,13 @@
           "buttonUrl": ""
         },
         {
+          "type": "divider",
+          "value": "",
+          "separatorType": "spacer",
+          "dividerType": "standard",
+          "height": "20"
+        },
+        {
           "type": "heading3",
           "value": "[color:#f97316](PRIMA DI SCARICARE UNA MOD:)"
         },
@@ -103,6 +110,13 @@
         {
           "type": "divider",
           "value": ""
+        },
+        {
+          "type": "divider",
+          "value": "",
+          "separatorType": "spacer",
+          "dividerType": "standard",
+          "height": "10"
         },
         {
           "type": "heading1",
@@ -188,8 +202,22 @@
           "borderColor": "#3b82f6"
         },
         {
+          "type": "divider",
+          "value": "",
+          "separatorType": "spacer",
+          "dividerType": "standard",
+          "height": "10"
+        },
+        {
           "type": "tip",
           "value": "[color:#eab308](**Fai attenzione:**) non lasciare mai file zip nella cartella mods!"
+        },
+        {
+          "type": "divider",
+          "value": "",
+          "separatorType": "spacer",
+          "dividerType": "standard",
+          "height": "10"
         },
         {
           "type": "paragraph",
@@ -197,7 +225,15 @@
         },
         {
           "type": "divider",
-          "value": ""
+          "value": "",
+          "dividerType": "standard"
+        },
+        {
+          "type": "divider",
+          "value": "",
+          "separatorType": "spacer",
+          "dividerType": "standard",
+          "height": "10"
         },
         {
           "type": "heading2",
