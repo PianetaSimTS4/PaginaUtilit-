@@ -14,6 +14,10 @@ app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  res.setHeader('Surrogate-Control', 'no-store');
   if (req.method === 'OPTIONS') {
     return res.sendStatus(200);
   }
@@ -154,12 +158,25 @@ const baseDir = isProd && fs.existsSync(path.join(process.cwd(), 'dist'))
 console.log(`[Server] Serving static content from: ${baseDir}`);
 
 
-app.use('/images', express.static(path.join(baseDir, 'images')));
-app.use('/public', express.static(path.join(baseDir, 'public')));
-app.use(express.static(baseDir));
+const staticOptions = {
+  etag: false,
+  maxAge: 0,
+  setHeaders: (res, path) => {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+  }
+};
+
+app.use('/images', express.static(path.join(baseDir, 'images'), staticOptions));
+app.use('/public', express.static(path.join(baseDir, 'public'), staticOptions));
+app.use(express.static(baseDir, staticOptions));
 
 
 app.get('*', (req, res) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
   res.sendFile(path.join(baseDir, 'index.html'));
 });
 

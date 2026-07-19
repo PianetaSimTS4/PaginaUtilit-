@@ -431,5 +431,47 @@
     "title": "Avviso Importante",
     "color": "rosso",
     "text": "Benvenuto su PianetaSim! Questo è un messaggio di avviso personalizzabile."
-  }
+  },
+  "creators": [
+    {
+      "id": "ladypsycotrilly",
+      "name": "LadyPsycoTrilly",
+      "role": "Amministratrice & Traduttrice",
+      "avatar": "images/logo.png",
+      "description": "Appassionata di The Sims da sempre. Cura il sito di PianetaSim, traduce le mod più popolari e scrive guide dettagliate sul gameplay e la personalizzazione del gioco.",
+      "tags": [
+        "Amministratore",
+        "Traduttore",
+        "Guide Creator"
+      ],
+      "socials": [
+        {
+          "label": "Telegram",
+          "url": "https://t.me/TheSims4ItaliaPianetaSim"
+        },
+        {
+          "label": "Sito Web",
+          "url": "https://pianetasimts.github.io/PianetaSim/index.html"
+        }
+      ]
+    },
+    {
+      "id": "sha",
+      "name": "Sha",
+      "role": "Moderatrice & Aiuto Supporto",
+      "avatar": "images/logo.png",
+      "description": "Esperta di installazioni e risoluzione problemi delle Mod e del Custom Content. Fornisce supporto tecnico tempestivo e guide passo-passo semplici per tutti.",
+      "tags": [
+        "Moderatore",
+        "Supporto Tecnico",
+        "CC Expert"
+      ],
+      "socials": [
+        {
+          "label": "Telegram",
+          "url": "https://t.me/TheSims4ItaliaPianetaSim"
+        }
+      ]
+    }
+  ]
 }
