@@ -86,9 +86,9 @@
     var lucideTimeout = null;
     function lazyCreateIcons() {
       if (lucideTimeout) {
-        cancelAnimationFrame(lucideTimeout);
+        clearTimeout(lucideTimeout);
       }
-      lucideTimeout = requestAnimationFrame(function() {
+      lucideTimeout = setTimeout(function() {
         if (typeof lucide !== 'undefined' && lucide.createIcons) {
           try {
             lucide.createIcons();
@@ -96,9 +96,9 @@
             console.warn("Lucide icons failed to render", e);
           }
         } else {
-          lucideTimeout = requestAnimationFrame(lazyCreateIcons);
+          lucideTimeout = setTimeout(lazyCreateIcons, 100);
         }
-      });
+      }, 50);
     }
   </script>
 
@@ -5125,7 +5125,10 @@
         
         const listWrapperEl = document.getElementById('guides-list-grid-wrapper');
         const countBadgeEl = document.getElementById('guides-count-badge');
-        if (listWrapperEl && countBadgeEl) {
+        const searchInputEl = document.getElementById('guide-search-input');
+        const isSearchInputFocused = (searchInputEl === document.activeElement);
+        
+        if (listWrapperEl && countBadgeEl && isSearchInputFocused) {
           countBadgeEl.textContent = `Trovate ${filteredGuides.length} guide`;
           listWrapperEl.innerHTML = filteredGuides.length === 0 ? `
             <div class="bg-space-card border border-slate-900/60 rounded-3xl p-12 text-center space-y-4">
@@ -7087,8 +7090,6 @@
           ctx.fillStyle = `rgba(148, 163, 184, ${currentOpacity * 0.5})`;
           ctx.fillText(c.name, c.x, c.y + c.scale * 1.05);
         }
-
-        requestAnimationFrame(animate);
       }
 
       animate();
