@@ -706,6 +706,7 @@
 
     let selectedCategoryColor = 'azzurro';
     let uploadedImages = [];
+    window.uploadedImagesLimit = 8;
 
     
     function getCategoryStyles(colorPreset) {
@@ -1506,29 +1507,32 @@
       reader.onload = function(e) {
         const img = new Image();
         img.onload = function() {
-          const maxDim = 800; // max dimension 800px for high performance and excellent quality
-          let width = img.width;
-          let height = img.height;
-          
-          if (width > maxDim || height > maxDim) {
-            if (width > height) {
-              height = Math.round((height * maxDim) / width);
-              width = maxDim;
-            } else {
-              width = Math.round((width * maxDim) / height);
-              height = maxDim;
+          // Defer CPU-heavy canvas scaling & encoding to keep the UI responsive and render the toast
+          setTimeout(() => {
+            const maxDim = 800; // max dimension 800px for high performance and excellent quality
+            let width = img.width;
+            let height = img.height;
+            
+            if (width > maxDim || height > maxDim) {
+              if (width > height) {
+                height = Math.round((height * maxDim) / width);
+                width = maxDim;
+              } else {
+                width = Math.round((width * maxDim) / height);
+                height = maxDim;
+              }
             }
-          }
-          
-          const canvas = document.createElement('canvas');
-          canvas.width = width;
-          canvas.height = height;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, width, height);
-          
-          // Compress as JPEG with 0.75 quality - results in very small size (approx 30KB - 80KB) but high visual clarity
-          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.75);
-          callback(null, compressedBase64);
+            
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            
+            // Compress as JPEG with 0.75 quality - results in very small size (approx 30KB - 80KB) but high visual clarity
+            const compressedBase64 = canvas.toDataURL('image/jpeg', 0.75);
+            callback(null, compressedBase64);
+          }, 50);
         };
         img.onerror = function() {
           callback(new Error("Errore nel caricamento dell'immagine per la compressione"), null);
@@ -1747,14 +1751,20 @@
         return;
       }
 
+      if (!window.uploadedImagesLimit) {
+        window.uploadedImagesLimit = 8;
+      }
+
+      const visibleImages = uploadedImages.slice(0, window.uploadedImagesLimit);
+      const hasMore = uploadedImages.length > window.uploadedImagesLimit;
+
       gridContainer.innerHTML = `
-        <div class="grid grid-cols-2 gap-2 max-h-[250px] overflow-y-auto pr-1 scrollbar-none mt-3">
-          ${uploadedImages.map(img => {
+        <div class="grid grid-cols-2 gap-2 max-h-[300px] overflow-y-auto pr-1 scrollbar-none mt-3">
+          ${visibleImages.map(img => {
             const isObj = typeof img === 'object' && img !== null;
             const imgName = isObj ? img.name : img;
             const imgUrl = isObj ? img.url : `images/${img}`;
             const isLocal = isObj && img.local;
-            
             
             const copyValue = isLocal ? imgUrl : `images/${imgName}`;
             
@@ -1763,7 +1773,6 @@
                 
                 <div class="w-full aspect-video rounded-lg overflow-hidden bg-slate-900 border border-slate-800 relative">
                   <img src="${imgUrl}" class="w-full h-full object-cover" alt="preview" />
-                  
                   
                   <div class="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 p-1">
                     <button
@@ -1809,6 +1818,17 @@
             `;
           }).join('')}
         </div>
+        ${hasMore ? `
+          <div class="pt-2 text-center">
+            <button
+              type="button"
+              onclick="window.uploadedImagesLimit += 8; renderUploadedImagesGrid();"
+              class="px-3 py-1.5 bg-slate-900 hover:bg-slate-850 border border-slate-800 text-[10px] text-slate-300 hover:text-white rounded-lg font-bold cursor-pointer transition-colors w-full flex items-center justify-center gap-1.5"
+            >
+              <span>Mostra Altri Media... (+${uploadedImages.length - window.uploadedImagesLimit})</span>
+            </button>
+          </div>
+        ` : ''}
       `;
       lazyCreateIcons();
     }
@@ -3426,41 +3446,90 @@
     function resetGuidesToDefault() {
       if (!confirm("Sei sicuro di voler ripristinare i dati originali? Tutte le modifiche locali non salvate andranno perse.")) return;
       
+      const btn = document.getElementById('sync-cache-btn');
+      const btnText = document.getElementById('sync-cache-btn-text');
+      if (btn) {
+        btn.disabled = true;
+        btn.style.opacity = '0.5';
+        btn.style.cursor = 'not-allowed';
+        if (btnText) {
+          btnText.innerHTML = 'Sincronizzazione in corso...';
+        }
+        const icon = btn.querySelector('i');
+        if (icon) {
+          icon.classList.add('animate-spin');
+        }
+      }
+
       localStorage.removeItem('pianetasim-custom-data');
       showToast("Dati locali azzerati! Ricaricamento...", "info");
       
-      fetch('./guides.json?t=' + Date.now())
-        .then(response => response.json())
-        .then(data => {
-          if (data.categories && data.guides) {
-            categories = data.categories;
-            guides = data.guides;
-            creators = data.creators || getDefaultCreators();
-            authorTags = data.authorTags || getDefaultAuthorTags();
-            adminPassword = data.adminPassword || 'sticazzi';
-            if (data.siteTitle) siteTitle = data.siteTitle;
-            if (data.siteDescription) siteDescription = data.siteDescription;
-            if (data.alertPopup) alertPopup = data.alertPopup;
-            if (data.siteLogo) siteLogo = data.siteLogo;
-          } else {
-            categories = [
-              { id: 'mod_cc', label: 'Mod e CC', color: 'cyan' },
-              { id: 'costruzione', label: 'Costruzione', color: 'green' },
-              { id: 'gameplay', label: 'Gameplay', color: 'purple' },
-              { id: 'espansioni', label: 'Espansioni', color: 'rose' }
-            ];
-            guides = data;
-            creators = getDefaultCreators();
-            authorTags = getDefaultAuthorTags();
-          }
-          updateLogoSrc();
-          renderApp();
-          showToast("Ripristino completato correttamente!", "success");
-        })
-        .catch(error => {
-          console.error("Errore nel ripristino:", error);
-          showToast("Impossibile recuperare guides.json dal server.", "info");
-        });
+      setTimeout(() => {
+        fetch('./guides.json?t=' + Date.now())
+          .then(response => response.json())
+          .then(data => {
+            if (data.categories && data.guides) {
+              categories = data.categories;
+              guides = data.guides;
+              creators = data.creators || getDefaultCreators();
+              authorTags = data.authorTags || getDefaultAuthorTags();
+              adminPassword = data.adminPassword || 'sticazzi';
+              if (data.siteTitle) siteTitle = data.siteTitle;
+              if (data.siteDescription) siteDescription = data.siteDescription;
+              if (data.alertPopup) alertPopup = data.alertPopup;
+              if (data.siteLogo) siteLogo = data.siteLogo;
+            } else {
+              categories = [
+                { id: 'mod_cc', label: 'Mod e CC', color: 'cyan' },
+                { id: 'costruzione', label: 'Costruzione', color: 'green' },
+                { id: 'gameplay', label: 'Gameplay', color: 'purple' },
+                { id: 'espansioni', label: 'Espansioni', color: 'rose' }
+              ];
+              guides = data;
+              creators = getDefaultCreators();
+              authorTags = getDefaultAuthorTags();
+            }
+            
+            requestAnimationFrame(() => {
+              updateLogoSrc();
+              renderApp();
+              
+              const newBtn = document.getElementById('sync-cache-btn');
+              const newBtnText = document.getElementById('sync-cache-btn-text');
+              if (newBtn) {
+                newBtn.disabled = false;
+                newBtn.style.opacity = '';
+                newBtn.style.cursor = '';
+                if (newBtnText) {
+                  newBtnText.innerHTML = 'Sincronizza / Svuota Cache 🔄';
+                }
+                const newIcon = newBtn.querySelector('i');
+                if (newIcon) {
+                  newIcon.classList.remove('animate-spin');
+                }
+              }
+              
+              showToast("Ripristino completato correttamente!", "success");
+            });
+          })
+          .catch(error => {
+            console.error("Errore nel ripristino:", error);
+            showToast("Impossibile recuperare guides.json dal server.", "info");
+            
+            if (btn) {
+              btn.disabled = false;
+              btn.style.opacity = '';
+              btn.style.cursor = '';
+              if (btnText) {
+                btnText.innerHTML = 'Sincronizza / Svuota Cache 🔄';
+              }
+              const icon = btn.querySelector('i');
+              if (icon) {
+                icon.classList.remove('animate-spin');
+              }
+            }
+          });
+      }, 300);
     }
 
     function saveEditingGuide() {
@@ -6495,15 +6564,28 @@
                                   </div>
                                   
                                   ${b.dividerType === 'color' ? `
-                                    <div class="flex items-center gap-2 pt-1">
-                                      <span class="font-bold text-[10px] uppercase text-slate-400 font-sans">Colore Linea:</span>
-                                      <input
-                                        type="color"
-                                        value="${b.dividerColor || '#10b981'}"
-                                        oninput="updateEditingBlockDividerColor(${idx}, this.value)"
-                                        class="w-6 h-6 rounded border border-slate-800 bg-transparent cursor-pointer p-0"
-                                      />
-                                      <span class="text-[10px] text-slate-400 font-mono">${b.dividerColor || '#10b981'}</span>
+                                    <div class="space-y-1.5 pt-1">
+                                      <span class="font-bold text-[10px] uppercase text-slate-400 font-sans block">Colore Linea (14 Colori):</span>
+                                      <div class="flex items-center gap-2">
+                                        <input
+                                          type="color"
+                                          value="${b.dividerColor || '#10b981'}"
+                                          oninput="updateEditingBlockDividerColor(${idx}, this.value); renderApp();"
+                                          class="w-6 h-6 rounded border border-slate-800 bg-transparent cursor-pointer p-0 shrink-0"
+                                        />
+                                        <span class="text-[10px] text-slate-400 font-mono">${b.dividerColor || '#10b981'}</span>
+                                      </div>
+                                      <div class="flex flex-wrap gap-1 mt-1">
+                                        ${textColorsList.map(hex => `
+                                          <button
+                                            type="button"
+                                            onclick="updateEditingBlockDividerColor(${idx}, '${hex}'); renderApp();"
+                                            class="w-3.5 h-3.5 rounded border cursor-pointer transition-all ${(b.dividerColor || '#10b981').toLowerCase() === hex.toLowerCase() ? 'border-white scale-110 ring-1 ring-white/50' : 'border-slate-800 hover:scale-115'}"
+                                            style="background-color: ${hex};"
+                                            title="${hex}"
+                                          ></button>
+                                        `).join('')}
+                                      </div>
                                     </div>
                                   ` : ''}
                                 </div>
@@ -6611,12 +6693,13 @@
                   Scarica Modifiche per GitHub (ZIP) 📦
                 </button>
                 <button
+                  id="sync-cache-btn"
                   onclick="resetGuidesToDefault()"
                   class="px-3 py-2 bg-slate-900 hover:bg-slate-850 text-slate-300 hover:text-white rounded-xl border border-slate-800 text-xs font-bold cursor-pointer flex items-center gap-1.5"
                   title="Svuota la cache locale del browser e ricarica i dati originari dal file guides.json del server (GitHub)"
                 >
                   <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-fluo-blue"></i>
-                  Sincronizza / Svuota Cache 🔄
+                  <span id="sync-cache-btn-text">Sincronizza / Svuota Cache 🔄</span>
                 </button>
                 <button
                   onclick="handleAdminLogout()"
