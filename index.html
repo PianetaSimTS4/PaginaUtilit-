@@ -2508,6 +2508,44 @@
       fileInput.click();
     }
 
+    window.updateEditingSocial = function(index, field, value) {
+      if (window.editingSocialsList && window.editingSocialsList[index]) {
+        window.editingSocialsList[index][field] = value;
+      }
+    };
+
+    window.addEditingSocial = function() {
+      if (!window.editingSocialsList) window.editingSocialsList = [];
+      window.editingSocialsList.push({ label: '', url: '', color: '#a855f7' });
+      renderApp();
+    };
+
+    window.removeEditingSocial = function(index) {
+      if (window.editingSocialsList) {
+        window.editingSocialsList.splice(index, 1);
+        renderApp();
+      }
+    };
+
+    window.updateNewCreatorSocial = function(index, field, value) {
+      if (window.newCreatorSocialsList && window.newCreatorSocialsList[index]) {
+        window.newCreatorSocialsList[index][field] = value;
+      }
+    };
+
+    window.addNewCreatorSocial = function() {
+      if (!window.newCreatorSocialsList) window.newCreatorSocialsList = [];
+      window.newCreatorSocialsList.push({ label: '', url: '', color: '#a855f7' });
+      renderApp();
+    };
+
+    window.removeNewCreatorSocial = function(index) {
+      if (window.newCreatorSocialsList) {
+        window.newCreatorSocialsList.splice(index, 1);
+        renderApp();
+      }
+    };
+
     function handleAddCreator() {
       const nameInput = document.getElementById('new-creator-name');
       const roleInput = document.getElementById('new-creator-role');
@@ -2536,19 +2574,7 @@
         tags.push('Autore');
       }
 
-      const socials = [];
-      for (let i = 1; i <= 3; i++) {
-        const lblInput = document.getElementById(`new-creator-social-label-${i}`);
-        const urlInput = document.getElementById(`new-creator-social-url-${i}`);
-        const colInput = document.getElementById(`new-creator-social-color-${i}`);
-        if (lblInput && urlInput && lblInput.value.trim() && urlInput.value.trim()) {
-          socials.push({
-            label: lblInput.value.trim(),
-            url: urlInput.value.trim(),
-            color: colInput ? colInput.value : '#0f172a'
-          });
-        }
-      }
+      const socials = (window.newCreatorSocialsList || []).filter(s => s.label.trim() && s.url.trim());
 
       const newCreator = {
         id: 'creator-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
@@ -2561,6 +2587,7 @@
       };
 
       creators.push(newCreator);
+      window.newCreatorSocialsList = [];
       persistDataLocally();
       saveAllGuidesToServer();
       renderApp();
@@ -2603,19 +2630,7 @@
         tags.push('Autore');
       }
 
-      const socials = [];
-      for (let i = 1; i <= 3; i++) {
-        const lblInput = document.getElementById(`edit-creator-social-label-${i}`);
-        const urlInput = document.getElementById(`edit-creator-social-url-${i}`);
-        const colInput = document.getElementById(`edit-creator-social-color-${i}`);
-        if (lblInput && urlInput && lblInput.value.trim() && urlInput.value.trim()) {
-          socials.push({
-            label: lblInput.value.trim(),
-            url: urlInput.value.trim(),
-            color: colInput ? colInput.value : '#0f172a'
-          });
-        }
-      }
+      const socials = (window.editingSocialsList || []).filter(s => s.label.trim() && s.url.trim());
 
       creators[creatorIdx] = {
         ...creators[creatorIdx],
@@ -2628,6 +2643,7 @@
       };
 
       window.editingCreatorId = null;
+      window.editingSocialsList = null;
       persistDataLocally();
       saveAllGuidesToServer();
       renderApp();
@@ -3775,6 +3791,30 @@
       window.location.hash = '#chi-siamo';
     }
 
+    function viewCreatorCard(creatorName, fallbackLink) {
+      const creator = creators.find(c => c.name.toLowerCase().trim() === creatorName.toLowerCase().trim());
+      if (creator) {
+        window.location.hash = '#chi-siamo';
+        setTimeout(() => {
+          const cardId = `creator-card-${creator.id || creator.name.toLowerCase().replace(/\s+/g, '-')}`;
+          const cardEl = document.getElementById(cardId);
+          if (cardEl) {
+            cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            cardEl.classList.remove('border-slate-800');
+            cardEl.classList.add('border-fluo-purple', 'ring-2', 'ring-fluo-purple/45', 'shadow-[0_0_25px_rgba(176,38,255,0.4)]');
+            setTimeout(() => {
+              cardEl.classList.remove('border-fluo-purple', 'ring-2', 'ring-fluo-purple/45', 'shadow-[0_0_25px_rgba(176,38,255,0.4)]');
+              cardEl.classList.add('border-slate-800');
+            }, 2000);
+          }
+        }, 120);
+      } else if (fallbackLink) {
+        window.open(fallbackLink.startsWith('http') ? fallbackLink : 'https://' + fallbackLink, '_blank', 'noopener,noreferrer');
+      } else {
+        window.location.hash = '#chi-siamo';
+      }
+    }
+
     function copyGuideLink(guideId) {
       const url = `${window.location.origin}${window.location.pathname}#guida-${guideId}`;
       navigator.clipboard.writeText(url).then(() => {
@@ -4324,15 +4364,9 @@
               if (window.editingCreatorId) {
                 const cToEdit = creators.find(c => c.id === window.editingCreatorId);
                 if (cToEdit) {
-                  const s1_lbl = cToEdit.socials?.[0]?.label || '';
-                  const s1_url = cToEdit.socials?.[0]?.url || '';
-                  const s1_color = cToEdit.socials?.[0]?.color || '#a855f7';
-                  const s2_lbl = cToEdit.socials?.[1]?.label || '';
-                  const s2_url = cToEdit.socials?.[1]?.url || '';
-                  const s2_color = cToEdit.socials?.[1]?.color || '#00f2fe';
-                  const s3_lbl = cToEdit.socials?.[2]?.label || '';
-                  const s3_url = cToEdit.socials?.[2]?.url || '';
-                  const s3_color = cToEdit.socials?.[2]?.color || '#39ff14';
+                  if (!window.editingSocialsList) {
+                    window.editingSocialsList = JSON.parse(JSON.stringify(cToEdit.socials || []));
+                  }
 
                   return `
                     <div class="p-4 bg-slate-950/40 border border-slate-850 rounded-2xl space-y-3">
@@ -4409,40 +4443,36 @@
                           <p class="text-[9px] text-slate-500 font-sans mt-1">Puoi aggiungere o modificare questi tag nella sezione "Gestione Tag Autori" qui sotto!</p>
                         </div>
 
-                        <div class="space-y-1.5 pt-2 border-t border-slate-900">
-                          <span class="text-[9px] uppercase font-black text-slate-400 block mb-1 font-sans">Social Link 1 (con Scelta Colore Tasto)</span>
-                          <div class="flex items-center gap-2 font-sans">
-                            <input type="text" id="edit-creator-social-label-1" value="${s1_lbl}" placeholder="Telegram" class="w-1/4 px-2 py-1.5 bg-slate-900 border border-slate-850 rounded-md text-[10px] text-white outline-none" />
-                            <input type="text" id="edit-creator-social-url-1" value="${s1_url}" placeholder="URL del link" class="flex-grow px-2 py-1.5 bg-slate-900 border border-slate-850 rounded-md text-[10px] text-white outline-none font-mono" />
-                            <div class="flex flex-col items-center gap-0.5 shrink-0">
-                              <label class="text-[8px] text-slate-400 uppercase font-bold font-sans">Tasto</label>
-                              <input type="color" id="edit-creator-social-color-1" value="${s1_color}" class="w-7 h-7 bg-transparent border-0 rounded cursor-pointer" />
+                        <div class="space-y-2 pt-2 border-t border-slate-900">
+                          <label class="text-[9px] uppercase font-black text-slate-400 font-sans block font-sans">Link Sociali Autore</label>
+                          
+                          ${window.editingSocialsList.map((s, index) => `
+                            <div class="space-y-1 p-2 bg-slate-900/60 rounded-xl border border-slate-850/60 font-sans">
+                              <div class="flex items-center justify-between mb-1">
+                                <span class="text-[8px] uppercase font-black text-slate-400">Social #${index + 1}</span>
+                                <button type="button" onclick="removeEditingSocial(${index})" class="text-[8px] uppercase font-black text-red-400 hover:text-red-300 cursor-pointer">
+                                  Rimuovi
+                                </button>
+                              </div>
+                              <div class="flex items-center gap-2">
+                                <input type="text" placeholder="Telegram" value="${s.label || ''}" 
+                                  oninput="updateEditingSocial(${index}, 'label', this.value)" 
+                                  class="w-1/4 px-2 py-1.5 bg-slate-950 border border-slate-850 rounded text-[10px] text-white outline-none" />
+                                <input type="text" placeholder="URL" value="${s.url || ''}" 
+                                  oninput="updateEditingSocial(${index}, 'url', this.value)" 
+                                  class="flex-grow px-2 py-1.5 bg-slate-950 border border-slate-850 rounded text-[10px] text-white outline-none font-mono" />
+                                <div class="flex flex-col items-center gap-0.5 shrink-0">
+                                  <input type="color" value="${s.color || '#a855f7'}" 
+                                    onchange="updateEditingSocial(${index}, 'color', this.value)" 
+                                    class="w-6 h-6 bg-transparent border-0 rounded cursor-pointer" />
+                                </div>
+                              </div>
                             </div>
-                          </div>
-                        </div>
+                          `).join('')}
 
-                        <div class="space-y-1.5">
-                          <span class="text-[9px] uppercase font-black text-slate-400 block mb-1 font-sans">Social Link 2 (con Scelta Colore Tasto)</span>
-                          <div class="flex items-center gap-2 font-sans">
-                            <input type="text" id="edit-creator-social-label-2" value="${s2_lbl}" placeholder="Instagram" class="w-1/4 px-2 py-1.5 bg-slate-900 border border-slate-850 rounded-md text-[10px] text-white outline-none" />
-                            <input type="text" id="edit-creator-social-url-2" value="${s2_url}" placeholder="URL" class="flex-grow px-2 py-1.5 bg-slate-900 border border-slate-850 rounded-md text-[10px] text-white outline-none font-mono" />
-                            <div class="flex flex-col items-center gap-0.5 shrink-0">
-                              <label class="text-[8px] text-slate-400 uppercase font-bold font-sans">Tasto</label>
-                              <input type="color" id="edit-creator-social-color-2" value="${s2_color}" class="w-7 h-7 bg-transparent border-0 rounded cursor-pointer" />
-                            </div>
-                          </div>
-                        </div>
-
-                        <div class="space-y-1.5">
-                          <span class="text-[9px] uppercase font-black text-slate-400 block mb-1 font-sans">Social Link 3 (con Scelta Colore Tasto)</span>
-                          <div class="flex items-center gap-2 font-sans">
-                            <input type="text" id="edit-creator-social-label-3" value="${s3_lbl}" placeholder="Sito Web" class="w-1/4 px-2 py-1.5 bg-slate-900 border border-slate-850 rounded-md text-[10px] text-white outline-none" />
-                            <input type="text" id="edit-creator-social-url-3" value="${s3_url}" placeholder="URL" class="flex-grow px-2 py-1.5 bg-slate-900 border border-slate-850 rounded-md text-[10px] text-white outline-none font-mono" />
-                            <div class="flex flex-col items-center gap-0.5 shrink-0">
-                              <label class="text-[8px] text-slate-400 uppercase font-bold font-sans">Tasto</label>
-                              <input type="color" id="edit-creator-social-color-3" value="${s3_color}" class="w-7 h-7 bg-transparent border-0 rounded cursor-pointer" />
-                            </div>
-                          </div>
+                          <button type="button" onclick="addEditingSocial()" class="w-full py-1.5 bg-slate-900 hover:bg-slate-850 border border-slate-850 border-dashed rounded-lg text-[9px] font-bold text-fluo-purple flex items-center justify-center gap-1 cursor-pointer font-sans">
+                            + Aggiungi Link Social
+                          </button>
                         </div>
 
                         <div class="flex gap-2 pt-2 font-sans">
@@ -4567,40 +4597,45 @@
                     </div>
                   </div>
 
-                  <div class="space-y-1.5 pt-2 border-t border-slate-900">
-                    <span class="text-[9px] uppercase font-black text-slate-400 block mb-1 font-sans">Social Link 1 (con Scelta Colore Tasto)</span>
-                    <div class="flex items-center gap-2 font-sans">
-                      <input type="text" id="new-creator-social-label-1" placeholder="Telegram" class="w-1/4 px-2 py-1.5 bg-slate-900 border border-slate-850 rounded-md text-[10px] text-white outline-none" />
-                      <input type="text" id="new-creator-social-url-1" placeholder="URL del link" class="flex-grow px-2 py-1.5 bg-slate-900 border border-slate-850 rounded-md text-[10px] text-white outline-none font-mono" />
-                      <div class="flex flex-col items-center gap-0.5 shrink-0">
-                        <label class="text-[8px] text-slate-400 uppercase font-bold font-sans">Tasto</label>
-                        <input type="color" id="new-creator-social-color-1" value="#a855f7" class="w-7 h-7 bg-transparent border-0 rounded cursor-pointer" />
-                      </div>
-                    </div>
-                  </div>
+                  ${(() => {
+                    if (!window.newCreatorSocialsList) {
+                      window.newCreatorSocialsList = [
+                        { label: 'Telegram', url: '', color: '#a855f7' }
+                      ];
+                    }
+                    return '';
+                  })()}
 
-                  <div class="space-y-1.5">
-                    <span class="text-[9px] uppercase font-black text-slate-400 block mb-1 font-sans">Social Link 2 (con Scelta Colore Tasto)</span>
-                    <div class="flex items-center gap-2 font-sans">
-                      <input type="text" id="new-creator-social-label-2" placeholder="Instagram" class="w-1/4 px-2 py-1.5 bg-slate-900 border border-slate-850 rounded-md text-[10px] text-white outline-none" />
-                      <input type="text" id="new-creator-social-url-2" placeholder="URL" class="flex-grow px-2 py-1.5 bg-slate-900 border border-slate-850 rounded-md text-[10px] text-white outline-none font-mono" />
-                      <div class="flex flex-col items-center gap-0.5 shrink-0">
-                        <label class="text-[8px] text-slate-400 uppercase font-bold font-sans">Tasto</label>
-                        <input type="color" id="new-creator-social-color-2" value="#00f2fe" class="w-7 h-7 bg-transparent border-0 rounded cursor-pointer" />
+                  <div class="space-y-2 pt-2 border-t border-slate-900">
+                    <label class="text-[9px] uppercase font-black text-slate-400 font-sans block">Link Sociali Autore</label>
+                    
+                    ${(window.newCreatorSocialsList || []).map((s, index) => `
+                      <div class="space-y-1 p-2 bg-slate-900/60 rounded-xl border border-slate-850/60 font-sans">
+                        <div class="flex items-center justify-between mb-1">
+                          <span class="text-[8px] uppercase font-black text-slate-400">Social #${index + 1}</span>
+                          <button type="button" onclick="removeNewCreatorSocial(${index})" class="text-[8px] uppercase font-black text-red-400 hover:text-red-300 cursor-pointer">
+                            Rimuovi
+                          </button>
+                        </div>
+                        <div class="flex items-center gap-2">
+                          <input type="text" placeholder="Telegram" value="${s.label || ''}" 
+                            oninput="updateNewCreatorSocial(${index}, 'label', this.value)" 
+                            class="w-1/4 px-2 py-1.5 bg-slate-950 border border-slate-850 rounded text-[10px] text-white outline-none" />
+                          <input type="text" placeholder="URL" value="${s.url || ''}" 
+                            oninput="updateNewCreatorSocial(${index}, 'url', this.value)" 
+                            class="flex-grow px-2 py-1.5 bg-slate-950 border border-slate-850 rounded text-[10px] text-white outline-none font-mono" />
+                          <div class="flex flex-col items-center gap-0.5 shrink-0">
+                            <input type="color" value="${s.color || '#a855f7'}" 
+                              onchange="updateNewCreatorSocial(${index}, 'color', this.value)" 
+                              class="w-6 h-6 bg-transparent border-0 rounded cursor-pointer" />
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
+                    `).join('')}
 
-                  <div class="space-y-1.5">
-                    <span class="text-[9px] uppercase font-black text-slate-400 block mb-1 font-sans">Social Link 3 (con Scelta Colore Tasto)</span>
-                    <div class="flex items-center gap-2 font-sans">
-                      <input type="text" id="new-creator-social-label-3" placeholder="Sito Web" class="w-1/4 px-2 py-1.5 bg-slate-900 border border-slate-850 rounded-md text-[10px] text-white outline-none" />
-                      <input type="text" id="new-creator-social-url-3" placeholder="URL" class="flex-grow px-2 py-1.5 bg-slate-900 border border-slate-850 rounded-md text-[10px] text-white outline-none font-mono" />
-                      <div class="flex flex-col items-center gap-0.5 shrink-0">
-                        <label class="text-[8px] text-slate-400 uppercase font-bold font-sans">Tasto</label>
-                        <input type="color" id="new-creator-social-color-3" value="#39ff14" class="w-7 h-7 bg-transparent border-0 rounded cursor-pointer" />
-                      </div>
-                    </div>
+                    <button type="button" onclick="addNewCreatorSocial()" class="w-full py-1.5 bg-slate-900 hover:bg-slate-850 border border-slate-850 border-dashed rounded-lg text-[9px] font-bold text-fluo-purple flex items-center justify-center gap-1 cursor-pointer font-sans">
+                      + Aggiungi Link Social
+                    </button>
                   </div>
 
                   <button
@@ -5009,7 +5044,9 @@
                 ${getGuideAuthorsList(guide).map(author => `
                   <span class="inline-flex items-center gap-1.5 text-xs bg-slate-900/45 px-3 py-1.5 rounded-xl border border-slate-800/40 relative group/author">
                     <span style="color: ${author.color || '#cbd5e1'}; font-weight: 700;" class="tracking-wide">
-                      ${author.link ? `<a href="${author.link.startsWith('http') ? author.link : 'https://' + author.link}" target="_blank" rel="noopener noreferrer" class="hover:underline hover:text-fluo-purple transition-all" onclick="event.stopPropagation()">${author.name}</a>` : author.name}
+                      <button onclick="event.stopPropagation(); viewCreatorCard('${author.name.replace(/'/g, "\\'")}', '${(author.link || '').replace(/'/g, "\\'")}')" class="hover:underline hover:text-fluo-purple transition-all cursor-pointer font-bold text-left bg-transparent border-0 p-0 text-inherit outline-none">
+                        ${author.name}
+                      </button>
                     </span>
                     <span class="cursor-help inline-block text-[11px] select-none transition-transform hover:scale-125" style="color: ${author.diamondColor || '#26ff5e'};" title="${author.level || 'Nessun livello'}">
                       ◆
@@ -5152,7 +5189,9 @@
                             ${getGuideAuthorsList(guide).map(author => `
                               <span class="text-[10px] font-sans font-medium flex items-center gap-1 relative group/list-author-1" title="${author.level || 'Autore'}">
                                 <span style="color: ${author.color || '#cbd5e1'}">
-                                  ${author.link ? `<a href="${author.link.startsWith('http') ? author.link : 'https://' + author.link}" target="_blank" rel="noopener noreferrer" class="hover:underline hover:text-fluo-purple transition-all" onclick="event.stopPropagation()">${author.name}</a>` : author.name}
+                                  <button onclick="event.stopPropagation(); viewCreatorCard('${author.name.replace(/'/g, "\\'")}', '${(author.link || '').replace(/'/g, "\\'")}')" class="hover:underline hover:text-fluo-purple transition-all cursor-pointer font-bold text-left bg-transparent border-0 p-0 text-inherit outline-none font-sans">
+                                    ${author.name}
+                                  </button>
                                 </span>
                                 <span class="text-[9px] select-none" style="color: ${author.diamondColor || '#26ff5e'}">◆</span>
                                 <span class="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-1.5 py-0.5 bg-slate-950 border border-slate-850 text-[9px] text-slate-300 rounded opacity-0 group-hover/list-author-1:opacity-100 transition-opacity whitespace-nowrap shadow-md z-30 font-sans">
@@ -5375,7 +5414,9 @@
                                   ${getGuideAuthorsList(guide).map(author => `
                                     <span class="text-[10px] font-sans font-medium flex items-center gap-1 relative group/list-author-2" title="${author.level || 'Autore'}">
                                       <span style="color: ${author.color || '#cbd5e1'}">
-                                        ${author.link ? `<a href="${author.link.startsWith('http') ? author.link : 'https://' + author.link}" target="_blank" rel="noopener noreferrer" class="hover:underline hover:text-fluo-purple transition-all" onclick="event.stopPropagation()">${author.name}</a>` : author.name}
+                                        <button onclick="event.stopPropagation(); viewCreatorCard('${author.name.replace(/'/g, "\\'")}', '${(author.link || '').replace(/'/g, "\\'")}')" class="hover:underline hover:text-fluo-purple transition-all cursor-pointer font-bold text-left bg-transparent border-0 p-0 text-inherit outline-none font-sans">
+                                          ${author.name}
+                                        </button>
                                       </span>
                                       <span class="text-[9px] select-none" style="color: ${author.diamondColor || '#26ff5e'}">◆</span>
                                       <span class="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-1.5 py-0.5 bg-slate-950 border border-slate-850 text-[9px] text-slate-300 rounded opacity-0 group-hover/list-author-2:opacity-100 transition-opacity whitespace-nowrap shadow-md z-30 font-sans">
@@ -5463,7 +5504,7 @@
                 }).join('');
 
                 return `
-                  <div class="bg-space-card rounded-2xl border border-slate-800 p-6 shadow-xl flex flex-col justify-between space-y-4 hover:border-slate-700 transition-all duration-300">
+                  <div id="creator-card-${creator.id || creator.name.toLowerCase().replace(/\s+/g, '-')}" class="bg-space-card rounded-2xl border border-slate-800 p-6 shadow-xl flex flex-col justify-between space-y-4 hover:border-slate-700 transition-all duration-300">
                     <div class="space-y-4">
                       <!-- Profilo -->
                       <div class="flex items-center gap-4">
