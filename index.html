@@ -1495,6 +1495,52 @@
       renderApp();
     }
 
+    function compressAndProcessImage(file, callback) {
+      if (!file) return;
+      if (!file.type.startsWith('image/')) {
+        callback(null, null);
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const maxDim = 800; // max dimension 800px for high performance and excellent quality
+          let width = img.width;
+          let height = img.height;
+          
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+          
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          // Compress as JPEG with 0.75 quality - results in very small size (approx 30KB - 80KB) but high visual clarity
+          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.75);
+          callback(null, compressedBase64);
+        };
+        img.onerror = function() {
+          callback(new Error("Errore nel caricamento dell'immagine per la compressione"), null);
+        };
+        img.src = e.target.result;
+      };
+      reader.onerror = function() {
+        callback(new Error("Errore nella lettura del file"), null);
+      };
+      reader.readAsDataURL(file);
+    }
+
     function updateLogoSrc() {
       const container = document.getElementById('logo-container');
       if (container) {
@@ -1515,10 +1561,12 @@
         const file = e.target.files[0];
         if (!file) return;
 
-        showToast('Caricamento logo...', 'info');
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-          const base64Data = evt.target.result;
+        showToast('Compressione e caricamento logo...', 'info');
+        compressAndProcessImage(file, (err, base64Data) => {
+          if (err) {
+            showToast('Errore nella compressione logo: ' + err.message, 'info');
+            return;
+          }
           
           const updateLogoPath = (imageUrl) => {
             siteLogo = imageUrl;
@@ -1530,7 +1578,6 @@
             renderApp();
           };
 
-          
           fetch('./api/upload-image', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -1552,7 +1599,6 @@
             console.warn("Utilizzo del fallback locale Base64 per il logo:", err);
             showToast('Logo caricato in modalità locale (compatibile con GitHub)!', 'success');
             
-            
             let localImgs = [];
             try {
               const storedLocalImgs = localStorage.getItem('pianetasim-local-images');
@@ -1572,8 +1618,7 @@
             fetchUploadedImages();
             updateLogoPath(base64Data);
           });
-        };
-        reader.readAsDataURL(file);
+        });
       };
       fileInput.click();
     }
@@ -2234,10 +2279,12 @@
         const file = e.target.files[0];
         if (!file) return;
 
-        showToast('Caricamento immagine...', 'info');
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-          const base64Data = evt.target.result;
+        showToast('Compressione e caricamento immagine...', 'info');
+        compressAndProcessImage(file, (err, base64Data) => {
+          if (err) {
+            showToast('Errore nella compressione: ' + err.message, 'info');
+            return;
+          }
           
           const insertImageToTextarea = (imageUrl) => {
             if (textareaId) {
@@ -2253,7 +2300,6 @@
                 textarea.focus();
                 textarea.setSelectionRange(start + replacement.length, start + replacement.length);
                 
-                
                 const idx = parseInt(textareaId.replace('admin-paragraph-', ''));
                 if (!isNaN(idx)) {
                   updateEditingParagraph(idx, textarea.value);
@@ -2264,7 +2310,6 @@
             }
           };
 
-          
           fetch('./api/upload-image', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -2286,7 +2331,6 @@
             console.warn("Utilizzo del fallback locale Base64 (Hosting statico / GitHub):", err);
             showToast('Immagine caricata in modalità locale (compatibile con GitHub)!', 'success');
             
-            
             let localImgs = [];
             try {
               const storedLocalImgs = localStorage.getItem('pianetasim-local-images');
@@ -2306,8 +2350,7 @@
             fetchUploadedImages();
             insertImageToTextarea(base64Data);
           });
-        };
-        reader.readAsDataURL(file);
+        });
       };
       fileInput.click();
     }
@@ -2452,10 +2495,12 @@
         const file = e.target.files[0];
         if (!file) return;
 
-        showToast('Caricamento immagine profilo...', 'info');
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-          const base64Data = evt.target.result;
+        showToast('Compressione e caricamento immagine profilo...', 'info');
+        compressAndProcessImage(file, (err, base64Data) => {
+          if (err) {
+            showToast('Errore nella compressione: ' + err.message, 'info');
+            return;
+          }
           
           fetch('./api/upload-image', {
             method: 'POST',
@@ -2502,8 +2547,7 @@
               input.value = base64Data;
             }
           });
-        };
-        reader.readAsDataURL(file);
+        });
       };
       fileInput.click();
     }
@@ -4461,10 +4505,22 @@
                                 <input type="text" placeholder="URL" value="${s.url || ''}" 
                                   oninput="updateEditingSocial(${index}, 'url', this.value)" 
                                   class="flex-grow px-2 py-1.5 bg-slate-950 border border-slate-850 rounded text-[10px] text-white outline-none font-mono" />
-                                <div class="flex flex-col items-center gap-0.5 shrink-0">
-                                  <input type="color" value="${s.color || '#a855f7'}" 
-                                    onchange="updateEditingSocial(${index}, 'color', this.value)" 
-                                    class="w-6 h-6 bg-transparent border-0 rounded cursor-pointer" />
+                              </div>
+                              <div class="w-full mt-1.5 space-y-1">
+                                <span class="text-[8px] uppercase font-bold text-slate-500 block">Colore Icona (14 Colori):</span>
+                                <div class="flex flex-wrap gap-1">
+                                  ${textColorsList.map(hex => {
+                                    const isSelected = (s.color || '#a855f7').toLowerCase() === hex.toLowerCase();
+                                    const activeBorder = isSelected ? 'border-white scale-110 ring-1 ring-white/50' : 'border-slate-800 hover:scale-115';
+                                    return `
+                                      <button type="button"
+                                        onclick="updateEditingSocial(${index}, 'color', '${hex}'); renderApp();"
+                                        class="w-3.5 h-3.5 rounded border cursor-pointer transition-all ${activeBorder}"
+                                        style="background-color: ${hex};"
+                                        title="${hex}"
+                                      ></button>
+                                    `;
+                                  }).join('')}
                                 </div>
                               </div>
                             </div>
@@ -4624,10 +4680,22 @@
                           <input type="text" placeholder="URL" value="${s.url || ''}" 
                             oninput="updateNewCreatorSocial(${index}, 'url', this.value)" 
                             class="flex-grow px-2 py-1.5 bg-slate-950 border border-slate-850 rounded text-[10px] text-white outline-none font-mono" />
-                          <div class="flex flex-col items-center gap-0.5 shrink-0">
-                            <input type="color" value="${s.color || '#a855f7'}" 
-                              onchange="updateNewCreatorSocial(${index}, 'color', this.value)" 
-                              class="w-6 h-6 bg-transparent border-0 rounded cursor-pointer" />
+                        </div>
+                        <div class="w-full mt-1.5 space-y-1">
+                          <span class="text-[8px] uppercase font-bold text-slate-500 block">Colore Icona (14 Colori):</span>
+                          <div class="flex flex-wrap gap-1">
+                            ${textColorsList.map(hex => {
+                              const isSelected = (s.color || '#a855f7').toLowerCase() === hex.toLowerCase();
+                              const activeBorder = isSelected ? 'border-white scale-110 ring-1 ring-white/50' : 'border-slate-800 hover:scale-115';
+                              return `
+                                <button type="button"
+                                  onclick="updateNewCreatorSocial(${index}, 'color', '${hex}'); renderApp();"
+                                  class="w-3.5 h-3.5 rounded border cursor-pointer transition-all ${activeBorder}"
+                                  style="background-color: ${hex};"
+                                  title="${hex}"
+                                ></button>
+                              `;
+                            }).join('')}
                           </div>
                         </div>
                       </div>
@@ -4698,15 +4766,25 @@
                         </div>
 
                         <div class="space-y-1">
-                          <label class="text-[9px] uppercase font-black text-slate-400 block">Colore Etichetta</label>
-                          <div class="flex items-center gap-2">
-                            <input
-                              type="color"
-                              id="edit-authortag-color"
-                              value="${tagToEdit.color}"
-                              class="w-10 h-10 bg-transparent border-0 rounded cursor-pointer shrink-0"
-                            />
-                            <span class="text-[10px] text-slate-500 font-mono">${tagToEdit.color}</span>
+                          <label class="text-[9px] uppercase font-black text-slate-400 block">Colore Etichetta (14 Colori)</label>
+                          <input type="hidden" id="edit-authortag-color" value="${tagToEdit.color}" />
+                          <div class="flex flex-wrap gap-1 mt-1.5">
+                            ${textColorsList.map(hex => {
+                              const isSelected = tagToEdit.color.toLowerCase() === hex.toLowerCase();
+                              const activeBorder = isSelected ? 'border-white scale-110 ring-1 ring-white/50' : 'border-slate-800 hover:scale-115';
+                              return `
+                                <button type="button"
+                                  onclick="document.getElementById('edit-authortag-color').value = '${hex}'; const btns = this.parentNode.children; for(let b of btns) { b.classList.remove('border-white', 'scale-110', 'ring-1', 'ring-white/50'); b.classList.add('border-slate-800'); }; this.classList.remove('border-slate-800'); this.classList.add('border-white', 'scale-110', 'ring-1', 'ring-white/50'); document.getElementById('edit-authortag-color-preview').style.backgroundColor = '${hex}'; document.getElementById('edit-authortag-color-preview-text').textContent = '${hex}';"
+                                  class="w-4 h-4 rounded border cursor-pointer transition-all ${activeBorder}"
+                                  style="background-color: ${hex};"
+                                  title="${hex}"
+                                ></button>
+                              `;
+                            }).join('')}
+                          </div>
+                          <div class="flex items-center gap-2 mt-1">
+                            <span id="edit-authortag-color-preview" class="w-4 h-4 rounded border border-slate-700" style="background-color: ${tagToEdit.color}"></span>
+                            <span id="edit-authortag-color-preview-text" class="text-[10px] text-slate-400 font-mono">${tagToEdit.color}</span>
                           </div>
                         </div>
 
@@ -4777,15 +4855,25 @@
                   </div>
 
                   <div class="space-y-1">
-                    <label class="text-[9px] uppercase font-black text-slate-400 block">Colore Etichetta</label>
-                    <div class="flex items-center gap-2">
-                      <input
-                        type="color"
-                        id="new-authortag-color"
-                        value="#ff007f"
-                        class="w-10 h-10 bg-transparent border-0 rounded cursor-pointer shrink-0"
-                      />
-                      <span class="text-[10px] text-slate-500 font-mono">Scegli un colore</span>
+                    <label class="text-[9px] uppercase font-black text-slate-400 block">Colore Etichetta (14 Colori)</label>
+                    <input type="hidden" id="new-authortag-color" value="#ff007f" />
+                    <div class="flex flex-wrap gap-1 mt-1.5">
+                      ${textColorsList.map(hex => {
+                        const isSelected = '#ff007f' === hex.toLowerCase();
+                        const activeBorder = isSelected ? 'border-white scale-110 ring-1 ring-white/50' : 'border-slate-800 hover:scale-115';
+                        return `
+                          <button type="button"
+                            onclick="document.getElementById('new-authortag-color').value = '${hex}'; const btns = this.parentNode.children; for(let b of btns) { b.classList.remove('border-white', 'scale-110', 'ring-1', 'ring-white/50'); b.classList.add('border-slate-800'); }; this.classList.remove('border-slate-800'); this.classList.add('border-white', 'scale-110', 'ring-1', 'ring-white/50'); document.getElementById('new-authortag-color-preview').style.backgroundColor = '${hex}'; document.getElementById('new-authortag-color-preview-text').textContent = '${hex}';"
+                            class="w-4 h-4 rounded border cursor-pointer transition-all ${activeBorder}"
+                            style="background-color: ${hex};"
+                            title="${hex}"
+                          ></button>
+                        `;
+                      }).join('')}
+                    </div>
+                    <div class="flex items-center gap-2 mt-1">
+                      <span id="new-authortag-color-preview" class="w-4 h-4 rounded border border-slate-700" style="background-color: #ff007f"></span>
+                      <span id="new-authortag-color-preview-text" class="text-[10px] text-slate-400 font-mono">#ff007f</span>
                     </div>
                   </div>
 
@@ -6236,33 +6324,47 @@
                                  />
                                </div>
                                <div class="space-y-1">
-                                 <label class="text-[10px] font-bold text-slate-400 uppercase">Colore del Pulsante</label>
-                                 <div class="flex items-center gap-2 mt-1">
-                                   <input
-                                     type="color"
-                                     value="${b.buttonColor || '#b026ff'}"
-                                     oninput="updateEditingBlockButtonColor(${idx}, this.value)"
-                                     class="w-8 h-8 rounded border border-slate-800 bg-transparent cursor-pointer p-0"
-                                   />
-                                   <span class="text-[11px] text-slate-300 font-mono">${b.buttonColor || '#b026ff'}</span>
+                                 <label class="text-[10px] font-bold text-slate-400 uppercase block">Colore del Pulsante (14 Colori)</label>
+                                 <div class="flex flex-wrap gap-1 mt-1">
+                                   ${textColorsList.map(hex => {
+                                     const isSelected = (b.buttonColor || '#b026ff').toLowerCase() === hex.toLowerCase();
+                                     const activeBorder = isSelected ? 'border-white scale-110 ring-1 ring-white/50' : 'border-slate-800 hover:scale-115';
+                                     return `
+                                       <button type="button"
+                                         onclick="updateEditingBlockButtonColor(${idx}, '${hex}'); renderApp();"
+                                         class="w-3.5 h-3.5 rounded border cursor-pointer transition-all ${activeBorder}"
+                                         style="background-color: ${hex};"
+                                         title="${hex}"
+                                       ></button>
+                                     `;
+                                   }).join('')}
                                  </div>
+                                 <div class="text-[10px] text-slate-400 font-mono mt-1">Selezionato: <span class="text-white">${b.buttonColor || '#b026ff'}</span></div>
                                </div>
                              </div>
                            ` : ''}
 
                            ${type === 'riquadro' ? `
                              <div class="flex flex-wrap items-center gap-4 bg-slate-900/60 p-2.5 rounded-xl border border-slate-900 text-[11px] text-slate-300 font-sans">
-                               <div class="flex items-center gap-2">
-                                 <span class="font-bold text-[10px] uppercase text-slate-400">Colore Bordo & Sfondo Riquadro:</span>
-                                 <input
-                                   type="color"
-                                   value="${b.borderColor || '#3b82f6'}"
-                                   oninput="updateEditingBlockBorderColor(${idx}, this.value)"
-                                   class="w-6 h-6 rounded border border-slate-800 bg-transparent cursor-pointer p-0"
-                                 />
-                                 <span class="text-[10px] text-slate-400 font-mono">${b.borderColor || '#3b82f6'}</span>
+                               <div class="space-y-1 w-full">
+                                 <span class="font-bold text-[10px] uppercase text-slate-400 block">Colore Bordo & Sfondo Riquadro (14 Colori):</span>
+                                 <div class="flex flex-wrap gap-1 mt-1">
+                                   ${textColorsList.map(hex => {
+                                     const isSelected = (b.borderColor || '#3b82f6').toLowerCase() === hex.toLowerCase();
+                                     const activeBorder = isSelected ? 'border-white scale-110 ring-1 ring-white/50' : 'border-slate-800 hover:scale-115';
+                                     return `
+                                       <button type="button"
+                                         onclick="updateEditingBlockBorderColor(${idx}, '${hex}'); renderApp();"
+                                         class="w-3.5 h-3.5 rounded border cursor-pointer transition-all ${activeBorder}"
+                                         style="background-color: ${hex};"
+                                         title="${hex}"
+                                       ></button>
+                                     `;
+                                   }).join('')}
+                                 </div>
+                                 <div class="text-[10px] text-slate-400 font-mono mt-1">Selezionato: <span class="text-white">${b.borderColor || '#3b82f6'}</span></div>
                                </div>
-                               <span class="text-slate-400 ml-auto italic text-[10px] bg-slate-950/40 px-2 py-1 rounded border border-slate-900/60">💡 Tip: Puoi scrivere all'interno del riquadro usando il box di testo sottostante.</span>
+                               <span class="text-slate-400 italic text-[10px] bg-slate-950/40 px-2 py-1 rounded border border-slate-900/60">💡 Tip: Puoi scrivere all'interno del riquadro usando il box di testo sottostante.</span>
                              </div>
                            ` : ''}
 
@@ -6283,14 +6385,23 @@
 
                           ${type === 'heading1' || type === 'heading2' || type === 'heading3' ? `
                             <div class="flex flex-wrap items-center gap-4 bg-slate-900/60 p-2.5 rounded-xl border border-slate-900 text-xs text-slate-300 font-sans">
-                              <div class="flex items-center gap-2">
-                                <span class="font-bold text-[10px] uppercase text-slate-400">Colore Titolo:</span>
-                                <input
-                                  type="color"
-                                  value="${b.color || '#ffffff'}"
-                                  oninput="updateEditingBlockColor(${idx}, this.value)"
-                                  class="w-6 h-6 rounded border border-slate-800 bg-transparent cursor-pointer p-0"
-                                />
+                              <div class="space-y-1 w-full">
+                                <span class="font-bold text-[10px] uppercase text-slate-400 block font-sans">Colore Titolo (14 Colori):</span>
+                                <div class="flex flex-wrap gap-1 mt-1">
+                                  ${textColorsList.map(hex => {
+                                    const isSelected = (b.color || '#ffffff').toLowerCase() === hex.toLowerCase();
+                                    const activeBorder = isSelected ? 'border-white scale-110 ring-1 ring-white/50' : 'border-slate-800 hover:scale-115';
+                                    return `
+                                      <button type="button"
+                                        onclick="updateEditingBlockColor(${idx}, '${hex}'); renderApp();"
+                                        class="w-3.5 h-3.5 rounded border cursor-pointer transition-all ${activeBorder}"
+                                        style="background-color: ${hex};"
+                                        title="${hex}"
+                                      ></button>
+                                    `;
+                                  }).join('')}
+                                </div>
+                                <div class="text-[10px] text-slate-400 font-mono mt-1 font-sans">Selezionato: <span class="text-white">${b.color || '#ffffff'}</span></div>
                               </div>
                               <label class="inline-flex items-center gap-1.5 cursor-pointer">
                                 <input
