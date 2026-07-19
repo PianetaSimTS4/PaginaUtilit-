@@ -616,6 +616,18 @@
     let guides = [];
     let categories = [];
     let creators = [];
+    let authorTags = [];
+
+    function getDefaultAuthorTags() {
+      return [
+        { name: "Amministratore", color: "#ff007f" },
+        { name: "Traduttore", color: "#b026ff" },
+        { name: "Guide Creator", color: "#38bdf8" },
+        { name: "Moderatore", color: "#eab308" },
+        { name: "Supporto Tecnico", color: "#22c55e" },
+        { name: "CC Expert", color: "#a855f7" }
+      ];
+    }
 
     function getDefaultCreators() {
       return [
@@ -787,7 +799,11 @@
     }
 
     function getTagStyles(tagName) {
-      if (!tagName) return getCategoryStyles('viola');
+      if (!tagName) return { colorCode: '#b026ff' };
+      const found = authorTags.find(t => t.name.toLowerCase() === tagName.toLowerCase());
+      if (found) {
+        return { colorCode: found.color };
+      }
       let hash = 0;
       for (let i = 0; i < tagName.length; i++) {
         hash = tagName.charCodeAt(i) + ((hash << 5) - hash);
@@ -1158,6 +1174,7 @@
         siteCustom: false,
         categories: false,
         team: false,
+        authorTags: false,
         media: false,
         guidesList: true
       };
@@ -1170,6 +1187,7 @@
           siteCustom: false,
           categories: false,
           team: false,
+          authorTags: false,
           media: false,
           guidesList: true
         };
@@ -1864,6 +1882,7 @@
             categories = parsed.categories;
             guides = parsed.guides;
             creators = parsed.creators || getDefaultCreators();
+            authorTags = parsed.authorTags || getDefaultAuthorTags();
             migrateAllGuidesTips();
             if (parsed.adminPassword) {
               adminPassword = parsed.adminPassword;
@@ -1900,6 +1919,7 @@
             categories = data.categories;
             guides = data.guides;
             creators = data.creators || getDefaultCreators();
+            authorTags = data.authorTags || getDefaultAuthorTags();
             if (data.adminPassword) adminPassword = data.adminPassword;
             if (data.siteTitle) siteTitle = data.siteTitle;
             if (data.siteDescription) siteDescription = data.siteDescription;
@@ -1915,6 +1935,7 @@
             ];
             guides = data;
             creators = getDefaultCreators();
+            authorTags = getDefaultAuthorTags();
           }
           migrateAllGuidesTips();
           updateLogoSrc();
@@ -2492,7 +2513,6 @@
       const roleInput = document.getElementById('new-creator-role');
       const avatarInput = document.getElementById('new-creator-avatar');
       const descInput = document.getElementById('new-creator-desc');
-      const tagsInput = document.getElementById('new-creator-tags');
 
       if (!nameInput || !nameInput.value.trim()) {
         showToast('Il nome del creatore è obbligatorio!', 'info');
@@ -2504,18 +2524,28 @@
       const avatar = avatarInput ? avatarInput.value.trim() : '';
       const description = descInput ? descInput.value.trim() : '';
       
-      const tags = tagsInput && tagsInput.value.trim() 
-        ? tagsInput.value.split(',').map(t => t.trim()).filter(Boolean)
-        : ['Autore'];
+      const tags = [];
+      authorTags.forEach(t => {
+        const id = `new-creator-tag-${t.name.replace(/\s+/g, '-')}`;
+        const cb = document.getElementById(id);
+        if (cb && cb.checked) {
+          tags.push(t.name);
+        }
+      });
+      if (tags.length === 0) {
+        tags.push('Autore');
+      }
 
       const socials = [];
       for (let i = 1; i <= 3; i++) {
         const lblInput = document.getElementById(`new-creator-social-label-${i}`);
         const urlInput = document.getElementById(`new-creator-social-url-${i}`);
+        const colInput = document.getElementById(`new-creator-social-color-${i}`);
         if (lblInput && urlInput && lblInput.value.trim() && urlInput.value.trim()) {
           socials.push({
             label: lblInput.value.trim(),
-            url: urlInput.value.trim()
+            url: urlInput.value.trim(),
+            color: colInput ? colInput.value : '#0f172a'
           });
         }
       }
@@ -2544,7 +2574,6 @@
       const roleInput = document.getElementById('edit-creator-role');
       const avatarInput = document.getElementById('edit-creator-avatar');
       const descInput = document.getElementById('edit-creator-desc');
-      const tagsInput = document.getElementById('edit-creator-tags');
 
       if (!nameInput || !nameInput.value.trim()) {
         showToast('Il nome del creatore è obbligatorio!', 'info');
@@ -2562,18 +2591,28 @@
       const avatar = avatarInput ? avatarInput.value.trim() : '';
       const description = descInput ? descInput.value.trim() : '';
       
-      const tags = tagsInput && tagsInput.value.trim() 
-        ? tagsInput.value.split(',').map(t => t.trim()).filter(Boolean)
-        : ['Autore'];
+      const tags = [];
+      authorTags.forEach(t => {
+        const id = `edit-creator-tag-${t.name.replace(/\s+/g, '-')}`;
+        const cb = document.getElementById(id);
+        if (cb && cb.checked) {
+          tags.push(t.name);
+        }
+      });
+      if (tags.length === 0) {
+        tags.push('Autore');
+      }
 
       const socials = [];
       for (let i = 1; i <= 3; i++) {
         const lblInput = document.getElementById(`edit-creator-social-label-${i}`);
         const urlInput = document.getElementById(`edit-creator-social-url-${i}`);
+        const colInput = document.getElementById(`edit-creator-social-color-${i}`);
         if (lblInput && urlInput && lblInput.value.trim() && urlInput.value.trim()) {
           socials.push({
             label: lblInput.value.trim(),
-            url: urlInput.value.trim()
+            url: urlInput.value.trim(),
+            color: colInput ? colInput.value : '#0f172a'
           });
         }
       }
@@ -2611,6 +2650,74 @@
       saveAllGuidesToServer();
       renderApp();
       showToast('Autore rimosso dal team con successo.', 'success');
+    }
+
+    window.editingAuthorTagName = null;
+
+    function handleAddAuthorTag() {
+      const nameInput = document.getElementById('new-authortag-name');
+      const colorInput = document.getElementById('new-authortag-color');
+      if (!nameInput || !nameInput.value.trim()) {
+        showToast('Il nome del tag è obbligatorio!', 'info');
+        return;
+      }
+      const name = nameInput.value.trim();
+      if (authorTags.some(t => t.name.toLowerCase() === name.toLowerCase())) {
+        showToast('Questo tag esiste già!', 'info');
+        return;
+      }
+      const color = colorInput ? colorInput.value : '#ff007f';
+      authorTags.push({ name, color });
+      persistDataLocally();
+      saveAllGuidesToServer();
+      renderApp();
+      showToast(`Tag "${name}" creato con successo!`, 'success');
+    }
+
+    function handleSaveAuthorTagEdit() {
+      if (!window.editingAuthorTagName) return;
+      const nameInput = document.getElementById('edit-authortag-name');
+      const colorInput = document.getElementById('edit-authortag-color');
+      if (!nameInput || !nameInput.value.trim()) {
+        showToast('Il nome del tag è obbligatorio!', 'info');
+        return;
+      }
+      const newName = nameInput.value.trim();
+      const newColor = colorInput ? colorInput.value : '#ff007f';
+
+      const tagIdx = authorTags.findIndex(t => t.name.toLowerCase() === window.editingAuthorTagName.toLowerCase());
+      if (tagIdx === -1) {
+        showToast('Tag non trovato!', 'error');
+        return;
+      }
+
+      const oldName = authorTags[tagIdx].name;
+      creators.forEach(c => {
+        if (c.tags) {
+          c.tags = c.tags.map(tag => tag.toLowerCase() === oldName.toLowerCase() ? newName : tag);
+        }
+      });
+
+      authorTags[tagIdx] = { name: newName, color: newColor };
+      window.editingAuthorTagName = null;
+      persistDataLocally();
+      saveAllGuidesToServer();
+      renderApp();
+      showToast('Tag aggiornato con successo!', 'success');
+    }
+
+    function handleDeleteAuthorTag(tagName) {
+      if (!confirm(`Sei sicuro di voler eliminare il tag "${tagName}"? I membri del team non avranno più questo tag associato.`)) return;
+      authorTags = authorTags.filter(t => t.name.toLowerCase() !== tagName.toLowerCase());
+      creators.forEach(c => {
+        if (c.tags) {
+          c.tags = c.tags.filter(tag => tag.toLowerCase() !== tagName.toLowerCase());
+        }
+      });
+      persistDataLocally();
+      saveAllGuidesToServer();
+      renderApp();
+      showToast('Tag eliminato con successo!', 'success');
     }
 
     
@@ -3246,6 +3353,7 @@
         categories: categories,
         guides: guides,
         creators: creators,
+        authorTags: authorTags,
         adminPassword: adminPassword,
         siteTitle: siteTitle,
         siteDescription: siteDescription,
@@ -3268,6 +3376,7 @@
             categories = data.categories;
             guides = data.guides;
             creators = data.creators || getDefaultCreators();
+            authorTags = data.authorTags || getDefaultAuthorTags();
             adminPassword = data.adminPassword || 'sticazzi';
             if (data.siteTitle) siteTitle = data.siteTitle;
             if (data.siteDescription) siteDescription = data.siteDescription;
@@ -3282,6 +3391,7 @@
             ];
             guides = data;
             creators = getDefaultCreators();
+            authorTags = getDefaultAuthorTags();
           }
           updateLogoSrc();
           renderApp();
@@ -3426,6 +3536,7 @@
         categories: categories,
         guides: guides,
         creators: creators,
+        authorTags: authorTags,
         adminPassword: adminPassword,
         siteTitle: siteTitle,
         siteDescription: siteDescription,
@@ -3458,6 +3569,7 @@
         categories: categories,
         guides: guides,
         creators: creators,
+        authorTags: authorTags,
         adminPassword: adminPassword,
         siteTitle: siteTitle,
         siteDescription: siteDescription,
@@ -3491,11 +3603,13 @@
             let importedGuides = null;
             let importedCategories = null;
             let importedCreators = null;
+            let importedAuthorTags = null;
             
             if (data.guides && data.categories) {
               importedGuides = data.guides;
               importedCategories = data.categories;
               importedCreators = data.creators || getDefaultCreators();
+              importedAuthorTags = data.authorTags || getDefaultAuthorTags();
               if (data.adminPassword) adminPassword = data.adminPassword;
               if (data.siteTitle) siteTitle = data.siteTitle;
               if (data.siteDescription) siteDescription = data.siteDescription;
@@ -3510,6 +3624,7 @@
                 { id: 'espansioni', label: 'Espansioni', color: 'rose' }
               ];
               importedCreators = getDefaultCreators();
+              importedAuthorTags = getDefaultAuthorTags();
             } else {
               throw new Error("Formato del file JSON non riconosciuto. Deve contenere un oggetto con 'guides' e 'categories' o un array di guide.");
             }
@@ -3517,6 +3632,7 @@
             categories = importedCategories;
             guides = importedGuides;
             creators = importedCreators;
+            authorTags = importedAuthorTags;
             migrateAllGuidesTips();
             
             persistDataLocally();
@@ -3525,6 +3641,7 @@
               categories: categories,
               guides: guides,
               creators: creators,
+              authorTags: authorTags,
               adminPassword: adminPassword,
               siteTitle: siteTitle,
               siteDescription: siteDescription,
@@ -4207,23 +4324,25 @@
               if (window.editingCreatorId) {
                 const cToEdit = creators.find(c => c.id === window.editingCreatorId);
                 if (cToEdit) {
-                  const tagsStr = (cToEdit.tags || []).join(', ');
                   const s1_lbl = cToEdit.socials?.[0]?.label || '';
                   const s1_url = cToEdit.socials?.[0]?.url || '';
+                  const s1_color = cToEdit.socials?.[0]?.color || '#a855f7';
                   const s2_lbl = cToEdit.socials?.[1]?.label || '';
                   const s2_url = cToEdit.socials?.[1]?.url || '';
+                  const s2_color = cToEdit.socials?.[1]?.color || '#00f2fe';
                   const s3_lbl = cToEdit.socials?.[2]?.label || '';
                   const s3_url = cToEdit.socials?.[2]?.url || '';
+                  const s3_color = cToEdit.socials?.[2]?.color || '#39ff14';
 
                   return `
                     <div class="p-4 bg-slate-950/40 border border-slate-850 rounded-2xl space-y-3">
-                      <h4 class="text-xs font-black text-white flex items-center gap-1.5 uppercase tracking-wider">
+                      <h4 class="text-xs font-black text-white flex items-center gap-1.5 uppercase tracking-wider font-sans">
                         <i data-lucide="edit-3" class="text-fluo-purple w-4 h-4 font-sans"></i>
                         Modifica Autore: ${cToEdit.name}
                       </h4>
                       <div class="space-y-3 text-xs">
                         <div class="space-y-1">
-                          <label class="text-[9px] uppercase font-black text-slate-400">Nome Staff</label>
+                          <label class="text-[9px] uppercase font-black text-slate-400 font-sans">Nome Staff</label>
                           <input
                             type="text"
                             id="edit-creator-name"
@@ -4244,7 +4363,7 @@
                         </div>
 
                         <div class="space-y-1">
-                          <label class="text-[9px] uppercase font-black text-slate-400">Immagine Profilo</label>
+                          <label class="text-[9px] uppercase font-black text-slate-400 font-sans">Immagine Profilo</label>
                           <div class="flex gap-2">
                             <input
                               type="text"
@@ -4264,7 +4383,7 @@
                         </div>
 
                         <div class="space-y-1">
-                          <label class="text-[9px] uppercase font-black text-slate-400">Biografia Breve</label>
+                          <label class="text-[9px] uppercase font-black text-slate-400 font-sans">Biografia Breve</label>
                           <textarea
                             id="edit-creator-desc"
                             rows="3"
@@ -4274,38 +4393,55 @@
                         </div>
 
                         <div class="space-y-1">
-                          <label class="text-[9px] uppercase font-black text-slate-400">Tag / Etichette (Separati da virgola)</label>
-                          <input
-                            type="text"
-                            id="edit-creator-tags"
-                            value="${tagsStr}"
-                            placeholder="es: Amministratore, Traduttore, Creator"
-                            class="w-full px-3 py-1.5 bg-slate-900 border border-slate-850 rounded-lg text-white outline-none focus:ring-1 focus:ring-fluo-purple font-sans"
-                          />
-                          <p class="text-[9px] text-slate-500 font-sans mt-0.5">I tag diventeranno automaticamente bellissime etichette colorate senza hashtag!</p>
+                          <label class="text-[9px] uppercase font-black text-slate-400 font-sans">Tag dell'Autore (Seleziona solo tra quelli esistenti)</label>
+                          <div class="grid grid-cols-2 gap-2 bg-slate-900 p-3 rounded-xl border border-slate-850 max-h-[140px] overflow-y-auto scrollbar-none">
+                            ${authorTags.map(t => {
+                              const isChecked = (cToEdit.tags || []).includes(t.name) ? 'checked' : '';
+                              return `
+                                <label class="flex items-center gap-2 text-[11px] text-slate-300 hover:text-white cursor-pointer select-none font-sans">
+                                  <input type="checkbox" id="edit-creator-tag-${t.name.replace(/\s+/g, '-')}" ${isChecked} class="rounded border-slate-850 text-fluo-purple focus:ring-fluo-purple bg-slate-950 w-3.5 h-3.5" />
+                                  <span class="inline-block w-2.5 h-2.5 rounded-full shrink-0" style="background-color: ${t.color}"></span>
+                                  <span class="truncate">${t.name}</span>
+                                </label>
+                              `;
+                            }).join('')}
+                          </div>
+                          <p class="text-[9px] text-slate-500 font-sans mt-1">Puoi aggiungere o modificare questi tag nella sezione "Gestione Tag Autori" qui sotto!</p>
                         </div>
 
                         <div class="space-y-1.5 pt-2 border-t border-slate-900">
-                          <span class="text-[9px] uppercase font-black text-slate-400 block mb-1">Social Link 1</span>
-                          <div class="grid grid-cols-3 gap-1 font-sans">
-                            <input type="text" id="edit-creator-social-label-1" value="${s1_lbl}" placeholder="Telegram" class="col-span-1 px-2 py-1 bg-slate-900 border border-slate-850 rounded-md text-[10px] text-white outline-none" />
-                            <input type="text" id="edit-creator-social-url-1" value="${s1_url}" placeholder="URL del link" class="col-span-2 px-2 py-1 bg-slate-900 border border-slate-850 rounded-md text-[10px] text-white outline-none font-mono" />
+                          <span class="text-[9px] uppercase font-black text-slate-400 block mb-1 font-sans">Social Link 1 (con Scelta Colore Tasto)</span>
+                          <div class="flex items-center gap-2 font-sans">
+                            <input type="text" id="edit-creator-social-label-1" value="${s1_lbl}" placeholder="Telegram" class="w-1/4 px-2 py-1.5 bg-slate-900 border border-slate-850 rounded-md text-[10px] text-white outline-none" />
+                            <input type="text" id="edit-creator-social-url-1" value="${s1_url}" placeholder="URL del link" class="flex-grow px-2 py-1.5 bg-slate-900 border border-slate-850 rounded-md text-[10px] text-white outline-none font-mono" />
+                            <div class="flex flex-col items-center gap-0.5 shrink-0">
+                              <label class="text-[8px] text-slate-400 uppercase font-bold font-sans">Tasto</label>
+                              <input type="color" id="edit-creator-social-color-1" value="${s1_color}" class="w-7 h-7 bg-transparent border-0 rounded cursor-pointer" />
+                            </div>
                           </div>
                         </div>
 
                         <div class="space-y-1.5">
-                          <span class="text-[9px] uppercase font-black text-slate-400 block mb-1 font-sans">Social Link 2</span>
-                          <div class="grid grid-cols-3 gap-1">
-                            <input type="text" id="edit-creator-social-label-2" value="${s2_lbl}" placeholder="Instagram" class="col-span-1 px-2 py-1 bg-slate-900 border border-slate-850 rounded-md text-[10px] text-white outline-none" />
-                            <input type="text" id="edit-creator-social-url-2" value="${s2_url}" placeholder="URL" class="col-span-2 px-2 py-1 bg-slate-900 border border-slate-850 rounded-md text-[10px] text-white outline-none font-mono" />
+                          <span class="text-[9px] uppercase font-black text-slate-400 block mb-1 font-sans">Social Link 2 (con Scelta Colore Tasto)</span>
+                          <div class="flex items-center gap-2 font-sans">
+                            <input type="text" id="edit-creator-social-label-2" value="${s2_lbl}" placeholder="Instagram" class="w-1/4 px-2 py-1.5 bg-slate-900 border border-slate-850 rounded-md text-[10px] text-white outline-none" />
+                            <input type="text" id="edit-creator-social-url-2" value="${s2_url}" placeholder="URL" class="flex-grow px-2 py-1.5 bg-slate-900 border border-slate-850 rounded-md text-[10px] text-white outline-none font-mono" />
+                            <div class="flex flex-col items-center gap-0.5 shrink-0">
+                              <label class="text-[8px] text-slate-400 uppercase font-bold font-sans">Tasto</label>
+                              <input type="color" id="edit-creator-social-color-2" value="${s2_color}" class="w-7 h-7 bg-transparent border-0 rounded cursor-pointer" />
+                            </div>
                           </div>
                         </div>
 
                         <div class="space-y-1.5">
-                          <span class="text-[9px] uppercase font-black text-slate-400 block mb-1 font-sans">Social Link 3</span>
-                          <div class="grid grid-cols-3 gap-1">
-                            <input type="text" id="edit-creator-social-label-3" value="${s3_lbl}" placeholder="Sito Web" class="col-span-1 px-2 py-1 bg-slate-900 border border-slate-850 rounded-md text-[10px] text-white outline-none" />
-                            <input type="text" id="edit-creator-social-url-3" value="${s3_url}" placeholder="URL" class="col-span-2 px-2 py-1 bg-slate-900 border border-slate-850 rounded-md text-[10px] text-white outline-none font-mono" />
+                          <span class="text-[9px] uppercase font-black text-slate-400 block mb-1 font-sans">Social Link 3 (con Scelta Colore Tasto)</span>
+                          <div class="flex items-center gap-2 font-sans">
+                            <input type="text" id="edit-creator-social-label-3" value="${s3_lbl}" placeholder="Sito Web" class="w-1/4 px-2 py-1.5 bg-slate-900 border border-slate-850 rounded-md text-[10px] text-white outline-none" />
+                            <input type="text" id="edit-creator-social-url-3" value="${s3_url}" placeholder="URL" class="flex-grow px-2 py-1.5 bg-slate-900 border border-slate-850 rounded-md text-[10px] text-white outline-none font-mono" />
+                            <div class="flex flex-col items-center gap-0.5 shrink-0">
+                              <label class="text-[8px] text-slate-400 uppercase font-bold font-sans">Tasto</label>
+                              <input type="color" id="edit-creator-social-color-3" value="${s3_color}" class="w-7 h-7 bg-transparent border-0 rounded cursor-pointer" />
+                            </div>
                           </div>
                         </div>
 
@@ -4409,7 +4545,7 @@
                   </div>
 
                   <div class="space-y-1">
-                    <label class="text-[9px] uppercase font-black text-slate-400">Biografia Breve</label>
+                    <label class="text-[9px] uppercase font-black text-slate-400 font-sans">Biografia Breve</label>
                     <textarea
                       id="new-creator-desc"
                       rows="2"
@@ -4419,20 +4555,210 @@
                   </div>
 
                   <div class="space-y-1">
-                    <label class="text-[9px] uppercase font-black text-slate-400">Tag (Separati da virgola)</label>
-                    <input
-                      type="text"
-                      id="new-creator-tags"
-                      placeholder="es: Traduttore, Admin, Moderatore"
-                      class="w-full px-3 py-1.5 bg-slate-900 border border-slate-850 rounded-lg text-white outline-none focus:ring-1 focus:ring-fluo-purple font-sans"
-                    />
+                    <label class="text-[9px] uppercase font-black text-slate-400 font-sans">Seleziona i Tag dell'Autore (Seleziona solo tra quelli esistenti)</label>
+                    <div class="grid grid-cols-2 gap-2 bg-slate-900 p-3 rounded-xl border border-slate-850 max-h-[140px] overflow-y-auto scrollbar-none">
+                      ${authorTags.map(t => `
+                        <label class="flex items-center gap-2 text-[11px] text-slate-300 hover:text-white cursor-pointer select-none font-sans">
+                          <input type="checkbox" id="new-creator-tag-${t.name.replace(/\s+/g, '-')}" class="rounded border-slate-850 text-fluo-purple focus:ring-fluo-purple bg-slate-950 w-3.5 h-3.5" />
+                          <span class="inline-block w-2.5 h-2.5 rounded-full shrink-0" style="background-color: ${t.color}"></span>
+                          <span class="truncate">${t.name}</span>
+                        </label>
+                      `).join('')}
+                    </div>
+                  </div>
+
+                  <div class="space-y-1.5 pt-2 border-t border-slate-900">
+                    <span class="text-[9px] uppercase font-black text-slate-400 block mb-1 font-sans">Social Link 1 (con Scelta Colore Tasto)</span>
+                    <div class="flex items-center gap-2 font-sans">
+                      <input type="text" id="new-creator-social-label-1" placeholder="Telegram" class="w-1/4 px-2 py-1.5 bg-slate-900 border border-slate-850 rounded-md text-[10px] text-white outline-none" />
+                      <input type="text" id="new-creator-social-url-1" placeholder="URL del link" class="flex-grow px-2 py-1.5 bg-slate-900 border border-slate-850 rounded-md text-[10px] text-white outline-none font-mono" />
+                      <div class="flex flex-col items-center gap-0.5 shrink-0">
+                        <label class="text-[8px] text-slate-400 uppercase font-bold font-sans">Tasto</label>
+                        <input type="color" id="new-creator-social-color-1" value="#a855f7" class="w-7 h-7 bg-transparent border-0 rounded cursor-pointer" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="space-y-1.5">
+                    <span class="text-[9px] uppercase font-black text-slate-400 block mb-1 font-sans">Social Link 2 (con Scelta Colore Tasto)</span>
+                    <div class="flex items-center gap-2 font-sans">
+                      <input type="text" id="new-creator-social-label-2" placeholder="Instagram" class="w-1/4 px-2 py-1.5 bg-slate-900 border border-slate-850 rounded-md text-[10px] text-white outline-none" />
+                      <input type="text" id="new-creator-social-url-2" placeholder="URL" class="flex-grow px-2 py-1.5 bg-slate-900 border border-slate-850 rounded-md text-[10px] text-white outline-none font-mono" />
+                      <div class="flex flex-col items-center gap-0.5 shrink-0">
+                        <label class="text-[8px] text-slate-400 uppercase font-bold font-sans">Tasto</label>
+                        <input type="color" id="new-creator-social-color-2" value="#00f2fe" class="w-7 h-7 bg-transparent border-0 rounded cursor-pointer" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="space-y-1.5">
+                    <span class="text-[9px] uppercase font-black text-slate-400 block mb-1 font-sans">Social Link 3 (con Scelta Colore Tasto)</span>
+                    <div class="flex items-center gap-2 font-sans">
+                      <input type="text" id="new-creator-social-label-3" placeholder="Sito Web" class="w-1/4 px-2 py-1.5 bg-slate-900 border border-slate-850 rounded-md text-[10px] text-white outline-none" />
+                      <input type="text" id="new-creator-social-url-3" placeholder="URL" class="flex-grow px-2 py-1.5 bg-slate-900 border border-slate-850 rounded-md text-[10px] text-white outline-none font-mono" />
+                      <div class="flex flex-col items-center gap-0.5 shrink-0">
+                        <label class="text-[8px] text-slate-400 uppercase font-bold font-sans">Tasto</label>
+                        <input type="color" id="new-creator-social-color-3" value="#39ff14" class="w-7 h-7 bg-transparent border-0 rounded cursor-pointer" />
+                      </div>
+                    </div>
                   </div>
 
                   <button
                     onclick="handleAddCreator()"
-                    class="w-full py-2 bg-fluo-purple text-white font-black rounded-lg text-xs cursor-pointer hover:bg-opacity-90 shadow-md font-sans"
+                    class="w-full py-2 bg-fluo-purple text-white font-black rounded-lg text-xs cursor-pointer hover:bg-opacity-90 shadow-md font-sans mt-2"
                   >
                     Aggiungi al Team
+                  </button>
+                </div>
+              </div>
+            ` : ''}
+          </div>
+        </div>
+      `;
+    }
+
+    // 4b. GESTIONE TAG AUTORI (authorTags)
+    function renderAdminSectionAuthorTags() {
+      const isOpen = window.adminSectionsOpen.authorTags;
+      return `
+        <div class="bg-space-card rounded-3xl border border-slate-800 shadow-xl overflow-hidden transition-all duration-300 mt-4">
+          <button
+            onclick="toggleAdminSection('authorTags')"
+            class="w-full px-5 py-4 flex items-center justify-between bg-slate-900/40 hover:bg-slate-900/80 border-b border-slate-800/60 text-left transition-all group"
+          >
+            <div class="flex items-center gap-3">
+              <div class="p-2 bg-pink-500/10 text-fluo-rose rounded-xl group-hover:scale-110 transition-transform">
+                <i data-lucide="tag" class="w-4 h-4 font-sans"></i>
+              </div>
+              <div>
+                <h3 class="text-xs font-black text-white uppercase tracking-wider font-sans">4b. Gestione Tag Autori</h3>
+                <p class="text-[10px] text-slate-400 font-sans">Modifica i tag degli autori (nome e colore personalizzato).</p>
+              </div>
+            </div>
+            <div class="text-slate-400 group-hover:text-white transition-colors">
+              <i data-lucide="${isOpen ? 'chevron-up' : 'chevron-down'}" class="w-4 h-4"></i>
+            </div>
+          </button>
+          
+          <div class="${isOpen ? 'p-5 space-y-4 animate-fade-in' : 'hidden'} transition-all duration-300">
+            ${(() => {
+              if (window.editingAuthorTagName) {
+                const tagToEdit = authorTags.find(t => t.name.toLowerCase() === window.editingAuthorTagName.toLowerCase());
+                if (tagToEdit) {
+                  return `
+                    <div class="p-4 bg-slate-950/40 border border-slate-850 rounded-2xl space-y-3 font-sans">
+                      <h4 class="text-xs font-black text-white flex items-center gap-1.5 uppercase tracking-wider">
+                        <i data-lucide="edit-3" class="text-fluo-rose w-4 h-4"></i>
+                        Modifica Tag: ${tagToEdit.name}
+                      </h4>
+                      <div class="space-y-3 text-xs">
+                        <div class="space-y-1">
+                          <label class="text-[9px] uppercase font-black text-slate-400">Nome Tag</label>
+                          <input
+                            type="text"
+                            id="edit-authortag-name"
+                            value="${tagToEdit.name}"
+                            class="w-full px-3 py-1.5 bg-slate-900 border border-slate-850 rounded-lg text-white outline-none focus:ring-1 focus:ring-fluo-rose"
+                          />
+                        </div>
+
+                        <div class="space-y-1">
+                          <label class="text-[9px] uppercase font-black text-slate-400 block">Colore Etichetta</label>
+                          <div class="flex items-center gap-2">
+                            <input
+                              type="color"
+                              id="edit-authortag-color"
+                              value="${tagToEdit.color}"
+                              class="w-10 h-10 bg-transparent border-0 rounded cursor-pointer shrink-0"
+                            />
+                            <span class="text-[10px] text-slate-500 font-mono">${tagToEdit.color}</span>
+                          </div>
+                        </div>
+
+                        <div class="flex gap-2 pt-1 font-sans">
+                          <button
+                            onclick="handleSaveAuthorTagEdit()"
+                            class="flex-grow py-2 bg-pink-600 text-white font-black rounded-lg text-xs cursor-pointer hover:bg-pink-500 shadow"
+                          >
+                            Salva Tag
+                          </button>
+                          <button
+                            onclick="window.editingAuthorTagName = null; renderApp();"
+                            class="px-3 py-2 bg-slate-900 hover:bg-slate-850 border border-slate-850 text-slate-400 rounded-lg text-xs font-bold cursor-pointer"
+                          >
+                            Annulla
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  `;
+                }
+              }
+              return '';
+            })()}
+
+            <div class="space-y-2">
+              <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest font-sans">Tag Autori Esistenti:</h4>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-[220px] overflow-y-auto scrollbar-none pr-1">
+                ${authorTags.map(t => `
+                  <div class="flex items-center justify-between p-2 bg-slate-950/40 rounded-xl border border-slate-900/60 hover:border-slate-850 transition-colors">
+                    <span class="text-xs text-slate-200 font-bold flex items-center gap-2">
+                      <span class="w-3 h-3 rounded-full shrink-0" style="background-color: ${t.color}"></span>
+                      ${t.name}
+                    </span>
+                    <div class="flex items-center gap-1 shrink-0">
+                      <button
+                        onclick="window.editingAuthorTagName = '${t.name.replace(/'/g, "\\'")}'; renderApp();"
+                        class="p-1 text-fluo-rose hover:text-pink-400 hover:bg-slate-900/40 rounded transition-colors"
+                        title="Modifica questo tag"
+                      >
+                        <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                      </button>
+                      <button
+                        onclick="handleDeleteAuthorTag('${t.name.replace(/'/g, "\\'")}')"
+                        class="p-1 text-red-500 hover:text-red-400 hover:bg-red-500/10 rounded transition-colors"
+                        title="Elimina questo tag"
+                      >
+                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                      </button>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+
+            ${!window.editingAuthorTagName ? `
+              <div class="pt-3 border-t border-slate-900/80 space-y-3 text-xs font-sans">
+                <h5 class="font-black uppercase tracking-wider text-slate-300 font-sans">+ Crea Nuovo Tag</h5>
+                <div class="space-y-3">
+                  <div class="space-y-1">
+                    <label class="text-[9px] uppercase font-black text-slate-400">Nome Tag</label>
+                    <input
+                      type="text"
+                      id="new-authortag-name"
+                      placeholder="es: CC Expert"
+                      class="w-full px-3 py-1.5 bg-slate-900 border border-slate-850 rounded-lg text-white outline-none focus:ring-1 focus:ring-fluo-rose"
+                    />
+                  </div>
+
+                  <div class="space-y-1">
+                    <label class="text-[9px] uppercase font-black text-slate-400 block">Colore Etichetta</label>
+                    <div class="flex items-center gap-2">
+                      <input
+                        type="color"
+                        id="new-authortag-color"
+                        value="#ff007f"
+                        class="w-10 h-10 bg-transparent border-0 rounded cursor-pointer shrink-0"
+                      />
+                      <span class="text-[10px] text-slate-500 font-mono">Scegli un colore</span>
+                    </div>
+                  </div>
+
+                  <button
+                    onclick="handleAddAuthorTag()"
+                    class="w-full py-2 bg-pink-600 text-white font-black rounded-lg text-xs cursor-pointer hover:bg-pink-500 shadow-md font-sans mt-1"
+                  >
+                    + Crea Tag
                   </button>
                 </div>
               </div>
@@ -4939,7 +5265,7 @@
                   Chi siamo?
                 </h2>
                 <p class="text-[11px] text-slate-300 leading-relaxed font-sans">
-                  Incontra le creatrici e le traduttrici delle nostre guide! Scopri chi lavora dietro le quinte di PianetaSim.
+                  Scopri chi c'è dietro a Pianeta e la sua Community
                 </p>
                 <button
                   onclick="navigateToCreators()"
@@ -5093,7 +5419,7 @@
                   <i data-lucide="users" class="w-6 h-6 text-fluo-purple"></i>
                   Chi Siamo
                 </h1>
-                <p class="text-xs text-slate-400">Incontra le menti creative e le traduttrici dietro alle guide di PianetaSim.</p>
+                <p class="text-xs text-slate-400">Scopri chi c'è dietro a Pianeta e la sua Community</p>
               </div>
               <button
                 onclick="navigateToGuidesList()"
@@ -5108,17 +5434,23 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               ${creators.map(creator => {
                 const avatarSrc = creator.avatar || 'images/logo.png';
-                const socialsHtml = (creator.socials || []).map(social => `
-                  <a
-                    href="${social.url.startsWith('http') ? social.url : 'https://' + social.url}"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="inline-flex items-center gap-1.5 px-3 py-2 bg-slate-900 hover:bg-slate-850 text-slate-200 hover:text-fluo-purple border border-slate-800/80 hover:border-fluo-purple/30 text-xs font-bold rounded-xl transition-all"
-                  >
-                    <span>${social.label}</span>
-                    <i data-lucide="external-link" class="w-3.5 h-3.5 text-slate-400"></i>
-                  </a>
-                `).join('');
+                const socialsHtml = (creator.socials || []).map(social => {
+                  const sColor = social.color || '#a855f7';
+                  return `
+                    <a
+                      href="${social.url.startsWith('http') ? social.url : 'https://' + social.url}"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold rounded-xl border transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
+                      style="background-color: ${sColor}15; border-color: ${sColor}40; color: ${sColor};"
+                      onmouseover="this.style.backgroundColor='${sColor}2a'; this.style.borderColor='${sColor}'; this.style.color='#ffffff';"
+                      onmouseout="this.style.backgroundColor='${sColor}15'; this.style.borderColor='${sColor}40'; this.style.color='${sColor}';"
+                    >
+                      <span>${social.label}</span>
+                      <i data-lucide="external-link" class="w-3.5 h-3.5" style="color: ${sColor}"></i>
+                    </a>
+                  `;
+                }).join('');
 
                 const tagsHtml = (creator.tags || []).map(tag => {
                   const s = getTagStyles(tag);
@@ -6155,6 +6487,7 @@
               <div class="lg:col-span-7 space-y-6">
                 ${renderAdminSectionGuidesList()}
                 ${renderAdminSectionTeam()}
+                ${renderAdminSectionAuthorTags()}
               </div>
 
             </div>
