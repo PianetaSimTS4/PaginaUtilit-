@@ -1537,7 +1537,7 @@
         
         // Defer CPU-heavy canvas scaling & encoding to keep the UI responsive and render the toast
         setTimeout(() => {
-          const maxDim = 800; // max dimension 800px for high performance and excellent quality
+          const maxDim = 1200; // max dimension 1200px for high performance and excellent readability
           let width = img.width;
           let height = img.height;
           
@@ -1557,8 +1557,8 @@
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, width, height);
           
-          // Compress as JPEG with 0.75 quality - results in very small size (approx 30KB - 80KB) but high visual clarity
-          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.75);
+          // Compress as JPEG with 0.85 quality - maintains very high text readability and fine details while keeping size compact
+          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.85);
           callback(null, compressedBase64);
         }, 50);
       };
