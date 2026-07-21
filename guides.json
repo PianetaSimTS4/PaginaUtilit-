@@ -281,51 +281,89 @@
       "authorLevel": "Admin"
     },
     {
-      "id": "guide-mods-cc",
-      "title": "Consectetur Adipiscing Elit",
-      "description": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+      "id": "guida-passopasso-mods",
+      "title": "COME INSTALLARE LE MOD PASSO PASSO",
+      "description": "Questa guida è fatta per chi è non è pratico nell'uso del pc. Con immagini, attraverso un esempio pratico, verrai guidato all'installazione delle mod.",
       "category": "mod_cc",
       "tags": [
-        "consectetur",
-        "adipiscing",
-        "elit",
-        "lorem"
+        "mod",
+        "installazione",
+        "immagini"
       ],
       "content": [
         {
           "type": "paragraph",
-          "value": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+          "value": "Ipotizziamo di voler scaricare la Talents & Weaknesses di Lumpinou."
+        },
+        {
+          "type": "didascalia",
+          "value": "[Tra le Mod vengono comprese anche Pose e Animazioni quindi il procedimento per scaricarle è lo stesso/simile]"
+        },
+        {
+          "type": "list",
+          "value": "Scarica le mod:",
+          "listType": "number"
         },
         {
           "type": "paragraph",
-          "value": "Mauris dictum tincidunt nisl, nec maximus libero consequat quis. Aliquam interdum urna sit amet massa pharetra, non vulputate libero tristique. Curabitur vel leo id erat auctor gravida in eget nulla."
+          "value": "A fondo pagina si trova il download della mod, lo clicco e scarico. \nIn questo caso, la mod richiede la Lumpinou’s Toolbox, scarico anche quella.\nAvrò quindi due tipi di file: ts4script e zip."
         },
         {
           "type": "paragraph",
-          "value": "Nullam hendrerit mi eu finibus feugiat. Vestibulum pretium scelerisque elit, id maximus diam feugiat ac. Curabitur accumsan, justo nec feugiat porttitor, ipsum diam facilisis nulla, sit amet rhoncus ante nisl vel tellus."
+          "value": "**Come procedere con il file zip:**"
         },
         {
           "type": "paragraph",
-          "value": "Quisque sodales scelerisque turpis, id condimentum dolor imperdiet vitae. Duis feugiat, elit quis aliquet varius, massa eros mattis ex, sed dictum nisl leo a mi. Aliquam gravida eleifend nibh rhoncus dictum."
+          "value": "2. **Trascina** i file sul **Desktop** ed **Estrai** la cartella Zip",
+          "listType": "number"
+        },
+        {
+          "type": "didascalia",
+          "value": "(La cartella Zip ha questa icona ↴)"
         },
         {
           "type": "paragraph",
-          "value": "Sed rhoncus lectus magna, quis facilisis leo tincidunt vitae. Nunc at pretium ante. Etiam quis egestas tellus. Curabitur lobortis mi sit amet mi iaculis, vel scelerisque magna congue. Cras eget tempor enim."
+          "value": "Clicca **Estrai**"
         },
         {
-          "type": "tip",
-          "value": "Excepteur sint occaecat cupidatat non proident, sunt in culpa."
+          "type": "paragraph",
+          "value": "Ora ci sono tre file:"
         },
         {
-          "type": "tip",
-          "value": "Aliquam interdum urna sit amet massa pharetra, non vulputate."
+          "type": "paragraph",
+          "value": "3. **Elimina** la Cartella Zip, non serve più",
+          "listType": "number"
         },
         {
-          "type": "tip",
-          "value": "Curabitur vel leo id erat auctor gravida in eget nulla."
+          "type": "paragraph",
+          "value": "4. La cartella “Lumpinou_TalentsAndWeaknesses” è la mod e dovrai spostarla in: Documenti > Electronic Arts > The Sims 4 > Mods [vedi il punto N per immagin]",
+          "listType": "number"
         }
       ],
-      "tips": []
+      "tips": [],
+      "categories": [
+        "mod_cc",
+        "guide-passo-passo"
+      ],
+      "authors": [
+        {
+          "name": "LadyPsycoTrilly",
+          "color": "#b026ff",
+          "diamondColor": "#ffffff",
+          "level": "Admin"
+        },
+        {
+          "name": "Sha",
+          "color": "#38bdf8",
+          "diamondColor": "#ffffff",
+          "level": "Admin"
+        }
+      ],
+      "authorName": "LadyPsycoTrilly",
+      "authorColor": "#b026ff",
+      "authorDiamondColor": "#ffffff",
+      "authorLevel": "Admin",
+      "authorLink": ""
     },
     {
       "id": "guide-occulti-vampiri",
