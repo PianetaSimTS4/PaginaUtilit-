@@ -47,12 +47,12 @@
   
   <script>
     var logoPaths = [
-      'images/logo.png',
       '/images/logo.png',
-      'logo.png',
+      'images/logo.png',
       '/logo.png',
-      'public/images/logo.png',
-      '/public/images/logo.png'
+      'logo.png',
+      '/public/images/logo.png',
+      'public/images/logo.png'
     ];
     var logoIndex = 0;
 
@@ -65,8 +65,14 @@
         console.warn("Logo path failed, trying fallback: " + logoPaths[logoIndex]);
         img.src = logoPaths[logoIndex];
       } else {
-        console.error("All logo paths failed to load!");
-        img.classList.add('hidden');
+        console.warn("All logo paths failed to load. Retrying from main logo.png in 2 seconds...");
+        logoIndex = 0;
+        setTimeout(function() {
+          var currentImg = document.getElementById('logo-img');
+          if (currentImg) {
+            currentImg.src = "/images/logo.png?t=" + Date.now();
+          }
+        }, 2000);
       }
     }
 
@@ -275,7 +281,7 @@
       
       <div class="flex items-center gap-3 cursor-pointer select-none" onclick="switchTab('guides')">
         <div id="logo-container" class="h-10 w-10 shrink-0 flex items-center justify-center">
-          <img id="logo-img" src="images/logo.png" alt="PianetaSim Logo" class="h-10 w-10 object-contain shrink-0" onerror="tryNextLogo()">
+          <img id="logo-img" src="/images/logo.png" alt="PianetaSim Logo" class="h-10 w-10 object-contain shrink-0" onerror="tryNextLogo()">
         </div>
         <div id="logo-fallback" class="flex items-center">
           <div class="font-black text-xl tracking-wider text-white m-0">PIANETA<span class="animate-sim-color">SIM</span></div>
@@ -1445,7 +1451,7 @@
     let adminPassword = 'sticazzi';
     let siteTitle = '<span class="animate-title-color">Guide & Utilità</span>';
     let siteDescription = 'Benvenuto nella sezione delle guide di PianetaSim! Impara nuove tecniche di costruzione, installa mod tradotte e copia trucchi con un solo click.';
-    let siteLogo = 'images/logo.png';
+    let siteLogo = '/images/logo.png?v=10';
     let alertPopup = {
       enabled: false,
       title: 'Avviso Importante',
@@ -1503,52 +1509,50 @@
         return;
       }
       
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const img = new Image();
-        img.onload = function() {
-          // Defer CPU-heavy canvas scaling & encoding to keep the UI responsive and render the toast
-          setTimeout(() => {
-            const maxDim = 800; // max dimension 800px for high performance and excellent quality
-            let width = img.width;
-            let height = img.height;
-            
-            if (width > maxDim || height > maxDim) {
-              if (width > height) {
-                height = Math.round((height * maxDim) / width);
-                width = maxDim;
-              } else {
-                width = Math.round((width * maxDim) / height);
-                height = maxDim;
-              }
+      const objectUrl = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = function() {
+        // Revoke the object URL immediately once the image is loaded into memory to free browser resources
+        URL.revokeObjectURL(objectUrl);
+        
+        // Defer CPU-heavy canvas scaling & encoding to keep the UI responsive and render the toast
+        setTimeout(() => {
+          const maxDim = 800; // max dimension 800px for high performance and excellent quality
+          let width = img.width;
+          let height = img.height;
+          
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
             }
-            
-            const canvas = document.createElement('canvas');
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, width, height);
-            
-            // Compress as JPEG with 0.75 quality - results in very small size (approx 30KB - 80KB) but high visual clarity
-            const compressedBase64 = canvas.toDataURL('image/jpeg', 0.75);
-            callback(null, compressedBase64);
-          }, 50);
-        };
-        img.onerror = function() {
-          callback(new Error("Errore nel caricamento dell'immagine per la compressione"), null);
-        };
-        img.src = e.target.result;
+          }
+          
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          // Compress as JPEG with 0.75 quality - results in very small size (approx 30KB - 80KB) but high visual clarity
+          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.75);
+          callback(null, compressedBase64);
+        }, 50);
       };
-      reader.onerror = function() {
-        callback(new Error("Errore nella lettura del file"), null);
+      img.onerror = function() {
+        URL.revokeObjectURL(objectUrl);
+        callback(new Error("Errore nel caricamento dell'immagine per la compressione"), null);
       };
-      reader.readAsDataURL(file);
+      img.src = objectUrl;
     }
 
     function updateLogoSrc() {
       const container = document.getElementById('logo-container');
       if (container) {
-        const logoUrl = siteLogo || 'images/logo.png';
+        const logoUrl = siteLogo || '/images/logo.png?v=10';
         container.innerHTML = `<img id="logo-img" src="${logoUrl}" alt="PianetaSim Logo" class="h-10 w-10 object-contain shrink-0" onerror="tryNextLogo()" />`;
         logoIndex = 0;
         if (!logoPaths.includes(logoUrl)) {
@@ -1617,6 +1621,9 @@
               url: base64Data,
               local: true
             });
+            if (localImgs.length > 12) {
+              localImgs = localImgs.slice(0, 12);
+            }
             localStorage.setItem('pianetasim-local-images', JSON.stringify(localImgs));
             
             fetchUploadedImages();
@@ -1925,16 +1932,24 @@
     
     document.addEventListener('DOMContentLoaded', () => {
       
-      const cachedData = localStorage.getItem('pianetasim-custom-data');
-      if (cachedData) {
-        try {
-          const parsed = JSON.parse(cachedData);
-          if (parsed.siteTitle && (parsed.siteTitle.includes('svg') || parsed.siteTitle.includes('pin-glow') || parsed.siteTitle.includes('Tutto quello che'))) {
-            parsed.siteTitle = '<span class="animate-title-color">Guide & Utilità</span>';
-            localStorage.setItem('pianetasim-custom-data', JSON.stringify(parsed));
-          }
-        } catch(e) {}
-      }
+       const cachedData = localStorage.getItem('pianetasim-custom-data');
+       if (cachedData) {
+         try {
+           const parsed = JSON.parse(cachedData);
+           let updated = false;
+           if (parsed.siteTitle && (parsed.siteTitle.includes('svg') || parsed.siteTitle.includes('pin-glow') || parsed.siteTitle.includes('Tutto quello che'))) {
+             parsed.siteTitle = '<span class="animate-title-color">Guide & Utilità</span>';
+             updated = true;
+           }
+           if (parsed.siteLogo && parsed.siteLogo.includes('logo.png') && !parsed.siteLogo.includes('?v=10')) {
+             parsed.siteLogo = '/images/logo.png?v=10';
+             updated = true;
+           }
+           if (updated) {
+             localStorage.setItem('pianetasim-custom-data', JSON.stringify(parsed));
+           }
+         } catch(e) {}
+       }
 
       updateLogoSrc();
       updateBookmarksCountBanner();
@@ -1962,8 +1977,8 @@
             if (parsed.alertPopup) alertPopup = parsed.alertPopup;
             if (parsed.siteLogo) {
               siteLogo = parsed.siteLogo;
-              if (siteLogo === '/images/logo.png') {
-                siteLogo = 'images/logo.png';
+              if (siteLogo.includes('logo.png')) {
+                siteLogo = '/images/logo.png?v=10';
               }
             }
             updateLogoSrc();
@@ -1989,7 +2004,12 @@
             if (data.siteTitle) siteTitle = data.siteTitle;
             if (data.siteDescription) siteDescription = data.siteDescription;
             if (data.alertPopup) alertPopup = data.alertPopup;
-            if (data.siteLogo) siteLogo = data.siteLogo;
+            if (data.siteLogo) {
+              siteLogo = data.siteLogo;
+              if (siteLogo.includes('logo.png') && !siteLogo.includes('?v=')) {
+                siteLogo = '/images/logo.png?v=10';
+              }
+            }
           } else {
             
             categories = [
@@ -2365,6 +2385,9 @@
               url: base64Data,
               local: true
             });
+            if (localImgs.length > 12) {
+              localImgs = localImgs.slice(0, 12);
+            }
             localStorage.setItem('pianetasim-local-images', JSON.stringify(localImgs));
             
             fetchUploadedImages();
@@ -2912,7 +2935,7 @@
       if (linkText) {
         linkText.textContent = `${window.location.origin}${window.location.pathname}#guida-${window.editingGuide.id}`;
       }
-      updateLivePreview();
+      updateLivePreviewDebounced();
 
       if (field === 'authorColor') {
         pushHistoryImmediate();
@@ -3007,6 +3030,14 @@
       lazyCreateIcons();
     }
 
+    let livePreviewTimeout = null;
+    function updateLivePreviewDebounced() {
+      if (livePreviewTimeout) clearTimeout(livePreviewTimeout);
+      livePreviewTimeout = setTimeout(() => {
+        updateLivePreview();
+      }, 150); // 150ms delay provides perfectly smooth real-time typing without lagging or freezing the page
+    }
+
     function getGuideAuthorsList(guide) {
       if (!guide) return [];
       if (guide.authors && Array.isArray(guide.authors) && guide.authors.length > 0) {
@@ -3051,7 +3082,7 @@
         window.editingGuide.authors[idx][field] = value;
       }
       syncLegacyAuthorFields();
-      updateLivePreview();
+      updateLivePreviewDebounced();
       pushHistoryDebounced();
     }
 
@@ -3091,7 +3122,7 @@
       window.editingGuide.tags = val.split(',')
         .map(t => t.trim().toLowerCase())
         .filter(t => t.length > 0);
-      updateLivePreview();
+      updateLivePreviewDebounced();
       pushHistoryDebounced();
     }
 
@@ -3172,7 +3203,7 @@
           block.value = val;
         }
       }
-      updateLivePreview();
+      updateLivePreviewDebounced();
       pushHistoryDebounced();
     }
 
@@ -3224,7 +3255,7 @@
       if (block && block.type === 'button') {
         block.buttonUrl = buttonUrl;
       }
-      updateLivePreview();
+      updateLivePreviewDebounced();
       pushHistoryDebounced();
     }
 
@@ -3234,7 +3265,7 @@
       if (block && block.type === 'button') {
         block.buttonColor = color;
       }
-      updateLivePreview();
+      updateLivePreviewDebounced();
       pushHistoryDebounced();
     }
 
@@ -3244,7 +3275,7 @@
       if (block) {
         block.height = height;
       }
-      updateLivePreview();
+      updateLivePreviewDebounced();
       pushHistoryDebounced();
     }
 
@@ -3284,7 +3315,7 @@
       if (block && block.type === 'riquadro') {
         block.borderColor = color;
       }
-      updateLivePreview();
+      updateLivePreviewDebounced();
       pushHistoryDebounced();
     }
 
@@ -3294,7 +3325,7 @@
       if (block) {
         block.color = color;
       }
-      updateLivePreview();
+      updateLivePreviewDebounced();
       pushHistoryDebounced();
     }
 
@@ -3334,7 +3365,7 @@
       if (block && block.type === 'divider') {
         block.dividerColor = color;
       }
-      updateLivePreview();
+      updateLivePreviewDebounced();
       pushHistoryDebounced();
     }
 
@@ -3355,7 +3386,7 @@
       if (block) {
         block.lineColor = color;
       }
-      updateLivePreview();
+      updateLivePreviewDebounced();
       pushHistoryDebounced();
       renderApp();
     }
@@ -3417,7 +3448,7 @@
     function updateEditingTip(idx, val) {
       if (!window.editingGuide) return;
       window.editingGuide.tips[idx] = val;
-      updateLivePreview();
+      updateLivePreviewDebounced();
       pushHistoryDebounced();
     }
 
