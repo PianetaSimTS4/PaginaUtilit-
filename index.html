@@ -619,6 +619,26 @@
       };
     }
     
+    // Robust fetch wrapper that handles absolute vs relative routing in iframe sandbox environments
+    function robustFetch(url, options = {}) {
+      let primaryUrl = url;
+      if (url.startsWith('/')) {
+        primaryUrl = '.' + url; // Convert to relative './api/...' or './guides.json'
+      }
+      return fetch(primaryUrl, options)
+        .then(res => {
+          if (!res.ok) {
+            const fallbackUrl = url.startsWith('/') ? url : '/' + url;
+            return fetch(fallbackUrl, options);
+          }
+          return res;
+        })
+        .catch(err => {
+          const fallbackUrl = url.startsWith('/') ? url : '/' + url;
+          return fetch(fallbackUrl, options);
+        });
+    }
+    
     let guides = [];
     let categories = [];
     let creators = [];
@@ -1586,7 +1606,7 @@
             renderApp();
           };
 
-          fetch('/api/upload-image', {
+          robustFetch('/api/upload-image', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -1636,7 +1656,7 @@
 
     
     function fetchUploadedImages() {
-      fetch('/api/list-images')
+      robustFetch('/api/list-images')
         .then(res => res.json())
         .then(data => {
           if (data.status === 'success') {
@@ -1694,7 +1714,7 @@
       localStorage.setItem('pianetasim-local-images', JSON.stringify(localImgs));
 
       
-      fetch('/api/delete-image', {
+      robustFetch('/api/delete-image', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ filename: filename })
@@ -1992,7 +2012,7 @@
       }
       
       
-      fetch('/guides.json?t=' + Date.now())
+      robustFetch('/guides.json?t=' + Date.now())
         .then(response => response.json())
         .then(data => {
           if (data.categories && data.guides) {
@@ -2353,7 +2373,7 @@
             }
           };
 
-          fetch('/api/upload-image', {
+          robustFetch('/api/upload-image', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -2548,7 +2568,7 @@
             return;
           }
           
-          fetch('/api/upload-image', {
+          robustFetch('/api/upload-image', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -3499,7 +3519,7 @@
       showToast("Dati locali azzerati! Ricaricamento...", "info");
       
       setTimeout(() => {
-        fetch('/guides.json?t=' + Date.now())
+        robustFetch('/guides.json?t=' + Date.now())
           .then(response => response.json())
           .then(data => {
             if (data.categories && data.guides) {
@@ -3707,7 +3727,7 @@
         alertPopup: alertPopup
       };
       
-      fetch('/api/save-guides', {
+      robustFetch('/api/save-guides', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -3812,7 +3832,7 @@
               siteLogo: siteLogo
             };
             
-            fetch('/api/save-guides', {
+            robustFetch('/api/save-guides', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
