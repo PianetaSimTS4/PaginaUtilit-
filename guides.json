@@ -68,9 +68,9 @@
         {
           "type": "divider",
           "value": "",
-          "separatorType": "spacer",
-          "dividerType": "standard",
-          "height": "20"
+          "separatorType": "line",
+          "dividerType": "color",
+          "dividerColor": "#26ff5e"
         },
         {
           "type": "heading3",
@@ -431,8 +431,7 @@
       "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
       "tags": [
         "Amministratore",
-        "Traduttore",
-        "Guide Creator"
+        "Traduttore"
       ],
       "socials": [
         {
@@ -450,7 +449,6 @@
       "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
       "tags": [
         "Traduttore",
-        "Moderatore",
         "Supporto Tecnico"
       ],
       "socials": [
