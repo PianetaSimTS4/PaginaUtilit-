@@ -76,8 +76,16 @@ app.post('/api/upload-image', (req, res) => {
       throw new Error('Missing filename or base64Data');
     }
     
-    const safeFilename = path.basename(filename);
-    
+    const ext = path.extname(filename);
+    const nameWithoutExt = path.basename(filename, ext);
+    const safeFilename = nameWithoutExt
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '') // remove accents
+      .replace(/[^a-z0-9]/g, '_')     // replace non-alphanumeric with underscore
+      .replace(/_+/g, '_')            // collapse multiple underscores
+      .replace(/^_+|_+$/g, '')        // trim leading/trailing underscores
+      + ext.toLowerCase();
     
     const imagesDir = path.join(process.cwd(), 'images');
     if (!fs.existsSync(imagesDir)) {
@@ -112,7 +120,7 @@ app.post('/api/upload-image', (req, res) => {
     res.json({
       status: 'success',
       message: 'Image uploaded successfully',
-      url: 'images/' + safeFilename
+      url: '/images/' + safeFilename
     });
   } catch (error) {
     res.status(400).json({ status: 'error', message: error.message });
