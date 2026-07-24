@@ -662,12 +662,11 @@
 
     function getDefaultAuthorTags() {
       return [
-        { name: "Amministratore", color: "#ff007f" },
+        { name: "Admin", color: "#38bdf8" },
+        { name: "Creatrice", color: "#ffffff" },
         { name: "Traduttore", color: "#b026ff" },
-        { name: "Guide Creator", color: "#38bdf8" },
         { name: "Moderatore", color: "#eab308" },
-        { name: "Supporto Tecnico", color: "#22c55e" },
-        { name: "CC Expert", color: "#a855f7" }
+        { name: "Supporto Tecnico", color: "#22c55e" }
       ];
     }
 
@@ -679,7 +678,7 @@
           role: "Amministratrice & Traduttrice",
           avatar: "images/logo.png",
           description: "Appassionata di The Sims da sempre. Cura il sito di PianetaSim, traduce le mod più popolari e scrive guide dettagliate sul gameplay e la personalizzazione del gioco.",
-          tags: ["Amministratore", "Traduttore", "Guide Creator"],
+          tags: ["Admin", "Traduttore", "Creatrice"],
           socials: [
             { label: "Telegram", url: "https://t.me/TheSims4ItaliaPianetaSim" },
             { label: "Sito Web", url: "https://pianetasimts.github.io/PianetaSim/index.html" }
@@ -691,7 +690,7 @@
           role: "Moderatrice & Aiuto Supporto",
           avatar: "images/logo.png",
           description: "Esperta di installazioni e risoluzione problemi delle Mod e del Custom Content. Fornisce supporto tecnico tempestivo e guide passo-passo semplici per tutti.",
-          tags: ["Moderatore", "Supporto Tecnico", "CC Expert"],
+          tags: ["Moderatore", "Supporto Tecnico", "Traduttore"],
           socials: [
             { label: "Telegram", url: "https://t.me/TheSims4ItaliaPianetaSim" }
           ]
@@ -1970,6 +1969,7 @@
             guides = parsed.guides;
             creators = parsed.creators || getDefaultCreators();
             authorTags = parsed.authorTags || getDefaultAuthorTags();
+            normalizeAuthorTagsAndCreators();
             migrateAllGuidesTips();
             if (parsed.adminPassword) {
               adminPassword = parsed.adminPassword;
@@ -2007,6 +2007,7 @@
             guides = data.guides;
             creators = data.creators || getDefaultCreators();
             authorTags = data.authorTags || getDefaultAuthorTags();
+            normalizeAuthorTagsAndCreators();
             if (data.adminPassword) adminPassword = data.adminPassword;
             if (data.siteTitle) siteTitle = data.siteTitle;
             if (data.siteDescription) siteDescription = data.siteDescription;
@@ -2028,6 +2029,7 @@
             guides = data;
             creators = getDefaultCreators();
             authorTags = getDefaultAuthorTags();
+            normalizeAuthorTagsAndCreators();
           }
           migrateAllGuidesTips();
           updateLogoSrc();
@@ -2710,17 +2712,71 @@
       }
     };
 
-    function ensureAllCreatorTagsInAuthorTags() {
-      if (!Array.isArray(authorTags)) authorTags = getDefaultAuthorTags();
-      const defaultColors = ['#ff007f', '#b026ff', '#38bdf8', '#eab308', '#22c55e', '#a855f7', '#ec4899', '#10b981', '#06b6d4', '#f97316'];
-      (creators || []).forEach(c => {
-        (c.tags || []).forEach(tag => {
-          if (tag && !authorTags.some(t => t.name.toLowerCase() === tag.toLowerCase())) {
-            const color = defaultColors[authorTags.length % defaultColors.length];
-            authorTags.push({ name: tag, color: color });
+    function normalizeAuthorTagsAndCreators() {
+      if (!Array.isArray(authorTags) || authorTags.length === 0) {
+        authorTags = getDefaultAuthorTags();
+      }
+
+      // 1. Ensure 'Admin' is azzurro (#38bdf8) and 'Creatrice' is bianco (#ffffff)
+      let adminTag = authorTags.find(t => t.name.toLowerCase() === 'admin' || t.name.toLowerCase() === 'amministratore');
+      if (adminTag) {
+        adminTag.name = 'Admin';
+        adminTag.color = '#38bdf8';
+      } else {
+        authorTags.unshift({ name: 'Admin', color: '#38bdf8' });
+      }
+
+      let creatriceTag = authorTags.find(t => t.name.toLowerCase() === 'creatrice');
+      if (creatriceTag) {
+        creatriceTag.color = '#ffffff';
+      } else {
+        const adminIdx = authorTags.findIndex(t => t.name.toLowerCase() === 'admin');
+        authorTags.splice(adminIdx >= 0 ? adminIdx + 1 : 0, 0, { name: 'Creatrice', color: '#ffffff' });
+      }
+
+      // 2. Remove unwanted tags: 'Guide Creator', 'Guide creatore', 'CC Expert'
+      authorTags = authorTags.filter(t => {
+        const lname = t.name.toLowerCase();
+        return lname !== 'guide creator' && lname !== 'guide creatore' && lname !== 'cc expert';
+      });
+
+      // 3. Deduplicate tags in authorTags
+      const seen = new Set();
+      authorTags = authorTags.filter(t => {
+        const lname = t.name.toLowerCase();
+        if (seen.has(lname)) return false;
+        seen.add(lname);
+        return true;
+      });
+
+      // 4. Normalize creators tags
+      if (Array.isArray(creators)) {
+        creators.forEach(c => {
+          if (Array.isArray(c.tags)) {
+            c.tags = c.tags
+              .map(tag => tag.toLowerCase() === 'amministratore' ? 'Admin' : tag)
+              .filter(tag => {
+                const lname = tag.toLowerCase();
+                return lname !== 'guide creator' && lname !== 'guide creatore' && lname !== 'cc expert';
+              });
+
+            // Match casing from authorTags
+            c.tags = c.tags.map(tag => {
+              const match = authorTags.find(at => at.name.toLowerCase() === tag.toLowerCase());
+              return match ? match.name : tag;
+            });
+
+            // Deduplicate per creator
+            const cSeen = new Set();
+            c.tags = c.tags.filter(tag => {
+              const lname = tag.toLowerCase();
+              if (cSeen.has(lname)) return false;
+              cSeen.add(lname);
+              return true;
+            });
           }
         });
-      });
+      }
     }
 
     function handleAddCreator() {
@@ -2766,7 +2822,7 @@
       window.newCreatorSocialsList = [];
       window.newCreatorTagsList = [];
 
-      ensureAllCreatorTagsInAuthorTags();
+      normalizeAuthorTagsAndCreators();
       persistDataLocally();
       saveAllGuidesToServer();
       renderApp();
@@ -2829,7 +2885,7 @@
       window.editingSocialsList = null;
       window.editingCreatorTagsList = null;
 
-      ensureAllCreatorTagsInAuthorTags();
+      normalizeAuthorTagsAndCreators();
       persistDataLocally();
       saveAllGuidesToServer();
       renderApp();
@@ -2868,8 +2924,9 @@
         showToast('Questo tag esiste già!', 'info');
         return;
       }
-      const color = colorInput ? colorInput.value : '#ff007f';
+      const color = colorInput ? colorInput.value : '#38bdf8';
       authorTags.push({ name, color });
+      normalizeAuthorTagsAndCreators();
       persistDataLocally();
       saveAllGuidesToServer();
       renderApp();
@@ -2885,7 +2942,7 @@
         return;
       }
       const newName = nameInput.value.trim();
-      const newColor = colorInput ? colorInput.value : '#ff007f';
+      const newColor = colorInput ? colorInput.value : '#38bdf8';
 
       const tagIdx = authorTags.findIndex(t => t.name.toLowerCase() === window.editingAuthorTagName.toLowerCase());
       if (tagIdx === -1) {
@@ -2909,6 +2966,7 @@
 
       authorTags[tagIdx] = { name: newName, color: newColor };
       window.editingAuthorTagName = null;
+      normalizeAuthorTagsAndCreators();
       persistDataLocally();
       saveAllGuidesToServer();
       renderApp();
@@ -2929,6 +2987,7 @@
       if (window.newCreatorTagsList) {
         window.newCreatorTagsList = window.newCreatorTagsList.filter(tag => tag.toLowerCase() !== tagName.toLowerCase());
       }
+      normalizeAuthorTagsAndCreators();
       persistDataLocally();
       saveAllGuidesToServer();
       renderApp();
@@ -3632,6 +3691,7 @@
               creators = getDefaultCreators();
               authorTags = getDefaultAuthorTags();
             }
+            normalizeAuthorTagsAndCreators();
             
             requestAnimationFrame(() => {
               updateLogoSrc();
@@ -3905,6 +3965,7 @@
             guides = importedGuides;
             creators = importedCreators;
             authorTags = importedAuthorTags;
+            normalizeAuthorTagsAndCreators();
             migrateAllGuidesTips();
             
             persistDataLocally();
