@@ -723,13 +723,18 @@
       "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
       "tags": [
         "Traduttore",
-        "Moderatore"
+        "Admin"
       ],
       "socials": [
         {
-          "label": "Telegram",
-          "url": "https://t.me/TheSims4ItaliaPianetaSim",
-          "color": "#a855f7"
+          "label": "Patreon",
+          "url": "https://www.patreon.com/cw/Sha_TsIta",
+          "color": "#f97316"
+        },
+        {
+          "label": "Tumblr",
+          "url": "https://www.tumblr.com/sh4-ts",
+          "color": "#2563eb"
         }
       ]
     }
