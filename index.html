@@ -7,6 +7,18 @@
   <link rel="icon" type="image/png" href="images/logo.png">
   
   
+  <!-- Performance Resource Hints -->
+  <link rel="dns-prefetch" href="https://cdn.tailwindcss.com">
+  <link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin>
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="https://unpkg.com">
+  <link rel="preconnect" href="https://unpkg.com" crossorigin>
+
+  <link rel="preload" href="images/logo.png" as="image" fetchpriority="high">
+
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -47,12 +59,8 @@
   
   <script>
     var logoPaths = [
-      '/images/logo.png',
       'images/logo.png',
-      '/logo.png',
-      'logo.png',
-      '/public/images/logo.png',
-      'public/images/logo.png'
+      '/images/logo.png'
     ];
     var logoIndex = 0;
 
@@ -65,12 +73,12 @@
         console.warn("Logo path failed, trying fallback: " + logoPaths[logoIndex]);
         img.src = logoPaths[logoIndex];
       } else {
-        console.warn("All logo paths failed to load. Retrying from main logo.png in 2 seconds...");
+        console.warn("All logo paths failed to load. Retrying from main images/logo.png in 2 seconds...");
         logoIndex = 0;
         setTimeout(function() {
           var currentImg = document.getElementById('logo-img');
           if (currentImg) {
-            currentImg.src = "/images/logo.png?t=" + Date.now();
+            currentImg.src = "images/logo.png?t=" + Date.now();
           }
         }, 2000);
       }
@@ -108,8 +116,6 @@
     }
   </script>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap"></noscript>
 
@@ -281,7 +287,7 @@
       
       <div class="flex items-center gap-3 cursor-pointer select-none" onclick="switchTab('guides')">
         <div id="logo-container" class="h-10 w-10 shrink-0 flex items-center justify-center">
-          <img id="logo-img" src="/images/logo.png" alt="PianetaSim Logo" width="40" height="40" fetchpriority="high" loading="eager" class="h-10 w-10 object-contain shrink-0" onerror="tryNextLogo()">
+          <img id="logo-img" src="images/logo.png" alt="PianetaSim Logo" width="40" height="40" fetchpriority="high" loading="eager" class="h-10 w-10 object-contain shrink-0" onerror="tryNextLogo()">
         </div>
         <div id="logo-fallback" class="flex items-center">
           <div class="font-black text-xl tracking-wider text-white m-0">PIANETA<span class="animate-sim-color">SIM</span></div>
@@ -1481,7 +1487,7 @@
     let adminPassword = 'sticazzi';
     let siteTitle = '<span class="animate-title-color">Guide & Utilità</span>';
     let siteDescription = 'Benvenuto nella sezione delle guide di PianetaSim! Impara nuove tecniche di costruzione, installa mod tradotte e copia trucchi con un solo click.';
-    let siteLogo = '/images/logo.png?v=10';
+    let siteLogo = 'images/logo.png';
     let alertPopup = {
       enabled: false,
       title: 'Avviso Importante',
@@ -1553,7 +1559,7 @@
     function updateLogoSrc() {
       const container = document.getElementById('logo-container');
       if (container) {
-        const logoUrl = siteLogo || '/images/logo.png?v=10';
+        const logoUrl = siteLogo || 'images/logo.png';
         container.innerHTML = `<img id="logo-img" src="${logoUrl}" alt="PianetaSim Logo" width="40" height="40" fetchpriority="high" class="h-10 w-10 object-contain shrink-0" onerror="tryNextLogo()" />`;
         logoIndex = 0;
         if (!logoPaths.includes(logoUrl)) {
@@ -1942,8 +1948,8 @@
              parsed.siteTitle = '<span class="animate-title-color">Guide & Utilità</span>';
              updated = true;
            }
-           if (parsed.siteLogo && parsed.siteLogo.includes('logo.png') && !parsed.siteLogo.includes('?v=10')) {
-             parsed.siteLogo = '/images/logo.png?v=10';
+           if (parsed.siteLogo && parsed.siteLogo.includes('logo.png')) {
+             parsed.siteLogo = 'images/logo.png';
              updated = true;
            }
            if (updated) {
@@ -1979,7 +1985,7 @@
             if (parsed.siteLogo) {
               siteLogo = parsed.siteLogo;
               if (siteLogo.includes('logo.png')) {
-                siteLogo = '/images/logo.png?v=10';
+                siteLogo = 'images/logo.png';
               }
             }
             updateLogoSrc();
@@ -2007,8 +2013,8 @@
             if (data.alertPopup) alertPopup = data.alertPopup;
             if (data.siteLogo) {
               siteLogo = data.siteLogo;
-              if (siteLogo.includes('logo.png') && !siteLogo.includes('?v=')) {
-                siteLogo = '/images/logo.png?v=10';
+              if (siteLogo.includes('logo.png')) {
+                siteLogo = 'images/logo.png';
               }
             }
           } else {
@@ -6954,7 +6960,7 @@
 
   
   <script>
-    (function() {
+    function initConstellationsCanvas() {
       const canvas = document.getElementById('constellations-canvas');
       if (!canvas) return;
       const ctx = canvas.getContext('2d');
@@ -7500,7 +7506,23 @@
       }
 
       animate();
-    })();
+    }
+
+    if (document.readyState === 'complete') {
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(initConstellationsCanvas, { timeout: 1500 });
+      } else {
+        setTimeout(initConstellationsCanvas, 200);
+      }
+    } else {
+      window.addEventListener('load', function() {
+        if ('requestIdleCallback' in window) {
+          requestIdleCallback(initConstellationsCanvas, { timeout: 1500 });
+        } else {
+          setTimeout(initConstellationsCanvas, 200);
+        }
+      });
+    }
   </script>
 </body>
 </html>
