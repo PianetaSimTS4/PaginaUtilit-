@@ -1460,6 +1460,79 @@
       draggedGuideId = null;
     }
 
+    // Drag and drop & move handlers for creator/collaborator reordering
+    let draggedCreatorId = null;
+
+    function handleCreatorDragStart(e, id) {
+      draggedCreatorId = id;
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', id);
+      const el = e.currentTarget;
+      el.classList.add('opacity-40', 'border-fluo-purple', 'bg-purple-950/20');
+    }
+
+    function handleCreatorDragOver(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      e.currentTarget.classList.add('border-dashed', 'border-fluo-purple', 'scale-[1.01]');
+    }
+
+    function handleCreatorDragLeave(e) {
+      e.currentTarget.classList.remove('border-dashed', 'border-fluo-purple', 'scale-[1.01]');
+    }
+
+    function handleCreatorDragEnd(e) {
+      e.currentTarget.classList.remove('opacity-40', 'border-fluo-purple', 'bg-purple-950/20', 'border-dashed', 'scale-[1.01]');
+    }
+
+    function handleCreatorDrop(e, targetId) {
+      e.preventDefault();
+      e.currentTarget.classList.remove('border-dashed', 'border-fluo-purple', 'scale-[1.01]');
+      
+      if (!draggedCreatorId || draggedCreatorId === targetId) return;
+      
+      const draggedIdx = creators.findIndex(c => c.id === draggedCreatorId);
+      const targetIdx = creators.findIndex(c => c.id === targetId);
+      
+      if (draggedIdx !== -1 && targetIdx !== -1) {
+        const [draggedItem] = creators.splice(draggedIdx, 1);
+        creators.splice(targetIdx, 0, draggedItem);
+        
+        persistDataLocally();
+        saveAllGuidesToServer();
+        renderApp();
+        showToast('Ordine dello staff salvato con successo! ↕️', 'success');
+      }
+      
+      draggedCreatorId = null;
+    }
+
+    function moveCreatorUp(id) {
+      const idx = creators.findIndex(c => c.id === id);
+      if (idx > 0) {
+        const temp = creators[idx];
+        creators[idx] = creators[idx - 1];
+        creators[idx - 1] = temp;
+        persistDataLocally();
+        saveAllGuidesToServer();
+        renderApp();
+        showToast('Ordine dello staff aggiornato!', 'success');
+      }
+    }
+
+    function moveCreatorDown(id) {
+      const idx = creators.findIndex(c => c.id === id);
+      if (idx !== -1 && idx < creators.length - 1) {
+        const temp = creators[idx];
+        creators[idx] = creators[idx + 1];
+        creators[idx + 1] = temp;
+        persistDataLocally();
+        saveAllGuidesToServer();
+        renderApp();
+        showToast('Ordine dello staff aggiornato!', 'success');
+      }
+    }
+
     // Global keyboard listener for Undo / Redo (Ctrl+Z / Ctrl+Y)
     window.addEventListener('keydown', (e) => {
       if (!window.editingGuide) return;
@@ -2749,9 +2822,12 @@
         return true;
       });
 
-      // 4. Normalize creators tags
+      // 4. Normalize creators tags and ensure id
       if (Array.isArray(creators)) {
-        creators.forEach(c => {
+        creators.forEach((c, idx) => {
+          if (!c.id) {
+            c.id = 'creator-' + (c.name ? c.name.toLowerCase().replace(/[^a-z0-9]/g, '') : idx) + '-' + Math.floor(Math.random() * 1000);
+          }
           if (Array.isArray(c.tags)) {
             c.tags = c.tags
               .map(tag => tag.toLowerCase() === 'amministratore' ? 'Admin' : tag)
@@ -4838,27 +4914,67 @@
             })()}
 
             <div class="space-y-2">
-              <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Membri del Team Attuali:</h4>
-              <div class="space-y-1.5 max-h-[160px] overflow-y-auto scrollbar-none pr-1">
-                ${creators.map(c => `
-                  <div class="flex items-center justify-between p-2 bg-slate-950/40 rounded-xl border border-slate-900/60 hover:border-slate-850 transition-colors">
+              <div class="flex items-center justify-between">
+                <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Membri del Team Attuali:</h4>
+                <span class="text-[9px] text-slate-500 font-sans flex items-center gap-1">
+                  <i data-lucide="grip-vertical" class="w-3 h-3 text-slate-400"></i>
+                  Trascina o usa le frecce per riordinare
+                </span>
+              </div>
+              <div class="space-y-1.5 max-h-[220px] overflow-y-auto scrollbar-none pr-1">
+                ${creators.map((c, index) => `
+                  <div
+                    draggable="true"
+                    ondragstart="handleCreatorDragStart(event, '${c.id}')"
+                    ondragover="handleCreatorDragOver(event)"
+                    ondragleave="handleCreatorDragLeave(event)"
+                    ondragend="handleCreatorDragEnd(event)"
+                    ondrop="handleCreatorDrop(event, '${c.id}')"
+                    class="flex items-center justify-between p-2 bg-slate-950/40 rounded-xl border border-slate-900/60 hover:border-slate-800 transition-all cursor-grab active:cursor-grabbing group/creator"
+                  >
                     <div class="flex items-center gap-2 truncate">
-                      <img src="${c.avatar || 'images/logo.png'}" alt="${c.name}" class="w-7 h-7 rounded-full border border-slate-800 object-cover bg-slate-900 shrink-0" onerror="this.src='images/logo.png';" />
+                      <div class="text-slate-600 group-hover/creator:text-slate-400 transition-colors shrink-0 cursor-grab" title="Trascina per riordinare">
+                        <i data-lucide="grip-vertical" class="w-3.5 h-3.5"></i>
+                      </div>
+                      <div class="relative w-7 h-7 rounded-full border border-slate-800 overflow-hidden bg-slate-900 shrink-0 select-none" oncontextmenu="return false;">
+                        <img src="${c.avatar || 'images/logo.png'}" alt="${c.name}" draggable="false" oncontextmenu="return false;" ondragstart="return false;" class="w-full h-full object-cover select-none pointer-events-none" onerror="this.src='images/logo.png';" />
+                        <div class="absolute inset-0 z-10 bg-transparent select-none" oncontextmenu="return false;"></div>
+                      </div>
                       <div class="truncate leading-tight">
                         <div class="text-xs font-bold text-slate-200 truncate font-sans">${c.name}</div>
                         <div class="text-[9px] text-slate-500 truncate font-sans">${c.role || 'Autore'}</div>
                       </div>
                     </div>
                     <div class="flex items-center gap-1 shrink-0">
+                      <div class="flex items-center mr-1 bg-slate-900/80 rounded-lg p-0.5 border border-slate-850">
+                        <button
+                          type="button"
+                          onclick="event.stopPropagation(); moveCreatorUp('${c.id}')"
+                          ${index === 0 ? 'disabled' : ''}
+                          class="p-1 text-slate-400 hover:text-white disabled:opacity-30 disabled:hover:text-slate-400 cursor-pointer disabled:cursor-not-allowed rounded transition-colors"
+                          title="Sposta su"
+                        >
+                          <i data-lucide="chevron-up" class="w-3 h-3"></i>
+                        </button>
+                        <button
+                          type="button"
+                          onclick="event.stopPropagation(); moveCreatorDown('${c.id}')"
+                          ${index === creators.length - 1 ? 'disabled' : ''}
+                          class="p-1 text-slate-400 hover:text-white disabled:opacity-30 disabled:hover:text-slate-400 cursor-pointer disabled:cursor-not-allowed rounded transition-colors"
+                          title="Sposta giù"
+                        >
+                          <i data-lucide="chevron-down" class="w-3 h-3"></i>
+                        </button>
+                      </div>
                       <button
-                        onclick="selectCreatorForEdit('${c.id}')"
+                        onclick="event.stopPropagation(); selectCreatorForEdit('${c.id}')"
                         class="p-1.5 text-fluo-purple hover:text-purple-400 hover:bg-slate-900/40 rounded transition-colors"
                         title="Modifica questo autore"
                       >
                         <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
                       </button>
                       <button
-                        onclick="handleDeleteCreator('${c.id}')"
+                        onclick="event.stopPropagation(); handleDeleteCreator('${c.id}')"
                         class="p-1.5 text-red-500 hover:text-red-400 hover:bg-red-500/10 rounded transition-colors"
                         title="Elimina questo autore"
                       >
@@ -6063,13 +6179,20 @@
                           <div class="space-y-4">
                             <!-- Profilo -->
                             <div class="flex items-center gap-4">
-                              <img 
-                                src="${avatarSrc}" 
-                                referrerpolicy="no-referrer"
-                                alt="${creator.name}" 
-                                class="w-16 h-16 rounded-full border-2 border-fluo-purple/40 object-cover bg-slate-900/40 shrink-0 animate-fade-in"
-                                onerror="this.src='images/logo.png';"
-                              />
+                              <div class="relative w-16 h-16 rounded-full border-2 border-fluo-purple/40 overflow-hidden bg-slate-900/40 shrink-0 select-none animate-fade-in" oncontextmenu="return false;" onselectstart="return false;">
+                               <img 
+                                 src="${avatarSrc}" 
+                                 referrerpolicy="no-referrer"
+                                 alt="${creator.name}" 
+                                 draggable="false"
+                                 oncontextmenu="return false;"
+                                 onselectstart="return false;"
+                                 ondragstart="return false;"
+                                 class="w-full h-full object-cover select-none pointer-events-none"
+                                 onerror="this.src='images/logo.png';"
+                               />
+                               <div class="absolute inset-0 z-10 bg-transparent select-none" oncontextmenu="return false;" ondragstart="return false;"></div>
+                             </div>
                               <div>
                                 <h3 class="text-base font-black text-white tracking-tight flex items-center gap-1.5">
                                   ${creator.name}
