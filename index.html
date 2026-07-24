@@ -2684,13 +2684,15 @@
       const tags = window.newCreatorTagsList ? [...window.newCreatorTagsList] : [];
       authorTags.forEach((t, tIdx) => {
         const cb = document.getElementById(`new-creator-tag-${tIdx}`);
-        if (cb && cb.checked && !tags.some(tag => tag.toLowerCase() === t.name.toLowerCase())) {
-          tags.push(t.name);
+        if (cb) {
+          if (cb.checked && !tags.some(tag => tag.toLowerCase() === t.name.toLowerCase())) {
+            tags.push(t.name);
+          } else if (!cb.checked && tags.some(tag => tag.toLowerCase() === t.name.toLowerCase())) {
+            const idx = tags.findIndex(tag => tag.toLowerCase() === t.name.toLowerCase());
+            if (idx !== -1) tags.splice(idx, 1);
+          }
         }
       });
-      if (tags.length === 0) {
-        tags.push('Autore');
-      }
 
       const socials = (window.newCreatorSocialsList || []).filter(s => s.label.trim() && s.url.trim());
 
@@ -2737,7 +2739,7 @@
       const avatar = avatarInput ? avatarInput.value.trim() : '';
       const description = descInput ? descInput.value.trim() : '';
       
-      const tags = window.editingCreatorTagsList ? [...window.editingCreatorTagsList] : [];
+      const tags = window.editingCreatorTagsList ? [...window.editingCreatorTagsList] : [...(creators[creatorIdx].tags || [])];
       authorTags.forEach((t, tIdx) => {
         const cb = document.getElementById(`edit-creator-tag-${tIdx}`);
         if (cb) {
@@ -2749,9 +2751,6 @@
           }
         }
       });
-      if (tags.length === 0) {
-        tags.push('Autore');
-      }
 
       const socials = (window.editingSocialsList || []).filter(s => s.label.trim() && s.url.trim());
 
@@ -2838,6 +2837,13 @@
         }
       });
 
+      if (window.editingCreatorTagsList) {
+        window.editingCreatorTagsList = window.editingCreatorTagsList.map(tag => tag.toLowerCase() === oldName.toLowerCase() ? newName : tag);
+      }
+      if (window.newCreatorTagsList) {
+        window.newCreatorTagsList = window.newCreatorTagsList.map(tag => tag.toLowerCase() === oldName.toLowerCase() ? newName : tag);
+      }
+
       authorTags[tagIdx] = { name: newName, color: newColor };
       window.editingAuthorTagName = null;
       persistDataLocally();
@@ -2854,6 +2860,12 @@
           c.tags = c.tags.filter(tag => tag.toLowerCase() !== tagName.toLowerCase());
         }
       });
+      if (window.editingCreatorTagsList) {
+        window.editingCreatorTagsList = window.editingCreatorTagsList.filter(tag => tag.toLowerCase() !== tagName.toLowerCase());
+      }
+      if (window.newCreatorTagsList) {
+        window.newCreatorTagsList = window.newCreatorTagsList.filter(tag => tag.toLowerCase() !== tagName.toLowerCase());
+      }
       persistDataLocally();
       saveAllGuidesToServer();
       renderApp();

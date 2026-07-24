@@ -634,7 +634,7 @@
       "avatar": "images/logo.png",
       "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
       "tags": [
-        "Admin",
+        "Amministratore",
         "Traduttore"
       ],
       "socials": [
@@ -653,18 +653,13 @@
       "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
       "tags": [
         "Traduttore",
-        "Admin"
+        "Moderatore"
       ],
       "socials": [
         {
-          "label": "Patreon",
-          "url": "https://www.patreon.com/cw/Sha_TsIta",
+          "label": "Telegram",
+          "url": "https://t.me/TheSims4ItaliaPianetaSim",
           "color": "#a855f7"
-        },
-        {
-          "label": "Tumblr",
-          "url": "https://www.tumblr.com/sh4-ts",
-          "color": "#2563eb"
         }
       ]
     }
@@ -672,11 +667,37 @@
   "adminPassword": "sticazzi",
   "siteTitle": "<span class=\"animate-title-color\">Guide & Utilità</span>",
   "siteDescription": "Benvenuto nella sezione delle guide di PianetaSim! Impara nuove tecniche di costruzione, installa mod tradotte e copia trucchi con un solo click.",
-  "siteLogo": "images/logo.png",
+  "siteLogo": "/images/logo.png?v=10",
   "alertPopup": {
     "enabled": false,
     "title": "Avviso Importante",
     "color": "rosso",
     "text": "Benvenuto su PianetaSim! Questo è un messaggio di avviso personalizzabile."
-  }
+  },
+  "authorTags": [
+    {
+      "name": "Amministratore",
+      "color": "#ff007f"
+    },
+    {
+      "name": "Traduttore",
+      "color": "#b026ff"
+    },
+    {
+      "name": "Guide Creator",
+      "color": "#38bdf8"
+    },
+    {
+      "name": "Moderatore",
+      "color": "#eab308"
+    },
+    {
+      "name": "Supporto Tecnico",
+      "color": "#22c55e"
+    },
+    {
+      "name": "CC Expert",
+      "color": "#a855f7"
+    }
+  ]
 }
