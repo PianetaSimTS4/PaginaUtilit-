@@ -24,7 +24,7 @@
   "guides": [
     {
       "id": "installazione-mod-veloce",
-      "title": "COME INSTALLARE LE MOD",
+      "title": "COME INSTALLARE LE MOD - GUIDA VELOCE",
       "description": "Questa guida è fatta per chi è ha confidenza o ha già esperienze nelle installazioni e videogiochi.",
       "category": "mod_cc",
       "tags": [
@@ -284,7 +284,7 @@
     },
     {
       "id": "guida-mods-passopasso",
-      "title": "COME INSTALLARE LE MOD PASSO PASSO",
+      "title": "COME INSTALLARE LE MOD - GUIDA PASSO PASSO",
       "description": "Questa guida è per chi è poco pratico o alla prime armi. Ad ogni punto verrai guidato attraverso le immagini e spiegazioni semplici.",
       "category": "mod_cc",
       "tags": [
@@ -533,64 +533,102 @@
       "authorLink": ""
     },
     {
-      "id": "guide-occulti-vampiri",
-      "title": "Nullam Hendrerit Mi Eu Finibus",
-      "description": "Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra.",
-      "category": "gameplay",
+      "id": "guida-traduzioni-veloce",
+      "title": "COME INSTALLARE LE TRADUZIONI - GUIDA VELOCE",
+      "description": "Una guida semplice e coincisa su come installare le traduzioni italiane per le mod di The SIms 4.",
+      "category": "guide-veloci",
       "tags": [
-        "nullam",
-        "hendrerit",
-        "finibus",
-        "lorem"
+        "installazione",
+        "traduzioni"
       ],
       "content": [
         {
-          "type": "paragraph",
-          "value": "Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris. Integer in mauris eu nibh euismod gravida."
+          "type": "heading3",
+          "value": "**DOVE POSSO TROVARE DELLE TRADUZIONI:**",
+          "color": "#26ff5e"
         },
         {
           "type": "paragraph",
-          "value": "Aliquam sollicitudin, arcu a laoreet tempor, risus neque pretium ipsum, sed convallis risus ligula a tellus. Cras iaculis ultricies nulla. Donec quis dui at sem tempor varius. Ut nonummy convallis risus."
+          "value": "Consigliamo di utilizzare il sito di [Pianeta Sim](https://pianetasimts.github.io/PianetaSim/index.html) o i siti di:"
+        },
+        {
+          "type": "list",
+          "value": "Leo Translations \n\nLady \"Psyco\" Trilly\n\nLoryNaMod\n\nRicky's Mom\n\nSha\n\nLadySilka\n\nSulAsya",
+          "listType": "bullet"
+        },
+        {
+          "type": "heading3",
+          "value": "**CHE TIPO DI FILE SONO:**",
+          "color": "#38bdf8"
         },
         {
           "type": "paragraph",
-          "value": "Morbi leo mi, nonummy eget, tristique non, rhoncus non, leo. Nullam tempor. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Vestibulum sapien."
+          "value": "Le traduzioni sono:"
         },
         {
-          "type": "paragraph",
-          "value": "Quisque cursus, metus vitae pharetra auctor, sem massa mattis sem, at interdum magna augue a odio. Nam nec ante. Sed lacinia, urna non volutpat tempor, tempor erat vehicula aliquet, nulla."
+          "type": "list",
+          "value": "file Package (.package) \n\ncartelle compresse zip, rar, 7z (.zip/.rar/.7z)",
+          "listType": "bullet"
         },
         {
-          "type": "paragraph",
-          "value": "Aenean nec lorem. In porttitor. Donec laoreet nonummy augue. Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend."
+          "type": "heading3",
+          "value": "**COSE IMPORTANTI DA SAPERE:**",
+          "color": "#eab308"
+        },
+        {
+          "type": "list",
+          "value": "Le Traduzioni vanno **sempre** inserite nella **stessa** cartella della **mod**.\n\nSe si scarica uno zip e all’interno ci sono **file di testo** con spiegazioni o indicazioni, **vanno letti e poi cancellati**. \n\nSe all’interno dello zip trovate, oltre i file della traduzione della mod, altre cartelle con all’interno dei file spesso significa che sono **traduzioni dei contenuti aggiuntivi** della mod. Quei file vanno presi e inseriti nella cartella corrispondente all’interno della mod.",
+          "listType": "bullet"
+        },
+        {
+          "type": "divider",
+          "value": "",
+          "separatorType": "line",
+          "dividerType": "color"
+        },
+        {
+          "type": "heading1",
+          "value": "PASSAGGI:",
+          "color": "#b026ff"
+        },
+        {
+          "type": "list",
+          "value": "Scarica la Traduzione\n\nInseriscile nella stessa cartella della mod che vuoi tradotta\n\nAl prossimo avvio del gioco la Traduzione sarà attiva\n\nOra la tua Traduzione è pronta! :D",
+          "listType": "number"
         },
         {
           "type": "tip",
-          "value": "Morbi leo mi, nonummy eget, tristique non, rhoncus non, leo."
+          "value": "Se non sai come installare le mod, leggi la guida dedicata: [COME INSTALLARE LE MOD - GUIDA VELOCE](https://pianetasimts4.github.io/PaginaUtilit-/#guida-installazione-mod-velocet)"
         },
         {
           "type": "tip",
-          "value": "Quisque cursus, metus vitae pharetra auctor, sem massa mattis."
-        },
-        {
-          "type": "tip",
-          "value": "Donec laoreet nonummy augue, suspendisse dui purus."
+          "value": "Se non sai come organizzare le mod leggi la guida dedicata: “CONSIGLI SUL COME ORGANIZZARE LE MOD”!"
         }
       ],
       "tips": [],
       "categories": [
-        "gameplay"
+        "guide-veloci",
+        "mod_cc"
       ],
       "authors": [
         {
-          "name": "Lidia",
-          "color": "#cbd5e1",
-          "diamondColor": "#26ff5e",
-          "level": "Amministratore"
+          "name": "LadyPsycoTrilly",
+          "color": "#b026ff",
+          "diamondColor": "#38bdf8",
+          "level": "Admin"
+        },
+        {
+          "name": "Sha",
+          "color": "#b026ff",
+          "diamondColor": "#38bdf8",
+          "level": "Admin"
         }
       ],
-      "authorName": "Lidia",
-      "authorColor": "#cbd5e1"
+      "authorName": "LadyPsycoTrilly",
+      "authorColor": "#b026ff",
+      "authorDiamondColor": "#38bdf8",
+      "authorLevel": "Admin",
+      "authorLink": ""
     },
     {
       "id": "guide-roofing",
@@ -681,7 +719,7 @@
   "adminPassword": "sticazzi",
   "siteTitle": "<span class=\"animate-title-color\">Guide & Utilità</span>",
   "siteDescription": "Benvenuto nella sezione delle guide di PianetaSim! Impara nuove tecniche di costruzione, installa mod tradotte e copia trucchi con un solo click.",
-  "siteLogo": "/images/logo.png?v=10",
+  "siteLogo": "images/logo.png",
   "alertPopup": {
     "enabled": false,
     "title": "Avviso Importante",
