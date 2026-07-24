@@ -266,20 +266,21 @@
         {
           "name": "LadyPsycoTrilly",
           "color": "#b026ff",
-          "diamondColor": "#ffffff",
+          "diamondColor": "#38bdf8",
           "level": "Admin"
         },
         {
           "name": "Sha",
           "color": "#38bdf8",
-          "diamondColor": "#ffffff",
+          "diamondColor": "#38bdf8",
           "level": "Admin"
         }
       ],
       "authorName": "LadyPsycoTrilly",
       "authorColor": "#b026ff",
-      "authorDiamondColor": "#ffffff",
-      "authorLevel": "Admin"
+      "authorDiamondColor": "#38bdf8",
+      "authorLevel": "Admin",
+      "authorLink": ""
     },
     {
       "id": "guida-mods-passopasso",
@@ -513,21 +514,21 @@
       ],
       "authors": [
         {
-          "name": "Lady Psyco Trilly",
+          "name": "LadyPsycoTrilly",
           "color": "#b026ff",
-          "diamondColor": "#ffffff",
+          "diamondColor": "#38bdf8",
           "level": "Admin"
         },
         {
           "name": "Sha",
           "color": "#38bdf8",
-          "diamondColor": "#ffffff",
+          "diamondColor": "#38bdf8",
           "level": "Admin"
         }
       ],
-      "authorName": "Lady Psyco Trilly",
+      "authorName": "LadyPsycoTrilly",
       "authorColor": "#b026ff",
-      "authorDiamondColor": "#ffffff",
+      "authorDiamondColor": "#38bdf8",
       "authorLevel": "Admin",
       "authorLink": ""
     },
@@ -576,7 +577,20 @@
           "value": "Donec laoreet nonummy augue, suspendisse dui purus."
         }
       ],
-      "tips": []
+      "tips": [],
+      "categories": [
+        "gameplay"
+      ],
+      "authors": [
+        {
+          "name": "Lidia",
+          "color": "#cbd5e1",
+          "diamondColor": "#26ff5e",
+          "level": "Amministratore"
+        }
+      ],
+      "authorName": "Lidia",
+      "authorColor": "#cbd5e1"
     },
     {
       "id": "guide-roofing",
@@ -634,7 +648,7 @@
       "avatar": "images/logo.png",
       "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
       "tags": [
-        "Amministratore",
+        "Admin",
         "Traduttore"
       ],
       "socials": [
@@ -673,31 +687,5 @@
     "title": "Avviso Importante",
     "color": "rosso",
     "text": "Benvenuto su PianetaSim! Questo è un messaggio di avviso personalizzabile."
-  },
-  "authorTags": [
-    {
-      "name": "Amministratore",
-      "color": "#ff007f"
-    },
-    {
-      "name": "Traduttore",
-      "color": "#b026ff"
-    },
-    {
-      "name": "Guide Creator",
-      "color": "#38bdf8"
-    },
-    {
-      "name": "Moderatore",
-      "color": "#eab308"
-    },
-    {
-      "name": "Supporto Tecnico",
-      "color": "#22c55e"
-    },
-    {
-      "name": "CC Expert",
-      "color": "#a855f7"
-    }
-  ]
+  }
 }
