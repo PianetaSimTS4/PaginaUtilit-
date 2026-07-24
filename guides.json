@@ -748,5 +748,31 @@
     "title": "Avviso Importante",
     "color": "rosso",
     "text": "Benvenuto su PianetaSim! Questo è un messaggio di avviso personalizzabile."
-  }
+  },
+  "authorTags": [
+    {
+      "name": "Admin",
+      "color": "#ff007f"
+    },
+    {
+      "name": "Traduttore",
+      "color": "#b026ff"
+    },
+    {
+      "name": "Guide Creator",
+      "color": "#38bdf8"
+    },
+    {
+      "name": "Moderatore",
+      "color": "#eab308"
+    },
+    {
+      "name": "Supporto Tecnico",
+      "color": "#22c55e"
+    },
+    {
+      "name": "CC Expert",
+      "color": "#a855f7"
+    }
+  ]
 }

@@ -2605,6 +2605,47 @@
       fileInput.click();
     }
 
+    window.syncEditingCreatorDraft = function() {
+      if (!window.editingCreatorDraft) window.editingCreatorDraft = {};
+      const nameInput = document.getElementById('edit-creator-name');
+      const roleInput = document.getElementById('edit-creator-role');
+      const avatarInput = document.getElementById('edit-creator-avatar');
+      const descInput = document.getElementById('edit-creator-desc');
+
+      if (nameInput) window.editingCreatorDraft.name = nameInput.value;
+      if (roleInput) window.editingCreatorDraft.role = roleInput.value;
+      if (avatarInput) window.editingCreatorDraft.avatar = avatarInput.value;
+      if (descInput) window.editingCreatorDraft.description = descInput.value;
+    };
+
+    window.syncNewCreatorDraft = function() {
+      if (!window.newCreatorDraft) window.newCreatorDraft = {};
+      const nameInput = document.getElementById('new-creator-name');
+      const roleInput = document.getElementById('new-creator-role');
+      const avatarInput = document.getElementById('new-creator-avatar');
+      const descInput = document.getElementById('new-creator-desc');
+
+      if (nameInput) window.newCreatorDraft.name = nameInput.value;
+      if (roleInput) window.newCreatorDraft.role = roleInput.value;
+      if (avatarInput) window.newCreatorDraft.avatar = avatarInput.value;
+      if (descInput) window.newCreatorDraft.description = descInput.value;
+    };
+
+    window.selectCreatorForEdit = function(creatorId) {
+      const cToEdit = creators.find(c => c.id === creatorId);
+      if (!cToEdit) return;
+      window.editingCreatorId = creatorId;
+      window.editingSocialsList = JSON.parse(JSON.stringify(cToEdit.socials || []));
+      window.editingCreatorTagsList = JSON.parse(JSON.stringify(cToEdit.tags || []));
+      window.editingCreatorDraft = {
+        name: cToEdit.name || '',
+        role: cToEdit.role || '',
+        avatar: cToEdit.avatar || '',
+        description: cToEdit.description || ''
+      };
+      renderApp();
+    };
+
     window.updateEditingSocial = function(index, field, value) {
       if (window.editingSocialsList && window.editingSocialsList[index]) {
         window.editingSocialsList[index][field] = value;
@@ -2612,12 +2653,14 @@
     };
 
     window.addEditingSocial = function() {
+      window.syncEditingCreatorDraft();
       if (!window.editingSocialsList) window.editingSocialsList = [];
       window.editingSocialsList.push({ label: '', url: '', color: '#a855f7' });
       renderApp();
     };
 
     window.removeEditingSocial = function(index) {
+      window.syncEditingCreatorDraft();
       if (window.editingSocialsList) {
         window.editingSocialsList.splice(index, 1);
         renderApp();
@@ -2631,12 +2674,14 @@
     };
 
     window.addNewCreatorSocial = function() {
+      window.syncNewCreatorDraft();
       if (!window.newCreatorSocialsList) window.newCreatorSocialsList = [];
       window.newCreatorSocialsList.push({ label: '', url: '', color: '#a855f7' });
       renderApp();
     };
 
     window.removeNewCreatorSocial = function(index) {
+      window.syncNewCreatorDraft();
       if (window.newCreatorSocialsList) {
         window.newCreatorSocialsList.splice(index, 1);
         renderApp();
@@ -2665,21 +2710,31 @@
       }
     };
 
-    function handleAddCreator() {
-      const nameInput = document.getElementById('new-creator-name');
-      const roleInput = document.getElementById('new-creator-role');
-      const avatarInput = document.getElementById('new-creator-avatar');
-      const descInput = document.getElementById('new-creator-desc');
+    function ensureAllCreatorTagsInAuthorTags() {
+      if (!Array.isArray(authorTags)) authorTags = getDefaultAuthorTags();
+      const defaultColors = ['#ff007f', '#b026ff', '#38bdf8', '#eab308', '#22c55e', '#a855f7', '#ec4899', '#10b981', '#06b6d4', '#f97316'];
+      (creators || []).forEach(c => {
+        (c.tags || []).forEach(tag => {
+          if (tag && !authorTags.some(t => t.name.toLowerCase() === tag.toLowerCase())) {
+            const color = defaultColors[authorTags.length % defaultColors.length];
+            authorTags.push({ name: tag, color: color });
+          }
+        });
+      });
+    }
 
-      if (!nameInput || !nameInput.value.trim()) {
+    function handleAddCreator() {
+      window.syncNewCreatorDraft();
+
+      const name = (window.newCreatorDraft && window.newCreatorDraft.name) ? window.newCreatorDraft.name.trim() : (document.getElementById('new-creator-name') ? document.getElementById('new-creator-name').value.trim() : '');
+      if (!name) {
         showToast('Il nome del creatore è obbligatorio!', 'info');
         return;
       }
 
-      const name = nameInput.value.trim();
-      const role = roleInput ? roleInput.value.trim() : 'Autore';
-      const avatar = avatarInput ? avatarInput.value.trim() : '';
-      const description = descInput ? descInput.value.trim() : '';
+      const role = (window.newCreatorDraft && window.newCreatorDraft.role) ? window.newCreatorDraft.role.trim() : (document.getElementById('new-creator-role') ? document.getElementById('new-creator-role').value.trim() : 'Autore');
+      const avatar = (window.newCreatorDraft && window.newCreatorDraft.avatar) ? window.newCreatorDraft.avatar.trim() : (document.getElementById('new-creator-avatar') ? document.getElementById('new-creator-avatar').value.trim() : '');
+      const description = (window.newCreatorDraft && window.newCreatorDraft.description) ? window.newCreatorDraft.description.trim() : (document.getElementById('new-creator-desc') ? document.getElementById('new-creator-desc').value.trim() : '');
       
       const tags = window.newCreatorTagsList ? [...window.newCreatorTagsList] : [];
       authorTags.forEach((t, tIdx) => {
@@ -2700,15 +2755,18 @@
         id: 'creator-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
         name: name,
         role: role,
-        avatar: avatar,
+        avatar: avatar || 'images/logo.png',
         description: description,
         tags: tags,
         socials: socials
       };
 
       creators.push(newCreator);
+      window.newCreatorDraft = null;
       window.newCreatorSocialsList = [];
       window.newCreatorTagsList = [];
+
+      ensureAllCreatorTagsInAuthorTags();
       persistDataLocally();
       saveAllGuidesToServer();
       renderApp();
@@ -2718,15 +2776,7 @@
     function handleSaveCreatorEdit() {
       if (!window.editingCreatorId) return;
 
-      const nameInput = document.getElementById('edit-creator-name');
-      const roleInput = document.getElementById('edit-creator-role');
-      const avatarInput = document.getElementById('edit-creator-avatar');
-      const descInput = document.getElementById('edit-creator-desc');
-
-      if (!nameInput || !nameInput.value.trim()) {
-        showToast('Il nome del creatore è obbligatorio!', 'info');
-        return;
-      }
+      window.syncEditingCreatorDraft();
 
       const creatorIdx = creators.findIndex(c => c.id === window.editingCreatorId);
       if (creatorIdx === -1) {
@@ -2734,10 +2784,20 @@
         return;
       }
 
-      const name = nameInput.value.trim();
-      const role = roleInput ? roleInput.value.trim() : 'Autore';
-      const avatar = avatarInput ? avatarInput.value.trim() : '';
-      const description = descInput ? descInput.value.trim() : '';
+      const nameInput = document.getElementById('edit-creator-name');
+      const roleInput = document.getElementById('edit-creator-role');
+      const avatarInput = document.getElementById('edit-creator-avatar');
+      const descInput = document.getElementById('edit-creator-desc');
+
+      const name = nameInput ? nameInput.value.trim() : (window.editingCreatorDraft ? window.editingCreatorDraft.name.trim() : '');
+      if (!name) {
+        showToast('Il nome del creatore è obbligatorio!', 'info');
+        return;
+      }
+
+      const role = roleInput ? roleInput.value.trim() : (window.editingCreatorDraft && window.editingCreatorDraft.role ? window.editingCreatorDraft.role.trim() : 'Autore');
+      const avatar = avatarInput ? avatarInput.value.trim() : (window.editingCreatorDraft && window.editingCreatorDraft.avatar ? window.editingCreatorDraft.avatar.trim() : '');
+      const description = descInput ? descInput.value.trim() : (window.editingCreatorDraft && window.editingCreatorDraft.description ? window.editingCreatorDraft.description.trim() : '');
       
       const tags = window.editingCreatorTagsList ? [...window.editingCreatorTagsList] : [...(creators[creatorIdx].tags || [])];
       authorTags.forEach((t, tIdx) => {
@@ -2765,8 +2825,11 @@
       };
 
       window.editingCreatorId = null;
+      window.editingCreatorDraft = null;
       window.editingSocialsList = null;
       window.editingCreatorTagsList = null;
+
+      ensureAllCreatorTagsInAuthorTags();
       persistDataLocally();
       saveAllGuidesToServer();
       renderApp();
@@ -4578,7 +4641,8 @@
                           <input
                             type="text"
                             id="edit-creator-name"
-                            value="${cToEdit.name}"
+                            value="${window.editingCreatorDraft && window.editingCreatorDraft.name !== undefined ? window.editingCreatorDraft.name : cToEdit.name}"
+                            oninput="syncEditingCreatorDraft()"
                             class="w-full px-3 py-1.5 bg-slate-900 border border-slate-850 rounded-lg text-white outline-none focus:ring-1 focus:ring-fluo-purple font-sans"
                           />
                         </div>
@@ -4588,7 +4652,8 @@
                           <input
                             type="text"
                             id="edit-creator-role"
-                            value="${cToEdit.role || ''}"
+                            value="${window.editingCreatorDraft && window.editingCreatorDraft.role !== undefined ? window.editingCreatorDraft.role : (cToEdit.role || '')}"
+                            oninput="syncEditingCreatorDraft()"
                             placeholder="es: Amministratrice & Traduttrice"
                             class="w-full px-3 py-1.5 bg-slate-900 border border-slate-850 rounded-lg text-white outline-none focus:ring-1 focus:ring-fluo-purple font-sans"
                           />
@@ -4600,7 +4665,8 @@
                             <input
                               type="text"
                               id="edit-creator-avatar"
-                              value="${cToEdit.avatar || ''}"
+                              value="${window.editingCreatorDraft && window.editingCreatorDraft.avatar !== undefined ? window.editingCreatorDraft.avatar : (cToEdit.avatar || '')}"
+                              oninput="syncEditingCreatorDraft()"
                               placeholder="es: images/avatar.png"
                               class="flex-grow px-3 py-1.5 bg-slate-900 border border-slate-850 rounded-lg text-white outline-none font-mono text-[10px]"
                             />
@@ -4619,9 +4685,10 @@
                           <textarea
                             id="edit-creator-desc"
                             rows="3"
+                            oninput="syncEditingCreatorDraft()"
                             class="w-full px-3 py-1.5 bg-slate-900 border border-slate-850 rounded-lg text-white outline-none focus:ring-1 focus:ring-fluo-purple font-sans"
                             placeholder="Parla un po' di te..."
-                          >${cToEdit.description || ''}</textarea>
+                          >${window.editingCreatorDraft && window.editingCreatorDraft.description !== undefined ? window.editingCreatorDraft.description : (cToEdit.description || '')}</textarea>
                         </div>
 
                         <div class="space-y-1">
@@ -4669,7 +4736,7 @@
                                     const activeBorder = isSelected ? 'border-white scale-110 ring-1 ring-white/50' : 'border-slate-800 hover:scale-115';
                                     return `
                                       <button type="button"
-                                        onclick="updateEditingSocial(${index}, 'color', '${hex}'); renderApp();"
+                                        onclick="syncEditingCreatorDraft(); updateEditingSocial(${index}, 'color', '${hex}'); renderApp();"
                                         class="w-3.5 h-3.5 rounded border cursor-pointer transition-all ${activeBorder}"
                                         style="background-color: ${hex};"
                                         title="${hex}"
@@ -4723,7 +4790,7 @@
                     </div>
                     <div class="flex items-center gap-1 shrink-0">
                       <button
-                        onclick="window.editingCreatorId = '${c.id}'; window.editingSocialsList = null; window.editingCreatorTagsList = null; renderApp();"
+                        onclick="selectCreatorForEdit('${c.id}')"
                         class="p-1.5 text-fluo-purple hover:text-purple-400 hover:bg-slate-900/40 rounded transition-colors"
                         title="Modifica questo autore"
                       >
@@ -4751,6 +4818,8 @@
                     <input
                       type="text"
                       id="new-creator-name"
+                      value="${window.newCreatorDraft ? window.newCreatorDraft.name || '' : ''}"
+                      oninput="syncNewCreatorDraft()"
                       placeholder="es: LadyPsycoTrilly"
                       class="w-full px-3 py-1.5 bg-slate-900 border border-slate-850 rounded-lg text-white outline-none focus:ring-1 focus:ring-fluo-purple font-sans"
                     />
@@ -4761,6 +4830,8 @@
                     <input
                       type="text"
                       id="new-creator-role"
+                      value="${window.newCreatorDraft ? window.newCreatorDraft.role || '' : ''}"
+                      oninput="syncNewCreatorDraft()"
                       placeholder="es: Amministratrice & Traduttrice"
                       class="w-full px-3 py-1.5 bg-slate-900 border border-slate-850 rounded-lg text-white outline-none focus:ring-1 focus:ring-fluo-purple font-sans"
                     />
@@ -4772,6 +4843,8 @@
                       <input
                         type="text"
                         id="new-creator-avatar"
+                        value="${window.newCreatorDraft ? window.newCreatorDraft.avatar || '' : ''}"
+                        oninput="syncNewCreatorDraft()"
                         placeholder="es: images/logo.png"
                         class="flex-grow px-3 py-1.5 bg-slate-900 border border-slate-850 rounded-lg text-white outline-none font-mono text-[10px]"
                       />
@@ -4790,9 +4863,10 @@
                     <textarea
                       id="new-creator-desc"
                       rows="2"
+                      oninput="syncNewCreatorDraft()"
                       class="w-full px-3 py-1.5 bg-slate-900 border border-slate-850 rounded-lg text-white outline-none focus:ring-1 focus:ring-fluo-purple font-sans"
                       placeholder="Scrivi una breve biografia..."
-                    ></textarea>
+                    >${window.newCreatorDraft ? window.newCreatorDraft.description || '' : ''}</textarea>
                   </div>
 
                   <div class="space-y-1">
