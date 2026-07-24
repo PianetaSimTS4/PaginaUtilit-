@@ -1529,44 +1529,15 @@
         return;
       }
       
-      const objectUrl = URL.createObjectURL(file);
-      const img = new Image();
-      img.onload = function() {
-        // Revoke the object URL immediately once the image is loaded into memory to free browser resources
-        URL.revokeObjectURL(objectUrl);
-        
-        // Defer CPU-heavy canvas scaling & encoding to keep the UI responsive and render the toast
-        setTimeout(() => {
-          const maxDim = 1200; // max dimension 1200px for high performance and excellent readability
-          let width = img.width;
-          let height = img.height;
-          
-          if (width > maxDim || height > maxDim) {
-            if (width > height) {
-              height = Math.round((height * maxDim) / width);
-              width = maxDim;
-            } else {
-              width = Math.round((width * maxDim) / height);
-              height = maxDim;
-            }
-          }
-          
-          const canvas = document.createElement('canvas');
-          canvas.width = width;
-          canvas.height = height;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, width, height);
-          
-          // Compress as JPEG with 0.85 quality - maintains very high text readability and fine details while keeping size compact
-          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.85);
-          callback(null, compressedBase64);
-        }, 50);
+      // Read original image file directly to preserve 100% original pixel quality, resolution, and format without lossy canvas encoding
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        callback(null, evt.target.result);
       };
-      img.onerror = function() {
-        URL.revokeObjectURL(objectUrl);
-        callback(new Error("Errore nel caricamento dell'immagine per la compressione"), null);
+      reader.onerror = function(err) {
+        callback(new Error("Errore nel caricamento dell'immagine originale: " + (err ? err.message : '')), null);
       };
-      img.src = objectUrl;
+      reader.readAsDataURL(file);
     }
 
     function updateLogoSrc() {
@@ -1589,10 +1560,10 @@
         const file = e.target.files[0];
         if (!file) return;
 
-        showToast('Compressione e caricamento logo...', 'info');
+        showToast('Caricamento logo in alta qualità...', 'info');
         compressAndProcessImage(file, (err, base64Data) => {
           if (err) {
-            showToast('Errore nella compressione logo: ' + err.message, 'info');
+            showToast('Errore nel caricamento del logo: ' + err.message, 'info');
             return;
           }
           
@@ -2339,10 +2310,10 @@
         const file = e.target.files[0];
         if (!file) return;
 
-        showToast('Compressione e caricamento immagine...', 'info');
+        showToast('Caricamento immagine in alta qualità...', 'info');
         compressAndProcessImage(file, (err, base64Data) => {
           if (err) {
-            showToast('Errore nella compressione: ' + err.message, 'info');
+            showToast('Errore nel caricamento immagine: ' + err.message, 'info');
             return;
           }
           
@@ -2561,10 +2532,10 @@
         const file = e.target.files[0];
         if (!file) return;
 
-        showToast('Compressione e caricamento immagine profilo...', 'info');
+        showToast('Caricamento immagine profilo in alta qualità...', 'info');
         compressAndProcessImage(file, (err, base64Data) => {
           if (err) {
-            showToast('Errore nella compressione: ' + err.message, 'info');
+            showToast('Errore nel caricamento immagine: ' + err.message, 'info');
             return;
           }
           
