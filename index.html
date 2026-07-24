@@ -108,7 +108,7 @@
     }
   </script>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap"></noscript>
@@ -281,7 +281,7 @@
       
       <div class="flex items-center gap-3 cursor-pointer select-none" onclick="switchTab('guides')">
         <div id="logo-container" class="h-10 w-10 shrink-0 flex items-center justify-center">
-          <img id="logo-img" src="/images/logo.png" alt="PianetaSim Logo" class="h-10 w-10 object-contain shrink-0" onerror="tryNextLogo()">
+          <img id="logo-img" src="/images/logo.png" alt="PianetaSim Logo" width="40" height="40" fetchpriority="high" loading="eager" class="h-10 w-10 object-contain shrink-0" onerror="tryNextLogo()">
         </div>
         <div id="logo-fallback" class="flex items-center">
           <div class="font-black text-xl tracking-wider text-white m-0">PIANETA<span class="animate-sim-color">SIM</span></div>
@@ -1554,7 +1554,7 @@
       const container = document.getElementById('logo-container');
       if (container) {
         const logoUrl = siteLogo || '/images/logo.png?v=10';
-        container.innerHTML = `<img id="logo-img" src="${logoUrl}" alt="PianetaSim Logo" class="h-10 w-10 object-contain shrink-0" onerror="tryNextLogo()" />`;
+        container.innerHTML = `<img id="logo-img" src="${logoUrl}" alt="PianetaSim Logo" width="40" height="40" fetchpriority="high" class="h-10 w-10 object-contain shrink-0" onerror="tryNextLogo()" />`;
         logoIndex = 0;
         if (!logoPaths.includes(logoUrl)) {
           logoPaths.unshift(logoUrl);
@@ -5353,9 +5353,9 @@
                 return `
                   <div
                     onclick="navigateToGuide('${guide.id}')"
-                    class="bg-space-card rounded-2xl border border-slate-800/80 p-5 cursor-pointer hover:border-slate-700/80 transition-all duration-300 hover:-translate-y-1 shadow-md hover:shadow-2xl flex flex-col justify-between group relative overflow-hidden min-h-[250px] h-full"
+                    class="bg-space-card rounded-2xl border border-slate-800/80 p-6 sm:p-6.5 cursor-pointer hover:border-slate-700/80 transition-all duration-300 hover:-translate-y-1 shadow-md hover:shadow-2xl flex flex-col justify-between group relative overflow-hidden min-h-[260px] sm:min-h-[270px] h-full"
                   >
-                    <div class="space-y-3">
+                    <div class="space-y-3.5">
                       
                       <div class="flex items-center justify-between gap-2 overflow-hidden">
                         <div class="flex flex-wrap gap-1 items-center overflow-hidden">
@@ -5383,12 +5383,12 @@
                     </div>
  
                     
-                    <div class="pt-3 border-t border-slate-900 flex items-center justify-between text-[11px]">
-                      <div class="flex flex-col gap-0.5 max-w-[60%] overflow-hidden">
+                    <div class="pt-4 mt-4 border-t border-slate-800/70 flex items-center justify-between text-[11px] gap-3">
+                      <div class="flex flex-col gap-1.5 min-w-0 flex-1 overflow-hidden pr-1">
                         ${(getGuideAuthorsList(guide).length > 0 && !guide.hideAuthorsInPreview) ? `
                           <div class="flex flex-wrap items-center gap-1.5 overflow-hidden">
                             ${getGuideAuthorsList(guide).map(author => `
-                              <span class="text-[10px] font-sans font-medium flex items-center gap-1 relative group/list-author-1" title="${author.level || 'Autore'}">
+                              <span class="text-[10px] sm:text-[11px] font-sans font-medium flex items-center gap-1 relative group/list-author-1" title="${author.level || 'Autore'}">
                                 <span style="color: ${author.color || '#cbd5e1'}">
                                   <button onclick="event.stopPropagation(); viewCreatorCard('${author.name.replace(/'/g, "\\'")}', '${(author.link || '').replace(/'/g, "\\'")}')" class="hover:underline hover:text-fluo-purple transition-all cursor-pointer font-bold text-left bg-transparent border-0 p-0 text-inherit outline-none font-sans">
                                     ${author.name}
@@ -5402,12 +5402,12 @@
                             `).join('')}
                           </div>
                         ` : ''}
-                        <span class="text-slate-500 truncate font-mono">
-                          #${guide.tags.slice(0, 2).join(' #')}
+                        <span class="text-slate-400/80 truncate font-mono text-[10px] sm:text-[10.5px] tracking-wide">
+                          #${guide.tags.slice(0, 3).join(' #')}
                         </span>
                       </div>
                       
-                      <span class="text-fluo-purple font-bold flex items-center gap-1 group-hover:text-white transition-colors">
+                      <span class="text-fluo-purple font-bold flex items-center gap-1 group-hover:text-white transition-colors shrink-0 text-xs pl-1">
                         Leggi Guida
                         <i data-lucide="chevron-right" class="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform"></i>
                       </span>
@@ -5578,9 +5578,9 @@
                       return `
                         <div
                           onclick="navigateToGuide('${guide.id}')"
-                          class="bg-space-card rounded-2xl border border-slate-800/80 p-5 cursor-pointer hover:border-slate-700/80 transition-all duration-300 hover:-translate-y-1 shadow-md hover:shadow-2xl flex flex-col justify-between group relative overflow-hidden h-[240px]"
+                          class="bg-space-card rounded-2xl border border-slate-800/80 p-6 sm:p-6.5 cursor-pointer hover:border-slate-700/80 transition-all duration-300 hover:-translate-y-1 shadow-md hover:shadow-2xl flex flex-col justify-between group relative overflow-hidden min-h-[260px] sm:min-h-[270px] h-full"
                         >
-                          <div class="space-y-3">
+                          <div class="space-y-3.5">
                             
                             <div class="flex items-center justify-between gap-2 overflow-hidden">
                               <div class="flex flex-wrap gap-1 items-center overflow-hidden">
@@ -5608,12 +5608,12 @@
                           </div>
 
                           
-                          <div class="pt-3 border-t border-slate-900 flex items-center justify-between text-[11px]">
-                            <div class="flex flex-col gap-0.5 max-w-[60%] overflow-hidden">
+                          <div class="pt-4 mt-4 border-t border-slate-800/70 flex items-center justify-between text-[11px] gap-3">
+                            <div class="flex flex-col gap-1.5 min-w-0 flex-1 overflow-hidden pr-1">
                               ${getGuideAuthorsList(guide).length > 0 ? `
                                 <div class="flex flex-wrap items-center gap-1.5 overflow-hidden">
                                   ${getGuideAuthorsList(guide).map(author => `
-                                    <span class="text-[10px] font-sans font-medium flex items-center gap-1 relative group/list-author-2" title="${author.level || 'Autore'}">
+                                    <span class="text-[10px] sm:text-[11px] font-sans font-medium flex items-center gap-1 relative group/list-author-2" title="${author.level || 'Autore'}">
                                       <span style="color: ${author.color || '#cbd5e1'}">
                                         <button onclick="event.stopPropagation(); viewCreatorCard('${author.name.replace(/'/g, "\\'")}', '${(author.link || '').replace(/'/g, "\\'")}')" class="hover:underline hover:text-fluo-purple transition-all cursor-pointer font-bold text-left bg-transparent border-0 p-0 text-inherit outline-none font-sans">
                                           ${author.name}
@@ -5627,12 +5627,12 @@
                                   `).join('')}
                                 </div>
                               ` : ''}
-                              <span class="text-slate-500 truncate font-mono">
-                                #${guide.tags.slice(0, 2).join(' #')}
+                              <span class="text-slate-400/80 truncate font-mono text-[10px] sm:text-[10.5px] tracking-wide">
+                                #${guide.tags.slice(0, 3).join(' #')}
                               </span>
                             </div>
                             
-                            <span class="text-fluo-purple font-bold flex items-center gap-1 group-hover:text-white transition-colors">
+                            <span class="text-fluo-purple font-bold flex items-center gap-1 group-hover:text-white transition-colors shrink-0 text-xs pl-1">
                               Leggi Guida
                               <i data-lucide="chevron-right" class="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform"></i>
                             </span>
@@ -5696,7 +5696,7 @@
               <div>
                 <h1 class="text-2xl sm:text-3xl font-black text-white flex items-center gap-2.5">
                   <i data-lucide="users" class="w-7 h-7 text-fluo-purple"></i>
-                  I nostri Collaboratori &lt;3
+                  I nostri Collaboratori ❤︎
                 </h1>
                 <p class="text-xs sm:text-sm text-slate-400">Scopri il team, i creatori di guide e la community dietro a PianetaSim</p>
               </div>
@@ -5725,11 +5725,11 @@
                       </div>
                       <div>
                         <span class="text-[9px] font-black uppercase tracking-wider text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded-md border border-sky-500/20">Community Telegram</span>
-                        <h3 class="text-sm font-black text-white leading-tight mt-0.5">Unisciti al Gruppo! 💬</h3>
+                        <h3 class="text-sm font-black text-white leading-tight mt-0.5">Unisciti a Pianeta Sim!</h3>
                       </div>
                     </div>
                     <p class="text-xs text-slate-300 leading-relaxed">
-                      Hai dubbi sulle mod, ti serve supporto o vuoi chattare con i collaboratori? Entra nel nostro gruppo ufficiale Telegram!
+                      Hai bisogno di una mano, vuoi semplicemente condividere la tua passione per The Sims o vuoi anche tu dare una mano alla comunnity? Entra nel nostro gruppo Telegram!
                     </p>
                     <a
                       href="https://t.me/TheSims4ItaliaPianetaSim"
@@ -7370,7 +7370,7 @@
         isTabActive = !document.hidden;
       });
 
-      const fpsInterval = 1000 / 30; // 30 FPS throttling for background canvas animation
+      const fpsInterval = 1000 / 24; // 24 FPS throttling for optimal performance & zero lag
       let lastFrameTime = performance.now();
 
       function animate(timestamp) {
@@ -7398,6 +7398,7 @@
         }
 
         
+        ctx.fillStyle = '#ffffff';
         for (let i = 0; i < backgroundStars.length; i++) {
           const s = backgroundStars[i];
           s.opacity += s.twinkleSpeed * s.twinkleDir;
@@ -7410,10 +7411,11 @@
           }
 
           
-          ctx.fillStyle = `rgba(255, 255, 255, ${s.opacity})`;
+          ctx.globalAlpha = s.opacity;
           const size = s.radius * 2;
           ctx.fillRect(s.x - s.radius, s.y - s.radius, size, size);
         }
+        ctx.globalAlpha = 1.0;
 
         
         ctx.font = '9px "JetBrains Mono", Courier, monospace';
