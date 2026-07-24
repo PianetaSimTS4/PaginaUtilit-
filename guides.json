@@ -553,7 +553,7 @@
         },
         {
           "type": "list",
-          "value": "Leo Translations \n\nLady \"Psyco\" Trilly\n\nLoryNaMod\n\nRicky's Mom\n\nSha\n\nLadySilka\n\nSulAsya",
+          "value": "[AngiePixelWords](https://www.patreon.com/cw/AngiePixelWords)\n\n[Lady \"Psyco\" Trilly](https://www.patreon.com/cw/LadyTrillyTheSims4)\n\n[LadySilka](https://www.patreon.com/cw/LadySilka)\n\n[Leo Translations ](https://www.patreon.com/cw/leotranslations)\n\n[LoryNaMods](https://www.lorynamods.com/)\n\n[Ricky's Mom](https://www.patreon.com/cw/RickysMomt)\n\n[Sha](https://www.patreon.com/cw/Sha_TsIta)\n\n[SulAsya](https://www.patreon.com/cw/sulasyat)]",
           "listType": "bullet"
         },
         {
@@ -603,6 +603,24 @@
         {
           "type": "tip",
           "value": "Se non sai come organizzare le mod leggi la guida dedicata: “CONSIGLI SUL COME ORGANIZZARE LE MOD”!"
+        },
+        {
+          "type": "divider",
+          "value": "",
+          "separatorType": "spacer",
+          "dividerType": "standard",
+          "height": "10"
+        },
+        {
+          "type": "paragraph",
+          "value": "**[color:#38bdf8](SE HAI DUBBI O DIFFICOLTÀ, PUOI RICHIEDE ASSISTENZA NEL GRUPPO TELEGRAM)**",
+          "align": "center"
+        },
+        {
+          "type": "button",
+          "value": "ASSISTENZA TELEGRAM",
+          "buttonUrl": "",
+          "buttonColor": "#38bdf8"
         }
       ],
       "tips": [],
