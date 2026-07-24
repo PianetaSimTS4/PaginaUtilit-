@@ -2643,6 +2643,28 @@
       }
     };
 
+    window.toggleEditingCreatorTag = function(tagName, isChecked) {
+      if (!window.editingCreatorTagsList) window.editingCreatorTagsList = [];
+      if (isChecked) {
+        if (!window.editingCreatorTagsList.some(t => t.toLowerCase() === tagName.toLowerCase())) {
+          window.editingCreatorTagsList.push(tagName);
+        }
+      } else {
+        window.editingCreatorTagsList = window.editingCreatorTagsList.filter(t => t.toLowerCase() !== tagName.toLowerCase());
+      }
+    };
+
+    window.toggleNewCreatorTag = function(tagName, isChecked) {
+      if (!window.newCreatorTagsList) window.newCreatorTagsList = [];
+      if (isChecked) {
+        if (!window.newCreatorTagsList.some(t => t.toLowerCase() === tagName.toLowerCase())) {
+          window.newCreatorTagsList.push(tagName);
+        }
+      } else {
+        window.newCreatorTagsList = window.newCreatorTagsList.filter(t => t.toLowerCase() !== tagName.toLowerCase());
+      }
+    };
+
     function handleAddCreator() {
       const nameInput = document.getElementById('new-creator-name');
       const roleInput = document.getElementById('new-creator-role');
@@ -2659,11 +2681,10 @@
       const avatar = avatarInput ? avatarInput.value.trim() : '';
       const description = descInput ? descInput.value.trim() : '';
       
-      const tags = [];
-      authorTags.forEach(t => {
-        const id = `new-creator-tag-${t.name.replace(/\s+/g, '-')}`;
-        const cb = document.getElementById(id);
-        if (cb && cb.checked) {
+      const tags = window.newCreatorTagsList ? [...window.newCreatorTagsList] : [];
+      authorTags.forEach((t, tIdx) => {
+        const cb = document.getElementById(`new-creator-tag-${tIdx}`);
+        if (cb && cb.checked && !tags.some(tag => tag.toLowerCase() === t.name.toLowerCase())) {
           tags.push(t.name);
         }
       });
@@ -2685,6 +2706,7 @@
 
       creators.push(newCreator);
       window.newCreatorSocialsList = [];
+      window.newCreatorTagsList = [];
       persistDataLocally();
       saveAllGuidesToServer();
       renderApp();
@@ -2715,12 +2737,16 @@
       const avatar = avatarInput ? avatarInput.value.trim() : '';
       const description = descInput ? descInput.value.trim() : '';
       
-      const tags = [];
-      authorTags.forEach(t => {
-        const id = `edit-creator-tag-${t.name.replace(/\s+/g, '-')}`;
-        const cb = document.getElementById(id);
-        if (cb && cb.checked) {
-          tags.push(t.name);
+      const tags = window.editingCreatorTagsList ? [...window.editingCreatorTagsList] : [];
+      authorTags.forEach((t, tIdx) => {
+        const cb = document.getElementById(`edit-creator-tag-${tIdx}`);
+        if (cb) {
+          if (cb.checked && !tags.some(tag => tag.toLowerCase() === t.name.toLowerCase())) {
+            tags.push(t.name);
+          } else if (!cb.checked && tags.some(tag => tag.toLowerCase() === t.name.toLowerCase())) {
+            const idx = tags.findIndex(tag => tag.toLowerCase() === t.name.toLowerCase());
+            if (idx !== -1) tags.splice(idx, 1);
+          }
         }
       });
       if (tags.length === 0) {
@@ -2741,6 +2767,7 @@
 
       window.editingCreatorId = null;
       window.editingSocialsList = null;
+      window.editingCreatorTagsList = null;
       persistDataLocally();
       saveAllGuidesToServer();
       renderApp();
@@ -4523,6 +4550,9 @@
                   if (!window.editingSocialsList) {
                     window.editingSocialsList = JSON.parse(JSON.stringify(cToEdit.socials || []));
                   }
+                  if (!window.editingCreatorTagsList) {
+                    window.editingCreatorTagsList = JSON.parse(JSON.stringify(cToEdit.tags || []));
+                  }
 
                   return `
                     <div class="p-4 bg-slate-950/40 border border-slate-850 rounded-2xl space-y-3">
@@ -4585,11 +4615,12 @@
                         <div class="space-y-1">
                           <label class="text-[9px] uppercase font-black text-slate-400 font-sans">Tag dell'Autore (Seleziona solo tra quelli esistenti)</label>
                           <div class="grid grid-cols-2 gap-2 bg-slate-900 p-3 rounded-xl border border-slate-850 max-h-[140px] overflow-y-auto scrollbar-none">
-                            ${authorTags.map(t => {
-                              const isChecked = (cToEdit.tags || []).includes(t.name) ? 'checked' : '';
+                            ${authorTags.map((t, tIdx) => {
+                              const isChecked = (window.editingCreatorTagsList || []).some(tag => tag.toLowerCase() === t.name.toLowerCase()) ? 'checked' : '';
+                              const safeName = t.name.replace(/'/g, "\\'");
                               return `
                                 <label class="flex items-center gap-2 text-[11px] text-slate-300 hover:text-white cursor-pointer select-none font-sans">
-                                  <input type="checkbox" id="edit-creator-tag-${t.name.replace(/\s+/g, '-')}" ${isChecked} class="rounded border-slate-850 text-fluo-purple focus:ring-fluo-purple bg-slate-950 w-3.5 h-3.5" />
+                                  <input type="checkbox" id="edit-creator-tag-${tIdx}" ${isChecked} onchange="toggleEditingCreatorTag('${safeName}', this.checked)" class="rounded border-slate-850 text-fluo-purple focus:ring-fluo-purple bg-slate-950 w-3.5 h-3.5 cursor-pointer" />
                                   <span class="inline-block w-2.5 h-2.5 rounded-full shrink-0" style="background-color: ${t.color}"></span>
                                   <span class="truncate">${t.name}</span>
                                 </label>
@@ -4651,7 +4682,7 @@
                             Salva Modifiche
                           </button>
                           <button
-                            onclick="window.editingCreatorId = null; renderApp();"
+                            onclick="window.editingCreatorId = null; window.editingSocialsList = null; window.editingCreatorTagsList = null; renderApp();"
                             class="px-3 py-2 bg-slate-900 hover:bg-slate-850 border border-slate-850 text-slate-400 rounded-lg text-xs font-bold cursor-pointer"
                           >
                             Annulla
@@ -4680,7 +4711,7 @@
                     </div>
                     <div class="flex items-center gap-1 shrink-0">
                       <button
-                        onclick="window.editingCreatorId = '${c.id}'; renderApp();"
+                        onclick="window.editingCreatorId = '${c.id}'; window.editingSocialsList = null; window.editingCreatorTagsList = null; renderApp();"
                         class="p-1.5 text-fluo-purple hover:text-purple-400 hover:bg-slate-900/40 rounded transition-colors"
                         title="Modifica questo autore"
                       >
@@ -4755,13 +4786,17 @@
                   <div class="space-y-1">
                     <label class="text-[9px] uppercase font-black text-slate-400 font-sans">Seleziona i Tag dell'Autore (Seleziona solo tra quelli esistenti)</label>
                     <div class="grid grid-cols-2 gap-2 bg-slate-900 p-3 rounded-xl border border-slate-850 max-h-[140px] overflow-y-auto scrollbar-none">
-                      ${authorTags.map(t => `
-                        <label class="flex items-center gap-2 text-[11px] text-slate-300 hover:text-white cursor-pointer select-none font-sans">
-                          <input type="checkbox" id="new-creator-tag-${t.name.replace(/\s+/g, '-')}" class="rounded border-slate-850 text-fluo-purple focus:ring-fluo-purple bg-slate-950 w-3.5 h-3.5" />
-                          <span class="inline-block w-2.5 h-2.5 rounded-full shrink-0" style="background-color: ${t.color}"></span>
-                          <span class="truncate">${t.name}</span>
-                        </label>
-                      `).join('')}
+                      ${authorTags.map((t, tIdx) => {
+                        const isChecked = (window.newCreatorTagsList || []).some(tag => tag.toLowerCase() === t.name.toLowerCase()) ? 'checked' : '';
+                        const safeName = t.name.replace(/'/g, "\\'");
+                        return `
+                          <label class="flex items-center gap-2 text-[11px] text-slate-300 hover:text-white cursor-pointer select-none font-sans">
+                            <input type="checkbox" id="new-creator-tag-${tIdx}" ${isChecked} onchange="toggleNewCreatorTag('${safeName}', this.checked)" class="rounded border-slate-850 text-fluo-purple focus:ring-fluo-purple bg-slate-950 w-3.5 h-3.5 cursor-pointer" />
+                            <span class="inline-block w-2.5 h-2.5 rounded-full shrink-0" style="background-color: ${t.color}"></span>
+                            <span class="truncate">${t.name}</span>
+                          </label>
+                        `;
+                      }).join('')}
                     </div>
                   </div>
 
