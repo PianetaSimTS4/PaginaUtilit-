@@ -289,35 +289,36 @@
       </div>
 
       
-      <nav class="flex items-center gap-2 sm:gap-3 overflow-x-auto max-w-full pb-1 sm:pb-0 scrollbar-none">
+      <!-- Navigazione Desktop & Mobile responsive -->
+      <nav class="flex flex-wrap items-center justify-center sm:justify-start gap-1.5 sm:gap-2 lg:gap-2.5 max-w-full pb-1 sm:pb-0 scrollbar-none">
         <a
           id="btn-tab-home"
           href="https://pianetasimts.github.io/PianetaSim/index.html"
-          class="px-4 py-2 sm:px-5 sm:py-3 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-300 bg-slate-900/60 border border-slate-800 hover:text-white hover:border-fluo-green flex items-center justify-center shadow-sm"
+          class="px-2.5 py-1.5 sm:px-3 sm:py-2 lg:px-3.5 lg:py-2 rounded-full text-[11px] sm:text-xs lg:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-300 bg-slate-900/60 border border-slate-800 hover:text-white hover:border-fluo-green flex items-center justify-center shadow-sm shrink-0"
         >
           Home
         </a>
         <a
           href="https://pianetasimts.github.io/PianetaSim/mod.html"
-          class="px-4 py-2 sm:px-5 sm:py-3 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-300 bg-slate-900/60 border border-slate-800 hover:text-white hover:border-fluo-green flex items-center justify-center shadow-sm"
+          class="px-2.5 py-1.5 sm:px-3 sm:py-2 lg:px-3.5 lg:py-2 rounded-full text-[11px] sm:text-xs lg:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-300 bg-slate-900/60 border border-slate-800 hover:text-white hover:border-fluo-green flex items-center justify-center shadow-sm shrink-0"
         >
           Mod & Traduzioni
         </a>
         <a
           href="https://pianetasimts.github.io/PianetaSim/mod18.html"
-          class="px-4 py-2 sm:px-5 sm:py-3 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-300 bg-slate-900/60 border border-slate-800 hover:text-white hover:border-fluo-green flex items-center justify-center shadow-sm"
+          class="px-2.5 py-1.5 sm:px-3 sm:py-2 lg:px-3.5 lg:py-2 rounded-full text-[11px] sm:text-xs lg:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-300 bg-slate-900/60 border border-slate-800 hover:text-white hover:border-fluo-green flex items-center justify-center shadow-sm shrink-0"
         >
           Mod & Traduzioni 18+
         </a>
         <a
           href="https://pianetasimts.github.io/PianetaSim/animazioniww18.html"
-          class="px-4 py-2 sm:px-5 sm:py-3 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-300 bg-slate-900/60 border border-slate-800 hover:text-white hover:border-fluo-green flex items-center justify-center shadow-sm"
+          class="px-2.5 py-1.5 sm:px-3 sm:py-2 lg:px-3.5 lg:py-2 rounded-full text-[11px] sm:text-xs lg:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-300 bg-slate-900/60 border border-slate-800 hover:text-white hover:border-fluo-green flex items-center justify-center shadow-sm shrink-0"
         >
           Animazioni
         </a>
         <a
           href="https://pianetasimts.github.io/PianetaSim/storie.html"
-          class="px-4 py-2 sm:px-5 sm:py-3 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-300 bg-slate-900/60 border border-slate-800 hover:text-white hover:border-fluo-green flex items-center justify-center shadow-sm"
+          class="px-2.5 py-1.5 sm:px-3 sm:py-2 lg:px-3.5 lg:py-2 rounded-full text-[11px] sm:text-xs lg:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-300 bg-slate-900/60 border border-slate-800 hover:text-white hover:border-fluo-green flex items-center justify-center shadow-sm shrink-0"
         >
           Racconti
         </a>
@@ -326,9 +327,18 @@
           role="button"
           tabindex="0"
           onclick="switchTab('guides')"
-          class="px-4 py-2 sm:px-5 sm:py-3 rounded-full text-xs sm:text-sm font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap bg-fluo-purple text-white shadow-[0_0_15px_rgba(176,38,255,0.55)] border border-fluo-purple/40 flex items-center justify-center"
+          class="px-2.5 py-1.5 sm:px-3 sm:py-2 lg:px-3.5 lg:py-2 rounded-full text-[11px] sm:text-xs lg:text-sm font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap bg-fluo-purple text-white shadow-[0_0_15px_rgba(176,38,255,0.55)] border border-fluo-purple/40 flex items-center justify-center shrink-0"
         >
           GUIDE & UTILITÀ
+        </div>
+        <div
+          id="btn-tab-creators"
+          role="button"
+          tabindex="0"
+          onclick="switchTab('creators')"
+          class="px-2.5 py-1.5 sm:px-3 sm:py-2 lg:px-3.5 lg:py-2 rounded-full text-[11px] sm:text-xs lg:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-300 bg-slate-900/60 border border-slate-800 hover:text-white hover:border-fluo-green flex items-center justify-center shadow-sm shrink-0"
+        >
+          CHI SIAMO?
         </div>
         
         <div
@@ -337,7 +347,7 @@
           tabindex="0"
           onclick="switchTab('admin')"
           title="Pannello Admin"
-          class="hidden w-10 h-10 rounded-full text-base font-bold transition-all cursor-pointer text-purple-300 hover:text-white bg-slate-900/60 border border-purple-900/50 hover:bg-purple-950/40 hover:border-fluo-purple/40 flex items-center justify-center shadow-sm shrink-0 hover:scale-105 active:scale-95"
+          class="hidden w-7 h-7 sm:w-8 sm:h-8 lg:w-9 lg:h-9 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer text-purple-300 hover:text-white bg-slate-900/60 border border-purple-900/50 hover:bg-purple-950/40 hover:border-fluo-purple/40 flex items-center justify-center shadow-sm shrink-0 hover:scale-105 active:scale-95"
         >
           👽
         </div>
@@ -3998,6 +4008,8 @@
     function switchTab(tab) {
       if (tab === 'admin') {
         navigateToAdmin();
+      } else if (tab === 'creators' || tab === 'chi-siamo') {
+        navigateToCreators();
       } else {
         selectedCategory = 'all';
         navigateToGuidesList();
@@ -5137,23 +5149,27 @@
 
       
       const btnGuides = document.getElementById('btn-tab-guides');
+      const btnCreators = document.getElementById('btn-tab-creators');
       const btnAdmin = document.getElementById('btn-tab-admin');
 
+      const activeBtnClass = "px-2.5 py-1.5 sm:px-3 sm:py-2 lg:px-3.5 lg:py-2 rounded-full text-[11px] sm:text-xs lg:text-sm font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap bg-fluo-purple text-white shadow-[0_0_15px_rgba(176,38,255,0.55)] border border-fluo-purple/40 flex items-center justify-center shrink-0";
+      const inactiveBtnClass = "px-2.5 py-1.5 sm:px-3 sm:py-2 lg:px-3.5 lg:py-2 rounded-full text-[11px] sm:text-xs lg:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-300 bg-slate-900/60 border border-slate-800 hover:text-white hover:border-fluo-green flex items-center justify-center shadow-sm shrink-0";
+
       if (btnGuides) {
-        if (activeTab === 'guides') {
-          btnGuides.className = "px-4 py-2 sm:px-5 sm:py-3 rounded-full text-xs sm:text-sm font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap bg-fluo-purple text-white shadow-[0_0_15px_rgba(176,38,255,0.55)] border border-fluo-purple/40 flex items-center justify-center";
-        } else {
-          btnGuides.className = "px-4 py-2 sm:px-5 sm:py-3 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-300 bg-slate-900/60 border border-slate-800 hover:text-white hover:border-fluo-green flex items-center justify-center shadow-sm";
-        }
+        btnGuides.className = (activeTab === 'guides') ? activeBtnClass : inactiveBtnClass;
+      }
+
+      if (btnCreators) {
+        btnCreators.className = (activeTab === 'creators') ? activeBtnClass : inactiveBtnClass;
       }
 
       if (btnAdmin) {
         if (window.isAdminAuthenticated) {
           btnAdmin.classList.remove('hidden');
           if (activeTab === 'admin') {
-            btnAdmin.className = "w-10 h-10 rounded-full text-base font-black transition-all cursor-pointer bg-fluo-purple text-white shadow-[0_0_15px_rgba(176,38,255,0.55)] border border-fluo-purple/40 flex items-center justify-center shrink-0 hover:scale-105 active:scale-95";
+            btnAdmin.className = "w-7 h-7 sm:w-8 sm:h-8 lg:w-9 lg:h-9 rounded-full text-xs sm:text-sm font-black transition-all cursor-pointer bg-fluo-purple text-white shadow-[0_0_15px_rgba(176,38,255,0.55)] border border-fluo-purple/40 flex items-center justify-center shrink-0 hover:scale-105 active:scale-95";
           } else {
-            btnAdmin.className = "w-10 h-10 rounded-full text-base font-bold transition-all cursor-pointer text-purple-300 hover:text-white bg-slate-900/60 border border-purple-900/50 hover:bg-purple-950/40 hover:border-fluo-purple/40 flex items-center justify-center shadow-sm shrink-0 hover:scale-105 active:scale-95";
+            btnAdmin.className = "w-7 h-7 sm:w-8 sm:h-8 lg:w-9 lg:h-9 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer text-purple-300 hover:text-white bg-slate-900/60 border border-purple-900/50 hover:bg-purple-950/40 hover:border-fluo-purple/40 flex items-center justify-center shadow-sm shrink-0 hover:scale-105 active:scale-95";
           }
         } else {
           btnAdmin.classList.add('hidden');
@@ -5636,97 +5652,267 @@
       }
 
       if (activeTab === 'creators') {
+        window.selectedCreatorTag = window.selectedCreatorTag || 'all';
+
+        // Estrazione di tutti i tag disponibili da authorTags e dai creatori
+        const tagMap = new Map();
+        (authorTags || []).forEach(t => {
+          if (t && t.name) {
+            tagMap.set(t.name.toLowerCase(), { name: t.name, color: t.color });
+          }
+        });
+        (creators || []).forEach(c => {
+          (c.tags || []).forEach(t => {
+            if (t && !tagMap.has(t.toLowerCase())) {
+              tagMap.set(t.toLowerCase(), { name: t, color: getTagStyles(t).colorCode });
+            }
+          });
+        });
+        const allTagsList = Array.from(tagMap.values());
+
+        // Conteggio collaboratori per ciascun tag
+        const tagCounts = {};
+        (creators || []).forEach(c => {
+          (c.tags || []).forEach(t => {
+            const key = t.trim();
+            if (key) {
+              const matched = allTagsList.find(a => a.name.toLowerCase() === key.toLowerCase());
+              const tagName = matched ? matched.name : key;
+              tagCounts[tagName] = (tagCounts[tagName] || 0) + 1;
+            }
+          });
+        });
+
+        // Filtraggio dei creatori
+        const selectedTag = window.selectedCreatorTag;
+        const filteredCreators = (selectedTag === 'all')
+          ? creators
+          : creators.filter(c => (c.tags || []).some(t => t.toLowerCase() === selectedTag.toLowerCase()));
+
         container.innerHTML = `
-          <div class="max-w-4xl mx-auto space-y-8 animate-fade-in font-sans">
+          <div class="max-w-6xl mx-auto space-y-8 animate-fade-in font-sans">
             <!-- Header con pulsante indietro -->
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800 pb-5">
               <div>
-                <h1 class="text-2xl font-black text-white flex items-center gap-2">
-                  <i data-lucide="users" class="w-6 h-6 text-fluo-purple"></i>
-                  Chi Siamo
+                <h1 class="text-2xl sm:text-3xl font-black text-white flex items-center gap-2.5">
+                  <i data-lucide="users" class="w-7 h-7 text-fluo-purple"></i>
+                  I nostri Collaboratori &lt;3
                 </h1>
-                <p class="text-xs text-slate-400">Scopri chi c'è dietro a Pianeta e la sua Community</p>
+                <p class="text-xs sm:text-sm text-slate-400">Scopri il team, i creatori di guide e la community dietro a PianetaSim</p>
               </div>
               <button
                 onclick="navigateToGuidesList()"
-                class="inline-flex items-center gap-2 text-xs font-bold text-slate-400 hover:text-fluo-green bg-slate-900/80 hover:bg-slate-800/80 border border-slate-800 px-4 py-2.5 rounded-xl cursor-pointer transition-all duration-200"
+                class="inline-flex items-center gap-2 text-xs font-bold text-slate-400 hover:text-fluo-green bg-slate-900/80 hover:bg-slate-800/80 border border-slate-800 px-4 py-2.5 rounded-xl cursor-pointer transition-all duration-200 shrink-0"
               >
                 <i data-lucide="arrow-left" class="w-4 h-4"></i>
                 Torna all'elenco delle guide
               </button>
             </div>
 
-            <!-- Griglia dei Creatori -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              ${creators.map(creator => {
-                const avatarSrc = creator.avatar || 'images/logo.png';
-                const socialsHtml = (creator.socials || []).map(social => {
-                  const sColor = social.color || '#a855f7';
-                  return `
+            <!-- Grid principale con Sidebar (Telegram + Filtri Tag) a sinistra e Collaboratori a destra -->
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
+              
+              <!-- Sidebar laterale -->
+              <div class="lg:col-span-1 space-y-6">
+                
+                <!-- Box / Tasto di spinta per il Gruppo Telegram -->
+                <div class="bg-space-card border border-slate-800 hover:border-sky-500/50 rounded-2xl p-5 shadow-xl relative overflow-hidden group transition-all duration-300">
+                  <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-sky-500/15 rounded-full blur-2xl group-hover:bg-sky-500/30 transition-all"></div>
+                  <div class="relative z-10 space-y-3">
+                    <div class="flex items-center gap-3">
+                      <div class="w-10 h-10 rounded-xl bg-sky-500/20 border border-sky-400/40 text-sky-400 flex items-center justify-center shrink-0 shadow-md">
+                        <i data-lucide="send" class="w-5 h-5"></i>
+                      </div>
+                      <div>
+                        <span class="text-[9px] font-black uppercase tracking-wider text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded-md border border-sky-500/20">Community Telegram</span>
+                        <h3 class="text-sm font-black text-white leading-tight mt-0.5">Unisciti al Gruppo! 💬</h3>
+                      </div>
+                    </div>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                      Hai dubbi sulle mod, ti serve supporto o vuoi chattare con i collaboratori? Entra nel nostro gruppo ufficiale Telegram!
+                    </p>
                     <a
-                      href="${social.url.startsWith('http') ? social.url : 'https://' + social.url}"
+                      href="https://t.me/TheSims4ItaliaPianetaSim"
                       target="_blank"
                       rel="noopener noreferrer"
-                      class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold rounded-xl border transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
-                      style="background-color: ${sColor}15; border-color: ${sColor}40; color: ${sColor};"
-                      onmouseover="this.style.backgroundColor='${sColor}2a'; this.style.borderColor='${sColor}'; this.style.color='#ffffff';"
-                      onmouseout="this.style.backgroundColor='${sColor}15'; this.style.borderColor='${sColor}40'; this.style.color='${sColor}';"
+                      class="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-black text-xs rounded-xl shadow-lg shadow-sky-500/25 hover:shadow-sky-500/40 transition-all duration-200 transform active:scale-95 group/btn"
                     >
-                      <span>${social.label}</span>
-                      <i data-lucide="external-link" class="w-3.5 h-3.5" style="color: ${sColor}"></i>
+                      <span>Entra nel Gruppo Telegram</span>
+                      <i data-lucide="external-link" class="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 transition-transform"></i>
                     </a>
-                  `;
-                }).join('');
-
-                const tagsHtml = (creator.tags || []).map(tag => {
-                  const s = getTagStyles(tag);
-                  return `
-                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-black border font-sans uppercase tracking-wider" style="color: ${s.colorCode}; border-color: ${s.colorCode}40; background-color: ${s.colorCode}10;">
-                      <span class="w-1.5 h-1.5 rounded-full" style="background-color: ${s.colorCode}"></span>
-                      ${tag}
-                    </span>
-                  `;
-                }).join('');
-
-                return `
-                  <div id="creator-card-${creator.id || creator.name.toLowerCase().replace(/\s+/g, '-')}" class="bg-space-card rounded-2xl border border-slate-800 p-6 shadow-xl flex flex-col justify-between space-y-4 hover:border-slate-700 transition-all duration-300">
-                    <div class="space-y-4">
-                      <!-- Profilo -->
-                      <div class="flex items-center gap-4">
-                        <img 
-                          src="${avatarSrc}" 
-                          referrerpolicy="no-referrer"
-                          alt="${creator.name}" 
-                          class="w-16 h-16 rounded-full border-2 border-fluo-purple/40 object-cover bg-slate-900/40 shrink-0 animate-fade-in"
-                          onerror="this.src='images/logo.png';"
-                        />
-                        <div>
-                          <h3 class="text-base font-black text-white tracking-tight flex items-center gap-1.5">
-                            ${creator.name}
-                            <span class="text-[10px] select-none text-fluo-green">◆</span>
-                          </h3>
-                          <p class="text-xs font-bold text-slate-400 font-sans">${creator.role || 'Autore'}</p>
-                        </div>
-                      </div>
-
-                      <!-- Descrizione -->
-                      <p class="text-xs text-slate-300 leading-relaxed font-sans min-h-[60px]">
-                        ${creator.description || 'Nessuna descrizione inserita.'}
-                      </p>
-
-                      <!-- Tag dell'autore -->
-                      <div class="flex flex-wrap gap-1">
-                        ${tagsHtml}
-                      </div>
-                    </div>
-
-                    <!-- Bottoni Social -->
-                    <div class="pt-4 border-t border-slate-900 flex flex-wrap gap-2">
-                      ${socialsHtml || '<span class="text-xs text-slate-500 italic">Nessun link social</span>'}
-                    </div>
                   </div>
-                `;
-              }).join('')}
+                </div>
+
+                <!-- Sezione Filtri per Tag -->
+                <div class="bg-space-card border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+                  <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+                    <h2 class="text-xs font-black uppercase tracking-wider text-white flex items-center gap-2">
+                      <i data-lucide="filter" class="w-4 h-4 text-fluo-purple"></i>
+                      Filtra per Ruolo
+                    </h2>
+                    ${selectedTag !== 'all' ? `
+                      <button
+                        onclick="window.selectedCreatorTag = 'all'; renderApp();"
+                        class="text-[11px] font-bold text-slate-400 hover:text-fluo-pink underline transition-colors cursor-pointer"
+                      >
+                        Reset
+                      </button>
+                    ` : ''}
+                  </div>
+
+                  <div class="flex flex-col gap-1.5">
+                    <!-- Pulsante 'Tutti i Collaboratori' -->
+                    <button
+                      onclick="window.selectedCreatorTag = 'all'; renderApp();"
+                      class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${selectedTag === 'all' ? 'bg-fluo-purple text-white shadow-md shadow-purple-900/40 font-black' : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'}"
+                    >
+                      <span class="flex items-center gap-2">
+                        <i data-lucide="users" class="w-3.5 h-3.5"></i>
+                        Tutti i Collaboratori
+                      </span>
+                      <span class="px-2 py-0.5 rounded-full text-[10px] ${selectedTag === 'all' ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-400'}">${creators.length}</span>
+                    </button>
+
+                    <!-- Elenco Tag -->
+                    ${allTagsList.map(tagObj => {
+                      const isSelected = selectedTag.toLowerCase() === tagObj.name.toLowerCase();
+                      const count = tagCounts[tagObj.name] || 0;
+                      const s = getTagStyles(tagObj.name);
+
+                      return `
+                        <button
+                          onclick="window.selectedCreatorTag = '${tagObj.name.replace(/'/g, "\\'")}'; renderApp();"
+                          class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer border ${isSelected ? 'border-transparent text-white font-black shadow-md' : 'border-transparent text-slate-300 hover:bg-slate-800/60 hover:text-white'}"
+                          style="${isSelected ? `background-color: ${s.colorCode};` : ''}"
+                        >
+                          <span class="flex items-center gap-2 truncate">
+                            <span class="w-2 h-2 rounded-full shrink-0" style="background-color: ${isSelected ? '#ffffff' : s.colorCode}"></span>
+                            <span class="truncate">${tagObj.name}</span>
+                          </span>
+                          <span class="px-2 py-0.5 rounded-full text-[10px] shrink-0 ${isSelected ? 'bg-black/20 text-white' : 'bg-slate-800 text-slate-400'}">${count}</span>
+                        </button>
+                      `;
+                    }).join('')}
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- Contenuto Collaboratori (3 colonne su desktop) -->
+              <div class="lg:col-span-3 space-y-6">
+                ${selectedTag !== 'all' ? `
+                  <div class="flex items-center justify-between bg-slate-900/80 border border-purple-900/40 px-4 py-3 rounded-xl">
+                    <div class="flex items-center gap-2 text-xs text-slate-300">
+                      <span>Filtro attivo:</span>
+                      <span class="font-black text-white px-2.5 py-0.5 rounded-full text-[11px] border" style="background-color: ${getTagStyles(selectedTag).colorCode}20; border-color: ${getTagStyles(selectedTag).colorCode}; color: ${getTagStyles(selectedTag).colorCode}">
+                        ${selectedTag}
+                      </span>
+                      <span class="text-slate-400">(${filteredCreators.length} ${filteredCreators.length === 1 ? 'collaboratore' : 'collaboratori'})</span>
+                    </div>
+                    <button
+                      onclick="window.selectedCreatorTag = 'all'; renderApp();"
+                      class="text-xs font-bold text-slate-400 hover:text-white flex items-center gap-1 cursor-pointer"
+                    >
+                      <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                      Mostra tutti
+                    </button>
+                  </div>
+                ` : ''}
+
+                ${filteredCreators.length === 0 ? `
+                  <div class="bg-space-card border border-slate-800 rounded-2xl p-12 text-center space-y-4">
+                    <div class="w-12 h-12 rounded-2xl bg-slate-800 text-slate-400 flex items-center justify-center mx-auto">
+                      <i data-lucide="user-x" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-base font-bold text-white">Nessun collaboratore trovato</h3>
+                    <p class="text-xs text-slate-400 max-w-sm mx-auto">Non ci sono collaboratori con il tag "${selectedTag}".</p>
+                    <button
+                      onclick="window.selectedCreatorTag = 'all'; renderApp();"
+                      class="px-4 py-2 bg-fluo-purple text-white text-xs font-bold rounded-xl hover:bg-opacity-90 transition-colors cursor-pointer"
+                    >
+                      Mostra tutti i collaboratori
+                    </button>
+                  </div>
+                ` : `
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    ${filteredCreators.map(creator => {
+                      const avatarSrc = creator.avatar || 'images/logo.png';
+                      const socialsHtml = (creator.socials || []).map(social => {
+                        const sColor = social.color || '#a855f7';
+                        return `
+                          <a
+                            href="${social.url.startsWith('http') ? social.url : 'https://' + social.url}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold rounded-xl border transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
+                            style="background-color: ${sColor}15; border-color: ${sColor}40; color: ${sColor};"
+                            onmouseover="this.style.backgroundColor='${sColor}2a'; this.style.borderColor='${sColor}'; this.style.color='#ffffff';"
+                            onmouseout="this.style.backgroundColor='${sColor}15'; this.style.borderColor='${sColor}40'; this.style.color='${sColor}';"
+                          >
+                            <span>${social.label}</span>
+                            <i data-lucide="external-link" class="w-3.5 h-3.5" style="color: ${sColor}"></i>
+                          </a>
+                        `;
+                      }).join('');
+
+                      const tagsHtml = (creator.tags || []).map(tag => {
+                        const s = getTagStyles(tag);
+                        return `
+                          <span 
+                            onclick="window.selectedCreatorTag = '${tag.replace(/'/g, "\\'")}'; renderApp();"
+                            class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-black border font-sans uppercase tracking-wider cursor-pointer hover:scale-105 transition-transform" 
+                            style="color: ${s.colorCode}; border-color: ${s.colorCode}40; background-color: ${s.colorCode}10;"
+                            title="Filtra per ${tag}"
+                          >
+                            <span class="w-1.5 h-1.5 rounded-full" style="background-color: ${s.colorCode}"></span>
+                            ${tag}
+                          </span>
+                        `;
+                      }).join('');
+
+                      return `
+                        <div id="creator-card-${creator.id || creator.name.toLowerCase().replace(/\s+/g, '-')}" class="bg-space-card rounded-2xl border border-slate-800 p-6 shadow-xl flex flex-col justify-between space-y-4 hover:border-slate-700 transition-all duration-300">
+                          <div class="space-y-4">
+                            <!-- Profilo -->
+                            <div class="flex items-center gap-4">
+                              <img 
+                                src="${avatarSrc}" 
+                                referrerpolicy="no-referrer"
+                                alt="${creator.name}" 
+                                class="w-16 h-16 rounded-full border-2 border-fluo-purple/40 object-cover bg-slate-900/40 shrink-0 animate-fade-in"
+                                onerror="this.src='images/logo.png';"
+                              />
+                              <div>
+                                <h3 class="text-base font-black text-white tracking-tight flex items-center gap-1.5">
+                                  ${creator.name}
+                                  <span class="text-[10px] select-none text-fluo-green">◆</span>
+                                </h3>
+                                <p class="text-xs font-bold text-slate-400 font-sans">${creator.role || 'Autore'}</p>
+                              </div>
+                            </div>
+
+                            <!-- Descrizione -->
+                            <p class="text-xs text-slate-300 leading-relaxed font-sans min-h-[60px]">
+                              ${creator.description || 'Nessuna descrizione inserita.'}
+                            </p>
+
+                            <!-- Tag dell'autore -->
+                            <div class="flex flex-wrap gap-1">
+                              ${tagsHtml}
+                            </div>
+                          </div>
+
+                          <!-- Bottoni Social -->
+                          <div class="pt-4 border-t border-slate-900 flex flex-wrap gap-2">
+                            ${socialsHtml || '<span class="text-xs text-slate-500 italic">Nessun link social</span>'}
+                          </div>
+                        </div>
+                      `;
+                    }).join('')}
+                  </div>
+                `}
+              </div>
+
             </div>
           </div>
         `;
