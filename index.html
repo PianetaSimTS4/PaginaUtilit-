@@ -1940,11 +1940,13 @@
       const end = textarea.selectionEnd;
       const text = textarea.value;
       const selected = text.substring(start, end);
-      const replacement = `[color:${colorHex}](${selected || 'testo colorato'})`;
+      const targetText = selected || 'testo colorato';
+      const prefix = `[color:${colorHex}](`;
+      const replacement = `${prefix}${targetText})`;
 
       textarea.value = text.substring(0, start) + replacement + text.substring(end);
       textarea.focus();
-      textarea.setSelectionRange(start + replacement.length, start + replacement.length);
+      textarea.setSelectionRange(start + prefix.length, start + prefix.length + targetText.length);
 
       const palette = document.getElementById(`color-palette-${id}`);
       if (palette) palette.classList.add('hidden');
@@ -2492,22 +2494,35 @@
       const text = textarea.value;
       const selected = text.substring(start, end);
       let replacement = "";
+      let prefixLen = 0;
+      let targetLen = 0;
       
       if (type === 'bold') {
-        replacement = `**${selected || 'testo in grassetto'}**`;
+        const targetText = selected || 'testo in grassetto';
+        prefixLen = 2;
+        targetLen = targetText.length;
+        replacement = `**${targetText}**`;
       } else if (type === 'italic') {
-        replacement = `*${selected || 'testo in corsivo'}*`;
+        const targetText = selected || 'testo in corsivo';
+        prefixLen = 1;
+        targetLen = targetText.length;
+        replacement = `*${targetText}*`;
       } else if (type === 'link') {
-        replacement = `[${selected || 'Nome Link'}](https://google.it)`;
+        const targetText = selected || 'Nome Link';
+        prefixLen = 1;
+        targetLen = targetText.length;
+        replacement = `[${targetText}](https://google.it)`;
       } else if (type === 'color') {
-        replacement = `[color:#ff007f](${selected || 'testo colorato'})`;
+        const targetText = selected || 'testo colorato';
+        prefixLen = 15;
+        targetLen = targetText.length;
+        replacement = `[color:#ff007f](${targetText})`;
       }
 
       textarea.value = text.substring(0, start) + replacement + text.substring(end);
       textarea.focus();
-      textarea.setSelectionRange(start + replacement.length, start + replacement.length);
+      textarea.setSelectionRange(start + prefixLen, start + prefixLen + targetLen);
 
-      
       if (id === 'admin-edit-desc') {
         updateEditingField('description', textarea.value);
       } else {
@@ -2685,11 +2700,13 @@
       const nameInput = document.getElementById('edit-creator-name');
       const roleInput = document.getElementById('edit-creator-role');
       const avatarInput = document.getElementById('edit-creator-avatar');
+      const colorInput = document.getElementById('edit-creator-color');
       const descInput = document.getElementById('edit-creator-desc');
 
       if (nameInput) window.editingCreatorDraft.name = nameInput.value;
       if (roleInput) window.editingCreatorDraft.role = roleInput.value;
       if (avatarInput) window.editingCreatorDraft.avatar = avatarInput.value;
+      if (colorInput) window.editingCreatorDraft.color = colorInput.value;
       if (descInput) window.editingCreatorDraft.description = descInput.value;
     };
 
@@ -2698,11 +2715,13 @@
       const nameInput = document.getElementById('new-creator-name');
       const roleInput = document.getElementById('new-creator-role');
       const avatarInput = document.getElementById('new-creator-avatar');
+      const colorInput = document.getElementById('new-creator-color');
       const descInput = document.getElementById('new-creator-desc');
 
       if (nameInput) window.newCreatorDraft.name = nameInput.value;
       if (roleInput) window.newCreatorDraft.role = roleInput.value;
       if (avatarInput) window.newCreatorDraft.avatar = avatarInput.value;
+      if (colorInput) window.newCreatorDraft.color = colorInput.value;
       if (descInput) window.newCreatorDraft.description = descInput.value;
     };
 
@@ -2716,6 +2735,7 @@
         name: cToEdit.name || '',
         role: cToEdit.role || '',
         avatar: cToEdit.avatar || '',
+        color: cToEdit.color || '#38bdf8',
         description: cToEdit.description || ''
       };
       renderApp();
@@ -2785,6 +2805,62 @@
       }
     };
 
+    function addCreatorAsGuideAuthor(creatorId) {
+      if (!window.editingGuide) return;
+      const c = creators.find(item => item.id === creatorId);
+      if (!c) return;
+      
+      if (!window.editingGuide.authors) {
+        window.editingGuide.authors = getGuideAuthorsList(window.editingGuide);
+      }
+      
+      const exists = window.editingGuide.authors.some(a => a.name.toLowerCase() === c.name.toLowerCase());
+      if (exists) {
+        showToast(`${c.name} è già aggiunto tra gli autori di questa guida!`, 'info');
+        return;
+      }
+
+      const personalColor = c.color || '#38bdf8';
+      window.editingGuide.authors.push({
+        name: c.name,
+        level: c.role || 'Collaboratore',
+        color: personalColor,
+        diamondColor: personalColor,
+        link: '#collaboratori'
+      });
+      
+      syncLegacyAuthorFields();
+      updateLivePreview();
+      pushHistoryImmediate();
+      renderApp();
+      showToast(`${c.name} aggiunto come autore della guida!`, 'success');
+    }
+
+    function applyCreatorToAuthor(authorIdx, creatorId) {
+      if (!window.editingGuide || !creatorId) return;
+      const c = creators.find(item => item.id === creatorId);
+      if (!c) return;
+      
+      if (!window.editingGuide.authors) {
+        window.editingGuide.authors = getGuideAuthorsList(window.editingGuide);
+      }
+      
+      if (window.editingGuide.authors[authorIdx]) {
+        const personalColor = c.color || '#38bdf8';
+        window.editingGuide.authors[authorIdx].name = c.name;
+        window.editingGuide.authors[authorIdx].level = c.role || 'Collaboratore';
+        window.editingGuide.authors[authorIdx].color = personalColor;
+        window.editingGuide.authors[authorIdx].diamondColor = personalColor;
+        window.editingGuide.authors[authorIdx].link = '#collaboratori';
+        
+        syncLegacyAuthorFields();
+        updateLivePreview();
+        pushHistoryImmediate();
+        renderApp();
+        showToast(`Autore #${authorIdx + 1} impostato su ${c.name}!`, 'success');
+      }
+    }
+
     function normalizeAuthorTagsAndCreators() {
       if (!Array.isArray(authorTags) || authorTags.length === 0) {
         authorTags = getDefaultAuthorTags();
@@ -2813,7 +2889,7 @@
         return lname !== 'guide creator' && lname !== 'guide creatore' && lname !== 'cc expert';
       });
 
-      // 3. Deduplicate tags in authorTags
+      // 3. Deduplicate tags in authorTags and sort alphabetically
       const seen = new Set();
       authorTags = authorTags.filter(t => {
         const lname = t.name.toLowerCase();
@@ -2821,12 +2897,16 @@
         seen.add(lname);
         return true;
       });
+      authorTags.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'it', { sensitivity: 'base' }));
 
-      // 4. Normalize creators tags and ensure id
+      // 4. Normalize creators tags, ensure id, personal color, and sort tags alphabetically
       if (Array.isArray(creators)) {
         creators.forEach((c, idx) => {
           if (!c.id) {
             c.id = 'creator-' + (c.name ? c.name.toLowerCase().replace(/[^a-z0-9]/g, '') : idx) + '-' + Math.floor(Math.random() * 1000);
+          }
+          if (!c.color) {
+            c.color = '#38bdf8';
           }
           if (Array.isArray(c.tags)) {
             c.tags = c.tags
@@ -2850,6 +2930,9 @@
               cSeen.add(lname);
               return true;
             });
+
+            // Sort tags alphabetically
+            c.tags.sort((a, b) => a.localeCompare(b, 'it', { sensitivity: 'base' }));
           }
         });
       }
@@ -2866,6 +2949,8 @@
 
       const role = (window.newCreatorDraft && window.newCreatorDraft.role) ? window.newCreatorDraft.role.trim() : (document.getElementById('new-creator-role') ? document.getElementById('new-creator-role').value.trim() : 'Autore');
       const avatar = (window.newCreatorDraft && window.newCreatorDraft.avatar) ? window.newCreatorDraft.avatar.trim() : (document.getElementById('new-creator-avatar') ? document.getElementById('new-creator-avatar').value.trim() : '');
+      const colorInput = document.getElementById('new-creator-color');
+      const color = colorInput ? colorInput.value : ((window.newCreatorDraft && window.newCreatorDraft.color) || '#38bdf8');
       const description = (window.newCreatorDraft && window.newCreatorDraft.description) ? window.newCreatorDraft.description.trim() : (document.getElementById('new-creator-desc') ? document.getElementById('new-creator-desc').value.trim() : '');
       
       const tags = window.newCreatorTagsList ? [...window.newCreatorTagsList] : [];
@@ -2888,6 +2973,7 @@
         name: name,
         role: role,
         avatar: avatar || 'images/logo.png',
+        color: color || '#38bdf8',
         description: description,
         tags: tags,
         socials: socials
@@ -2919,6 +3005,7 @@
       const nameInput = document.getElementById('edit-creator-name');
       const roleInput = document.getElementById('edit-creator-role');
       const avatarInput = document.getElementById('edit-creator-avatar');
+      const colorInput = document.getElementById('edit-creator-color');
       const descInput = document.getElementById('edit-creator-desc');
 
       const name = nameInput ? nameInput.value.trim() : (window.editingCreatorDraft ? window.editingCreatorDraft.name.trim() : '');
@@ -2929,6 +3016,7 @@
 
       const role = roleInput ? roleInput.value.trim() : (window.editingCreatorDraft && window.editingCreatorDraft.role ? window.editingCreatorDraft.role.trim() : 'Autore');
       const avatar = avatarInput ? avatarInput.value.trim() : (window.editingCreatorDraft && window.editingCreatorDraft.avatar ? window.editingCreatorDraft.avatar.trim() : '');
+      const color = colorInput ? colorInput.value : ((window.editingCreatorDraft && window.editingCreatorDraft.color) || creators[creatorIdx].color || '#38bdf8');
       const description = descInput ? descInput.value.trim() : (window.editingCreatorDraft && window.editingCreatorDraft.description ? window.editingCreatorDraft.description.trim() : '');
       
       const tags = window.editingCreatorTagsList ? [...window.editingCreatorTagsList] : [...(creators[creatorIdx].tags || [])];
@@ -2951,6 +3039,7 @@
         name: name,
         role: role,
         avatar: avatar,
+        color: color || '#38bdf8',
         description: description,
         tags: tags,
         socials: socials
@@ -3424,6 +3513,18 @@
       window.editingGuide.content.push(newBlock);
       pushHistoryImmediate();
       renderApp();
+
+      const newIdx = window.editingGuide.content.length - 1;
+      setTimeout(() => {
+        scrollToEditorBlock(newIdx);
+        const inputEl = document.getElementById(`admin-block-${newIdx}`) || document.getElementById(`admin-paragraph-${newIdx}`);
+        if (inputEl) {
+          inputEl.focus();
+          if (inputEl.setSelectionRange) {
+            inputEl.setSelectionRange(inputEl.value.length, inputEl.value.length);
+          }
+        }
+      }, 100);
     }
 
     function scrollToEditorBlock(idx) {
@@ -4817,6 +4918,31 @@
                           </div>
                         </div>
 
+                        <div class="space-y-1.5">
+                          <label class="text-[9px] uppercase font-black text-slate-400 font-sans block">Colore Personale Collaboratore (Nome e Diamante ◆)</label>
+                          <div class="flex items-center gap-2">
+                            <input
+                              type="color"
+                              id="edit-creator-color"
+                              value="${window.editingCreatorDraft && window.editingCreatorDraft.color !== undefined ? window.editingCreatorDraft.color : (cToEdit.color || '#38bdf8')}"
+                              oninput="syncEditingCreatorDraft(); renderApp();"
+                              class="w-6 h-6 p-0 bg-transparent border-0 rounded cursor-pointer shrink-0"
+                            />
+                            <span class="text-[10px] text-slate-400 font-mono">${(window.editingCreatorDraft && window.editingCreatorDraft.color) || cToEdit.color || '#38bdf8'}</span>
+                          </div>
+                          <div class="flex flex-wrap gap-1 mt-1">
+                            ${textColorsList.map(hex => `
+                              <button
+                                type="button"
+                                onclick="if(!window.editingCreatorDraft) window.editingCreatorDraft={}; window.editingCreatorDraft.color='${hex}'; const el=document.getElementById('edit-creator-color'); if(el) el.value='${hex}'; renderApp();"
+                                class="w-4 h-4 rounded-md border transition-all hover:scale-125 cursor-pointer shrink-0"
+                                style="background-color: ${hex}; border-color: ${((window.editingCreatorDraft && window.editingCreatorDraft.color) || cToEdit.color || '#38bdf8').toLowerCase() === hex.toLowerCase() ? '#ffffff' : 'rgba(255,255,255,0.1)'};"
+                                title="${hex}"
+                              ></button>
+                            `).join('')}
+                          </div>
+                        </div>
+
                         <div class="space-y-1">
                           <label class="text-[9px] uppercase font-black text-slate-400 font-sans">Biografia Breve</label>
                           <textarea
@@ -5032,6 +5158,31 @@
                       >
                         Carica
                       </button>
+                    </div>
+                  </div>
+
+                  <div class="space-y-1.5">
+                    <label class="text-[9px] uppercase font-black text-slate-400 font-sans block">Colore Personale Collaboratore (Nome e Diamante ◆)</label>
+                    <div class="flex items-center gap-2">
+                      <input
+                        type="color"
+                        id="new-creator-color"
+                        value="${window.newCreatorDraft && window.newCreatorDraft.color ? window.newCreatorDraft.color : '#38bdf8'}"
+                        oninput="syncNewCreatorDraft(); renderApp();"
+                        class="w-6 h-6 p-0 bg-transparent border-0 rounded cursor-pointer shrink-0"
+                      />
+                      <span class="text-[10px] text-slate-400 font-mono">${(window.newCreatorDraft && window.newCreatorDraft.color) || '#38bdf8'}</span>
+                    </div>
+                    <div class="flex flex-wrap gap-1 mt-1">
+                      ${textColorsList.map(hex => `
+                        <button
+                          type="button"
+                          onclick="if(!window.newCreatorDraft) window.newCreatorDraft={}; window.newCreatorDraft.color='${hex}'; const el=document.getElementById('new-creator-color'); if(el) el.value='${hex}'; renderApp();"
+                          class="w-4 h-4 rounded-md border transition-all hover:scale-125 cursor-pointer shrink-0"
+                          style="background-color: ${hex}; border-color: ${((window.newCreatorDraft && window.newCreatorDraft.color) || '#38bdf8').toLowerCase() === hex.toLowerCase() ? '#ffffff' : 'rgba(255,255,255,0.1)'};"
+                          title="${hex}"
+                        ></button>
+                      `).join('')}
                     </div>
                   </div>
 
@@ -5593,7 +5744,7 @@
 
               
               <div class="pt-6 border-t border-slate-800/80 flex flex-wrap gap-1.5">
-                ${guide.tags.map(tag => `
+                ${[...(guide.tags || [])].sort((a, b) => a.localeCompare(b, 'it', { sensitivity: 'base' })).map(tag => `
                   <span class="inline-block text-xs text-slate-400 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-md font-mono">
                     #${tag}
                   </span>
@@ -5707,7 +5858,7 @@
                           </div>
                         ` : ''}
                         <span class="text-slate-400/80 truncate font-mono text-[10px] sm:text-[10.5px] tracking-wide">
-                          #${guide.tags.slice(0, 3).join(' #')}
+                          #${[...(guide.tags || [])].sort((a, b) => a.localeCompare(b, 'it', { sensitivity: 'base' })).slice(0, 3).join(' #')}
                         </span>
                       </div>
                       
@@ -5973,6 +6124,7 @@
           });
         });
         const allTagsList = Array.from(tagMap.values());
+        allTagsList.sort((a, b) => a.name.localeCompare(b.name, 'it', { sensitivity: 'base' }));
 
         // Conteggio collaboratori per ciascun tag
         const tagCounts = {};
@@ -6194,9 +6346,9 @@
                                <div class="absolute inset-0 z-10 bg-transparent select-none" oncontextmenu="return false;" ondragstart="return false;"></div>
                              </div>
                               <div>
-                                <h3 class="text-base font-black text-white tracking-tight flex items-center gap-1.5">
-                                  ${creator.name}
-                                  <span class="text-[10px] select-none text-fluo-green">◆</span>
+                                <h3 class="text-base font-black tracking-tight flex items-center gap-1.5" style="color: ${creator.color || '#38bdf8'};">
+                                  <span style="color: ${creator.color || '#38bdf8'};">${creator.name}</span>
+                                  <span class="text-[10px] select-none" style="color: ${creator.color || '#38bdf8'};">◆</span>
                                 </h3>
                                 <p class="text-xs font-bold text-slate-400 font-sans">${creator.role || 'Autore'}</p>
                               </div>
@@ -6462,21 +6614,32 @@
                       </label>
                     </div>
 
-                    <!-- Gestione Autori dell'Articolo (Nuova Sezione Avanzata per Autori Multipli) -->
+                    <!-- Gestione Autori dell'Articolo (Seleziona dai Collaboratori o Inserimento Manuale) -->
                     <div class="space-y-3.5 border-t border-slate-900 pt-4 mt-4">
-                      <div class="flex items-center justify-between">
+                      <div class="flex flex-wrap items-center justify-between gap-2">
                         <label class="text-xs font-bold text-slate-300 uppercase tracking-wider font-sans flex items-center gap-1.5">
                           <i data-lucide="users" class="w-4 h-4 text-fluo-purple"></i>
                           Gestione Autori dell'Articolo
                         </label>
-                        <button
-                          type="button"
-                          onclick="addAuthorToEditingGuide()"
-                          class="px-2.5 py-1.5 bg-fluo-purple hover:bg-opacity-90 text-white rounded-lg text-[10px] font-black cursor-pointer transition-all flex items-center gap-1 shadow-md shadow-purple-950/20"
-                        >
-                          <i data-lucide="user-plus" class="w-3 h-3"></i>
-                          Aggiungi Autore
-                        </button>
+                        <div class="flex items-center gap-2">
+                          ${creators && creators.length > 0 ? `
+                            <select
+                              onchange="if(this.value){ addCreatorAsGuideAuthor(this.value); this.value=''; }"
+                              class="px-2 py-1.5 bg-slate-950 border border-slate-800 rounded-lg text-[10px] font-bold text-slate-300 outline-none focus:ring-1 focus:ring-fluo-purple cursor-pointer"
+                            >
+                              <option value="">+ Seleziona dai Collaboratori...</option>
+                              ${creators.map(c => `<option value="${c.id}">${c.name} (${c.role || 'Collaboratore'})</option>`).join('')}
+                            </select>
+                          ` : ''}
+                          <button
+                            type="button"
+                            onclick="addAuthorToEditingGuide()"
+                            class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-[10px] font-black cursor-pointer transition-all flex items-center gap-1 shadow-md"
+                          >
+                            <i data-lucide="user-plus" class="w-3 h-3"></i>
+                            Nuovo Manuale
+                          </button>
+                        </div>
                       </div>
 
                       <div class="space-y-3">
@@ -6499,6 +6662,23 @@
                                 </button>
                               ` : ''}
                             </div>
+
+                            ${creators && creators.length > 0 ? `
+                              <div class="bg-slate-950/80 p-2 rounded-xl border border-slate-850/80 flex flex-wrap items-center justify-between gap-2">
+                                <span class="text-[9px] font-bold text-slate-400 uppercase font-sans">Collega a Collaboratore Esistente:</span>
+                                <select
+                                  onchange="if(this.value){ applyCreatorToAuthor(${authorIdx}, this.value); }"
+                                  class="px-2 py-1 bg-slate-900 border border-slate-800 rounded-lg text-[10px] text-fluo-purple font-bold outline-none cursor-pointer"
+                                >
+                                  <option value="">-- Seleziona un Collaboratore --</option>
+                                  ${creators.map(c => `
+                                    <option value="${c.id}" ${author.name && author.name.toLowerCase() === c.name.toLowerCase() ? 'selected' : ''}>
+                                      ${c.name} (${c.role || 'Collaboratore'})
+                                    </option>
+                                  `).join('')}
+                                </select>
+                              </div>
+                            ` : ''}
 
                             <!-- Form campi autore in grid responsive -->
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
