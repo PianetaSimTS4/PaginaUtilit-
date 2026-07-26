@@ -648,7 +648,7 @@
         },
         {
           "name": "Sha",
-          "color": "#b026ff",
+          "color": "#38bdf8",
           "diamondColor": "#38bdf8",
           "level": "Admin"
         }
@@ -754,6 +754,68 @@
       ],
       "authorName": "LadyPsycoTrilly",
       "authorColor": "#b026ff",
+      "authorDiamondColor": "#38bdf8",
+      "authorLevel": "Admin",
+      "authorLink": ""
+    },
+    {
+      "id": "guida-mod-attivazione",
+      "title": "COME ATTIVARE MOD E CC IN GIOCO - GUIDA VELOCE",
+      "description": "Ecco come attivare le mod e cc in gioco, spiegato brevemente.",
+      "category": "mod_cc",
+      "categories": [
+        "mod_cc",
+        "guide-veloci"
+      ],
+      "tags": [
+        "mod",
+        "cc",
+        "installazione"
+      ],
+      "content": [
+        {
+          "type": "riquadro",
+          "value": "[color:#eab308](**ATTENZIONE:**)\n\nQuesto procedimento va fatto **solo in due occasioni**:\n    • La prima volta che installi le mod\n    • Dopo ogni grande aggiornamento del gioco – il gioco ti avviserà che le mod/cc sono stati disattivati",
+          "borderColor": "#eab308"
+        },
+        {
+          "type": "heading1",
+          "value": "PASSAGGI:",
+          "color": "#b026ff"
+        },
+        {
+          "type": "list",
+          "value": "Apri The Sims 4\n\nVai su **Impostazioni**\n\nAl Menu scegli **Opzioni di Gioco**\n\nClicca su **Altro** e poi Spunta l’opzione “Attiva il contenuto personalizzato e le mod”\n\nAll’avviso Clicca Ok\n\nApplica le modifiche (in basso a dx), chiudi le Opzioni ed Esci dal gioco\n\nOra i tutte le Mod e Cc sono Attivi! :D",
+          "listType": "number"
+        },
+        {
+          "type": "paragraph",
+          "value": "[color:#38bdf8](**SE HAI DUBBI O DIFFICOLTÀ, PUOI RICHIEDE ASSISTENZA NEL GRUPPO TELEGRAM**)"
+        },
+        {
+          "type": "button",
+          "value": "ASSISTENZA TELEGRAM",
+          "buttonUrl": "https://t.me/TheSims4ItaliaPianetaSim",
+          "buttonColor": "#b026ff"
+        }
+      ],
+      "tips": [],
+      "authorName": "LadyPsycoTrilly",
+      "authorColor": "#b026ff",
+      "authors": [
+        {
+          "name": "LadyPsycoTrilly",
+          "color": "#b026ff",
+          "diamondColor": "#38bdf8",
+          "level": "Admin"
+        },
+        {
+          "name": "Sha",
+          "color": "#38bdf8",
+          "diamondColor": "#38bdf8",
+          "level": "Admin"
+        }
+      ],
       "authorDiamondColor": "#38bdf8",
       "authorLevel": "Admin",
       "authorLink": ""
