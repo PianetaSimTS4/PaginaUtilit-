@@ -621,6 +621,17 @@
       };
     }
 
+    function safeLocalStorageSetItem(key, val) {
+      try {
+        localStorage.setItem(key, val);
+      } catch (e) {
+        console.error("Errore di scrittura in localStorage:", e);
+        if (typeof showToast === 'function') {
+          showToast("La memoria locale è piena! Se riscontri problemi, elimina qualche vecchia immagine caricata.", "info");
+        }
+      }
+    }
+
     let sessionStorage;
     try {
       window.sessionStorage.getItem('test');
@@ -663,7 +674,7 @@
     function getDefaultAuthorTags() {
       return [
         { name: "Admin", color: "#38bdf8" },
-        { name: "Creatrice", color: "#ffffff" },
+        { name: "Fondatrice", color: "#ffffff" },
         { name: "Traduttore", color: "#b026ff" },
         { name: "Moderatore", color: "#eab308" },
         { name: "Supporto Tecnico", color: "#22c55e" }
@@ -678,7 +689,7 @@
           role: "Amministratrice & Traduttrice",
           avatar: "images/logo.png",
           description: "Appassionata di The Sims da sempre. Cura il sito di PianetaSim, traduce le mod più popolari e scrive guide dettagliate sul gameplay e la personalizzazione del gioco.",
-          tags: ["Admin", "Traduttore", "Creatrice"],
+          tags: ["Admin", "Traduttore", "Fondatrice"],
           socials: [
             { label: "Telegram", url: "https://t.me/TheSims4ItaliaPianetaSim" },
             { label: "Sito Web", url: "https://pianetasimts.github.io/PianetaSim/index.html" }
@@ -1703,7 +1714,7 @@
             if (localImgs.length > 12) {
               localImgs = localImgs.slice(0, 12);
             }
-            localStorage.setItem('pianetasim-local-images', JSON.stringify(localImgs));
+            safeLocalStorageSetItem('pianetasim-local-images', JSON.stringify(localImgs));
             
             fetchUploadedImages();
             updateLogoPath(base64Data);
@@ -1770,7 +1781,7 @@
         console.error(e);
       }
       localImgs = localImgs.filter(img => img.name !== filename);
-      localStorage.setItem('pianetasim-local-images', JSON.stringify(localImgs));
+      safeLocalStorageSetItem('pianetasim-local-images', JSON.stringify(localImgs));
 
       
       robustFetch('/api/delete-image', {
@@ -1817,7 +1828,7 @@
         }
         
         localImgs = localImgs.filter(img => img.name !== name);
-        localStorage.setItem('pianetasim-local-images', JSON.stringify(localImgs));
+        safeLocalStorageSetItem('pianetasim-local-images', JSON.stringify(localImgs));
         
         fetchUploadedImages();
         showToast('Immagine locale rimossa!', 'success');
@@ -2027,7 +2038,7 @@
              updated = true;
            }
            if (updated) {
-             localStorage.setItem('pianetasim-custom-data', JSON.stringify(parsed));
+             safeLocalStorageSetItem('pianetasim-custom-data', JSON.stringify(parsed));
            }
          } catch(e) {}
        }
@@ -2135,7 +2146,7 @@
 
     
     function saveBookmarks() {
-      localStorage.setItem('pianetasim-bookmarks', JSON.stringify(bookmarks));
+      safeLocalStorageSetItem('pianetasim-bookmarks', JSON.stringify(bookmarks));
       updateBookmarksCountBanner();
     }
 
@@ -2475,7 +2486,7 @@
             if (localImgs.length > 12) {
               localImgs = localImgs.slice(0, 12);
             }
-            localStorage.setItem('pianetasim-local-images', JSON.stringify(localImgs));
+            safeLocalStorageSetItem('pianetasim-local-images', JSON.stringify(localImgs));
             
             fetchUploadedImages();
             insertImageToTextarea(base64Data);
@@ -2682,7 +2693,7 @@
               url: base64Data,
               local: true
             });
-            localStorage.setItem('pianetasim-local-images', JSON.stringify(localImgs));
+            safeLocalStorageSetItem('pianetasim-local-images', JSON.stringify(localImgs));
             
             fetchUploadedImages();
             const input = document.getElementById(inputId);
@@ -2866,7 +2877,7 @@
         authorTags = getDefaultAuthorTags();
       }
 
-      // 1. Ensure 'Admin' is azzurro (#38bdf8) and 'Creatrice' is bianco (#ffffff)
+      // 1. Ensure 'Admin' is azzurro (#38bdf8) and 'Fondatrice' is bianco (#ffffff)
       let adminTag = authorTags.find(t => t.name.toLowerCase() === 'admin' || t.name.toLowerCase() === 'amministratore');
       if (adminTag) {
         adminTag.name = 'Admin';
@@ -2875,18 +2886,18 @@
         authorTags.unshift({ name: 'Admin', color: '#38bdf8' });
       }
 
-      let creatriceTag = authorTags.find(t => t.name.toLowerCase() === 'creatrice');
-      if (creatriceTag) {
-        creatriceTag.color = '#ffffff';
+      let fondatriceTag = authorTags.find(t => t.name.toLowerCase() === 'fondatrice');
+      if (fondatriceTag) {
+        fondatriceTag.color = '#ffffff';
       } else {
         const adminIdx = authorTags.findIndex(t => t.name.toLowerCase() === 'admin');
-        authorTags.splice(adminIdx >= 0 ? adminIdx + 1 : 0, 0, { name: 'Creatrice', color: '#ffffff' });
+        authorTags.splice(adminIdx >= 0 ? adminIdx + 1 : 0, 0, { name: 'Fondatrice', color: '#ffffff' });
       }
 
-      // 2. Remove unwanted tags: 'Guide Creator', 'Guide creatore', 'CC Expert'
+      // 2. Remove unwanted tags: 'Guide Creator', 'Guide creatore', 'CC Expert', 'Creatrice'
       authorTags = authorTags.filter(t => {
         const lname = t.name.toLowerCase();
-        return lname !== 'guide creator' && lname !== 'guide creatore' && lname !== 'cc expert';
+        return lname !== 'guide creator' && lname !== 'guide creatore' && lname !== 'cc expert' && lname !== 'creatrice';
       });
 
       // 3. Deduplicate tags in authorTags and sort alphabetically
@@ -2910,10 +2921,15 @@
           }
           if (Array.isArray(c.tags)) {
             c.tags = c.tags
-              .map(tag => tag.toLowerCase() === 'amministratore' ? 'Admin' : tag)
+              .map(tag => {
+                const lname = tag.toLowerCase();
+                if (lname === 'amministratore') return 'Admin';
+                if (lname === 'creatrice') return 'Fondatrice';
+                return tag;
+              })
               .filter(tag => {
                 const lname = tag.toLowerCase();
-                return lname !== 'guide creator' && lname !== 'guide creatore' && lname !== 'cc expert';
+                return lname !== 'guide creator' && lname !== 'guide creatore' && lname !== 'cc expert' && lname !== 'creatrice';
               });
 
             // Match casing from authorTags
@@ -3819,7 +3835,7 @@
         alertPopup: alertPopup,
         siteLogo: siteLogo
       };
-      localStorage.setItem('pianetasim-custom-data', JSON.stringify(payload));
+      safeLocalStorageSetItem('pianetasim-custom-data', JSON.stringify(payload));
     }
 
     function resetGuidesToDefault() {
