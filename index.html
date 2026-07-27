@@ -1632,10 +1632,50 @@
         return;
       }
       
-      // Read original image file directly to preserve 100% original pixel quality, resolution, and format without lossy canvas encoding
       const reader = new FileReader();
       reader.onload = function(evt) {
-        callback(null, evt.target.result);
+        const rawBase64 = evt.target.result;
+        
+        // Se il file è piccolo (sotto i 300KB), non c'è bisogno di comprimere
+        if (file.size < 300 * 1024) {
+          callback(null, rawBase64);
+          return;
+        }
+        
+        // Comprimiamo l'immagine usando Canvas
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          
+          // Limite dimensione massima di 1600px mantenendo le proporzioni
+          const MAX_DIM = 1600;
+          if (width > MAX_DIM || height > MAX_DIM) {
+            if (width > height) {
+              height = Math.round((height * MAX_DIM) / width);
+              width = MAX_DIM;
+            } else {
+              width = Math.round((width * MAX_DIM) / height);
+              height = MAX_DIM;
+            }
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+          
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          // Conversione in JPEG di alta qualità (0.8) per massimizzare la compressione
+          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.8);
+          callback(null, compressedBase64);
+        };
+        img.onerror = function() {
+          // In caso di errore nel caricamento in canvas, inviamo l'immagine originale
+          callback(null, rawBase64);
+        };
+        img.src = rawBase64;
       };
       reader.onerror = function(err) {
         callback(new Error("Errore nel caricamento dell'immagine originale: " + (err ? err.message : '')), null);
@@ -2931,11 +2971,8 @@
         authorTags.unshift({ name: 'Admin', color: '#38bdf8' });
       }
 
-      // 2. Remove unwanted tags: 'Guide Creator', 'Guide creatore', 'CC Expert', 'Creatrice'
-      authorTags = authorTags.filter(t => {
-        const lname = t.name.toLowerCase();
-        return lname !== 'guide creator' && lname !== 'guide creatore' && lname !== 'cc expert' && lname !== 'creatrice';
-      });
+      // 2. Clear any empty or invalid tags (no hardcoded filters that block placeholders like CC Expert)
+      authorTags = authorTags.filter(t => t && t.name && t.name.trim().length > 0);
 
       // 3. Deduplicate tags in authorTags and sort alphabetically
       const seen = new Set();
@@ -2959,10 +2996,7 @@
           if (Array.isArray(c.tags)) {
             c.tags = c.tags
               .map(tag => tag.toLowerCase() === 'amministratore' ? 'Admin' : tag)
-              .filter(tag => {
-                const lname = tag.toLowerCase();
-                return lname !== 'guide creator' && lname !== 'guide creatore' && lname !== 'cc expert' && lname !== 'creatrice';
-              });
+              .filter(tag => tag && tag.trim().length > 0);
 
             // Match casing from authorTags
             c.tags = c.tags.map(tag => {
