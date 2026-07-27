@@ -2958,12 +2958,20 @@
     }
 
     function normalizeAuthorTagsAndCreators() {
-      if (!Array.isArray(authorTags) || authorTags.length === 0) {
+      // Ensure authorTags is a valid array of objects
+      if (!Array.isArray(authorTags)) {
         authorTags = getDefaultAuthorTags();
       }
 
-      // 1. Ensure 'Admin' is azzurro (#38bdf8)
-      let adminTag = authorTags.find(t => t.name.toLowerCase() === 'admin' || t.name.toLowerCase() === 'amministratore');
+      // Pre-filter: remove any elements that are null, undefined, or lack a string name property
+      authorTags = authorTags.filter(t => t && typeof t === 'object' && typeof t.name === 'string' && t.name.trim().length > 0);
+
+      if (authorTags.length === 0) {
+        authorTags = getDefaultAuthorTags();
+      }
+
+      // 1. Ensure 'Admin' is azzurro (#38bdf8) and properly initialized
+      let adminTag = authorTags.find(t => t && t.name && (t.name.toLowerCase() === 'admin' || t.name.toLowerCase() === 'amministratore'));
       if (adminTag) {
         adminTag.name = 'Admin';
         adminTag.color = '#38bdf8';
@@ -2971,12 +2979,13 @@
         authorTags.unshift({ name: 'Admin', color: '#38bdf8' });
       }
 
-      // 2. Clear any empty or invalid tags (no hardcoded filters that block placeholders like CC Expert)
-      authorTags = authorTags.filter(t => t && t.name && t.name.trim().length > 0);
+      // 2. Clear any empty or invalid tags
+      authorTags = authorTags.filter(t => t && typeof t.name === 'string' && t.name.trim().length > 0);
 
       // 3. Deduplicate tags in authorTags and sort alphabetically
       const seen = new Set();
       authorTags = authorTags.filter(t => {
+        if (!t || typeof t.name !== 'string') return false;
         const lname = t.name.toLowerCase();
         if (seen.has(lname)) return false;
         seen.add(lname);
@@ -2987,26 +2996,39 @@
       // 4. Normalize creators tags, ensure id, personal color, and sort tags alphabetically
       if (Array.isArray(creators)) {
         creators.forEach((c, idx) => {
+          if (!c || typeof c !== 'object') return;
           if (!c.id) {
-            c.id = 'creator-' + (c.name ? c.name.toLowerCase().replace(/[^a-z0-9]/g, '') : idx) + '-' + Math.floor(Math.random() * 1000);
+            c.id = 'creator-' + (c.name ? String(c.name).toLowerCase().replace(/[^a-z0-9]/g, '') : idx) + '-' + Math.floor(Math.random() * 1000);
           }
           if (!c.color) {
             c.color = '#38bdf8';
           }
-          if (Array.isArray(c.tags)) {
+          if (c.tags) {
+            if (!Array.isArray(c.tags)) {
+              if (typeof c.tags === 'string' && c.tags.trim().length > 0) {
+                c.tags = [c.tags];
+              } else {
+                c.tags = [];
+              }
+            }
+
             c.tags = c.tags
-              .map(tag => tag.toLowerCase() === 'amministratore' ? 'Admin' : tag)
+              .map(tag => {
+                if (typeof tag !== 'string') return '';
+                return tag.toLowerCase() === 'amministratore' ? 'Admin' : tag;
+              })
               .filter(tag => tag && tag.trim().length > 0);
 
             // Match casing from authorTags
             c.tags = c.tags.map(tag => {
-              const match = authorTags.find(at => at.name.toLowerCase() === tag.toLowerCase());
+              const match = authorTags.find(at => at && at.name && at.name.toLowerCase() === tag.toLowerCase());
               return match ? match.name : tag;
             });
 
             // Deduplicate per creator
             const cSeen = new Set();
             c.tags = c.tags.filter(tag => {
+              if (!tag) return false;
               const lname = tag.toLowerCase();
               if (cSeen.has(lname)) return false;
               cSeen.add(lname);
@@ -3015,6 +3037,8 @@
 
             // Sort tags alphabetically
             c.tags.sort((a, b) => a.localeCompare(b, 'it', { sensitivity: 'base' }));
+          } else {
+            c.tags = [];
           }
         });
       }
