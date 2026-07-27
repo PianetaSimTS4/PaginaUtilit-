@@ -656,13 +656,19 @@
         .then(res => {
           if (!res.ok) {
             const fallbackUrl = url.startsWith('/') ? url : '/' + url;
-            return fetch(fallbackUrl, options);
+            if (fallbackUrl !== primaryUrl) {
+              return fetch(fallbackUrl, options);
+            }
           }
           return res;
         })
         .catch(err => {
+          console.warn("Primary fetch failed for " + url + ", trying fallback absolute url...", err);
           const fallbackUrl = url.startsWith('/') ? url : '/' + url;
-          return fetch(fallbackUrl, options);
+          if (fallbackUrl !== primaryUrl) {
+            return fetch(fallbackUrl, options);
+          }
+          throw err;
         });
     }
     
@@ -2043,18 +2049,14 @@
          } catch(e) {}
        }
 
-      updateLogoSrc();
-      updateBookmarksCountBanner();
-      
-      
-      if (cachedData) {
+           if (cachedData) {
         try {
           const parsed = JSON.parse(cachedData);
-          if (parsed.categories && parsed.guides) {
-            categories = parsed.categories;
-            guides = parsed.guides;
-            creators = parsed.creators || getDefaultCreators();
-            authorTags = parsed.authorTags || getDefaultAuthorTags();
+          if (parsed && parsed.categories && parsed.guides) {
+            categories = Array.isArray(parsed.categories) ? parsed.categories : [];
+            guides = Array.isArray(parsed.guides) ? parsed.guides : [];
+            creators = Array.isArray(parsed.creators) ? parsed.creators : getDefaultCreators();
+            authorTags = Array.isArray(parsed.authorTags) ? parsed.authorTags : getDefaultAuthorTags();
             normalizeAuthorTagsAndCreators();
             migrateAllGuidesTips();
             if (parsed.adminPassword) {
@@ -2086,13 +2088,25 @@
       
       
       robustFetch('/guides.json?t=' + Date.now())
-        .then(response => response.json())
+        .then(response => {
+          if (!response || !response.ok) {
+            throw new Error("Errore di rete o file non trovato (status: " + (response ? response.status : "N/D") + ")");
+          }
+          const contentType = response.headers.get("content-type") || "";
+          if (!contentType.includes("application/json") && !response.url.endsWith(".json")) {
+            throw new Error("Il server ha restituito HTML/testo invece di JSON (possibile fallback SPA o errore 404)");
+          }
+          return response.json();
+        })
         .then(data => {
+          if (!data) {
+            throw new Error("Dati ricevuti dal server vuoti");
+          }
           if (data.categories && data.guides) {
-            categories = data.categories;
-            guides = data.guides;
-            creators = data.creators || getDefaultCreators();
-            authorTags = data.authorTags || getDefaultAuthorTags();
+            categories = Array.isArray(data.categories) ? data.categories : [];
+            guides = Array.isArray(data.guides) ? data.guides : [];
+            creators = Array.isArray(data.creators) ? data.creators : getDefaultCreators();
+            authorTags = Array.isArray(data.authorTags) ? data.authorTags : getDefaultAuthorTags();
             normalizeAuthorTagsAndCreators();
             if (data.adminPassword) adminPassword = data.adminPassword;
             if (data.siteTitle) siteTitle = data.siteTitle;
@@ -2112,7 +2126,7 @@
               { id: 'gameplay', label: 'Gameplay', color: 'purple' },
               { id: 'espansioni', label: 'Espansioni', color: 'rose' }
             ];
-            guides = data;
+            guides = Array.isArray(data) ? data : [];
             creators = getDefaultCreators();
             authorTags = getDefaultAuthorTags();
             normalizeAuthorTagsAndCreators();
@@ -2124,17 +2138,24 @@
         })
         .catch(error => {
           console.error('Errore nel caricamento delle guide:', error);
+          
+          // Clear potentially corrupted local storage to recover on next reload
+          try {
+            localStorage.removeItem('pianetasim-custom-data');
+          } catch(err) {}
          
           categories = [{ id: 'costruzione', label: 'Generali', color: 'green' }];
           guides = [
             {
               id: 'guide-error',
               title: 'Errore nel caricamento delle guide',
-              description: 'Non è stato possibile caricare il file guides.json. Controlla il server o la cartella principale.',
+              description: 'Dettagli dell\'errore: ' + (error.message || error) + '. Ricarica la pagina o contatta l\'amministrazione.',
               category: 'costruzione',
               tags: ['errore'],
               content: [
-                'Si è verificato un problema nel recupero dei contenuti. Controlla il server o la cartella principale.'
+                'Si è verificato un problema nel recupero dei contenuti dal server.',
+                'Per risolvere questo problema, prova ad effettuare un hard refresh (CTRL+F5 o CMD+Shift+R) per svuotare la cache del browser, oppure clicca sul tasto in alto o in basso per cancellare i dati locali.',
+                'Se il problema persiste, verifica che il file guides.json nella cartella principale del server sia integro e valido.'
               ],
               tips: []
             }
@@ -2873,84 +2894,111 @@
     }
 
     function normalizeAuthorTagsAndCreators() {
-      if (!Array.isArray(authorTags) || authorTags.length === 0) {
-        authorTags = getDefaultAuthorTags();
-      }
+      try {
+        if (!Array.isArray(authorTags)) {
+          authorTags = getDefaultAuthorTags();
+        }
 
-      // 1. Ensure 'Admin' is azzurro (#38bdf8) and 'Fondatrice' is bianco (#ffffff)
-      let adminTag = authorTags.find(t => t.name.toLowerCase() === 'admin' || t.name.toLowerCase() === 'amministratore');
-      if (adminTag) {
-        adminTag.name = 'Admin';
-        adminTag.color = '#38bdf8';
-      } else {
-        authorTags.unshift({ name: 'Admin', color: '#38bdf8' });
-      }
-
-      let fondatriceTag = authorTags.find(t => t.name.toLowerCase() === 'fondatrice');
-      if (fondatriceTag) {
-        fondatriceTag.color = '#ffffff';
-      } else {
-        const adminIdx = authorTags.findIndex(t => t.name.toLowerCase() === 'admin');
-        authorTags.splice(adminIdx >= 0 ? adminIdx + 1 : 0, 0, { name: 'Fondatrice', color: '#ffffff' });
-      }
-
-      // 2. Remove unwanted tags: 'Guide Creator', 'Guide creatore', 'CC Expert', 'Creatrice'
-      authorTags = authorTags.filter(t => {
-        const lname = t.name.toLowerCase();
-        return lname !== 'guide creator' && lname !== 'guide creatore' && lname !== 'cc expert' && lname !== 'creatrice';
-      });
-
-      // 3. Deduplicate tags in authorTags and sort alphabetically
-      const seen = new Set();
-      authorTags = authorTags.filter(t => {
-        const lname = t.name.toLowerCase();
-        if (seen.has(lname)) return false;
-        seen.add(lname);
-        return true;
-      });
-      authorTags.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'it', { sensitivity: 'base' }));
-
-      // 4. Normalize creators tags, ensure id, personal color, and sort tags alphabetically
-      if (Array.isArray(creators)) {
-        creators.forEach((c, idx) => {
-          if (!c.id) {
-            c.id = 'creator-' + (c.name ? c.name.toLowerCase().replace(/[^a-z0-9]/g, '') : idx) + '-' + Math.floor(Math.random() * 1000);
+        // Sanitize and ensure every tag in authorTags is a valid object
+        authorTags = authorTags.map(t => {
+          if (!t) return null;
+          if (typeof t === 'string') {
+            return { name: t, color: '#38bdf8' };
           }
-          if (!c.color) {
-            c.color = '#38bdf8';
+          if (typeof t === 'object') {
+            return {
+              name: typeof t.name === 'string' ? t.name : '',
+              color: typeof t.color === 'string' ? t.color : '#38bdf8',
+              diamondColor: typeof t.diamondColor === 'string' ? t.diamondColor : ''
+            };
           }
-          if (Array.isArray(c.tags)) {
-            c.tags = c.tags
-              .map(tag => {
-                const lname = tag.toLowerCase();
-                if (lname === 'amministratore') return 'Admin';
-                if (lname === 'creatrice') return 'Fondatrice';
-                return tag;
-              })
-              .filter(tag => {
-                const lname = tag.toLowerCase();
-                return lname !== 'guide creator' && lname !== 'guide creatore' && lname !== 'cc expert' && lname !== 'creatrice';
+          return null;
+        }).filter(t => t !== null && t.name.trim() !== '');
+
+        // 1. Ensure 'Admin' is azzurro (#38bdf8) and 'Fondatrice' is bianco (#ffffff)
+        let adminTag = authorTags.find(t => t && t.name && (t.name.toLowerCase() === 'admin' || t.name.toLowerCase() === 'amministratore'));
+        if (adminTag) {
+          adminTag.name = 'Admin';
+          adminTag.color = '#38bdf8';
+        } else {
+          authorTags.unshift({ name: 'Admin', color: '#38bdf8' });
+        }
+
+        let fondatriceTag = authorTags.find(t => t && t.name && t.name.toLowerCase() === 'fondatrice');
+        if (fondatriceTag) {
+          fondatriceTag.color = '#ffffff';
+        } else {
+          const adminIdx = authorTags.findIndex(t => t && t.name && t.name.toLowerCase() === 'admin');
+          authorTags.splice(adminIdx >= 0 ? adminIdx + 1 : 0, 0, { name: 'Fondatrice', color: '#ffffff' });
+        }
+
+        // 2. Remove unwanted tags: 'Guide Creator', 'Guide creatore', 'CC Expert', 'Creatrice'
+        authorTags = authorTags.filter(t => {
+          if (!t || !t.name) return false;
+          const lname = t.name.toLowerCase();
+          return lname !== 'guide creator' && lname !== 'guide creatore' && lname !== 'cc expert' && lname !== 'creatrice';
+        });
+
+        // 3. Deduplicate tags in authorTags and sort alphabetically
+        const seen = new Set();
+        authorTags = authorTags.filter(t => {
+          if (!t || !t.name) return false;
+          const lname = t.name.toLowerCase();
+          if (seen.has(lname)) return false;
+          seen.add(lname);
+          return true;
+        });
+        authorTags.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'it', { sensitivity: 'base' }));
+
+        // 4. Normalize creators tags, ensure id, personal color, and sort tags alphabetically
+        if (Array.isArray(creators)) {
+          creators.forEach((c, idx) => {
+            if (!c || typeof c !== 'object') return;
+            if (!c.id) {
+              c.id = 'creator-' + (c.name ? c.name.toLowerCase().replace(/[^a-z0-9]/g, '') : idx) + '-' + Math.floor(Math.random() * 1000);
+            }
+            if (!c.color) {
+              c.color = '#38bdf8';
+            }
+            if (Array.isArray(c.tags)) {
+              c.tags = c.tags
+                .filter(tag => typeof tag === 'string' && tag.trim() !== '')
+                .map(tag => {
+                  const lname = tag.toLowerCase();
+                  if (lname === 'amministratore') return 'Admin';
+                  if (lname === 'creatrice') return 'Fondatrice';
+                  return tag;
+                })
+                .filter(tag => {
+                  const lname = tag.toLowerCase();
+                  return lname !== 'guide creator' && lname !== 'guide creatore' && lname !== 'cc expert' && lname !== 'creatrice';
+                });
+
+              // Match casing from authorTags
+              c.tags = c.tags.map(tag => {
+                const match = authorTags.find(at => at && at.name && at.name.toLowerCase() === tag.toLowerCase());
+                return match ? match.name : tag;
               });
 
-            // Match casing from authorTags
-            c.tags = c.tags.map(tag => {
-              const match = authorTags.find(at => at.name.toLowerCase() === tag.toLowerCase());
-              return match ? match.name : tag;
-            });
+              // Deduplicate per creator
+              const cSeen = new Set();
+              c.tags = c.tags.filter(tag => {
+                if (!tag) return false;
+                const lname = tag.toLowerCase();
+                if (cSeen.has(lname)) return false;
+                cSeen.add(lname);
+                return true;
+              });
 
-            // Deduplicate per creator
-            const cSeen = new Set();
-            c.tags = c.tags.filter(tag => {
-              const lname = tag.toLowerCase();
-              if (cSeen.has(lname)) return false;
-              cSeen.add(lname);
-              return true;
-            });
-
-            // Sort tags alphabetically
-            c.tags.sort((a, b) => a.localeCompare(b, 'it', { sensitivity: 'base' }));
-          }
-        });
+              // Sort tags alphabetically
+              c.tags.sort((a, b) => a.localeCompare(b, 'it', { sensitivity: 'base' }));
+            } else {
+              c.tags = [];
+            }
+          });
+        }
+      } catch (err) {
+        console.error("Errore imprevisto in normalizeAuthorTagsAndCreators:", err);
       }
     }
 
