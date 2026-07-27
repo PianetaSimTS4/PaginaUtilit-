@@ -1718,7 +1718,11 @@
             if (localImgs.length > 12) {
               localImgs = localImgs.slice(0, 12);
             }
-            localStorage.setItem('pianetasim-local-images', JSON.stringify(localImgs));
+            try {
+              localStorage.setItem('pianetasim-local-images', JSON.stringify(localImgs));
+            } catch (ex) {
+              console.warn("Spazio di archiviazione per le immagini di backup locali esaurito:", ex);
+            }
             
             fetchUploadedImages();
             updateLogoPath(base64Data);
@@ -2519,7 +2523,11 @@
             if (localImgs.length > 12) {
               localImgs = localImgs.slice(0, 12);
             }
-            localStorage.setItem('pianetasim-local-images', JSON.stringify(localImgs));
+            try {
+              localStorage.setItem('pianetasim-local-images', JSON.stringify(localImgs));
+            } catch (ex) {
+              console.warn("Spazio di archiviazione per le immagini di backup locali esaurito:", ex);
+            }
             
             fetchUploadedImages();
             insertImageToTextarea(base64Data);
@@ -2726,7 +2734,11 @@
               url: base64Data,
               local: true
             });
-            localStorage.setItem('pianetasim-local-images', JSON.stringify(localImgs));
+            try {
+              localStorage.setItem('pianetasim-local-images', JSON.stringify(localImgs));
+            } catch (ex) {
+              console.warn("Spazio di archiviazione per le immagini di backup locali esaurito:", ex);
+            }
             
             fetchUploadedImages();
             const input = document.getElementById(inputId);
@@ -2910,7 +2922,7 @@
         authorTags = getDefaultAuthorTags();
       }
 
-      // 1. Ensure 'Admin' is azzurro (#38bdf8) and 'Creatrice' is bianco (#ffffff)
+      // 1. Ensure 'Admin' is azzurro (#38bdf8)
       let adminTag = authorTags.find(t => t.name.toLowerCase() === 'admin' || t.name.toLowerCase() === 'amministratore');
       if (adminTag) {
         adminTag.name = 'Admin';
@@ -2919,18 +2931,10 @@
         authorTags.unshift({ name: 'Admin', color: '#38bdf8' });
       }
 
-      let creatriceTag = authorTags.find(t => t.name.toLowerCase() === 'creatrice');
-      if (creatriceTag) {
-        creatriceTag.color = '#ffffff';
-      } else {
-        const adminIdx = authorTags.findIndex(t => t.name.toLowerCase() === 'admin');
-        authorTags.splice(adminIdx >= 0 ? adminIdx + 1 : 0, 0, { name: 'Creatrice', color: '#ffffff' });
-      }
-
-      // 2. Remove unwanted tags: 'Guide Creator', 'Guide creatore', 'CC Expert'
+      // 2. Remove unwanted tags: 'Guide Creator', 'Guide creatore', 'CC Expert', 'Creatrice'
       authorTags = authorTags.filter(t => {
         const lname = t.name.toLowerCase();
-        return lname !== 'guide creator' && lname !== 'guide creatore' && lname !== 'cc expert';
+        return lname !== 'guide creator' && lname !== 'guide creatore' && lname !== 'cc expert' && lname !== 'creatrice';
       });
 
       // 3. Deduplicate tags in authorTags and sort alphabetically
@@ -2957,7 +2961,7 @@
               .map(tag => tag.toLowerCase() === 'amministratore' ? 'Admin' : tag)
               .filter(tag => {
                 const lname = tag.toLowerCase();
-                return lname !== 'guide creator' && lname !== 'guide creatore' && lname !== 'cc expert';
+                return lname !== 'guide creator' && lname !== 'guide creatore' && lname !== 'cc expert' && lname !== 'creatrice';
               });
 
             // Match casing from authorTags
@@ -3852,18 +3856,22 @@
     }
 
     function persistDataLocally() {
-      const payload = {
-        categories: categories,
-        guides: guides,
-        creators: creators,
-        authorTags: authorTags,
-        adminPassword: adminPassword,
-        siteTitle: siteTitle,
-        siteDescription: siteDescription,
-        alertPopup: alertPopup,
-        siteLogo: siteLogo
-      };
-      localStorage.setItem('pianetasim-custom-data', JSON.stringify(payload));
+      try {
+        const payload = {
+          categories: categories,
+          guides: guides,
+          creators: creators,
+          authorTags: authorTags,
+          adminPassword: adminPassword,
+          siteTitle: siteTitle,
+          siteDescription: siteDescription,
+          alertPopup: alertPopup,
+          siteLogo: siteLogo
+        };
+        localStorage.setItem('pianetasim-custom-data', JSON.stringify(payload));
+      } catch (e) {
+        console.warn("Spazio di archiviazione locale (localStorage) esaurito. Le modifiche non possono essere salvate come bozza locale nel browser, ma verranno comunque salvate correttamente sul server permanente.", e);
+      }
     }
 
     function resetGuidesToDefault() {
