@@ -1413,14 +1413,18 @@
       ],
       "authors": [
         {
-          "name": "Lidia",
-          "color": "#cbd5e1",
-          "diamondColor": "#26ff5e",
-          "level": "Amministratore"
+          "name": "Lilithsimss",
+          "level": "Sims Creator & Modder",
+          "color": "#b026ff",
+          "diamondColor": "#64748b",
+          "link": "#collaboratori"
         }
       ],
-      "authorName": "Lidia",
-      "authorColor": "#cbd5e1"
+      "authorName": "Lilithsimss",
+      "authorColor": "#b026ff",
+      "authorDiamondColor": "#64748b",
+      "authorLevel": "Sims Creator & Modder",
+      "authorLink": "#collaboratori"
     }
   ],
   "creators": [
