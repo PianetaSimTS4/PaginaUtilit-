@@ -29,6 +29,11 @@
       "id": "mcc",
       "label": "MCC",
       "color": "rosso"
+    },
+    {
+      "id": "traduzioni",
+      "label": "Traduzioni",
+      "color": "fucsia"
     }
   ],
   "guides": [
@@ -1309,6 +1314,7 @@
       "tips": [],
       "categories": [
         "mod_cc",
+        "traduzioni",
         "guide-veloci"
       ],
       "authors": [
@@ -1408,6 +1414,7 @@
       "tips": [],
       "categories": [
         "mod_cc",
+        "traduzioni",
         "guide-passo-passo"
       ],
       "authors": [
