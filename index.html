@@ -3530,15 +3530,7 @@
             ${contentHtml || '<p class="text-slate-500 italic text-xs">Nessun contenuto aggiunto.</p>'}
           </div>
 
-          ${g.tags && g.tags.length > 0 ? `
-            <div class="pt-4 border-t border-slate-900 flex flex-wrap gap-1.5">
-              ${g.tags.map(tag => `
-                <span class="inline-block text-[9px] text-slate-400 bg-slate-900 border border-slate-850 px-2 py-0.5 rounded font-mono">
-                  #${tag}
-                </span>
-              `).join('')}
-            </div>
-          ` : ''}
+
         </div>
       `;
       container.scrollTop = savedScrollTop;
@@ -4125,19 +4117,7 @@
         return;
       }
       
-      if (g._rawTags !== undefined) {
-        g.tags = g._rawTags.split(',')
-          .map(t => t.trim().toLowerCase())
-          .filter(t => t.length > 0);
-        delete g._rawTags;
-      } else {
-        const tagsInput = document.getElementById('admin-edit-tags');
-        if (tagsInput) {
-          g.tags = tagsInput.value.split(',')
-            .map(t => t.trim().toLowerCase())
-            .filter(t => t.length > 0);
-        }
-      }
+      if (g._rawTags) delete g._rawTags;
 
       
       g.content = g.content.map(block => {
@@ -4568,9 +4548,12 @@
     }
 
     function getCategoryCount(catId) {
-      if (catId === 'all') return guides.length;
-      if (catId === 'preferiti') return bookmarks.length;
-      return guides.filter(g => g.category === catId).length;
+      if (catId === 'all') return (guides || []).length;
+      if (catId === 'preferiti') return (bookmarks || []).length;
+      return (guides || []).filter(g => {
+        const guideCats = g.categories || (g.category ? [g.category] : []);
+        return guideCats.includes(catId);
+      }).length;
     }
 
     
@@ -5993,13 +5976,7 @@
               ` : ''}
 
               
-              <div class="pt-6 border-t border-slate-800/80 flex flex-wrap gap-1.5">
-                ${[...(guide.tags || [])].sort((a, b) => a.localeCompare(b, 'it', { sensitivity: 'base' })).map(tag => `
-                  <span class="inline-block text-xs text-slate-400 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-md font-mono">
-                    #${tag}
-                  </span>
-                `).join('')}
-              </div>
+
             </div>
           </div>
         `;
@@ -6107,9 +6084,7 @@
                             `).join('')}
                           </div>
                         ` : ''}
-                        <span class="text-slate-400/80 truncate font-mono text-[10px] sm:text-[10.5px] tracking-wide">
-                          #${[...(guide.tags || [])].sort((a, b) => a.localeCompare(b, 'it', { sensitivity: 'base' })).slice(0, 3).join(' #')}
-                        </span>
+
                       </div>
                       
                       <span class="text-fluo-purple font-bold flex items-center gap-1 group-hover:text-white transition-colors shrink-0 text-xs pl-1">
@@ -6332,9 +6307,7 @@
                                   `).join('')}
                                 </div>
                               ` : ''}
-                              <span class="text-slate-400/80 truncate font-mono text-[10px] sm:text-[10.5px] tracking-wide">
-                                #${guide.tags.slice(0, 3).join(' #')}
-                              </span>
+
                             </div>
                             
                             <span class="text-fluo-purple font-bold flex items-center gap-1 group-hover:text-white transition-colors shrink-0 text-xs pl-1">
@@ -6616,7 +6589,7 @@
                           </div>
 
                           <!-- Bottoni Social -->
-                          <div class="pt-4 border-t border-slate-900 flex flex-wrap gap-2">
+                          <div class="pt-4 border-t border-slate-700/80 flex flex-wrap gap-2">
                             ${socialsHtml || '<span class="text-xs text-slate-500 italic">Nessun link social</span>'}
                           </div>
                         </div>
@@ -6825,31 +6798,7 @@
                         />
                       </div>
 
-                      <div class="space-y-1.5">
-                        <label class="text-xs font-bold text-slate-400 uppercase">Tags (Separati da Virgola)</label>
-                        <input
-                          type="text"
-                          id="admin-edit-tags"
-                          value="${g._rawTags !== undefined ? g._rawTags : g.tags.join(', ')}"
-                          oninput="updateEditingTags(this.value)"
-                          placeholder="es: costruzione, trucchi, mobili"
-                          class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:ring-2 focus:ring-fluo-purple outline-none"
-                        />
-                        ${g.tags && g.tags.length > 0 ? `
-                        <div class="flex flex-wrap gap-1 mt-1.5">
-                          ${g.tags.map((tag, tIdx) => `
-                            <span class="inline-flex items-center gap-1 text-[10px] bg-slate-900 text-slate-300 border border-slate-800 px-2 py-0.5 rounded-md font-mono">
-                              #${tag}
-                              <button
-                                type="button"
-                                onclick="deleteTagFromEditingGuide(${tIdx})"
-                                class="hover:text-red-400 text-slate-500 cursor-pointer text-[10px] font-black"
-                              >✕</button>
-                            </span>
-                          `).join('')}
-                        </div>
-                        ` : ''}
-                      </div>
+
                     </div>
 
                     <div class="p-3 bg-slate-900/30 rounded-xl border border-slate-900/60 flex items-center gap-2 mt-2">
