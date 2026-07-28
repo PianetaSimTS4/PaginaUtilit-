@@ -26,14 +26,24 @@
       "color": "blu"
     },
     {
-      "id": "mcc",
-      "label": "MCC",
+      "id": "mccc",
+      "label": "MCCC",
       "color": "rosso"
     },
     {
       "id": "traduzioni",
       "label": "Traduzioni",
       "color": "fucsia"
+    },
+    {
+      "id": "tabelle",
+      "label": "Tabelle",
+      "color": "arancione"
+    },
+    {
+      "id": "gshade",
+      "label": "GShade",
+      "color": "verdeacqua"
     }
   ],
   "guides": [
@@ -313,7 +323,7 @@
       "category": "pianeta-sim",
       "categories": [
         "pianeta-sim",
-        "mod_cc"
+        "tabelle"
       ],
       "tags": [
         "paineta sim",
@@ -552,7 +562,7 @@
       "category": "pianeta-sim",
       "categories": [
         "pianeta-sim",
-        "mod_cc"
+        "tabelle"
       ],
       "tags": [
         "pianeta sim",
@@ -1866,12 +1876,11 @@
     },
     {
       "id": "guida-gshade",
-      "title": "📷 GUIDA SU GSHADE",
+      "title": "📷 GUIDA INSTALLAZIONE GSHADE",
       "description": "Ecco come utilizzare GShade: un programma per modificare la grafica (luci, colori, grana, ecc...) di The Sims 4. Fatta da LilithSimss aka la vostra Jun!",
-      "category": "mod_cc",
+      "category": "gshade",
       "categories": [
-        "mod_cc",
-        "gameplay",
+        "gshade",
         "guide-passo-passo"
       ],
       "tags": [
