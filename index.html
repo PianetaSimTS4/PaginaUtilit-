@@ -667,7 +667,7 @@
         { name: "Traduttore", color: "#b026ff" },
         { name: "Moderatore", color: "#eab308" },
         { name: "Supporto Tecnico", color: "#22c55e" },
-        { name: "Modder", color: "#a855f7" },
+        { name: "Modder", color: "#ff007f" },
         { name: "Utente", color: "#94a3b8" },
         { name: "Programmatore", color: "#ef4444" }
       ];
@@ -729,7 +729,7 @@
     }
 
     
-    const catColorsList = ['nero', 'grigio', 'bianco', 'rosso', 'arancione', 'giallo', 'lime', 'verde', 'verdeacqua', 'azzurro', 'blu', 'viola', 'fucsia', 'rosa'];
+    const catColorsList = ['nero', 'grigio', 'bianco', 'rosso', 'arancione', 'giallo', 'lime', 'verde', 'verdeacqua', 'azzurro', 'blu', 'viola', 'lilla', 'fucsia', 'rosa'];
     
     const textColorsList = [
       '#ef4444', 
@@ -741,6 +741,7 @@
       '#38bdf8', 
       '#2563eb', 
       '#b026ff', 
+      '#c084fc', 
       '#ff007f', 
       '#ec4899', 
       '#ffffff', 
@@ -827,6 +828,12 @@
           text: 'text-purple-400',
           colorCode: '#b026ff'
         },
+        lilla: {
+          badge: 'bg-purple-500/10 text-violet-300 border-purple-500/30 hover:border-purple-500/50',
+          shadow: 'neon-shadow-purple',
+          text: 'text-violet-300',
+          colorCode: '#c084fc'
+        },
         fucsia: {
           badge: 'bg-fuchsia-500/10 text-fluo-fuchsia border-fluo-fuchsia/30 hover:border-fluo-fuchsia/50',
           shadow: 'neon-shadow-fuchsia',
@@ -853,7 +860,7 @@
       for (let i = 0; i < tagName.length; i++) {
         hash = tagName.charCodeAt(i) + ((hash << 5) - hash);
       }
-      const presets = ['viola', 'verde', 'azzurro', 'rosso', 'arancione', 'giallo', 'fucsia', 'rosa', 'lime', 'verdeacqua', 'blu'];
+      const presets = ['viola', 'lilla', 'verde', 'azzurro', 'rosso', 'arancione', 'giallo', 'fucsia', 'rosa', 'lime', 'verdeacqua', 'blu'];
       const index = Math.abs(hash) % presets.length;
       return getCategoryStyles(presets[index]);
     }
@@ -2994,6 +3001,24 @@
         adminTag.color = '#38bdf8';
       } else {
         authorTags.unshift({ name: 'Admin', color: '#38bdf8' });
+      }
+
+      // Enforce Modder is fucsia (#ff007f)
+      let modderTag = authorTags.find(t => t && t.name && t.name.toLowerCase() === 'modder');
+      if (modderTag) {
+        modderTag.color = '#ff007f';
+      }
+
+      // Enforce Utente is grigio (#94a3b8)
+      let utenteTag = authorTags.find(t => t && t.name && t.name.toLowerCase() === 'utente');
+      if (utenteTag) {
+        utenteTag.color = '#94a3b8';
+      }
+
+      // Enforce Programmatore is rosso (#ef4444)
+      let progTag = authorTags.find(t => t && t.name && t.name.toLowerCase() === 'programmatore');
+      if (progTag) {
+        progTag.color = '#ef4444';
       }
 
       // 2. Clear any empty or invalid tags
