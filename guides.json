@@ -1307,33 +1307,31 @@
     {
       "id": "ladypsycotrilly",
       "name": "LadyPsycoTrilly",
-      "role": "Amministratrice & Traduttrice",
+      "role": "Fondatrice & Traduttrice",
       "avatar": "images/FpLady.png",
       "color": "#38bdf8",
-      "description": "Appassionata di The Sims da sempre. Cura il sito di PianetaSim, traduce le mod più popolari e scrive guide dettagliate sul gameplay e la personalizzazione del gioco.",
+      "description": "",
       "tags": [
         "Admin",
         "Fondatrice",
+        "Moderatore",
+        "Supporto Tecnico",
         "Traduttore"
       ],
       "socials": [
         {
-          "label": "Telegram",
-          "url": "https://t.me/TheSims4ItaliaPianetaSim"
-        },
-        {
-          "label": "Sito Web",
-          "url": "https://pianetasimts.github.io/PianetaSim/index.html"
+          "label": "Patreon",
+          "url": "https://www.patreon.com/cw/LadyTrillyTheSims4"
         }
       ]
     },
     {
       "id": "sha",
       "name": "Sha",
-      "role": "Moderatrice & Aiuto Supporto",
+      "role": "Admin & Traduttrice",
       "avatar": "images/FpSha.png",
       "color": "#38bdf8",
-      "description": "Esperta di installazioni e risoluzione problemi delle Mod e del Custom Content. Fornisce supporto tecnico tempestivo e guide passo-passo semplici per tutti.",
+      "description": "Ho una pagina Patreon in cui condivido le mie traduzioni per varie mod e un blog Tumblr entrambi riguardanti The Sims 4 :D Inoltre, aiuto nella gestione dello stato delle mod, ho creato e gestisco la pagina delle Guide & Utilità di Pianeta Sim!",
       "tags": [
         "Moderatore",
         "Supporto Tecnico",
@@ -1341,111 +1339,141 @@
       ],
       "socials": [
         {
-          "label": "Telegram",
-          "url": "https://t.me/TheSims4ItaliaPianetaSim"
+          "label": "Patreon",
+          "url": "https://www.patreon.com/cw/Sha_TsIta",
+          "color": "#f97316"
+        },
+        {
+          "label": "Tumblr",
+          "url": "https://www.tumblr.com/sh4-ts",
+          "color": "#2563eb"
         }
       ]
     },
     {
       "id": "creator-1785142827052-172",
       "name": "Leo",
-      "role": "Traduttore & Collaboratore",
+      "role": "Admin & Traduttore",
       "avatar": "images/FpLeo.jpg",
-      "color": "#38bdf8",
+      "color": "#2563eb",
       "description": "Collaboratore attivo di PianetaSim. Aiuta con la traduzione di mod e custom content per arricchire l'esperienza dei giocatori italiani.",
       "tags": [
+        "Admin",
         "Traduttore"
       ],
       "socials": [
         {
-          "label": "Telegram",
-          "url": "https://t.me/TheSims4ItaliaPianetaSim"
+          "label": "Patreon",
+          "url": "https://www.patreon.com/cw/leotranslations",
+          "color": "#f97316"
         }
       ]
     },
     {
       "id": "creator-1785144069191-889",
       "name": "Mr.Nico",
-      "role": "Moderatore & Supporto",
+      "role": "Programmatore & Admin",
       "avatar": "images/logo.png",
-      "color": "#38bdf8",
+      "color": "#ef4444",
       "description": "Fornisce supporto tecnico e aiuta a moderare e gestire al meglio la community di PianetaSim.",
       "tags": [
+        "Admin",
         "Moderatore",
+        "Programmatore",
         "Supporto Tecnico"
       ],
-      "socials": [
-        {
-          "label": "Telegram",
-          "url": "https://t.me/TheSims4ItaliaPianetaSim"
-        }
-      ]
+      "socials": []
     },
     {
       "id": "creator-1784913099538-709",
       "name": "LoryNaMods",
-      "role": "Traduttrice & Collaboratrice",
+      "role": "Modder & Traduttrice",
       "avatar": "images/FpLory.png",
-      "color": "#38bdf8",
-      "description": "Crea e traduce mod eccezionali per The Sims 4. Appassionata di personalizzazione e gameplay avanzato.",
+      "color": "#b026ff",
+      "description": "Laureanda in Informatica e modder di TS4. Unisco studio e creatività nei miei contenuti. E chissà, forse in futuro anche un nuovo viodeogioco!",
       "tags": [
+        "Modder",
         "Traduttore"
       ],
       "socials": [
         {
-          "label": "Telegram",
-          "url": "https://t.me/TheSims4ItaliaPianetaSim"
+          "label": "Sito",
+          "url": "https://www.lorynamods.com/",
+          "color": "#eab308"
+        },
+        {
+          "label": "Forge",
+          "url": "https://www.curseforge.com/members/lorynamods/projects",
+          "color": "#f97316"
         }
       ]
     },
     {
       "id": "creator-1785142861026-548",
       "name": "Ricky's Mom",
-      "role": "Traduttrice & Collaboratrice",
+      "role": "Modder & Traduttrice",
       "avatar": "images/logo.png",
       "color": "#38bdf8",
-      "description": "Collaboratrice appassionata. Partecipa attivamente alle traduzioni e alla crescita del gruppo italiano.",
+      "description": "Sognatrice vivace ed audace con mente brillante e cuore libero. Elegante equilibrista, ambiziosa ma tenera, che sparge originalità con un sorriso contagioso 😽.",
       "tags": [
+        "Modder",
         "Traduttore"
       ],
       "socials": [
         {
-          "label": "Telegram",
-          "url": "https://t.me/TheSims4ItaliaPianetaSim"
+          "label": "Patreon",
+          "url": "https://www.patreon.com/cw/RickysMom"
         }
       ]
     },
     {
       "id": "creator-1784912840733-761",
       "name": "AngiePixelWords",
-      "role": "Traduttrice & Scrittrice",
+      "role": "Traduttrice",
       "avatar": "images/FpAngi.jpg",
-      "color": "#38bdf8",
-      "description": "Scrittrice appassionata e traduttrice di mod. Cura i dettagli e la qualità dei testi per renderli adatti ai giocatori italiani.",
+      "color": "#26ff5e",
+      "description": "Ciao a tutti! Sono Angela, 38 anni. Appassionata di The Sims 4, traduco mod e aiuto, se serve, la fantastica community di Pianeta Sim da oltre un anno!",
       "tags": [
         "Traduttore"
       ],
       "socials": [
         {
-          "label": "Telegram",
-          "url": "https://t.me/TheSims4ItaliaPianetaSim"
+          "label": "Patreon",
+          "url": "https://www.patreon.com/cw/AngiePixelWords",
+          "color": "#f97316"
         }
       ]
     },
     {
       "id": "creator-1785171482013-566",
       "name": "Lilithsimss",
-      "role": "Traduttrice & Collaboratrice",
+      "role": "Sims Creator & Modder",
       "avatar": "images/FpLillith.jpg",
-      "color": "#38bdf8",
-      "description": "Traduttrice appassionata di gameplay di The Sims 4. Si impegna a portare i contenuti più divertenti alla community italiana.",
+      "color": "#b026ff",
+      "description": "Sims Creator | Scrivo, creo, e condivido i miei sim e le loro storie su Instagram e X! La vostra simmer di fiducia se cercate cc ❤️",
       "tags": [
-        "Traduttore"
+        "Utente"
       ],
       "socials": [
         {
-          "label": "Telegram",
-          "url": "https://t.me/TheSims4ItaliaPianetaSim"
+          "label": "Instagram",
+          "url": "https://www.instagram.com/lilithsimss",
+          "color": "#ff007f"
+        },
+        {
+          "label": "TikTok",
+          "url": "https://www.tiktok.com/@lilith.simss",
+          "color": "#b026ff"
+        },
+        {
+          "label": "X",
+          "url": "https://x.com/lilithsimss",
+          "color": "#2563eb"
+        },
+        {
+          "label": "Pinterest",
+          "url": "https://it.pinterest.com/lilithsimss/",
+          "color": "#ef4444"
         }
       ]
     }
@@ -1459,39 +1487,5 @@
     "title": "Avviso Importante",
     "color": "rosso",
     "text": "Benvenuto su PianetaSim! Questo è un messaggio di avviso personalizzabile."
-  },
-  "authorTags": [
-    {
-      "name": "Admin",
-      "color": "#38bdf8"
-    },
-    {
-      "name": "Fondatrice",
-      "color": "#ffffff"
-    },
-    {
-      "name": "Traduttore",
-      "color": "#b026ff"
-    },
-    {
-      "name": "Moderatore",
-      "color": "#eab308"
-    },
-    {
-      "name": "Supporto Tecnico",
-      "color": "#22c55e"
-    },
-    {
-      "name": "Modder",
-      "color": "#a855f7"
-    },
-    {
-      "name": "Utente",
-      "color": "#94a3b8"
-    },
-    {
-      "name": "Programmatore",
-      "color": "#ef4444"
-    }
-  ]
+  }
 }
