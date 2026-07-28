@@ -3057,7 +3057,7 @@
       });
       authorTags.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'it', { sensitivity: 'base' }));
 
-      // 4. Normalize creators tags, ensure id, personal color, and sort tags alphabetically
+      // 4. Normalize creators tags, ensure id, personal color, diamond color, and sort tags alphabetically
       if (Array.isArray(creators)) {
         creators.forEach((c, idx) => {
           if (!c || typeof c !== 'object') return;
@@ -3066,6 +3066,9 @@
           }
           if (!c.color) {
             c.color = '#38bdf8';
+          }
+          if (!c.diamondColor) {
+            c.diamondColor = c.color || '#26ff5e';
           }
           if (c.tags) {
             if (!Array.isArray(c.tags)) {
@@ -3553,14 +3556,31 @@
     function getGuideAuthorsList(guide) {
       if (!guide) return [];
       if (guide.authors && Array.isArray(guide.authors) && guide.authors.length > 0) {
-        return guide.authors;
+        return guide.authors.map(a => {
+          if (a && typeof a === 'object') {
+            return {
+              name: a.name || 'Nuovo Autore',
+              color: a.color || '#cbd5e1',
+              diamondColor: a.diamondColor || a.color || '#26ff5e',
+              level: a.level || 'Collaboratore',
+              link: a.link || ''
+            };
+          }
+          return {
+            name: typeof a === 'string' ? a : 'Nuovo Autore',
+            color: '#cbd5e1',
+            diamondColor: '#26ff5e',
+            level: 'Collaboratore',
+            link: ''
+          };
+        });
       }
       // Fallback to legacy single author properties if exists
       if (guide.authorName) {
         return [{
           name: guide.authorName,
           color: guide.authorColor || '#cbd5e1',
-          diamondColor: guide.authorDiamondColor || '#26ff5e',
+          diamondColor: guide.authorDiamondColor || guide.authorColor || '#26ff5e',
           level: guide.authorLevel || 'Moderatore',
           link: guide.authorLink || ''
         }];
