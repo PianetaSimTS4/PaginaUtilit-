@@ -1443,7 +1443,8 @@
           "label": "Patreon",
           "url": "https://www.patreon.com/cw/LadyTrillyTheSims4"
         }
-      ]
+      ],
+      "diamondColor": "#ffffff"
     },
     {
       "id": "sha",
@@ -1467,7 +1468,8 @@
           "url": "https://www.tumblr.com/sh4-ts",
           "color": "#2563eb"
         }
-      ]
+      ],
+      "diamondColor": "#38bdf8"
     },
     {
       "id": "creator-1785142827052-172",
@@ -1486,7 +1488,8 @@
           "url": "https://www.patreon.com/cw/leotranslations",
           "color": "#f97316"
         }
-      ]
+      ],
+      "diamondColor": "#38bdf8"
     },
     {
       "id": "creator-1785144069191-889",
@@ -1499,7 +1502,8 @@
         "Admin",
         "Programmatore"
       ],
-      "socials": []
+      "socials": [],
+      "diamondColor": "#ef4444"
     },
     {
       "id": "creator-1784913099538-709",
@@ -1523,14 +1527,15 @@
           "url": "https://www.curseforge.com/members/lorynamods/projects",
           "color": "#f97316"
         }
-      ]
+      ],
+      "diamondColor": "#ff007f"
     },
     {
       "id": "creator-1785142861026-548",
       "name": "Ricky's Mom",
       "role": "Modder & Traduttrice",
       "avatar": "images/logo.png",
-      "color": "#38bdf8",
+      "color": "#ff007f",
       "description": "Sognatrice vivace ed audace con mente brillante e cuore libero. Elegante equilibrista, ambiziosa ma tenera, che sparge originalità con un sorriso contagioso 😽.",
       "tags": [
         "Modder",
@@ -1541,7 +1546,8 @@
           "label": "Patreon",
           "url": "https://www.patreon.com/cw/RickysMom"
         }
-      ]
+      ],
+      "diamondColor": "#c084fc"
     },
     {
       "id": "creator-1784912840733-761",
@@ -1559,7 +1565,8 @@
           "url": "https://www.patreon.com/cw/AngiePixelWords",
           "color": "#f97316"
         }
-      ]
+      ],
+      "diamondColor": "#b026ff"
     },
     {
       "id": "creator-1785171482013-566",
@@ -1592,7 +1599,8 @@
           "url": "https://it.pinterest.com/lilithsimss/",
           "color": "#ef4444"
         }
-      ]
+      ],
+      "diamondColor": "#64748b"
     }
   ],
   "adminPassword": "sticazzi",
