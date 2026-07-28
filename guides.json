@@ -34,7 +34,7 @@
   "guides": [
     {
       "id": "guida-sito-generale",
-      "title": "INFORMAZIONI GENERALI SUL SITO",
+      "title": "ℹ️ INFORMAZIONI GENERALI SUL SITO",
       "description": "Qui troverai informazioni sul sito di Pianeta Sim e guide dettagliate sulle varie sezioni di esso.",
       "category": "pianeta-sim",
       "categories": [
@@ -271,7 +271,7 @@
           "type": "divider",
           "value": "",
           "separatorType": "line",
-          "dividerType": "standard"
+          "dividerType": "color"
         },
         {
           "type": "paragraph",
@@ -303,12 +303,12 @@
     },
     {
       "id": "guida-tabella-mod",
-      "title": "GUIDA ALLE TABELLE MOD & TRADUZIONI",
+      "title": "🔎 GUIDA ALLE TABELLE MOD & TRADUZIONI",
       "description": "Spiegazione dettagliata di tutte le funzioni della Tabella delle Mod & Traduzioni, compresa la 18+, del sito di Pianeta Sim.",
-      "category": "mod_cc",
+      "category": "pianeta-sim",
       "categories": [
-        "mod_cc",
-        "pianeta-sim"
+        "pianeta-sim",
+        "mod_cc"
       ],
       "tags": [
         "paineta sim",
@@ -541,8 +541,127 @@
       "authorLink": "#collaboratori"
     },
     {
+      "id": "guida-tabella-animazion",
+      "title": "🔎 GUIDA ALLA TABELLA ANIMAZIONI WW +18",
+      "description": "Spiegazione dettagliata di tutte le funzioni della Tabella Animazioni del sito di Pianeta Sim. ",
+      "category": "pianeta-sim",
+      "categories": [
+        "pianeta-sim",
+        "mod_cc"
+      ],
+      "tags": [
+        "pianeta sim",
+        "tabella",
+        "animazioni"
+      ],
+      "content": [
+        {
+          "type": "quote",
+          "value": "La tabella [[color:#ff007f](Animazioni WW)](https://pianetasimts.github.io/PianetaSim/animazioniww18.html) si occupa degli aggiornamenti della animazioni usate con la mod WickedWhims di TurboDriver.\n**Rigorosamente contenuti per adulti.**",
+          "quoteType": "linea",
+          "lineColor": "fucsia"
+        },
+        {
+          "type": "heading3",
+          "value": "PREFERITE:",
+          "color": "#eab308"
+        },
+        {
+          "type": "paragraph",
+          "value": "Usate la stellina per segnare le vostre mod preferite e tenere più facilmente sotto controllo il loro stato.\nQuando una mod cambia stato, riceverete una notifica all’apertura del sito."
+        },
+        {
+          "type": "riquadro",
+          "value": "[color:#eab308](**ATTENZIONE:**)\nSe si elimina la cronologia del browser questa funzione verrà resettata.",
+          "borderColor": "#eab308"
+        },
+        {
+          "type": "heading3",
+          "value": "DESCRIZIONE MOD:",
+          "color": "#38bdf8"
+        },
+        {
+          "type": "paragraph",
+          "value": "Per leggere la descrizione dell’animazione, vi basterà passare con il mouse sopra il NOME DELL’AUTORE DELL’ANIMAZIONE e vi apparirà un Pop Up con una breve descrizione."
+        },
+        {
+          "type": "heading3",
+          "value": "GUIDA TABELLA",
+          "color": "#b026ff"
+        },
+        {
+          "type": "paragraph",
+          "value": "Ogni tabella è dotata del pulsante “GUIDA TABELLA”: cliccandolo, si accede alla guida specifica della tabella selezionata, facilmente individuabile in alto a destra una volta entrati nella tabella."
+        },
+        {
+          "type": "heading1",
+          "value": "DESCRIZIONE TABELLA",
+          "color": "#ff007f"
+        },
+        {
+          "type": "paragraph",
+          "value": "[color:#38bdf8](**AUTORE & DOWNLOAD: **)\nIndica il nome del creatore dell’animazione; cliccandoci, si apre il sito ufficiale da cui scaricarla."
+        },
+        {
+          "type": "paragraph",
+          "value": "[color:#eab308](**STATO ANIMAZIONE: **)\nIndica lo stato dell’animazione attuale."
+        },
+        {
+          "type": "riquadro",
+          "value": "[color:#38bdf8](**● COMPATIBILE **)\nIndica che l’animazione è compatibile con il gioco.\n[color:#38bdf8](L’animazione può essere utilizzata.)",
+          "borderColor": "#38bdf8"
+        },
+        {
+          "type": "riquadro",
+          "value": "[color:#26ff5e](**● AGGIORNATA **)\nIndica che l’animazione ha ricevuto un aggiornamento dal creatore. \n[color:#26ff5e](L’animazione può essere utilizzata.)",
+          "borderColor": "#26ff5e"
+        },
+        {
+          "type": "riquadro",
+          "value": "[color:#b026ff](**● NUOVA**)\nIndica che L’animazione è nuova, ovvero è stata inserita nel sito quel\ngiorno. \n[color:#b026ff](L’animazione può essere utilizzata.)",
+          "borderColor": "#b026ff"
+        },
+        {
+          "type": "paragraph",
+          "value": "[color:#26ff5e](**DATA AGGIORNAMENTO ANIMAZIONE: **)\nIndica l’ultimo aggiornamento ricevuto."
+        },
+        {
+          "type": "divider",
+          "value": "",
+          "separatorType": "line",
+          "dividerType": "color"
+        },
+        {
+          "type": "paragraph",
+          "value": "[color:#38bdf8](**SE HAI DUBBI O DIFFICOLTÀ, PUOI RICHIEDE ASSISTENZA NEL GRUPPO TELEGRAM**)",
+          "align": "center"
+        },
+        {
+          "type": "button",
+          "value": "ASSISTENZA TELEGRAM",
+          "buttonUrl": "https://t.me/TheSims4ItaliaPianetaSim",
+          "buttonColor": "#38bdf8"
+        }
+      ],
+      "tips": [],
+      "authorName": "LadyPsycoTrilly",
+      "authorColor": "#b026ff",
+      "authors": [
+        {
+          "name": "LadyPsycoTrilly",
+          "level": "Fondatrice & Traduttrice",
+          "color": "#b026ff",
+          "diamondColor": "#ffffff",
+          "link": "#collaboratori"
+        }
+      ],
+      "authorDiamondColor": "#ffffff",
+      "authorLevel": "Fondatrice & Traduttrice",
+      "authorLink": "#collaboratori"
+    },
+    {
       "id": "installazione-mod-veloce",
-      "title": "COME INSTALLARE LE MOD - GUIDA VELOCE",
+      "title": "📁 COME INSTALLARE LE MOD - GUIDA VELOCE",
       "description": "Questa guida è fatta per chi è ha confidenza o ha già esperienze nelle installazioni e videogiochi.",
       "category": "mod_cc",
       "tags": [
@@ -814,7 +933,7 @@
     },
     {
       "id": "guida-mods-passopasso",
-      "title": "COME INSTALLARE LE MOD - GUIDA PASSO PASSO",
+      "title": "📁 COME INSTALLARE LE MOD - GUIDA PASSO PASSO",
       "description": "Questa guida è per chi è poco pratico o alla prime armi. Ad ogni punto verrai guidato attraverso le immagini e spiegazioni semplici.",
       "category": "mod_cc",
       "tags": [
@@ -1087,9 +1206,9 @@
     },
     {
       "id": "guida-traduzioni-veloce",
-      "title": "COME INSTALLARE LE TRADUZIONI - GUIDA VELOCE",
+      "title": "🇮🇹 COME INSTALLARE LE TRADUZIONI - GUIDA VELOCE",
       "description": "Una guida semplice e coincisa su come installare le traduzioni italiane per le mod di The SIms 4.",
-      "category": "guide-veloci",
+      "category": "mod_cc",
       "tags": [
         "installazione",
         "traduzioni"
@@ -1189,8 +1308,8 @@
       ],
       "tips": [],
       "categories": [
-        "guide-veloci",
-        "mod_cc"
+        "mod_cc",
+        "guide-veloci"
       ],
       "authors": [
         {
@@ -1214,7 +1333,7 @@
     },
     {
       "id": "guida-traduzioni-passopasso",
-      "title": "COME INSTALLARE LE TRADUZIONI - GUIDA PASSO PASSO",
+      "title": "🇮🇹 COME INSTALLARE LE TRADUZIONI - GUIDA PASSO PASSO",
       "description": "Una guida con immagini e con esempio pratico, per i meno esperti, su come installare le traduzioni italiane per le mod di The Sims 4.",
       "category": "mod_cc",
       "tags": [
@@ -1313,7 +1432,7 @@
     },
     {
       "id": "come-attivare-mod-e-cc-in-gioco-guida",
-      "title": "COME ATTIVARE MOD E CC IN GIOCO - GUIDA VELOCE",
+      "title": "⚙️ COME ATTIVARE MOD E CC IN GIOCO - GUIDA VELOCE",
       "description": "Ecco come poter attivare le mod e cc in The Sims 4.",
       "category": "mod_cc",
       "categories": [
@@ -1385,7 +1504,7 @@
     },
     {
       "id": "guida-mod-attivazione",
-      "title": "COME ATTIVARE MOD E CC IN GIOCO - GUIDA PASSO PASSO",
+      "title": "⚙️ COME ATTIVARE MOD E CC IN GIOCO - GUIDA PASSO PASSO",
       "description": "Dopo aver scaricato mod e cc serve attivarle in gioco, segui la guida con immagini per sapere come fare.",
       "category": "mod_cc",
       "categories": [
@@ -1496,7 +1615,7 @@
     },
     {
       "id": "come-organizzare-mod-cc",
-      "title": "CONSIGLI SU COME ORGANIZZARE MOD E CC",
+      "title": "✍️ CONSIGLI SU COME ORGANIZZARE MOD E CC",
       "description": "Se non sai come prganizzare la cartella Mods ti offriamo alcuni consigli per poter migliorare la tua esperienza di gioco o trarre infomazioni utili.",
       "category": "mod_cc",
       "categories": [
@@ -1740,11 +1859,12 @@
     },
     {
       "id": "guida-gshade",
-      "title": "GUIDA SU GSHADE",
+      "title": "📷 GUIDA SU GSHADE",
       "description": "Ecco come utilizzare GShade: un programma per modificare la grafica (luci, colori, grana, ecc...) di The Sims 4. Fatta da LilithSimss aka la vostra Jun!",
       "category": "mod_cc",
       "categories": [
         "mod_cc",
+        "gameplay",
         "guide-passo-passo"
       ],
       "tags": [
@@ -1942,125 +2062,6 @@
       "authorColor": "#b026ff",
       "authorDiamondColor": "#64748b",
       "authorLevel": "Sims Creator & Modder",
-      "authorLink": "#collaboratori"
-    },
-    {
-      "id": "guida-tabella-animazion",
-      "title": "GUIDA ALLA TABELLA ANIMAZION WW +18",
-      "description": "Spiegazione dettagliata di tutte le funzioni della Tabella Animazioni del sito di Pianeta Sim. ",
-      "category": "pianeta-sim",
-      "categories": [
-        "pianeta-sim",
-        "mod_cc"
-      ],
-      "tags": [
-        "pianeta sim",
-        "tabella",
-        "animazioni"
-      ],
-      "content": [
-        {
-          "type": "quote",
-          "value": "La tabella [[color:#ff007f](Animazioni WW)](https://pianetasimts.github.io/PianetaSim/animazioniww18.html) si occupa degli aggiornamenti della animazioni usate con la mod WickedWhims di TurboDriver.\n**Rigorosamente contenuti per adulti.**",
-          "quoteType": "linea",
-          "lineColor": "fucsia"
-        },
-        {
-          "type": "heading3",
-          "value": "PREFERITE:",
-          "color": "#eab308"
-        },
-        {
-          "type": "paragraph",
-          "value": "Usate la stellina per segnare le vostre mod preferite e tenere più facilmente sotto controllo il loro stato.\nQuando una mod cambia stato, riceverete una notifica all’apertura del sito."
-        },
-        {
-          "type": "riquadro",
-          "value": "[color:#eab308](**ATTENZIONE:**)\nSe si elimina la cronologia del browser questa funzione verrà resettata.",
-          "borderColor": "#eab308"
-        },
-        {
-          "type": "heading3",
-          "value": "DESCRIZIONE MOD:",
-          "color": "#38bdf8"
-        },
-        {
-          "type": "paragraph",
-          "value": "Per leggere la descrizione dell’animazione, vi basterà passare con il mouse sopra il NOME DELL’AUTORE DELL’ANIMAZIONE e vi apparirà un Pop Up con una breve descrizione."
-        },
-        {
-          "type": "heading3",
-          "value": "GUIDA TABELLA",
-          "color": "#b026ff"
-        },
-        {
-          "type": "paragraph",
-          "value": "Ogni tabella è dotata del pulsante “GUIDA TABELLA”: cliccandolo, si accede alla guida specifica della tabella selezionata, facilmente individuabile in alto a destra una volta entrati nella tabella."
-        },
-        {
-          "type": "heading1",
-          "value": "DESCRIZIONE TABELLA",
-          "color": "#ff007f"
-        },
-        {
-          "type": "paragraph",
-          "value": "[color:#38bdf8](**AUTORE & DOWNLOAD: **)\nIndica il nome del creatore dell’animazione; cliccandoci, si apre il sito ufficiale da cui scaricarla."
-        },
-        {
-          "type": "paragraph",
-          "value": "[color:#eab308](**STATO ANIMAZIONE: **)\nIndica lo stato dell’animazione attuale."
-        },
-        {
-          "type": "riquadro",
-          "value": "[color:#38bdf8](**● COMPATIBILE **)\nIndica che l’animazione è compatibile con il gioco.\n[color:#38bdf8](L’animazione può essere utilizzata.)",
-          "borderColor": "#38bdf8"
-        },
-        {
-          "type": "riquadro",
-          "value": "[color:#26ff5e](**● AGGIORNATA **)\nIndica che l’animazione ha ricevuto un aggiornamento dal creatore. \n[color:#26ff5e](L’animazione può essere utilizzata.)",
-          "borderColor": "#26ff5e"
-        },
-        {
-          "type": "riquadro",
-          "value": "[color:#b026ff](**● NUOVA**)\nIndica che L’animazione è nuova, ovvero è stata inserita nel sito quel\ngiorno. \n[color:#b026ff](L’animazione può essere utilizzata.)",
-          "borderColor": "#b026ff"
-        },
-        {
-          "type": "paragraph",
-          "value": "[color:#26ff5e](**DATA AGGIORNAMENTO ANIMAZIONE: **)\nIndica l’ultimo aggiornamento ricevuto."
-        },
-        {
-          "type": "divider",
-          "value": "",
-          "separatorType": "line",
-          "dividerType": "color"
-        },
-        {
-          "type": "paragraph",
-          "value": "[color:#38bdf8](**SE HAI DUBBI O DIFFICOLTÀ, PUOI RICHIEDE ASSISTENZA NEL GRUPPO TELEGRAM**)",
-          "align": "center"
-        },
-        {
-          "type": "button",
-          "value": "ASSISTENZA TELEGRAM",
-          "buttonUrl": "https://t.me/TheSims4ItaliaPianetaSim",
-          "buttonColor": "#38bdf8"
-        }
-      ],
-      "tips": [],
-      "authorName": "LadyPsycoTrilly",
-      "authorColor": "#b026ff",
-      "authors": [
-        {
-          "name": "LadyPsycoTrilly",
-          "level": "Fondatrice & Traduttrice",
-          "color": "#b026ff",
-          "diamondColor": "#ffffff",
-          "link": "#collaboratori"
-        }
-      ],
-      "authorDiamondColor": "#ffffff",
-      "authorLevel": "Fondatrice & Traduttrice",
       "authorLink": "#collaboratori"
     }
   ],
