@@ -2815,12 +2815,14 @@
       const roleInput = document.getElementById('edit-creator-role');
       const avatarInput = document.getElementById('edit-creator-avatar');
       const colorInput = document.getElementById('edit-creator-color');
+      const diamondColorInput = document.getElementById('edit-creator-diamond-color');
       const descInput = document.getElementById('edit-creator-desc');
 
       if (nameInput) window.editingCreatorDraft.name = nameInput.value;
       if (roleInput) window.editingCreatorDraft.role = roleInput.value;
       if (avatarInput) window.editingCreatorDraft.avatar = avatarInput.value;
       if (colorInput) window.editingCreatorDraft.color = colorInput.value;
+      if (diamondColorInput) window.editingCreatorDraft.diamondColor = diamondColorInput.value;
       if (descInput) window.editingCreatorDraft.description = descInput.value;
     };
 
@@ -2830,12 +2832,14 @@
       const roleInput = document.getElementById('new-creator-role');
       const avatarInput = document.getElementById('new-creator-avatar');
       const colorInput = document.getElementById('new-creator-color');
+      const diamondColorInput = document.getElementById('new-creator-diamond-color');
       const descInput = document.getElementById('new-creator-desc');
 
       if (nameInput) window.newCreatorDraft.name = nameInput.value;
       if (roleInput) window.newCreatorDraft.role = roleInput.value;
       if (avatarInput) window.newCreatorDraft.avatar = avatarInput.value;
       if (colorInput) window.newCreatorDraft.color = colorInput.value;
+      if (diamondColorInput) window.newCreatorDraft.diamondColor = diamondColorInput.value;
       if (descInput) window.newCreatorDraft.description = descInput.value;
     };
 
@@ -2850,6 +2854,7 @@
         role: cToEdit.role || '',
         avatar: cToEdit.avatar || '',
         color: cToEdit.color || '#38bdf8',
+        diamondColor: cToEdit.diamondColor || cToEdit.color || '#26ff5e',
         description: cToEdit.description || ''
       };
       renderApp();
@@ -2939,7 +2944,7 @@
         name: c.name,
         level: c.role || 'Collaboratore',
         color: personalColor,
-        diamondColor: personalColor,
+        diamondColor: c.diamondColor || personalColor || '#26ff5e',
         link: '#collaboratori'
       });
       
@@ -2964,7 +2969,7 @@
         window.editingGuide.authors[authorIdx].name = c.name;
         window.editingGuide.authors[authorIdx].level = c.role || 'Collaboratore';
         window.editingGuide.authors[authorIdx].color = personalColor;
-        window.editingGuide.authors[authorIdx].diamondColor = personalColor;
+        window.editingGuide.authors[authorIdx].diamondColor = c.diamondColor || personalColor || '#26ff5e';
         window.editingGuide.authors[authorIdx].link = '#collaboratori';
         
         syncLegacyAuthorFields();
@@ -3132,6 +3137,8 @@
       });
 
       const socials = (window.newCreatorSocialsList || []).filter(s => s.label.trim() && s.url.trim());
+      const diamondColorInput = document.getElementById('new-creator-diamond-color');
+      const diamondColor = diamondColorInput ? diamondColorInput.value : ((window.newCreatorDraft && window.newCreatorDraft.diamondColor) || color || '#26ff5e');
 
       const newCreator = {
         id: 'creator-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
@@ -3139,6 +3146,7 @@
         role: role,
         avatar: avatar || 'images/logo.png',
         color: color || '#38bdf8',
+        diamondColor: diamondColor,
         description: description,
         tags: tags,
         socials: socials
@@ -3171,6 +3179,7 @@
       const roleInput = document.getElementById('edit-creator-role');
       const avatarInput = document.getElementById('edit-creator-avatar');
       const colorInput = document.getElementById('edit-creator-color');
+      const diamondColorInput = document.getElementById('edit-creator-diamond-color');
       const descInput = document.getElementById('edit-creator-desc');
 
       const name = nameInput ? nameInput.value.trim() : (window.editingCreatorDraft ? window.editingCreatorDraft.name.trim() : '');
@@ -3182,6 +3191,7 @@
       const role = roleInput ? roleInput.value.trim() : (window.editingCreatorDraft && window.editingCreatorDraft.role ? window.editingCreatorDraft.role.trim() : 'Autore');
       const avatar = avatarInput ? avatarInput.value.trim() : (window.editingCreatorDraft && window.editingCreatorDraft.avatar ? window.editingCreatorDraft.avatar.trim() : '');
       const color = colorInput ? colorInput.value : ((window.editingCreatorDraft && window.editingCreatorDraft.color) || creators[creatorIdx].color || '#38bdf8');
+      const diamondColor = diamondColorInput ? diamondColorInput.value : ((window.editingCreatorDraft && window.editingCreatorDraft.diamondColor) || creators[creatorIdx].diamondColor || color || '#26ff5e');
       const description = descInput ? descInput.value.trim() : (window.editingCreatorDraft && window.editingCreatorDraft.description ? window.editingCreatorDraft.description.trim() : '');
       
       const tags = window.editingCreatorTagsList ? [...window.editingCreatorTagsList] : [...(creators[creatorIdx].tags || [])];
@@ -3205,6 +3215,7 @@
         role: role,
         avatar: avatar,
         color: color || '#38bdf8',
+        diamondColor: diamondColor,
         description: description,
         tags: tags,
         socials: socials
@@ -5088,7 +5099,7 @@
                         </div>
 
                         <div class="space-y-1.5">
-                          <label class="text-[9px] uppercase font-black text-slate-400 font-sans block">Colore Personale Collaboratore (Nome e Diamante ◆)</label>
+                          <label class="text-[9px] uppercase font-black text-slate-400 font-sans block">Colore Personale Collaboratore (Nome)</label>
                           <div class="flex items-center gap-2">
                             <input
                               type="color"
@@ -5106,6 +5117,31 @@
                                 onclick="if(!window.editingCreatorDraft) window.editingCreatorDraft={}; window.editingCreatorDraft.color='${hex}'; const el=document.getElementById('edit-creator-color'); if(el) el.value='${hex}'; renderApp();"
                                 class="w-4 h-4 rounded-md border transition-all hover:scale-125 cursor-pointer shrink-0"
                                 style="background-color: ${hex}; border-color: ${((window.editingCreatorDraft && window.editingCreatorDraft.color) || cToEdit.color || '#38bdf8').toLowerCase() === hex.toLowerCase() ? '#ffffff' : 'rgba(255,255,255,0.1)'};"
+                                title="${hex}"
+                              ></button>
+                            `).join('')}
+                          </div>
+                        </div>
+
+                        <div class="space-y-1.5">
+                          <label class="text-[9px] uppercase font-black text-slate-400 font-sans block">Colore del Rombo (Diamante ◆)</label>
+                          <div class="flex items-center gap-2">
+                            <input
+                              type="color"
+                              id="edit-creator-diamond-color"
+                              value="${window.editingCreatorDraft && window.editingCreatorDraft.diamondColor !== undefined ? window.editingCreatorDraft.diamondColor : (cToEdit.diamondColor || cToEdit.color || '#26ff5e')}"
+                              oninput="syncEditingCreatorDraft(); renderApp();"
+                              class="w-6 h-6 p-0 bg-transparent border-0 rounded cursor-pointer shrink-0"
+                            />
+                            <span class="text-[10px] text-slate-400 font-mono">${(window.editingCreatorDraft && window.editingCreatorDraft.diamondColor) || cToEdit.diamondColor || cToEdit.color || '#26ff5e'}</span>
+                          </div>
+                          <div class="flex flex-wrap gap-1 mt-1">
+                            ${textColorsList.map(hex => `
+                              <button
+                                type="button"
+                                onclick="if(!window.editingCreatorDraft) window.editingCreatorDraft={}; window.editingCreatorDraft.diamondColor='${hex}'; const el=document.getElementById('edit-creator-diamond-color'); if(el) el.value='${hex}'; renderApp();"
+                                class="w-4 h-4 rounded-md border transition-all hover:scale-125 cursor-pointer shrink-0"
+                                style="background-color: ${hex}; border-color: ${((window.editingCreatorDraft && window.editingCreatorDraft.diamondColor) || cToEdit.diamondColor || cToEdit.color || '#26ff5e').toLowerCase() === hex.toLowerCase() ? '#ffffff' : 'rgba(255,255,255,0.1)'};"
                                 title="${hex}"
                               ></button>
                             `).join('')}
@@ -5331,7 +5367,7 @@
                   </div>
 
                   <div class="space-y-1.5">
-                    <label class="text-[9px] uppercase font-black text-slate-400 font-sans block">Colore Personale Collaboratore (Nome e Diamante ◆)</label>
+                    <label class="text-[9px] uppercase font-black text-slate-400 font-sans block">Colore Personale Collaboratore (Nome)</label>
                     <div class="flex items-center gap-2">
                       <input
                         type="color"
@@ -5349,6 +5385,31 @@
                           onclick="if(!window.newCreatorDraft) window.newCreatorDraft={}; window.newCreatorDraft.color='${hex}'; const el=document.getElementById('new-creator-color'); if(el) el.value='${hex}'; renderApp();"
                           class="w-4 h-4 rounded-md border transition-all hover:scale-125 cursor-pointer shrink-0"
                           style="background-color: ${hex}; border-color: ${((window.newCreatorDraft && window.newCreatorDraft.color) || '#38bdf8').toLowerCase() === hex.toLowerCase() ? '#ffffff' : 'rgba(255,255,255,0.1)'};"
+                          title="${hex}"
+                        ></button>
+                      `).join('')}
+                    </div>
+                  </div>
+
+                  <div class="space-y-1.5">
+                    <label class="text-[9px] uppercase font-black text-slate-400 font-sans block">Colore del Rombo (Diamante ◆)</label>
+                    <div class="flex items-center gap-2">
+                      <input
+                        type="color"
+                        id="new-creator-diamond-color"
+                        value="${window.newCreatorDraft && window.newCreatorDraft.diamondColor ? window.newCreatorDraft.diamondColor : '#26ff5e'}"
+                        oninput="syncNewCreatorDraft(); renderApp();"
+                        class="w-6 h-6 p-0 bg-transparent border-0 rounded cursor-pointer shrink-0"
+                      />
+                      <span class="text-[10px] text-slate-400 font-mono">${(window.newCreatorDraft && window.newCreatorDraft.diamondColor) || '#26ff5e'}</span>
+                    </div>
+                    <div class="flex flex-wrap gap-1 mt-1">
+                      ${textColorsList.map(hex => `
+                        <button
+                          type="button"
+                          onclick="if(!window.newCreatorDraft) window.newCreatorDraft={}; window.newCreatorDraft.diamondColor='${hex}'; const el=document.getElementById('new-creator-diamond-color'); if(el) el.value='${hex}'; renderApp();"
+                          class="w-4 h-4 rounded-md border transition-all hover:scale-125 cursor-pointer shrink-0"
+                          style="background-color: ${hex}; border-color: ${((window.newCreatorDraft && window.newCreatorDraft.diamondColor) || '#26ff5e').toLowerCase() === hex.toLowerCase() ? '#ffffff' : 'rgba(255,255,255,0.1)'};"
                           title="${hex}"
                         ></button>
                       `).join('')}
@@ -6517,7 +6578,7 @@
                               <div>
                                 <h3 class="text-base font-black tracking-tight flex items-center gap-1.5" style="color: ${creator.color || '#38bdf8'};">
                                   <span style="color: ${creator.color || '#38bdf8'};">${creator.name}</span>
-                                  <span class="text-[10px] select-none" style="color: ${creator.color || '#38bdf8'};">◆</span>
+                                  <span class="text-[10px] select-none" style="color: ${creator.diamondColor || creator.color || '#26ff5e'};">◆</span>
                                 </h3>
                                 <p class="text-xs font-bold text-slate-400 font-sans">${creator.role || 'Autore'}</p>
                               </div>
