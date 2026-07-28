@@ -184,8 +184,8 @@
         },
         {
           "type": "button",
-          "value": "GUIDA ALLA TABELLA MOD & TRADUZIONI",
-          "buttonUrl": "",
+          "value": "GUIDA ALLE TABELLE MOD & TRADUZIONI",
+          "buttonUrl": "https://pianetasimts4.github.io/PaginaUtilit-/#guida-guida-tabella-mod",
           "buttonColor": "#b026ff"
         },
         {
@@ -208,8 +208,8 @@
         },
         {
           "type": "button",
-          "value": "GUIDA ALLA TABELLA MOD & TRADUZIONI 18+",
-          "buttonUrl": "",
+          "value": "GUIDA ALLE TABELLE MOD & TRADUZIONI",
+          "buttonUrl": "https://pianetasimts4.github.io/PaginaUtilit-/#guida-guida-tabella-mod",
           "buttonColor": "#ef4444"
         },
         {
@@ -283,6 +283,228 @@
           "value": "ASSISTENZA TELEGRAM",
           "buttonUrl": "https://t.me/TheSims4ItaliaPianetaSim",
           "buttonColor": "#38bdf8"
+        }
+      ],
+      "tips": [],
+      "authorName": "LadyPsycoTrilly",
+      "authorColor": "#b026ff",
+      "authors": [
+        {
+          "name": "LadyPsycoTrilly",
+          "level": "Fondatrice & Traduttrice",
+          "color": "#b026ff",
+          "diamondColor": "#ffffff",
+          "link": "#collaboratori"
+        }
+      ],
+      "authorDiamondColor": "#ffffff",
+      "authorLevel": "Fondatrice & Traduttrice",
+      "authorLink": "#collaboratori"
+    },
+    {
+      "id": "guida-tabella-mod",
+      "title": "GUIDA ALLE TABELLE MOD & TRADUZIONI",
+      "description": "Spiegazione dettagliata di tutte le funzioni della Tabella delle Mod & Traduzioni, compresa la 18+, del sito di Pianeta Sim.",
+      "category": "mod_cc",
+      "categories": [
+        "mod_cc",
+        "pianeta-sim"
+      ],
+      "tags": [
+        "paineta sim",
+        "tabela"
+      ],
+      "content": [
+        {
+          "type": "quote",
+          "value": "Le due tabelle mod si occupano degli aggiornamenti di mod e traduzioni:\n[[color:#b026ff](MOD & TRADUZIONI)](https://pianetasimts.github.io/PianetaSim/mod.html) è riguardante le mod normali, ovvero con contenuti utilizzabili da tutte le fasce d’età, invece, \n[[color:#ef4444](MOD & TRADUZIONI 18+)](https://pianetasimts.github.io/PianetaSim/mod18.html) si occupa di mod e traduzioni nsfw, ovvero per adulti.",
+          "quoteType": "linea",
+          "lineColor": "verde"
+        },
+        {
+          "type": "divider",
+          "value": "",
+          "separatorType": "line",
+          "dividerType": "color"
+        },
+        {
+          "type": "heading3",
+          "value": "● PREFERITE:",
+          "color": "#eab308"
+        },
+        {
+          "type": "paragraph",
+          "value": "Usate la stellina per segnare le vostre mod preferite e tenere più facilmente sotto controllo il loro stato. \nQuando una mod cambia stato, riceverete una notifica all’apertura del sito."
+        },
+        {
+          "type": "riquadro",
+          "value": "[color:#eab308](**ATTENZIONE:**)\nSe si elimina la cronologia del browser questa funzione verrà resettata.",
+          "borderColor": "#eab308"
+        },
+        {
+          "type": "heading3",
+          "value": "● DESCRIZIONE MOD:",
+          "color": "#38bdf8"
+        },
+        {
+          "type": "paragraph",
+          "value": "Per leggere la descrizione della mod, vi basterà passare con il mouse sopra il NOME DELLA MOD e vi apparirà un Pop Up con una breve descrizione."
+        },
+        {
+          "type": "heading3",
+          "value": "● FILTRI CATEGORIA:",
+          "color": "#26ff5e"
+        },
+        {
+          "type": "paragraph",
+          "value": "Puoi usare i filtri per categoria per visualizzare solo le mod che ti interessano, escludendo quelle non pertinenti. In questo modo la navigazione diventa più semplice e ordinata, risparmi tempo nella ricerca e consulti i contenuti in modo più chiaro, rapido ed efficiente."
+        },
+        {
+          "type": "heading3",
+          "value": "● GUIDA TABELLA:",
+          "color": "#b026ff"
+        },
+        {
+          "type": "paragraph",
+          "value": "Ogni tabella è dotata del pulsante “GUIDA TABELLA”: cliccandolo, si accede alla guida specifica della tabella selezionata, facilmente individuabile in alto a destra una volta entrati nella tabella."
+        },
+        {
+          "type": "divider",
+          "value": "",
+          "separatorType": "line",
+          "dividerType": "standard"
+        },
+        {
+          "type": "heading1",
+          "value": "DESCRIZIONE TABELLA:",
+          "color": "#ff007f"
+        },
+        {
+          "type": "paragraph",
+          "value": "[color:#38bdf8](**AUTORE:**)\nIndica il nome del creatore della mod."
+        },
+        {
+          "type": "paragraph",
+          "value": "[color:#b026ff](**MOD & DOWNLOAD:**)\nIndica il nome della mod; cliccandoci, si apre il sito ufficiale da cui scaricarla."
+        },
+        {
+          "type": "paragraph",
+          "value": "[color:#eab308](**STATO PATCH:**)\nIndica lo stato della mod rispetto alla patch, utilizzando dei filtri:"
+        },
+        {
+          "type": "riquadro",
+          "value": "[color:#38bdf8](**● COMPATIBILE **)\nIndica che la mod è compatibile con la patch.\n[color:#38bdf8](La mod può essere utilizzata.)",
+          "borderColor": "#38bdf8"
+        },
+        {
+          "type": "riquadro",
+          "value": "[color:#26ff5e](**● AGGIORNATA**)\nIndica che la mod ha ricevuto un aggiornamento dal creatore. \n*Una mod può venire aggiornata durante le patch (aggiornamento di gioco) o nel corso del tempo, a discrezione del creatore.* \n[color:#26ff5e](La mod può essere utilizzata dopo averla aggiornata.)",
+          "color": "#26ff5e",
+          "borderColor": "#26ff5e"
+        },
+        {
+          "type": "riquadro",
+          "value": "[color:#ef4444](**● ROTTA**)\nIndica che la mod non è funzionante. \n[color:#ef4444](La mod non può essere utilizzata fino a quando non riceverà un aggiornamento dal creatore.)",
+          "borderColor": "#ef4444"
+        },
+        {
+          "type": "riquadro",
+          "value": "[color:#b026ff](**● NUOVA**)\nIndica che la mod è nuova, ovvero uscita quel giorno. \n[color:#b026ff](La mod può essere utilizzata.)",
+          "borderColor": "#3b82f6"
+        },
+        {
+          "type": "riquadro",
+          "value": "[color:#64748b](**● SCONOSCIUTA**)\nIndica che non si conosce lo stato della mod. Potrebbe funzionare come no, potrebbe dare problemi in gioco e/o corrompere i salvataggi. \n[color:#64748b](Si sconsiglia quindi l’utilizzo di mod sconosciute per evitare i questi problemi; qualora si scelga di utilizzarle lo si fa a proprio rischio e pericolo.)",
+          "borderColor": "#64748b"
+        },
+        {
+          "type": "riquadro",
+          "value": "[color:#ff007f](**● OBSOLETA**)\nIndica che la mod non è più scaricabile. I motivi possono essere\nmolteplici.\n[color:#ff007f](La mod non è più utilizzabile.)",
+          "borderColor": "#ff007f"
+        },
+        {
+          "type": "riquadro",
+          "value": "[color:#f97316](**● PROBLEMI MINORI**)\nNella mod son stati riscontrati alcuni problemi di poca importanza.\n[color:#f97316](Si sconsiglia di usarla per sicurezza.)",
+          "borderColor": "#f97316"
+        },
+        {
+          "type": "paragraph",
+          "value": "[color:#26ff5e](**DATA ULTIMO AGGIORNAMENTO MOD: **)\nIndica l’ultima modifica ricevuta dalla mod."
+        },
+        {
+          "type": "paragraph",
+          "value": "[color:#ff007f](**STATO TRADUZIONE: **)\nIndica lo stato della traduzione in base alla data dell’ultimo aggiornamento della mod. Attraverso dei filtri, verrà segnalato lo stato della traduzione o se la traduzione per quella mod non è da scaricare:"
+        },
+        {
+          "type": "riquadro",
+          "value": "[color:#38bdf8](**● COMPATIBILE **)\nIndica che la traduzione è compatibile con l’ultimo aggiornamento mod.\n[color:#38bdf8](La traduzione può essere utilizzata.)",
+          "borderColor": "#38bdf8"
+        },
+        {
+          "type": "riquadro",
+          "value": "[color:#26ff5e](**● AGGIORNATA **)\nIndica che la traduzione è stata aggiornata.\n[color:#26ff5e](La mod può essere utilizzata dopo averla aggiornata.)",
+          "borderColor": "#3b82f6"
+        },
+        {
+          "type": "riquadro",
+          "value": "[color:#f97316](**● NON NECESSARIA**)\nIndica che la traduzione non è necessaria.\n[color:#f97316](Non serve scaricare nessuna traduzione.)",
+          "borderColor": "#f97316"
+        },
+        {
+          "type": "riquadro",
+          "value": "[color:#eab308](**● INCLUSA**)\nIndica che la traduzione è già inserita nella mod.\n[color:#eab308](Non serve scaricare la traduzione.)",
+          "borderColor": "#eab308"
+        },
+        {
+          "type": "riquadro",
+          "value": "[color:#b026ff](**● NUOVA**)\nIndica che la traduzione è nuova, ovvero creata quel giorno.",
+          "borderColor": "#b026ff"
+        },
+        {
+          "type": "riquadro",
+          "value": "[color:#ff007f](**● IN LAVORAZIONE**)\nIndica che la traduzione è stata presa in carico da un traduttore ed è in arrivo.",
+          "borderColor": "#ff007f"
+        },
+        {
+          "type": "riquadro",
+          "value": "[color:#64748b](**● DA CONTROLLARE**)\nIndica che la traduzione dev’essere ancora controllata dal creatore, quindi non si conosce lo stato.\n[color:#64748b](Si consiglia di non scaricare la traduzione e aspettare il cambio di stato.)",
+          "borderColor": "#64748b"
+        },
+        {
+          "type": "riquadro",
+          "value": "[color:#2563eb](**● DA AGGIORNARE**)\nIndica che la traduzione è stata controllata, quindi non traduce la nuova versione della mod.\n[color:#2563eb](Si consiglia di non scaricare la traduzione e aspettare l'aggiornamento.)",
+          "borderColor": "#2563eb"
+        },
+        {
+          "type": "riquadro",
+          "value": "● NON DISPONIBILE\nIndica che la traduzione non c’è.",
+          "borderColor": "#c3b0e8"
+        },
+        {
+          "type": "paragraph",
+          "value": "[color:#f97316](**DOWNLOAD & DATA TRADUZIONE:**)\nCliccando sul nome del traduttore, verrete portati al sito da cui scaricare la traduzione.\nLa data della traduzione, che trovate sotto al nome, indica la data\ndell’ultima modifica della traduzione."
+        },
+        {
+          "type": "paragraph",
+          "value": "[color:#ef4444](**MOD RICHIESTE:**)\nQui trovi l’elenco delle mod richieste per il corretto funzionamento\ndella mod principale, con nome e autore. Per alcune mod possono\nessere presenti anche note o attenzioni particolari."
+        },
+        {
+          "type": "list",
+          "value": "[color:#ffffff](**Necessarie:**) la mod è obbligatoria. Senza di essa la mod principale non funzionerà, oppure funzionerà in modo errato.\n\n[color:#ffffff](**Raccomandate:**) la mod non è obbligatoria, ma abilita alcune funzioni/opzioni della mod principale. Senza di essa, tali funzioni non saranno disponibili.\n\n[color:#ffffff](**Nessuna:**) non viene richiesta nessun’altra mod per il funzionamento della mod principale.",
+          "listType": "bullet"
+        },
+        {
+          "type": "paragraph",
+          "value": "[color:#eab308](**DLC RICHIESTI: **)\nQui vengono indicati i DLC (Expansion Pack, Game Pack, Stuff Pack e Kit) acquistabili tramite EA app/sito o rivenditori affiliati, richiesti per il corretto funzionamento della mod."
+        },
+        {
+          "type": "list",
+          "value": "[color:#ffffff](**Necessari:**) il DLC è obbligatorio. Senza di esso la mod principale non funzionerà, oppure funzionerà in modo errato.\n\n[color:#ffffff](**Raccomandati:**) il DLC non è obbligatorio, ma abilita alcune funzioni/opzioni della mod. Senza di esso, tali funzioni non saranno disponibili.",
+          "listType": "bullet"
+        },
+        {
+          "type": "paragraph",
+          "value": "[color:#64748b](**NOTE:**)\nIn questo spazio puoi trovare eventuali informazioni da sapere sulla mod o sulla traduzione."
         }
       ],
       "tips": [],
@@ -1703,228 +1925,6 @@
       "authorColor": "#b026ff",
       "authorDiamondColor": "#64748b",
       "authorLevel": "Sims Creator & Modder",
-      "authorLink": "#collaboratori"
-    },
-    {
-      "id": "guida--tabella-mod",
-      "title": "GUIDA ALLE TABELLE MOD & TRADUZIONI",
-      "description": "Spiegazione dettagliata di tutte le funzioni della Tabella delle Mod & Traduzioni, compresa la 18+, del sito di Pianeta Sim.",
-      "category": "mod_cc",
-      "categories": [
-        "mod_cc",
-        "pianeta-sim"
-      ],
-      "tags": [
-        "paineta sim",
-        "tabela"
-      ],
-      "content": [
-        {
-          "type": "quote",
-          "value": "Le due tabelle mod si occupano degli aggiornamenti di mod e traduzioni:\n[[color:#b026ff](MOD & TRADUZIONI)](https://pianetasimts.github.io/PianetaSim/mod.html) è riguardante le mod normali, ovvero con contenuti utilizzabili da tutte le fasce d’età, invece, \n[[color:#ef4444](MOD & TRADUZIONI 18+)](https://pianetasimts.github.io/PianetaSim/mod18.html) si occupa di mod e traduzioni nsfw, ovvero per adulti.",
-          "quoteType": "linea",
-          "lineColor": "verde"
-        },
-        {
-          "type": "divider",
-          "value": "",
-          "separatorType": "line",
-          "dividerType": "color"
-        },
-        {
-          "type": "heading3",
-          "value": "● PREFERITE:",
-          "color": "#eab308"
-        },
-        {
-          "type": "paragraph",
-          "value": "Usate la stellina per segnare le vostre mod preferite e tenere più facilmente sotto controllo il loro stato. \nQuando una mod cambia stato, riceverete una notifica all’apertura del sito."
-        },
-        {
-          "type": "riquadro",
-          "value": "[color:#eab308](**ATTENZIONE:**)\nSe si elimina la cronologia del browser questa funzione verrà resettata.",
-          "borderColor": "#eab308"
-        },
-        {
-          "type": "heading3",
-          "value": "● DESCRIZIONE MOD:",
-          "color": "#38bdf8"
-        },
-        {
-          "type": "paragraph",
-          "value": "Per leggere la descrizione della mod, vi basterà passare con il mouse sopra il NOME DELLA MOD e vi apparirà un Pop Up con una breve descrizione."
-        },
-        {
-          "type": "heading3",
-          "value": "● FILTRI CATEGORIA:",
-          "color": "#26ff5e"
-        },
-        {
-          "type": "paragraph",
-          "value": "Puoi usare i filtri per categoria per visualizzare solo le mod che ti interessano, escludendo quelle non pertinenti. In questo modo la navigazione diventa più semplice e ordinata, risparmi tempo nella ricerca e consulti i contenuti in modo più chiaro, rapido ed efficiente."
-        },
-        {
-          "type": "heading3",
-          "value": "● GUIDA TABELLA:",
-          "color": "#b026ff"
-        },
-        {
-          "type": "paragraph",
-          "value": "Ogni tabella è dotata del pulsante “GUIDA TABELLA”: cliccandolo, si accede alla guida specifica della tabella selezionata, facilmente individuabile in alto a destra una volta entrati nella tabella."
-        },
-        {
-          "type": "divider",
-          "value": "",
-          "separatorType": "line",
-          "dividerType": "standard"
-        },
-        {
-          "type": "heading1",
-          "value": "DESCRIZIONE TABELLA:",
-          "color": "#ff007f"
-        },
-        {
-          "type": "paragraph",
-          "value": "[color:#38bdf8](**AUTORE:**)\nIndica il nome del creatore della mod."
-        },
-        {
-          "type": "paragraph",
-          "value": "[color:#b026ff](**MOD & DOWNLOAD:**)\nIndica il nome della mod; cliccandoci, si apre il sito ufficiale da cui scaricarla."
-        },
-        {
-          "type": "paragraph",
-          "value": "[color:#eab308](**STATO PATCH:**)\nIndica lo stato della mod rispetto alla patch, utilizzando dei filtri:"
-        },
-        {
-          "type": "riquadro",
-          "value": "[color:#38bdf8](**● COMPATIBILE **)\nIndica che la mod è compatibile con la patch.\n[color:#38bdf8](La mod può essere utilizzata.)",
-          "borderColor": "#38bdf8"
-        },
-        {
-          "type": "riquadro",
-          "value": "[color:#26ff5e](**● AGGIORNATA**)\nIndica che la mod ha ricevuto un aggiornamento dal creatore. \n*Una mod può venire aggiornata durante le patch (aggiornamento di gioco) o nel corso del tempo, a discrezione del creatore.* \n[color:#26ff5e](La mod può essere utilizzata dopo averla aggiornata.)",
-          "color": "#26ff5e",
-          "borderColor": "#26ff5e"
-        },
-        {
-          "type": "riquadro",
-          "value": "[color:#ef4444](**● ROTTA**)\nIndica che la mod non è funzionante. \n[color:#ef4444](La mod non può essere utilizzata fino a quando non riceverà un aggiornamento dal creatore.)",
-          "borderColor": "#ef4444"
-        },
-        {
-          "type": "riquadro",
-          "value": "[color:#b026ff](**● NUOVA**)\nIndica che la mod è nuova, ovvero uscita quel giorno. \n[color:#b026ff](La mod può essere utilizzata.)",
-          "borderColor": "#3b82f6"
-        },
-        {
-          "type": "riquadro",
-          "value": "[color:#64748b](**● SCONOSCIUTA**)\nIndica che non si conosce lo stato della mod. Potrebbe funzionare come no, potrebbe dare problemi in gioco e/o corrompere i salvataggi. \n[color:#64748b](Si sconsiglia quindi l’utilizzo di mod sconosciute per evitare i questi problemi; qualora si scelga di utilizzarle lo si fa a proprio rischio e pericolo.)",
-          "borderColor": "#64748b"
-        },
-        {
-          "type": "riquadro",
-          "value": "[color:#ff007f](**● OBSOLETA**)\nIndica che la mod non è più scaricabile. I motivi possono essere\nmolteplici.\n[color:#ff007f](La mod non è più utilizzabile.)",
-          "borderColor": "#ff007f"
-        },
-        {
-          "type": "riquadro",
-          "value": "[color:#f97316](**● PROBLEMI MINORI**)\nNella mod son stati riscontrati alcuni problemi di poca importanza.\n[color:#f97316](Si sconsiglia di usarla per sicurezza.)",
-          "borderColor": "#f97316"
-        },
-        {
-          "type": "paragraph",
-          "value": "[color:#26ff5e](**DATA ULTIMO AGGIORNAMENTO MOD: **)\nIndica l’ultima modifica ricevuta dalla mod."
-        },
-        {
-          "type": "paragraph",
-          "value": "[color:#ff007f](**STATO TRADUZIONE: **)\nIndica lo stato della traduzione in base alla data dell’ultimo aggiornamento della mod. Attraverso dei filtri, verrà segnalato lo stato della traduzione o se la traduzione per quella mod non è da scaricare:"
-        },
-        {
-          "type": "riquadro",
-          "value": "[color:#38bdf8](**● COMPATIBILE **)\nIndica che la traduzione è compatibile con l’ultimo aggiornamento mod.\n[color:#38bdf8](La traduzione può essere utilizzata.)",
-          "borderColor": "#38bdf8"
-        },
-        {
-          "type": "riquadro",
-          "value": "[color:#26ff5e](**● AGGIORNATA **)\nIndica che la traduzione è stata aggiornata.\n[color:#26ff5e](La mod può essere utilizzata dopo averla aggiornata.)",
-          "borderColor": "#3b82f6"
-        },
-        {
-          "type": "riquadro",
-          "value": "[color:#f97316](**● NON NECESSARIA**)\nIndica che la traduzione non è necessaria.\n[color:#f97316](Non serve scaricare nessuna traduzione.)",
-          "borderColor": "#f97316"
-        },
-        {
-          "type": "riquadro",
-          "value": "[color:#eab308](**● INCLUSA**)\nIndica che la traduzione è già inserita nella mod.\n[color:#eab308](Non serve scaricare la traduzione.)",
-          "borderColor": "#eab308"
-        },
-        {
-          "type": "riquadro",
-          "value": "[color:#b026ff](**● NUOVA**)\nIndica che la traduzione è nuova, ovvero creata quel giorno.",
-          "borderColor": "#b026ff"
-        },
-        {
-          "type": "riquadro",
-          "value": "[color:#ff007f](**● IN LAVORAZIONE**)\nIndica che la traduzione è stata presa in carico da un traduttore ed è in arrivo.",
-          "borderColor": "#ff007f"
-        },
-        {
-          "type": "riquadro",
-          "value": "[color:#64748b](**● DA CONTROLLARE**)\nIndica che la traduzione dev’essere ancora controllata dal creatore, quindi non si conosce lo stato.\n[color:#64748b](Si consiglia di non scaricare la traduzione e aspettare il cambio di stato.)",
-          "borderColor": "#64748b"
-        },
-        {
-          "type": "riquadro",
-          "value": "[color:#2563eb](**● DA AGGIORNARE**)\nIndica che la traduzione è stata controllata, quindi non traduce la nuova versione della mod.\n[color:#2563eb](Si consiglia di non scaricare la traduzione e aspettare l'aggiornamento.)",
-          "borderColor": "#2563eb"
-        },
-        {
-          "type": "riquadro",
-          "value": "● NON DISPONIBILE\nIndica che la traduzione non c’è.",
-          "borderColor": "#c3b0e8"
-        },
-        {
-          "type": "paragraph",
-          "value": "[color:#f97316](**DOWNLOAD & DATA TRADUZIONE:**)\nCliccando sul nome del traduttore, verrete portati al sito da cui scaricare la traduzione.\nLa data della traduzione, che trovate sotto al nome, indica la data\ndell’ultima modifica della traduzione."
-        },
-        {
-          "type": "paragraph",
-          "value": "[color:#ef4444](**MOD RICHIESTE:**)\nQui trovi l’elenco delle mod richieste per il corretto funzionamento\ndella mod principale, con nome e autore. Per alcune mod possono\nessere presenti anche note o attenzioni particolari."
-        },
-        {
-          "type": "list",
-          "value": "[color:#ffffff](**Necessarie:**) la mod è obbligatoria. Senza di essa la mod principale non funzionerà, oppure funzionerà in modo errato.\n\n[color:#ffffff](**Raccomandate:**) la mod non è obbligatoria, ma abilita alcune funzioni/opzioni della mod principale. Senza di essa, tali funzioni non saranno disponibili.\n\n[color:#ffffff](**Nessuna:**) non viene richiesta nessun’altra mod per il funzionamento della mod principale.",
-          "listType": "bullet"
-        },
-        {
-          "type": "paragraph",
-          "value": "[color:#eab308](**DLC RICHIESTI: **)\nQui vengono indicati i DLC (Expansion Pack, Game Pack, Stuff Pack e Kit) acquistabili tramite EA app/sito o rivenditori affiliati, richiesti per il corretto funzionamento della mod."
-        },
-        {
-          "type": "list",
-          "value": "[color:#ffffff](**Necessari:**) il DLC è obbligatorio. Senza di esso la mod principale non funzionerà, oppure funzionerà in modo errato.\n\n[color:#ffffff](**Raccomandati:**) il DLC non è obbligatorio, ma abilita alcune funzioni/opzioni della mod. Senza di esso, tali funzioni non saranno disponibili.",
-          "listType": "bullet"
-        },
-        {
-          "type": "paragraph",
-          "value": "[color:#64748b](**NOTE:**)\nIn questo spazio puoi trovare eventuali informazioni da sapere sulla mod o sulla traduzione."
-        }
-      ],
-      "tips": [],
-      "authorName": "LadyPsycoTrilly",
-      "authorColor": "#b026ff",
-      "authors": [
-        {
-          "name": "LadyPsycoTrilly",
-          "level": "Fondatrice & Traduttrice",
-          "color": "#b026ff",
-          "diamondColor": "#ffffff",
-          "link": "#collaboratori"
-        }
-      ],
-      "authorDiamondColor": "#ffffff",
-      "authorLevel": "Fondatrice & Traduttrice",
       "authorLink": "#collaboratori"
     }
   ],
