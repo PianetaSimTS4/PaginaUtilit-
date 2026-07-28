@@ -19,6 +19,16 @@
       "id": "guide-passo-passo",
       "label": "Guide Passo Passo",
       "color": "verde"
+    },
+    {
+      "id": "pianeta-sim",
+      "label": "Pianeta Sim",
+      "color": "blu"
+    },
+    {
+      "id": "mcc",
+      "label": "MCC",
+      "color": "rosso"
     }
   ],
   "guides": [
@@ -1424,6 +1434,275 @@
       "authorColor": "#b026ff",
       "authorDiamondColor": "#64748b",
       "authorLevel": "Sims Creator & Modder",
+      "authorLink": "#collaboratori"
+    },
+    {
+      "id": "guida-sito-generale",
+      "title": "INFORMAZIONI GENERALI SUL SITO",
+      "description": "Qui troverai informazioni sul sito di Pianeta Sim e guide dettagliate sulle varie sezioni di esso.",
+      "category": "pianeta-sim",
+      "categories": [
+        "pianeta-sim"
+      ],
+      "tags": [
+        "pianeta sim"
+      ],
+      "content": [
+        {
+          "type": "heading2",
+          "value": "CHE COS'È PIANETA SIM?",
+          "color": "#b026ff"
+        },
+        {
+          "type": "quote",
+          "value": "Pianeta Sim è una meravigliosa community Telegram in cui si ritrovano gli appassionati di The Sims 4 per condividere, scoprire il gioco, ricevere assistenza e altro ancora!",
+          "borderColor": "#b026ff",
+          "align": "center",
+          "quoteType": "virgolette"
+        },
+        {
+          "type": "button",
+          "value": "ISCRIVITI ORA",
+          "buttonUrl": "https://t.me/TheSims4ItaliaPianetaSim",
+          "buttonColor": "#b026ff"
+        },
+        {
+          "type": "divider",
+          "value": "",
+          "separatorType": "line",
+          "dividerType": "color"
+        },
+        {
+          "type": "paragraph",
+          "value": "**In questo sito troverete gli aggiornamenti delle mod più famose e utilizzate dai membri di Pianeta Sim e molto altro.**\nOgni contenuto è corredato da informazioni utili e link per accedervi facilmente.\n\nLe informazioni presenti provengono da fonti ufficiali come:"
+        },
+        {
+          "type": "list",
+          "value": "Server Discord\nPatreon\nTwitter\nProfili personali dei creator",
+          "listType": "bullet"
+        },
+        {
+          "type": "paragraph",
+          "value": "In particolare, inoltre, viene fatto riferimento al server [[color:#ef4444](Discord di Deaderpool)](https://discord.com/invite/mccc) e alla [[color:#ff007f](Lista Scarlet)](https://scarletsrealm.com/the-mod-list/)."
+        },
+        {
+          "type": "divider",
+          "value": "",
+          "separatorType": "spacer",
+          "dividerType": "standard",
+          "height": "10"
+        },
+        {
+          "type": "heading1",
+          "value": "HOME",
+          "color": "#eab308"
+        },
+        {
+          "type": "paragraph",
+          "value": "Nella pagina iniziale ci sono dei pulsanti colorati."
+        },
+        {
+          "type": "list",
+          "value": "Ogni pulsante porta a una diversa sezione del sito.\n\nCliccate su un pulsante per andare direttamente alla parte che vi interessa.\n\nPer spostarvi tra le varie sezioni usate i pulsanti in alto nella pagina.\n\nPer tornare alla pagina iniziale, cliccate su HOME in alto a sinistra.\n\nOgni tabella ha una guida dedicata, cliccate sul bottone per leggere tutte le informazioni.",
+          "listType": "bullet"
+        },
+        {
+          "type": "heading2",
+          "value": "I PULSANTI DELLA HOME:",
+          "color": "#f97316"
+        },
+        {
+          "type": "list",
+          "value": "[color:#b026ff](**MOD & TRADUZIONI:**) **qui troverete la tabella degli aggiornamenti delle mod **adatte a tutti, ovvero tutte le mod di gioco più utilizzate e seguite dalla community. Le **traduzioni italiane**, quando disponibili, sono nella tabella delle mod.\n\n[color:#ef4444](**MOD & TRADUZIONI +18:**) questa tabella raccoglie gli aggiornamenti delle mod NSFW, ovvero **[color:#ef4444](mod con contenuti per adulti)**. Le **traduzioni italiane**, quando disponibili, sono nella tabella delle mod +18.\n\n[color:#ff007f](**ANIMAZIONI WW (+18):**) aggiornamenti delle **animazioni** per chi usa la **mod WickedWhims** di Turbodriver. **Monitoriamo solo i creator onorari e attivi presenti sul sito ufficiale di Turbodriver.**\n\n[color:#26ff5e](**HELP SIM:**) cliccando potrai scaricare Help Sim, il programma creato da Pianeta Sim per semplificarti la vita: **Help Sim ti permette di fare backup automatici.** Scaricalo, leggi la guida e… divertiti!\n\n[color:#2563eb](**ASSISTENZA:**) Cliccando sarai reindirizzato al gruppo Telegram Pianeta Sim. Una volta iscritto, potrai chiedere aiuto nel topic dedicato \"Assistenza\" e ricevere supporto.\n\n[color:#c084fc](**GUIDA AL SITO:**) se stai leggendo significa che hai premuto su questo pulsante. *Attenzione! Una pianta mucca affamata potrebbe sbucare alle tue spalle!* **Qui troverai spiegazioni dettagliate su tutto ciò che il sito Pianeta Sim mette a disposizione.** Grazie per la fiducia e il supporto!\n\n[color:#ec4899](**RACCONTI & STORIE:**)\n\n[color:#38bdf8](**GUIDE & UTILITÀ:**)",
+          "listType": "bullet"
+        },
+        {
+          "type": "paragraph",
+          "value": "[color:#26ff5e](**POTETE SOSTENERE I PROGETTI DEL SITO E DI HELP SIM**)",
+          "align": "center"
+        },
+        {
+          "type": "didascalia",
+          "value": "[color:#26ff5e](Con una donazione a vostra scelta, cliccando sul pulsante Ko-fi che trovate nella Home del sito o il pulsante qui sotto. Ci aiuterete a farli crescere)!",
+          "align": "center"
+        },
+        {
+          "type": "button",
+          "value": "DONA SU KO-FI",
+          "buttonUrl": "https://ko-fi.com/",
+          "buttonColor": "#26ff5e"
+        },
+        {
+          "type": "divider",
+          "value": "",
+          "separatorType": "line",
+          "dividerType": "color",
+          "height": "24"
+        },
+        {
+          "type": "heading1",
+          "value": "INDICE GUIDE DEL SITO"
+        },
+        {
+          "type": "paragraph",
+          "value": "Ogni tabella è fornita di un pulsante che porta alla sua guida specifica, che potete trovare facilmente in alto a destra, una volta entrati nella tabella scelta."
+        },
+        {
+          "type": "paragraph",
+          "value": "Qui di seguito viene riportato un indice generale di tutti i pulsanti della guida al sito, vi basterà cliccarci per venire portati alla spiegazione dettagliata dell’argomento scelto."
+        },
+        {
+          "type": "didascalia",
+          "value": "Non tutti i punti hanno un pulsante e quindi una guida dedicata, siccome più brevi."
+        },
+        {
+          "type": "heading2",
+          "value": "HOME",
+          "color": "#eab308"
+        },
+        {
+          "type": "quote",
+          "value": "La Home è la pagina iniziale del sito, dove puoi iniziare la navigazione su Pianeta Sim.",
+          "quoteType": "linea",
+          "lineColor": "giallo"
+        },
+        {
+          "type": "paragraph",
+          "value": "Nella pagina iniziale ci sono dei pulsanti colorati:"
+        },
+        {
+          "type": "list",
+          "value": "Ogni pulsante porta a una diversa sezione del sito.\n\nCliccate su un pulsante per andare direttamente alla parte che vi interessa.\n\nPer spostarvi tra le varie sezioni usate i pulsanti in alto nella pagina.\n\nPer tornare alla pagina iniziale, cliccate su HOME in alto a sinistra.",
+          "listType": "bullet"
+        },
+        {
+          "type": "heading2",
+          "value": "TABELLA MOD & TRADUZIONI",
+          "color": "#b026ff"
+        },
+        {
+          "type": "quote",
+          "value": "La tabella mod si occupa degli aggiornamenti di mod & traduzioni riguardanti mod normali, ovvero con contenuti utilizzabili da tutte le fasce d’età.",
+          "quoteType": "linea",
+          "lineColor": "viola"
+        },
+        {
+          "type": "button",
+          "value": "GUIDA ALLA TABELLA MOD & TRADUZIONI",
+          "buttonUrl": "",
+          "buttonColor": "#b026ff"
+        },
+        {
+          "type": "divider",
+          "value": "",
+          "separatorType": "spacer",
+          "dividerType": "standard",
+          "height": "10"
+        },
+        {
+          "type": "heading2",
+          "value": "TABELLA MOD & TRADUZIONI +18",
+          "color": "#ef4444"
+        },
+        {
+          "type": "quote",
+          "value": "La tabella  mod +18 si occupa degli aggiornamenti di mod & traduzioni riguardanti mod nsfw, ovvero mod per adulti.",
+          "quoteType": "linea",
+          "lineColor": "rosso"
+        },
+        {
+          "type": "button",
+          "value": "GUIDA ALLA TABELLA MOD & TRADUZIONI 18+",
+          "buttonUrl": "",
+          "buttonColor": "#ef4444"
+        },
+        {
+          "type": "divider",
+          "value": "",
+          "separatorType": "spacer",
+          "dividerType": "standard",
+          "height": "10"
+        },
+        {
+          "type": "heading2",
+          "value": "ANIMAZION WW +18",
+          "color": "#ff007f"
+        },
+        {
+          "type": "quote",
+          "value": "La tabella animazioni WW si occupa degli aggiornamenti della animazioni usate con la mod WickedWhims di TurboDriver. Rigorosamente contenuti per adulti.",
+          "quoteType": "linea",
+          "lineColor": "fucsia"
+        },
+        {
+          "type": "button",
+          "value": "GUIDA ALLA TABELLA ANIMAZION WW +18",
+          "buttonUrl": "",
+          "buttonColor": "#ff007f"
+        },
+        {
+          "type": "divider",
+          "value": "",
+          "separatorType": "spacer",
+          "dividerType": "standard",
+          "height": "10"
+        },
+        {
+          "type": "heading2",
+          "value": "HELP SIM",
+          "color": "#26ff5e"
+        },
+        {
+          "type": "quote",
+          "value": "Help Sim è un programma sviluppato da Pianeta Sim e serve per aiutare facilitando la procedra di back up per The Sims 4.",
+          "quoteType": "linea",
+          "lineColor": "verde"
+        },
+        {
+          "type": "button",
+          "value": "GUIDA ALL'UTILIZZO DI HELP SIM",
+          "buttonUrl": "",
+          "buttonColor": "#26ff5e"
+        },
+        {
+          "type": "divider",
+          "value": "",
+          "separatorType": "spacer",
+          "dividerType": "standard",
+          "height": "10"
+        },
+        {
+          "type": "divider",
+          "value": "",
+          "separatorType": "line",
+          "dividerType": "standard"
+        },
+        {
+          "type": "paragraph",
+          "value": "[color:#38bdf8](**SE HAI DUBBI O DIFFICOLTÀ, PUOI RICHIEDE ASSISTENZA NEL GRUPPO TELEGRAM**)",
+          "align": "center"
+        },
+        {
+          "type": "button",
+          "value": "ASSISTENZA TELEGRAM",
+          "buttonUrl": "https://t.me/TheSims4ItaliaPianetaSim",
+          "buttonColor": "#38bdf8"
+        }
+      ],
+      "tips": [],
+      "authorName": "LadyPsycoTrilly",
+      "authorColor": "#b026ff",
+      "authors": [
+        {
+          "name": "LadyPsycoTrilly",
+          "level": "Fondatrice & Traduttrice",
+          "color": "#b026ff",
+          "diamondColor": "#ffffff",
+          "link": "#collaboratori"
+        }
+      ],
+      "authorDiamondColor": "#ffffff",
+      "authorLevel": "Fondatrice & Traduttrice",
       "authorLink": "#collaboratori"
     }
   ],
