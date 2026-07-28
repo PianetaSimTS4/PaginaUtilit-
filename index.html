@@ -666,7 +666,10 @@
         { name: "Fondatrice", color: "#ffffff" },
         { name: "Traduttore", color: "#b026ff" },
         { name: "Moderatore", color: "#eab308" },
-        { name: "Supporto Tecnico", color: "#22c55e" }
+        { name: "Supporto Tecnico", color: "#22c55e" },
+        { name: "Modder", color: "#a855f7" },
+        { name: "Utente", color: "#94a3b8" },
+        { name: "Programmatore", color: "#ef4444" }
       ];
     }
 
@@ -676,7 +679,7 @@
           id: "ladypsycotrilly",
           name: "LadyPsycoTrilly",
           role: "Amministratrice & Traduttrice",
-          avatar: "images/logo.png",
+          avatar: "images/FpLady.png",
           description: "Appassionata di The Sims da sempre. Cura il sito di PianetaSim, traduce le mod più popolari e scrive guide dettagliate sul gameplay e la personalizzazione del gioco.",
           tags: ["Admin", "Traduttore", "Fondatrice"],
           socials: [
@@ -688,7 +691,7 @@
           id: "sha",
           name: "Sha",
           role: "Moderatrice & Aiuto Supporto",
-          avatar: "images/logo.png",
+          avatar: "images/FpSha.png",
           description: "Esperta di installazioni e risoluzione problemi delle Mod e del Custom Content. Fornisce supporto tecnico tempestivo e guide passo-passo semplici per tutti.",
           tags: ["Moderatore", "Supporto Tecnico", "Traduttore"],
           socials: [
@@ -2103,48 +2106,15 @@
       updateBookmarksCountBanner();
       
       
-      if (cachedData) {
-        try {
-          const parsed = JSON.parse(cachedData);
-          if (parsed.categories && parsed.guides) {
-            categories = parsed.categories;
-            guides = parsed.guides;
-            creators = parsed.creators || getDefaultCreators();
-            authorTags = parsed.authorTags || getDefaultAuthorTags();
-            normalizeAuthorTagsAndCreators();
-            migrateAllGuidesTips();
-            if (parsed.adminPassword) {
-              adminPassword = parsed.adminPassword;
-            }
-            if (parsed.siteTitle) {
-              siteTitle = parsed.siteTitle;
-              if (siteTitle.includes('Guide & Utilità') || siteTitle.includes('Tutto quello che devi sapere su The Sims 4') || siteTitle.includes('pin-glow') || siteTitle.includes('svg')) {
-                siteTitle = '<span class="animate-title-color">Guide & Utilità</span>';
-              }
-            }
-            if (parsed.siteDescription) siteDescription = parsed.siteDescription;
-            if (parsed.alertPopup) alertPopup = parsed.alertPopup;
-            if (parsed.siteLogo) {
-              siteLogo = parsed.siteLogo;
-              if (siteLogo.includes('logo.png')) {
-                siteLogo = 'images/logo.png';
-              }
-            }
-            updateLogoSrc();
-            handleHashRouting();
-            checkAndShowAlertPopup();
-            return;
-          }
-        } catch(e) {
-          console.error("Errore nel caricamento dei dati personalizzati da localStorage:", e);
-        }
-      }
-      
-      
+      // Try fetching fresh data from the server first.
+      // This ensures any newly updated guides, creators, or tags on the server are visible to returning users immediately.
       robustFetch('/guides.json?t=' + Date.now())
-        .then(response => response.json())
+        .then(response => {
+          if (!response.ok) throw new Error("Server response not ok");
+          return response.json();
+        })
         .then(data => {
-          if (data.categories && data.guides) {
+          if (data && data.categories && data.guides) {
             categories = data.categories;
             guides = data.guides;
             creators = data.creators || getDefaultCreators();
@@ -2160,8 +2130,10 @@
                 siteLogo = 'images/logo.png';
               }
             }
+            // Sync local cache with latest server data so it is ready for offline usage
+            persistDataLocally();
           } else {
-            
+            // Legacy / simple array data format fallback
             categories = [
               { id: 'mod_cc', label: 'Mod e CC', color: 'cyan' },
               { id: 'costruzione', label: 'Costruzione', color: 'green' },
@@ -2172,6 +2144,7 @@
             creators = getDefaultCreators();
             authorTags = getDefaultAuthorTags();
             normalizeAuthorTagsAndCreators();
+            persistDataLocally();
           }
           migrateAllGuidesTips();
           updateLogoSrc();
@@ -2179,14 +2152,53 @@
           checkAndShowAlertPopup();
         })
         .catch(error => {
-          console.error('Errore nel caricamento delle guide:', error);
-         
+          console.warn('Errore nel recupero dati dal server, provo a caricare dalla cache locale:', error);
+          
+          // Offline fallback: load from localStorage if cachedData is present
+          if (cachedData) {
+            try {
+              const parsed = JSON.parse(cachedData);
+              if (parsed.categories && parsed.guides) {
+                categories = parsed.categories;
+                guides = parsed.guides;
+                creators = parsed.creators || getDefaultCreators();
+                authorTags = parsed.authorTags || getDefaultAuthorTags();
+                normalizeAuthorTagsAndCreators();
+                migrateAllGuidesTips();
+                if (parsed.adminPassword) {
+                  adminPassword = parsed.adminPassword;
+                }
+                if (parsed.siteTitle) {
+                  siteTitle = parsed.siteTitle;
+                  if (siteTitle.includes('Guide & Utilità') || siteTitle.includes('Tutto quello che devi sapere su The Sims 4') || siteTitle.includes('pin-glow') || siteTitle.includes('svg')) {
+                    siteTitle = '<span class="animate-title-color">Guide & Utilità</span>';
+                  }
+                }
+                if (parsed.siteDescription) siteDescription = parsed.siteDescription;
+                if (parsed.alertPopup) alertPopup = parsed.alertPopup;
+                if (parsed.siteLogo) {
+                  siteLogo = parsed.siteLogo;
+                  if (siteLogo.includes('logo.png')) {
+                    siteLogo = 'images/logo.png';
+                  }
+                }
+                updateLogoSrc();
+                handleHashRouting();
+                checkAndShowAlertPopup();
+                return;
+              }
+            } catch(e) {
+              console.error("Errore nel caricamento dei dati personalizzati da localStorage:", e);
+            }
+          }
+          
+          // Complete offline / error fallback screen
           categories = [{ id: 'costruzione', label: 'Generali', color: 'green' }];
           guides = [
             {
               id: 'guide-error',
               title: 'Errore nel caricamento delle guide ⚠️',
-              description: 'Non è stato possibile caricare il file guides.json o i dati sono corrotti nella cache locale.',
+              description: 'Non è stato possibile caricare il file guides.json dal server e non ci sono copie locali disponibili.',
               category: 'costruzione',
               tags: ['errore'],
               content: [
@@ -2196,29 +2208,28 @@
                 },
                 {
                   type: 'paragraph',
-                  value: 'Si è verificato un problema nel recupero dei contenuti. Questo può accadere se il server ha riscontrato un errore momentaneo o se la cache locale del browser memorizza dati obsoleti o non validi.'
+                  value: 'Si è verificato un problema nel recupero dei contenuti. Questo può accadere se il server ha riscontrato un errore momentaneo o se sei offline.'
                 },
                 {
                   type: 'paragraph',
-                  value: 'Fai clic sul pulsante qui sotto per svuotare la cache locale e ricaricare in modo pulito i dati originari dal server:'
+                  value: 'Fai clic sul pulsante qui sotto per riprovare a caricare o svuotare la cache locale:'
                 },
                 {
                   type: 'button_action',
-                  value: 'Ripristina Dati e Svuota Cache 🔄',
+                  value: 'Riprova / Svuota Cache 🔄',
                   actionName: 'forceResetCache',
                   buttonColor: '#26ff5e'
-                },
-                {
-                  type: 'paragraph',
-                  value: 'Se il problema persiste dopo aver svuotato la cache, assicurati che il file `guides.json` sul server non contenga errori sintattici.'
                 }
               ],
               tips: []
             }
           ];
+          creators = getDefaultCreators();
+          authorTags = getDefaultAuthorTags();
+          normalizeAuthorTagsAndCreators();
           migrateAllGuidesTips();
           renderApp();
-        });
+        });;
     });
 
     
@@ -2958,6 +2969,12 @@
     }
 
     function normalizeAuthorTagsAndCreators() {
+      // Ensure creators is a valid array of objects
+      if (!Array.isArray(creators)) {
+        creators = getDefaultCreators();
+      }
+      creators = creators.filter(c => c && typeof c === 'object' && typeof c.name === 'string' && c.name.trim().length > 0);
+
       // Ensure authorTags is a valid array of objects
       if (!Array.isArray(authorTags)) {
         authorTags = getDefaultAuthorTags();
@@ -2981,6 +2998,23 @@
 
       // 2. Clear any empty or invalid tags
       authorTags = authorTags.filter(t => t && typeof t.name === 'string' && t.name.trim().length > 0);
+
+      // Collect any tags currently assigned to creators that are missing from authorTags
+      if (Array.isArray(creators)) {
+        creators.forEach(c => {
+          if (c && Array.isArray(c.tags)) {
+            c.tags.forEach(tag => {
+              if (typeof tag === 'string' && tag.trim().length > 0) {
+                const cleanTag = tag.trim();
+                const exists = authorTags.some(t => t && t.name && t.name.toLowerCase() === cleanTag.toLowerCase());
+                if (!exists) {
+                  authorTags.push({ name: cleanTag, color: '#38bdf8' });
+                }
+              }
+            });
+          }
+        });
+      }
 
       // 3. Deduplicate tags in authorTags and sort alphabetically
       const seen = new Set();
