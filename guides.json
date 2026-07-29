@@ -2079,6 +2079,153 @@
       "authorDiamondColor": "#64748b",
       "authorLevel": "Sims Creator & Modder",
       "authorLink": "#collaboratori"
+    },
+    {
+      "id": "guida-trayfiles",
+      "title": "🗃️ TRAY FILES INSTALLAZIONE E SPIEGAZIONE",
+      "description": "I tray files all'apparenza possono essere complessi, ma in realtà sono molto semplici.\nServono per installare o salvare lotti o unità familiari al di fuori della galleria.",
+      "category": "guide-veloci",
+      "categories": [
+        "guide-veloci"
+      ],
+      "tags": [],
+      "content": [
+        {
+          "type": "heading2",
+          "value": "CHE COSA SONO?",
+          "color": "#2563eb"
+        },
+        {
+          "type": "quote",
+          "value": "I tray files sono i lotti e unità familiari presenti nella tua galleria. Ogni volta che salvi un Sim o una casa verrà salvato nella cartella Tray.\n\nVengono utilizzati per backup delle proprie creazioni o per condividere e installare edifici o famiglie di altri giocatori.",
+          "quoteType": "linea",
+          "lineColor": "verdeacqua"
+        },
+        {
+          "type": "heading3",
+          "value": "CHE TIPO DI FILE SONO:",
+          "color": "#26ff5e"
+        },
+        {
+          "type": "paragraph",
+          "value": "Ogni Famiglia o Casa sono composti da più file e le loro estensioni cambiano in base al contenuto. Questo può aiutarti a capire se contengono informazioni su:"
+        },
+        {
+          "type": "heading3",
+          "value": "Unità Familiare:",
+          "color": "#38bdf8"
+        },
+        {
+          "type": "list",
+          "value": "[color:#ffffff](**.householdbinary**) [color:#38bdf8](➜) è il file principale e contiene i dati dei Sim\n\n[color:#ffffff](**.hhi**) [color:#38bdf8](➜) contiene le informazioni sui Sim della famiglia\n\n[color:#ffffff](**.sgi**) [color:#38bdf8](➜) è l'aspetto e alla genetica dei Sim\n\n[color:#ffffff](**.trayitem**) [color:#38bdf8](➜) permette l'indicizzazione nella libreria",
+          "listType": "bullet"
+        },
+        {
+          "type": "heading3",
+          "value": "Lotti e Stanze:",
+          "color": "#eab308"
+        },
+        {
+          "type": "list",
+          "value": "[color:#ffffff](**.blueprint**) [color:#eab308](➜) è il file della struttura principale, cioè la mappa del lotto\n\n[color:#ffffff](**.bpi**) [color:#eab308](➜) contiene i dati di posizionamento degli oggetti e dei muri\n\n[color:#ffffff](**.rmi / .room**) [color:#eab308](➜) appare se salvi una singola stanza anziché un intero lotto\n\n[color:#ffffff](**.trayitem**) [color:#eab308](➜) permette l'indicizzazione nella libreria",
+          "listType": "bullet"
+        },
+        {
+          "type": "divider",
+          "value": "",
+          "separatorType": "line",
+          "dividerType": "standard"
+        },
+        {
+          "type": "heading2",
+          "value": "COME SALVARE I PROPRI TRAY FILES",
+          "color": "#ff007f"
+        },
+        {
+          "type": "heading3",
+          "value": "Backup:",
+          "color": "#b026ff"
+        },
+        {
+          "type": "paragraph",
+          "value": "Se vuoi salvare tutte le creazioni peresenti nella tua galleria ti basterà **copiare** la cartella Tray e poi incollarla all'esterno della cartella di The Sims 4, ad esempio sul desktop. \nAvrai così una copia al sicuro di tutti i lotti e famiglie che hai creato o salvato."
+        },
+        {
+          "type": "tip",
+          "value": "Ricordati di fare questo passaggio ogni volta che aggiungi delle nuove creazioni nella galleria."
+        },
+        {
+          "type": "riquadro",
+          "value": "[color:#eab308](**ATTENZIONE:**)\nCopia sempre e [color:#eab308](**NON TAGLIARE**) mai la cartella Tray, o in gioco ti ritroverai la galleria vuota.\n*(A meno che non è quello che desideri)*",
+          "borderColor": "#eab308"
+        },
+        {
+          "type": "divider",
+          "value": "",
+          "separatorType": "line",
+          "dividerType": "color"
+        },
+        {
+          "type": "heading3",
+          "value": "Salvare un singolo lotto o unità familiare:",
+          "separatorType": "line",
+          "dividerType": "standard",
+          "color": "#ef4444"
+        },
+        {
+          "type": "paragraph",
+          "value": "Siccome è difficile poter riconoscere la Famiglia o Lotto dato i nomi particolari dei file, si consiglia di seguire questa procedura:"
+        },
+        {
+          "type": "list",
+          "value": "Fai il **Backup** della cartella Tray e salvala sul Desktop\n\n[color:#ffffff](**Entra in gioco**) e salva nuovamente nella galleria il lotto o l'unità familiare\n\n[color:#ffffff](**Segnati l'ora del salvataggio**)\n\nRitorna nella cartella Tray e assicurati di aver messo la visualizzazione dei file per **Ordine Cronologico **\n\nControlla se i file in cima hanno lo **stesso orario** segnato in precedenza\n\nSeleziona e **copia tutti i file con lo stesso orario**, per aiutarti controlla le estensioni finali dei file per capire se è la creazione giusta, cioè un lotto o un'unità familiare (guarda il capitolo precedente della guida)\n\n**Crea una nuova cartella sul Desktop**, nominala con nome file vuoi e aprila\n\nAll'interno **incolla** i file tray copiati in precedenza\n\nI tuoi file tray sono stati salvati! :D",
+          "listType": "number"
+        },
+        {
+          "type": "tip",
+          "value": "Se vuoi **condividere** i tuoi file Tray devi **compirimere (.zip /.7z / .rar) la cartella** che li contiene.\nRicorda di **nominare la cartella** con il nome del Lotto o Unità Familiare e il tuo **nickname**."
+        },
+        {
+          "type": "divider",
+          "value": "",
+          "separatorType": "line",
+          "dividerType": "color"
+        },
+        {
+          "type": "paragraph",
+          "value": "[color:#38bdf8](**SE HAI DUBBI O DIFFICOLTÀ, PUOI RICHIEDE ASSISTENZA NEL GRUPPO TELEGRAM**)",
+          "align": "center"
+        },
+        {
+          "type": "button",
+          "value": "ASSISTENZA TELEGRAM",
+          "buttonUrl": "https://t.me/TheSims4ItaliaPianetaSim",
+          "buttonColor": "#38bdf8"
+        }
+      ],
+      "tips": [],
+      "authorName": "LadyPsycoTrilly",
+      "authorColor": "#b026ff",
+      "authors": [
+        {
+          "name": "LadyPsycoTrilly",
+          "level": "Fondatrice & Traduttrice",
+          "color": "#b026ff",
+          "diamondColor": "#ffffff",
+          "link": "#collaboratori"
+        },
+        {
+          "name": "Sha",
+          "level": "Admin & Traduttrice",
+          "color": "#38bdf8",
+          "diamondColor": "#38bdf8",
+          "link": "#collaboratori"
+        }
+      ],
+      "authorDiamondColor": "#ffffff",
+      "authorLevel": "Fondatrice & Traduttrice",
+      "authorLink": "#collaboratori",
+      "_rawTags": ""
     }
   ],
   "creators": [
@@ -2087,7 +2234,7 @@
       "name": "LadyPsycoTrilly",
       "role": "Fondatrice & Traduttrice",
       "avatar": "images/FpLady.png",
-      "color": "#38bdf8",
+      "color": "#b026ff",
       "description": "Pazza fondatrice di Pianeta Sim. L’obiettivo è aiutare la community italiana, in un clima di condivisione e passione. Inoltre traduco mod per The Sims 4.",
       "tags": [
         "Admin",
