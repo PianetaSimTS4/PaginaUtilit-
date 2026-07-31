@@ -709,6 +709,17 @@
           "value": "[color:#38bdf8](**✔ Al prossimo avvio del gioco Mod e CC saranno attivi!**)"
         },
         {
+          "type": "paragraph",
+          "value": "[color:#eab308](**HAI BISOGNO DI UNA SPIEGAZIONE PIÙ DETTAGLIATA? LEGGI LA GUIDA:**)",
+          "align": "center"
+        },
+        {
+          "type": "button",
+          "value": "COME ATTIVARE MOD E CC IN GIOCO - GUIDA PASSO PASSO",
+          "buttonUrl": "https://pianetasimts4.github.io/PaginaUtilit-/#guida-guida-mod-attivazione",
+          "buttonColor": "#eab308"
+        },
+        {
           "type": "divider",
           "value": "",
           "separatorType": "spacer",
@@ -2203,6 +2214,166 @@
         {
           "type": "paragraph",
           "value": "[color:#38bdf8](**SE HAI DUBBI O DIFFICOLTÀ, PUOI RICHIEDE ASSISTENZA NEL GRUPPO TELEGRAM**)",
+          "align": "center"
+        },
+        {
+          "type": "button",
+          "value": "ASSISTENZA TELEGRAM",
+          "buttonUrl": "https://t.me/TheSims4ItaliaPianetaSim",
+          "buttonColor": "#38bdf8"
+        }
+      ],
+      "tips": [],
+      "authorName": "LadyPsycoTrilly",
+      "authorColor": "#b026ff",
+      "authors": [
+        {
+          "name": "LadyPsycoTrilly",
+          "level": "Fondatrice & Traduttrice",
+          "color": "#b026ff",
+          "diamondColor": "#ffffff",
+          "link": "#collaboratori"
+        },
+        {
+          "name": "Sha",
+          "level": "Admin & Traduttrice",
+          "color": "#38bdf8",
+          "diamondColor": "#38bdf8",
+          "link": "#collaboratori"
+        }
+      ],
+      "authorDiamondColor": "#ffffff",
+      "authorLevel": "Fondatrice & Traduttrice",
+      "authorLink": "#collaboratori",
+      "_rawTags": ""
+    },
+    {
+      "id": "guida-installazione-cc",
+      "title": "COME INSTALLARE I CC - GUIDA VELOCE",
+      "description": "Spiegazione chiara e riassuntiva su come poter scaricare i tuoi cc (contenuto personalizzato) su The Sims 4.",
+      "category": "mod_cc",
+      "categories": [
+        "mod_cc",
+        "guide-veloci"
+      ],
+      "tags": [],
+      "content": [
+        {
+          "type": "heading1",
+          "value": "[color:#b026ff](PREPARAZIONE)"
+        },
+        {
+          "type": "heading3",
+          "value": "[color:#f97316](SE INSTALLI MOD/CC PER LA PRIMA VOLTA:)"
+        },
+        {
+          "type": "paragraph",
+          "value": "Se è la prima volta che installi delle mod/cc allora dovrai Attivare le Impostazioni in Gioco:"
+        },
+        {
+          "type": "list",
+          "value": "Apri The Sims 4 \nImpostazioni \nOpzioni di Gioco \nAltro \nSpunta le opzioni: “Attiva il contenuto personalizzato” e “Mod dello script permesse”\nClicca Ok > Applica le modifiche (in basso a dx) > chiudi le Opzioni > Esci dal gioco",
+          "listType": "number"
+        },
+        {
+          "type": "paragraph",
+          "value": "[color:#38bdf8](**✔ Al prossimo avvio del gioco Mod e CC saranno attivi!**)"
+        },
+        {
+          "type": "paragraph",
+          "value": "[color:#eab308](**HAI BISOGNO DI UNA SPIEGAZIONE PIÙ DETTAGLIATA? LEGGI LA GUIDA:**)",
+          "buttonUrl": "",
+          "buttonColor": "#b026ff",
+          "align": "center"
+        },
+        {
+          "type": "button",
+          "value": "COME ATTIVARE MOD E CC IN GIOCO\nGUIDA PASSO PASSO",
+          "buttonUrl": "https://pianetasimts4.github.io/PaginaUtilit-/#guida-come-attivare-mod-e-cc-in-gioco-guida",
+          "buttonColor": "#eab308"
+        },
+        {
+          "type": "divider",
+          "value": "",
+          "separatorType": "spacer",
+          "dividerType": "standard",
+          "height": "10"
+        },
+        {
+          "type": "heading3",
+          "value": "[color:#26ff5e](DOVE POSSO TROVARE DELLE MOD?)"
+        },
+        {
+          "type": "paragraph",
+          "value": "Clicca sul nome e verrai indirizzato al sito"
+        },
+        {
+          "type": "list",
+          "value": "[Patreon](https://www.patreon.com/explore)\n\n[Tumblr](https://www.tumblr.com/tagged/sims4cc)\n\n[CurseForge](https://www.curseforge.com/sims4)\n\n[The Sims Resource](https://www.thesimsresource.com/)\n\n[Mundo Sims](https://mundosims.com/)\n\n[Snootysims](https://snootysims.com/)\n\n[Wcif.cc](https://wcif.cc/wcif-lists)\n\nI siti personali dove i creatori caricano le loro creazioni",
+          "listType": "bullet"
+        },
+        {
+          "type": "heading3",
+          "value": "[color:#26ff5e](CHE TIPO DI FILE SONO:)"
+        },
+        {
+          "type": "paragraph",
+          "value": "Essi possono essere:"
+        },
+        {
+          "type": "list",
+          "value": "Package (.package)\nArchivio zip, rar, 7z (.zip/.rar/.7z)",
+          "listType": "bullet"
+        },
+        {
+          "type": "riquadro",
+          "value": "**[color:#eab308](ATTENZIONE:)**\n\n• I Cc sono diversi dalle mod e possono essere suddivisi **[color:#eab308](fino a un massimo di 5 sottocartelle.)**\n\n• Se si scarica uno zip e all’interno ci sono **immagini, file di testo** con spiegazioni o indicazioni, vanno **letti e poi cancellati**. \n\n• Se all’interno dello zip trovate più file package vuol dire che è un set di cc, per ordine e facilità consigliamo di tenerli insieme, così da poterli riconoscere in futuro.",
+          "borderColor": "#eab308"
+        },
+        {
+          "type": "divider",
+          "value": "",
+          "separatorType": "line",
+          "dividerType": "standard"
+        },
+        {
+          "type": "heading1",
+          "value": "[color:#b026ff](INSTALLAZIONE)"
+        },
+        {
+          "type": "paragraph",
+          "value": "1. Scarica i Cc"
+        },
+        {
+          "type": "paragraph",
+          "value": "2. **Consigliamo** di creare le **cartelle CC Build e CC CAS**:"
+        },
+        {
+          "type": "list",
+          "value": "In **CC Build** andranno tutti i **cc riguardanti la Modalità Costruisci**\n\nIn **CC CAS** andranno tutti i **cc riguardanti la Modalità Crea un Sim**",
+          "listType": "bullet"
+        },
+        {
+          "type": "paragraph",
+          "value": "3. Metti i file scaricati nella cartella dei CC dedicata"
+        },
+        {
+          "type": "tip",
+          "value": "Organizzare per bene cc e mod può semplificarti la vita! Leggi la guida dedicata:\n[[color:#b026ff](**CONSIGLI SU COME ORGANIZZARE MOD E CC **)](https://pianetasimts4.github.io/PaginaUtilit-/#guida-come-organizzare-mod-cc)"
+        },
+        {
+          "type": "paragraph",
+          "value": "4. Ora i tuoi Cc sono pronti! :D"
+        },
+        {
+          "type": "divider",
+          "value": "",
+          "separatorType": "line",
+          "dividerType": "color"
+        },
+        {
+          "type": "paragraph",
+          "value": "**[color:#38bdf8](SE HAI DUBBI O DIFFICOLTÀ, PUOI RICHIEDE ASSISTENZA NEL GRUPPO TELEGRAM)**",
           "align": "center"
         },
         {
