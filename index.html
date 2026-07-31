@@ -4694,6 +4694,8 @@
         searchQuery = '';
         const searchInput = document.getElementById('guide-search-input');
         if (searchInput) searchInput.value = '';
+        const mobileInput = document.getElementById('guide-search-input-mobile');
+        if (mobileInput) mobileInput.value = '';
         switchTab('admin');
         showToast("🔐 Inserisci la password per accedere al pannello", "info");
         return;
@@ -6100,8 +6102,8 @@
         
         const listWrapperEl = document.getElementById('guides-list-grid-wrapper');
         const countBadgeEl = document.getElementById('guides-count-badge');
-        const searchInputEl = document.getElementById('guide-search-input');
-        const isSearchInputFocused = (searchInputEl === document.activeElement);
+        const searchInputEl = document.getElementById('guide-search-input') || document.getElementById('guide-search-input-mobile');
+        const isSearchInputFocused = (document.activeElement && (document.activeElement.id === 'guide-search-input' || document.activeElement.id === 'guide-search-input-mobile'));
         
         if (listWrapperEl && countBadgeEl && isSearchInputFocused) {
           countBadgeEl.textContent = `Trovate ${filteredGuides.length} guide`;
@@ -6199,13 +6201,13 @@
         const isFolderView = (selectedCategory === 'all' && searchQuery.trim() === '');
 
         container.innerHTML = `
-          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start w-full">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start w-full">
             
-            <!-- Sidebar Sinistra -->
-            <div class="lg:col-span-3 space-y-6">
+            <!-- Area Principale (Mostrata in alto su Mobile order-1, a destra su Desktop lg:order-2) -->
+            <div class="lg:col-span-9 space-y-6 order-1 lg:order-2">
               
-              <!-- Card Cerca Guida -->
-              <div class="bg-space-card p-5 rounded-2xl border border-slate-800 shadow-xl space-y-3 neon-shadow-purple">
+              <!-- Card Cerca Guida (Specifico per Mobile < lg) -->
+              <div class="lg:hidden bg-space-card p-4 rounded-2xl border border-slate-800 shadow-xl space-y-2.5 neon-shadow-purple">
                 <h2 class="text-xs font-bold text-slate-400 uppercase tracking-widest">
                   Cerca Guida
                 </h2>
@@ -6213,7 +6215,7 @@
                   <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500"></i>
                   <input
                     type="text"
-                    id="guide-search-input"
+                    id="guide-search-input-mobile"
                     placeholder="Parole chiave, mod, trucchi..."
                     value="${searchQuery}"
                     oninput="handleSearchInput(this.value)"
@@ -6221,102 +6223,6 @@
                   />
                 </div>
               </div>
-
-              <!-- Card Filtra per Categoria (Appare SOLO all'interno delle cartelle) -->
-              ${!isFolderView ? `
-                <div class="bg-space-card p-5 rounded-2xl border border-slate-800 shadow-xl space-y-3.5 neon-shadow-blue">
-                  <h2 class="text-xs font-extrabold text-slate-400 uppercase tracking-widest">
-                    Filtra per Categoria
-                  </h2>
-                  <div class="flex flex-wrap gap-2">
-                    <button
-                      onclick="selectedCategory = 'all_guides'; renderApp();"
-                      class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer border ${
-                        (selectedCategory === 'all' || selectedCategory === 'all_guides')
-                          ? 'bg-fluo-blue text-black border-fluo-blue shadow-[0_0_12px_rgba(0,240,255,0.3)]'
-                          : 'bg-slate-900/80 hover:bg-slate-850 text-slate-300 border-slate-800/80 hover:border-slate-700/80'
-                      }"
-                    >
-                      <span>Tutte</span>
-                      <span class="px-1.5 py-0.5 bg-black/30 text-[10px] rounded-full font-mono">${getCategoryCount('all')}</span>
-                    </button>
-
-                    ${categories.map(cat => {
-                      const isActive = selectedCategory === cat.id;
-                      const catStyles = getCategoryStyles(cat.color);
-                      return `
-                        <button
-                          onclick="selectedCategory = '${cat.id}'; renderApp();"
-                          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer border"
-                          style="${
-                            isActive
-                              ? `background-color: #1e293b; color: #ffffff; border-color: ${catStyles.colorCode}; box-shadow: 0 0 10px ${catStyles.colorCode}25;`
-                              : 'background-color: rgba(15,23,42,0.8); color: #cbd5e1; border-color: rgba(30,41,59,0.8);'
-                          }"
-                        >
-                          <span class="w-2 h-2 rounded-full" style="background-color: ${catStyles.colorCode}"></span>
-                          <span>${cat.label}</span>
-                          <span class="px-1.5 py-0.5 bg-black/30 text-[10px] rounded-full font-mono">${getCategoryCount(cat.id)}</span>
-                        </button>
-                      `;
-                    }).join('')}
-
-                    <button
-                      onclick="selectedCategory = 'preferiti'; renderApp();"
-                      class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer border ${
-                        selectedCategory === 'preferiti'
-                          ? 'bg-amber-500 text-white border-amber-500 shadow-[0_0_12px_rgba(245,158,11,0.3)]'
-                          : 'bg-slate-900/80 hover:bg-slate-850 text-slate-300 border-slate-800/80 hover:border-slate-700/80'
-                      }"
-                    >
-                      <i data-lucide="star" class="w-3.5 h-3.5 text-amber-400 fill-current"></i>
-                      <span>Preferiti</span>
-                      <span class="px-1.5 py-0.5 bg-black/30 text-[10px] rounded-full font-mono">${getCategoryCount('preferiti')}</span>
-                    </button>
-                  </div>
-                </div>
-              ` : ''}
-
-              <!-- Card Chi siamo? -->
-              <div class="p-5 bg-space-card border border-slate-800 rounded-2xl text-slate-200 shadow-md relative overflow-hidden space-y-3">
-                <h2 class="text-xs font-extrabold uppercase tracking-widest text-fluo-purple flex items-center gap-1.5">
-                  <i data-lucide="users" class="w-4 h-4 text-fluo-purple"></i>
-                  Chi siamo?
-                </h2>
-                <p class="text-[11px] text-slate-300 leading-relaxed font-sans">
-                  Scopri chi c'è dietro a Pianeta e la sua Community
-                </p>
-                <button
-                  onclick="navigateToCreators()"
-                  class="w-full block text-center py-2 bg-fluo-purple hover:bg-opacity-95 text-white font-bold rounded-xl text-xs transition-colors cursor-pointer"
-                >
-                  Scopri il Team 🌟
-                </button>
-              </div>
-
-              <!-- Card Serve Aiuto? -->
-              <div class="p-5 bg-space-card border border-slate-800 rounded-2xl text-slate-200 shadow-md relative overflow-hidden space-y-3">
-                <h2 class="text-xs font-extrabold uppercase tracking-widest text-fluo-green flex items-center gap-1.5">
-                  <i data-lucide="help-circle" class="w-4 h-4 text-fluo-green"></i>
-                  Serve aiuto?
-                </h2>
-                <p class="text-[11px] text-slate-300 leading-relaxed">
-                  Hai dubbi sull'installazione delle mod tradotte o cerchi risposte a bug noti del gioco?
-                </p>
-                <a
-                  href="https://t.me/TheSims4ItaliaPianetaSim"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="w-full block text-center py-2 bg-sky-500 hover:bg-sky-400 text-white font-bold rounded-xl text-xs transition-colors cursor-pointer"
-                >
-                  Gruppo Telegram 💬
-                </a>
-              </div>
-
-            </div>
-
-            <!-- Area Principale -->
-            <div class="lg:col-span-9 space-y-6">
               
               ${(() => {
                 if (isFolderView) {
@@ -6331,7 +6237,7 @@
                         <span class="text-xs text-slate-400 font-sans">Seleziona una cartella per accedere alle guide</span>
                       </div>
 
-                      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3.5 pt-1">
+                      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 pt-1">
                         
                         <!-- Cartella: Tutte -->
                         ${(() => {
@@ -6342,34 +6248,34 @@
                               class="group cursor-pointer transition-all duration-200 hover:-translate-y-0.5 flex flex-col h-full"
                             >
                               <!-- Linguette Cartella -->
-                              <div class="flex items-end w-full relative -mb-px z-10 pr-3">
+                              <div class="flex items-end w-full relative -mb-px z-10 pr-2 sm:pr-3">
                                 <!-- Linguetta Principale -->
-                                <div class="px-3 py-1 rounded-t-lg bg-space-card border-t border-x border-slate-800 group-hover:border-slate-700 relative z-10 flex items-center justify-center text-cyan-400 transition-colors shrink-0">
+                                <div class="px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-t-lg bg-space-card border-t border-x border-slate-800 group-hover:border-slate-700 relative z-10 flex items-center justify-center text-cyan-400 transition-colors shrink-0">
                                   <i data-lucide="folder" class="w-3.5 h-3.5"></i>
                                 </div>
-                                <!-- Seconda Linguetta (lunga quasi quanto il riquadro della cartella) -->
-                                <div class="flex-1 h-[18px] rounded-t-lg border-t border-x -ml-1.5 relative z-0 transition-colors block" style="background-color: rgba(0, 240, 255, 0.25); border-color: rgba(0, 240, 255, 0.6);"></div>
+                                <!-- Seconda Linguetta -->
+                                <div class="flex-1 h-[14px] sm:h-[18px] rounded-t-lg border-t border-x -ml-1.5 relative z-0 transition-colors block" style="background-color: rgba(0, 240, 255, 0.25); border-color: rgba(0, 240, 255, 0.6);"></div>
                               </div>
 
                               <!-- Corpo Cartella -->
-                              <div class="bg-space-card rounded-b-xl rounded-tr-xl rounded-tl-none border border-slate-800 group-hover:border-slate-700 p-4.5 sm:p-5 transition-all duration-200 flex flex-col justify-between min-h-[130px] sm:min-h-[140px] h-full shadow-md relative z-0">
-                                <div class="space-y-2">
-                                  <div class="flex items-center justify-between gap-1.5">
-                                    <div class="p-1.5 rounded-md bg-cyan-500/10 text-cyan-400">
-                                      <i data-lucide="folder" class="w-4 h-4"></i>
+                              <div class="bg-space-card rounded-b-xl rounded-tr-xl rounded-tl-none border border-slate-800 group-hover:border-slate-700 p-3.5 sm:p-4.5 md:p-5 transition-all duration-200 flex flex-col justify-between min-h-[110px] sm:min-h-[135px] h-full shadow-md relative z-0">
+                                <div class="space-y-1.5 sm:space-y-2">
+                                  <div class="flex items-center justify-between gap-1 overflow-hidden">
+                                    <div class="p-1 sm:p-1.5 rounded-md bg-cyan-500/10 text-cyan-400 shrink-0">
+                                      <i data-lucide="folder" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
                                     </div>
-                                    <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-slate-950 text-slate-300 border border-slate-800">
+                                    <span class="text-[9px] sm:text-[10px] font-mono font-bold px-1.5 sm:px-2 py-0.5 rounded-full bg-slate-950 text-slate-300 border border-slate-800 shrink-0 whitespace-nowrap">
                                       ${count} ${count === 1 ? 'guida' : 'guide'}
                                     </span>
                                   </div>
-                                  <h3 class="text-sm sm:text-base font-extrabold text-slate-100 group-hover:text-white transition-colors line-clamp-1 uppercase tracking-wide">
+                                  <h3 class="text-xs sm:text-sm lg:text-base font-extrabold text-slate-100 group-hover:text-white transition-colors line-clamp-2 leading-tight uppercase tracking-wide text-left break-words">
                                     Tutte
                                   </h3>
                                 </div>
 
-                                <div class="pt-2 flex items-center justify-between text-[10px] font-semibold text-slate-400 group-hover:text-slate-200 transition-colors">
+                                <div class="pt-2 flex items-center justify-between text-[10px] sm:text-[11px] font-semibold text-slate-400 group-hover:text-slate-200 transition-colors">
                                   <span>Apri</span>
-                                  <i data-lucide="arrow-right" class="w-4 h-4 stroke-[3] text-cyan-400 group-hover:translate-x-1 transition-all"></i>
+                                  <i data-lucide="arrow-right" class="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[3] text-cyan-400 group-hover:translate-x-1 transition-all"></i>
                                 </div>
                               </div>
                             </div>
@@ -6386,34 +6292,34 @@
                               class="group cursor-pointer transition-all duration-200 hover:-translate-y-0.5 flex flex-col h-full"
                             >
                               <!-- Linguette Cartella -->
-                              <div class="flex items-end w-full relative -mb-px z-10 pr-3">
+                              <div class="flex items-end w-full relative -mb-px z-10 pr-2 sm:pr-3">
                                 <!-- Linguetta Principale -->
-                                <div class="px-3 py-1 rounded-t-lg bg-space-card border-t border-x border-slate-800 group-hover:border-slate-700 relative z-10 flex items-center justify-center transition-colors shrink-0" style="color: ${catStyles.colorCode};">
+                                <div class="px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-t-lg bg-space-card border-t border-x border-slate-800 group-hover:border-slate-700 relative z-10 flex items-center justify-center transition-colors shrink-0" style="color: ${catStyles.colorCode};">
                                   <i data-lucide="folder" class="w-3.5 h-3.5"></i>
                                 </div>
-                                <!-- Seconda Linguetta (lunga quasi quanto il riquadro della cartella) -->
-                                <div class="flex-1 h-[18px] rounded-t-lg border-t border-x -ml-1.5 relative z-0 transition-colors block" style="background-color: ${catStyles.colorCode}35; border-color: ${catStyles.colorCode}90;"></div>
+                                <!-- Seconda Linguetta -->
+                                <div class="flex-1 h-[14px] sm:h-[18px] rounded-t-lg border-t border-x -ml-1.5 relative z-0 transition-colors block" style="background-color: ${catStyles.colorCode}35; border-color: ${catStyles.colorCode}90;"></div>
                               </div>
 
                               <!-- Corpo Cartella -->
-                              <div class="bg-space-card rounded-b-xl rounded-tr-xl rounded-tl-none border border-slate-800 group-hover:border-slate-700 p-4.5 sm:p-5 transition-all duration-200 flex flex-col justify-between min-h-[130px] sm:min-h-[140px] h-full shadow-md relative z-0">
-                                <div class="space-y-2">
-                                  <div class="flex items-center justify-between gap-1.5">
-                                    <div class="p-1.5 rounded-md" style="background-color: ${catStyles.colorCode}15; color: ${catStyles.colorCode};">
-                                      <i data-lucide="folder" class="w-4 h-4"></i>
+                              <div class="bg-space-card rounded-b-xl rounded-tr-xl rounded-tl-none border border-slate-800 group-hover:border-slate-700 p-3.5 sm:p-4.5 md:p-5 transition-all duration-200 flex flex-col justify-between min-h-[110px] sm:min-h-[135px] h-full shadow-md relative z-0">
+                                <div class="space-y-1.5 sm:space-y-2">
+                                  <div class="flex items-center justify-between gap-1 overflow-hidden">
+                                    <div class="p-1 sm:p-1.5 rounded-md shrink-0" style="background-color: ${catStyles.colorCode}15; color: ${catStyles.colorCode};">
+                                      <i data-lucide="folder" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
                                     </div>
-                                    <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-slate-950 text-slate-300 border border-slate-800">
+                                    <span class="text-[9px] sm:text-[10px] font-mono font-bold px-1.5 sm:px-2 py-0.5 rounded-full bg-slate-950 text-slate-300 border border-slate-800 shrink-0 whitespace-nowrap">
                                       ${count} ${count === 1 ? 'guida' : 'guide'}
                                     </span>
                                   </div>
-                                  <h3 class="text-sm sm:text-base font-extrabold text-slate-100 group-hover:text-white transition-colors line-clamp-1 uppercase tracking-wide">
+                                  <h3 class="text-xs sm:text-sm lg:text-base font-extrabold text-slate-100 group-hover:text-white transition-colors line-clamp-2 leading-tight uppercase tracking-wide text-left break-words">
                                     ${cat.label}
                                   </h3>
                                 </div>
 
-                                <div class="pt-2 flex items-center justify-between text-[10px] font-semibold text-slate-400 group-hover:text-slate-200 transition-colors">
+                                <div class="pt-2 flex items-center justify-between text-[10px] sm:text-[11px] font-semibold text-slate-400 group-hover:text-slate-200 transition-colors">
                                   <span>Apri</span>
-                                  <i data-lucide="arrow-right" class="w-4 h-4 stroke-[3] group-hover:translate-x-1 transition-all" style="color: ${catStyles.colorCode};"></i>
+                                  <i data-lucide="arrow-right" class="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[3] group-hover:translate-x-1 transition-all" style="color: ${catStyles.colorCode};"></i>
                                 </div>
                               </div>
                             </div>
@@ -6429,34 +6335,34 @@
                               class="group cursor-pointer transition-all duration-200 hover:-translate-y-0.5 flex flex-col h-full"
                             >
                               <!-- Linguette Cartella -->
-                              <div class="flex items-end w-full relative -mb-px z-10 pr-3">
+                              <div class="flex items-end w-full relative -mb-px z-10 pr-2 sm:pr-3">
                                 <!-- Linguetta Principale -->
-                                <div class="px-3 py-1 rounded-t-lg bg-space-card border-t border-x border-slate-800 group-hover:border-slate-700 relative z-10 flex items-center justify-center text-amber-400 transition-colors shrink-0">
+                                <div class="px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-t-lg bg-space-card border-t border-x border-slate-800 group-hover:border-slate-700 relative z-10 flex items-center justify-center text-amber-400 transition-colors shrink-0">
                                   <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
                                 </div>
-                                <!-- Seconda Linguetta (lunga quasi quanto il riquadro della cartella) -->
-                                <div class="flex-1 h-[18px] rounded-t-lg border-t border-x -ml-1.5 relative z-0 transition-colors block" style="background-color: rgba(245, 158, 11, 0.25); border-color: rgba(245, 158, 11, 0.6);"></div>
+                                <!-- Seconda Linguetta -->
+                                <div class="flex-1 h-[14px] sm:h-[18px] rounded-t-lg border-t border-x -ml-1.5 relative z-0 transition-colors block" style="background-color: rgba(245, 158, 11, 0.25); border-color: rgba(245, 158, 11, 0.6);"></div>
                               </div>
 
                               <!-- Corpo Cartella -->
-                              <div class="bg-space-card rounded-b-xl rounded-tr-xl rounded-tl-none border border-slate-800 group-hover:border-slate-700 p-4.5 sm:p-5 transition-all duration-200 flex flex-col justify-between min-h-[130px] sm:min-h-[140px] h-full shadow-md relative z-0">
-                                <div class="space-y-2">
-                                  <div class="flex items-center justify-between gap-1.5">
-                                    <div class="p-1.5 rounded-md text-amber-400 bg-amber-500/10">
-                                      <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                              <div class="bg-space-card rounded-b-xl rounded-tr-xl rounded-tl-none border border-slate-800 group-hover:border-slate-700 p-3.5 sm:p-4.5 md:p-5 transition-all duration-200 flex flex-col justify-between min-h-[110px] sm:min-h-[135px] h-full shadow-md relative z-0">
+                                <div class="space-y-1.5 sm:space-y-2">
+                                  <div class="flex items-center justify-between gap-1 overflow-hidden">
+                                    <div class="p-1 sm:p-1.5 rounded-md text-amber-400 bg-amber-500/10 shrink-0">
+                                      <i data-lucide="star" class="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-current"></i>
                                     </div>
-                                    <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-slate-950 text-amber-300 border border-slate-800">
+                                    <span class="text-[9px] sm:text-[10px] font-mono font-bold px-1.5 sm:px-2 py-0.5 rounded-full bg-slate-950 text-amber-300 border border-slate-800 shrink-0 whitespace-nowrap">
                                       ${count} ${count === 1 ? 'guida' : 'guide'}
                                     </span>
                                   </div>
-                                  <h3 class="text-sm sm:text-base font-extrabold text-slate-100 group-hover:text-white transition-colors line-clamp-1 uppercase tracking-wide">
+                                  <h3 class="text-xs sm:text-sm lg:text-base font-extrabold text-slate-100 group-hover:text-white transition-colors line-clamp-2 leading-tight uppercase tracking-wide text-left break-words">
                                     I Miei Preferiti
                                   </h3>
                                 </div>
 
-                                <div class="pt-2 flex items-center justify-between text-[10px] font-semibold text-slate-400 group-hover:text-slate-200 transition-colors">
+                                <div class="pt-2 flex items-center justify-between text-[10px] sm:text-[11px] font-semibold text-slate-400 group-hover:text-slate-200 transition-colors">
                                   <span>Apri</span>
-                                  <i data-lucide="arrow-right" class="w-4 h-4 stroke-[3] text-amber-400 group-hover:translate-x-1 transition-all"></i>
+                                  <i data-lucide="arrow-right" class="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[3] text-amber-400 group-hover:translate-x-1 transition-all"></i>
                                 </div>
                               </div>
                             </div>
@@ -6595,6 +6501,121 @@
               })()}
 
             </div>
+
+            <!-- Sidebar (Order 2 su Mobile, Order 1 su Desktop lg) -->
+            <div class="lg:col-span-3 space-y-6 order-2 lg:order-1">
+              
+              <!-- Card Cerca Guida (Visibile solo su Desktop lg) -->
+              <div class="hidden lg:block bg-space-card p-5 rounded-2xl border border-slate-800 shadow-xl space-y-3 neon-shadow-purple">
+                <h2 class="text-xs font-bold text-slate-400 uppercase tracking-widest">
+                  Cerca Guida
+                </h2>
+                <div class="relative">
+                  <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500"></i>
+                  <input
+                    type="text"
+                    id="guide-search-input"
+                    placeholder="Parole chiave, mod, trucchi..."
+                    value="${searchQuery}"
+                    oninput="handleSearchInput(this.value)"
+                    class="w-full pl-9 pr-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:ring-2 focus:ring-fluo-purple focus:border-transparent outline-none transition-all"
+                  />
+                </div>
+              </div>
+
+              <!-- Card Filtra per Categoria (Appare SOLO all'interno delle cartelle) -->
+              ${!isFolderView ? `
+                <div class="bg-space-card p-4 sm:p-5 rounded-2xl border border-slate-800 shadow-xl space-y-3.5 neon-shadow-blue">
+                  <h2 class="text-xs font-extrabold text-slate-400 uppercase tracking-widest">
+                    Filtra per Categoria
+                  </h2>
+                  <div class="flex flex-wrap gap-2">
+                    <button
+                      onclick="selectedCategory = 'all_guides'; renderApp();"
+                      class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer border ${
+                        (selectedCategory === 'all' || selectedCategory === 'all_guides')
+                          ? 'bg-fluo-blue text-black border-fluo-blue shadow-[0_0_12px_rgba(0,240,255,0.3)]'
+                          : 'bg-slate-900/80 hover:bg-slate-850 text-slate-300 border-slate-800/80 hover:border-slate-700/80'
+                      }"
+                    >
+                      <span>Tutte</span>
+                      <span class="px-1.5 py-0.5 bg-black/30 text-[10px] rounded-full font-mono">${getCategoryCount('all')}</span>
+                    </button>
+
+                    ${categories.map(cat => {
+                      const isActive = selectedCategory === cat.id;
+                      const catStyles = getCategoryStyles(cat.color);
+                      return `
+                        <button
+                          onclick="selectedCategory = '${cat.id}'; renderApp();"
+                          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer border"
+                          style="${
+                            isActive
+                              ? `background-color: #1e293b; color: #ffffff; border-color: ${catStyles.colorCode}; box-shadow: 0 0 10px ${catStyles.colorCode}25;`
+                              : 'background-color: rgba(15,23,42,0.8); color: #cbd5e1; border-color: rgba(30,41,59,0.8);'
+                          }"
+                        >
+                          <span class="w-2 h-2 rounded-full" style="background-color: ${catStyles.colorCode}"></span>
+                          <span>${cat.label}</span>
+                          <span class="px-1.5 py-0.5 bg-black/30 text-[10px] rounded-full font-mono">${getCategoryCount(cat.id)}</span>
+                        </button>
+                      `;
+                    }).join('')}
+
+                    <button
+                      onclick="selectedCategory = 'preferiti'; renderApp();"
+                      class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer border ${
+                        selectedCategory === 'preferiti'
+                          ? 'bg-amber-500 text-white border-amber-500 shadow-[0_0_12px_rgba(245,158,11,0.3)]'
+                          : 'bg-slate-900/80 hover:bg-slate-850 text-slate-300 border-slate-800/80 hover:border-slate-700/80'
+                      }"
+                    >
+                      <i data-lucide="star" class="w-3.5 h-3.5 text-amber-400 fill-current"></i>
+                      <span>Preferiti</span>
+                      <span class="px-1.5 py-0.5 bg-black/30 text-[10px] rounded-full font-mono">${getCategoryCount('preferiti')}</span>
+                    </button>
+                  </div>
+                </div>
+              ` : ''}
+
+              <!-- Card Chi siamo? -->
+              <div class="p-5 bg-space-card border border-slate-800 rounded-2xl text-slate-200 shadow-md relative overflow-hidden space-y-3">
+                <h2 class="text-xs font-extrabold uppercase tracking-widest text-fluo-purple flex items-center gap-1.5">
+                  <i data-lucide="users" class="w-4 h-4 text-fluo-purple"></i>
+                  Chi siamo?
+                </h2>
+                <p class="text-[11px] text-slate-300 leading-relaxed font-sans">
+                  Scopri chi c'è dietro a Pianeta e la sua Community
+                </p>
+                <button
+                  onclick="navigateToCreators()"
+                  class="w-full block text-center py-2 bg-fluo-purple hover:bg-opacity-95 text-white font-bold rounded-xl text-xs transition-colors cursor-pointer"
+                >
+                  Scopri il Team 🌟
+                </button>
+              </div>
+
+              <!-- Card Serve Aiuto? -->
+              <div class="p-5 bg-space-card border border-slate-800 rounded-2xl text-slate-200 shadow-md relative overflow-hidden space-y-3">
+                <h2 class="text-xs font-extrabold uppercase tracking-widest text-fluo-green flex items-center gap-1.5">
+                  <i data-lucide="help-circle" class="w-4 h-4 text-fluo-green"></i>
+                  Serve aiuto?
+                </h2>
+                <p class="text-[11px] text-slate-300 leading-relaxed">
+                  Hai dubbi sull'installazione delle mod tradotte o cerchi risposte a bug noti del gioco?
+                </p>
+                <a
+                  href="https://t.me/TheSims4ItaliaPianetaSim"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="w-full block text-center py-2 bg-sky-500 hover:bg-sky-400 text-white font-bold rounded-xl text-xs transition-colors cursor-pointer"
+                >
+                  Gruppo Telegram 💬
+                </a>
+              </div>
+
+            </div>
+
           </div>
         `;
         lazyCreateIcons();
