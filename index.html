@@ -266,6 +266,78 @@
       -ms-overflow-style: none;
       scrollbar-width: none;
     }
+
+    @keyframes merloBounceIn {
+      0% {
+        opacity: 0;
+        transform: translateY(30px) scale(0.2) rotate(-15deg);
+      }
+      60% {
+        opacity: 1;
+        transform: translateY(-10px) scale(1.15) rotate(5deg);
+      }
+      80% {
+        transform: translateY(2px) scale(0.95) rotate(-2deg);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1) rotate(0deg);
+      }
+    }
+
+    @keyframes merloBounceOut {
+      0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(25px) scale(0.1) rotate(15deg);
+      }
+    }
+
+    @keyframes floatNote {
+      0% {
+        opacity: 0;
+        transform: translateY(0) scale(0.6) rotate(0deg);
+      }
+      50% {
+        opacity: 1;
+        transform: translateY(-15px) scale(1.2) rotate(-12deg);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-30px) scale(0.8) rotate(15deg);
+      }
+    }
+
+    .animate-merlo-bounce {
+      animation: merloBounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    .animate-merlo-fadeout {
+      animation: merloBounceOut 0.4s ease-in forwards;
+    }
+
+    .animate-float-note {
+      animation: floatNote 1.6s ease-out infinite;
+    }
+
+    .animate-float-note-delayed {
+      animation: floatNote 1.6s ease-out 0.8s infinite;
+    }
+
+    /* Performance Optimizations */
+    .fast-render-card {
+      content-visibility: auto;
+      contain-intrinsic-size: 1px 200px;
+    }
+
+    #constellations-canvas, .space-bg {
+      will-change: transform;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+    }
   </style>
 </head>
 <body class="flex flex-col min-h-full selection:bg-fluo-green selection:text-black">
@@ -4465,6 +4537,33 @@
       window.location.hash = '#chi-siamo';
     }
 
+    function triggerMerloPopup(cardEl, creatorName) {
+      if (!cardEl) return;
+      
+      const existing = cardEl.querySelector('.merlo-popup-wrapper');
+      if (existing) existing.remove();
+
+      cardEl.style.position = 'relative';
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'merlo-popup-wrapper absolute top-3 right-10 z-50 pointer-events-none animate-merlo-bounce';
+      wrapper.innerHTML = `
+        <div class="bg-amber-400 text-slate-950 px-3 py-1.5 rounded-2xl text-xs font-black shadow-xl border-2 border-amber-300 flex items-center gap-1.5 whitespace-nowrap">
+          <span>Cip cip! 🐦</span>
+        </div>
+      `;
+
+      cardEl.appendChild(wrapper);
+
+      setTimeout(() => {
+        wrapper.classList.remove('animate-merlo-bounce');
+        wrapper.classList.add('animate-merlo-fadeout');
+        setTimeout(() => {
+          wrapper.remove();
+        }, 400);
+      }, 3000);
+    }
+
     function viewCreatorCard(creatorName, fallbackLink) {
       const creator = creators.find(c => c.name.toLowerCase().trim() === creatorName.toLowerCase().trim());
       if (creator) {
@@ -4476,6 +4575,7 @@
             cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
             cardEl.classList.remove('border-slate-800');
             cardEl.classList.add('border-fluo-purple', 'ring-2', 'ring-fluo-purple/45', 'shadow-[0_0_25px_rgba(176,38,255,0.4)]');
+            triggerMerloPopup(cardEl, creator.name);
             setTimeout(() => {
               cardEl.classList.remove('border-fluo-purple', 'ring-2', 'ring-fluo-purple/45', 'shadow-[0_0_25px_rgba(176,38,255,0.4)]');
               cardEl.classList.add('border-slate-800');
@@ -4607,32 +4707,27 @@
       }, 100);
     }
 
+    var renderAnimationFrame = null;
     function renderApp() {
+      if (renderAnimationFrame) {
+        cancelAnimationFrame(renderAnimationFrame);
+      }
       const savedWindowScroll = window.scrollY;
       const previewEl = document.getElementById('guide-live-preview-container');
       const savedPreviewScroll = previewEl ? previewEl.scrollTop : 0;
 
-      _actualRenderApp();
+      renderAnimationFrame = requestAnimationFrame(function() {
+        renderAnimationFrame = null;
+        _actualRenderApp();
 
-      if (savedWindowScroll !== undefined) {
-        window.scrollTo(0, savedWindowScroll);
-      }
-      const newPreviewEl = document.getElementById('guide-live-preview-container');
-      if (newPreviewEl && savedPreviewScroll) {
-        newPreviewEl.scrollTop = savedPreviewScroll;
-      }
-      setTimeout(() => {
-        const pEl = document.getElementById('guide-live-preview-container');
-        if (pEl && savedPreviewScroll) {
-          pEl.scrollTop = savedPreviewScroll;
+        if (savedWindowScroll !== undefined && Math.abs(window.scrollY - savedWindowScroll) > 2) {
+          window.scrollTo(0, savedWindowScroll);
         }
-      }, 0);
-      setTimeout(() => {
-        const pEl = document.getElementById('guide-live-preview-container');
-        if (pEl && savedPreviewScroll) {
-          pEl.scrollTop = savedPreviewScroll;
+        const newPreviewEl = document.getElementById('guide-live-preview-container');
+        if (newPreviewEl && savedPreviewScroll) {
+          newPreviewEl.scrollTop = savedPreviewScroll;
         }
-      }, 50);
+      });
     }
 
     // --- UTILITY E RENDERING MODULARE PANNELLO ADMIN (ACCORDION) ---
@@ -5995,7 +6090,7 @@
           let matchesCategory = true;
           if (selectedCategory === 'preferiti') {
             matchesCategory = bookmarks.includes(guide.id);
-          } else if (selectedCategory !== 'all') {
+          } else if (selectedCategory !== 'all' && selectedCategory !== 'all_guides') {
             const guideCats = guide.categories || (guide.category ? [guide.category] : []);
             matchesCategory = guideCats.includes(selectedCategory);
           }
@@ -6101,13 +6196,15 @@
           return;
         }
 
+        const isFolderView = (selectedCategory === 'all' && searchQuery.trim() === '');
+
         container.innerHTML = `
           <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start w-full">
             
-            
+            <!-- Sidebar Sinistra -->
             <div class="lg:col-span-3 space-y-6">
               
-              
+              <!-- Card Cerca Guida -->
               <div class="bg-space-card p-5 rounded-2xl border border-slate-800 shadow-xl space-y-3 neon-shadow-purple">
                 <h2 class="text-xs font-bold text-slate-400 uppercase tracking-widest">
                   Cerca Guida
@@ -6125,58 +6222,60 @@
                 </div>
               </div>
 
-              
-              <div class="bg-space-card p-5 rounded-2xl border border-slate-800 shadow-xl space-y-3.5 neon-shadow-blue">
-                <h2 class="text-xs font-extrabold text-slate-400 uppercase tracking-widest">
-                  Filtra per Categoria
-                </h2>
-                <div class="flex flex-wrap gap-2">
-                  <button
-                    onclick="selectedCategory = 'all'; renderApp();"
-                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer border ${
-                      selectedCategory === 'all'
-                        ? 'bg-fluo-blue text-black border-fluo-blue shadow-[0_0_12px_rgba(0,240,255,0.3)]'
-                        : 'bg-slate-900/80 hover:bg-slate-850 text-slate-300 border-slate-800/80 hover:border-slate-700/80'
-                    }"
-                  >
-                    <span>Tutte</span>
-                    <span class="px-1.5 py-0.5 bg-black/30 text-[10px] rounded-full font-mono">${getCategoryCount('all')}</span>
-                  </button>
+              <!-- Card Filtra per Categoria (Appare SOLO all'interno delle cartelle) -->
+              ${!isFolderView ? `
+                <div class="bg-space-card p-5 rounded-2xl border border-slate-800 shadow-xl space-y-3.5 neon-shadow-blue">
+                  <h2 class="text-xs font-extrabold text-slate-400 uppercase tracking-widest">
+                    Filtra per Categoria
+                  </h2>
+                  <div class="flex flex-wrap gap-2">
+                    <button
+                      onclick="selectedCategory = 'all_guides'; renderApp();"
+                      class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer border ${
+                        (selectedCategory === 'all' || selectedCategory === 'all_guides')
+                          ? 'bg-fluo-blue text-black border-fluo-blue shadow-[0_0_12px_rgba(0,240,255,0.3)]'
+                          : 'bg-slate-900/80 hover:bg-slate-850 text-slate-300 border-slate-800/80 hover:border-slate-700/80'
+                      }"
+                    >
+                      <span>Tutte</span>
+                      <span class="px-1.5 py-0.5 bg-black/30 text-[10px] rounded-full font-mono">${getCategoryCount('all')}</span>
+                    </button>
 
-                  ${categories.map(cat => {
-                    const isActive = selectedCategory === cat.id;
-                    const catStyles = getCategoryStyles(cat.color);
-                    return `
-                      <button
-                        onclick="selectedCategory = '${cat.id}'; renderApp();"
-                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer border"
-                        style="${
-                          isActive
-                            ? `background-color: #1e293b; color: #ffffff; border-color: ${catStyles.colorCode}; box-shadow: 0 0 10px ${catStyles.colorCode}25;`
-                            : 'background-color: rgba(15,23,42,0.8); color: #cbd5e1; border-color: rgba(30,41,59,0.8);'
-                        }"
-                      >
-                        <span class="w-2 h-2 rounded-full" style="background-color: ${catStyles.colorCode}"></span>
-                        <span>${cat.label}</span>
-                        <span class="px-1.5 py-0.5 bg-black/30 text-[10px] rounded-full font-mono">${getCategoryCount(cat.id)}</span>
-                      </button>
-                    `;
-                  }).join('')}
+                    ${categories.map(cat => {
+                      const isActive = selectedCategory === cat.id;
+                      const catStyles = getCategoryStyles(cat.color);
+                      return `
+                        <button
+                          onclick="selectedCategory = '${cat.id}'; renderApp();"
+                          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer border"
+                          style="${
+                            isActive
+                              ? `background-color: #1e293b; color: #ffffff; border-color: ${catStyles.colorCode}; box-shadow: 0 0 10px ${catStyles.colorCode}25;`
+                              : 'background-color: rgba(15,23,42,0.8); color: #cbd5e1; border-color: rgba(30,41,59,0.8);'
+                          }"
+                        >
+                          <span class="w-2 h-2 rounded-full" style="background-color: ${catStyles.colorCode}"></span>
+                          <span>${cat.label}</span>
+                          <span class="px-1.5 py-0.5 bg-black/30 text-[10px] rounded-full font-mono">${getCategoryCount(cat.id)}</span>
+                        </button>
+                      `;
+                    }).join('')}
 
-                  <button
-                    onclick="selectedCategory = 'preferiti'; renderApp();"
-                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer border ${
-                      selectedCategory === 'preferiti'
-                        ? 'bg-amber-500 text-white border-amber-500 shadow-[0_0_12px_rgba(245,158,11,0.3)]'
-                        : 'bg-slate-900/80 hover:bg-slate-850 text-slate-300 border-slate-800/80 hover:border-slate-700/80'
-                    }"
-                  >
-                    <i data-lucide="star" class="w-3.5 h-3.5 text-amber-400 fill-current"></i>
-                    <span>Preferiti</span>
-                    <span class="px-1.5 py-0.5 bg-black/30 text-[10px] rounded-full font-mono">${getCategoryCount('preferiti')}</span>
-                  </button>
+                    <button
+                      onclick="selectedCategory = 'preferiti'; renderApp();"
+                      class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer border ${
+                        selectedCategory === 'preferiti'
+                          ? 'bg-amber-500 text-white border-amber-500 shadow-[0_0_12px_rgba(245,158,11,0.3)]'
+                          : 'bg-slate-900/80 hover:bg-slate-850 text-slate-300 border-slate-800/80 hover:border-slate-700/80'
+                      }"
+                    >
+                      <i data-lucide="star" class="w-3.5 h-3.5 text-amber-400 fill-current"></i>
+                      <span>Preferiti</span>
+                      <span class="px-1.5 py-0.5 bg-black/30 text-[10px] rounded-full font-mono">${getCategoryCount('preferiti')}</span>
+                    </button>
+                  </div>
                 </div>
-              </div>
+              ` : ''}
 
               <!-- Card Chi siamo? -->
               <div class="p-5 bg-space-card border border-slate-800 rounded-2xl text-slate-200 shadow-md relative overflow-hidden space-y-3">
@@ -6195,7 +6294,7 @@
                 </button>
               </div>
 
-              
+              <!-- Card Serve Aiuto? -->
               <div class="p-5 bg-space-card border border-slate-800 rounded-2xl text-slate-200 shadow-md relative overflow-hidden space-y-3">
                 <h2 class="text-xs font-extrabold uppercase tracking-widest text-fluo-green flex items-center gap-1.5">
                   <i data-lucide="help-circle" class="w-4 h-4 text-fluo-green"></i>
@@ -6216,111 +6315,284 @@
 
             </div>
 
-            
+            <!-- Area Principale -->
             <div class="lg:col-span-9 space-y-6">
               
-              <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                <h2 class="text-base font-extrabold text-white">
-                  ${selectedCategory === 'preferiti' 
-                    ? 'I Miei Preferiti' 
-                    : selectedCategory === 'all' 
-                      ? 'Tutte le Guide' 
-                      : categories.find(c => c.id === selectedCategory)?.label || 'Elenco Guide'}
-                </h2>
-                <span id="guides-count-badge" class="text-xs text-slate-400 font-semibold font-mono font-sans">
-                  Trovate ${filteredGuides.length} guide
-                </span>
-              </div>
-
-              <div id="guides-list-grid-wrapper">
-                ${filteredGuides.length === 0 ? `
-                  <div class="bg-space-card border border-slate-900/60 rounded-3xl p-12 text-center space-y-4 font-sans">
-                    <i data-lucide="folder-open" class="w-12 h-12 text-slate-600 mx-auto font-sans"></i>
-                    <p class="text-slate-400 text-sm font-semibold">Nessuna guida corrisponde ai filtri selezionati.</p>
-                    <button onclick="selectedCategory='all'; searchQuery=''; renderApp();" class="text-xs text-fluo-purple hover:underline font-bold cursor-pointer">Resetta tutti i filtri</button>
-                  </div>
-                ` : `
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    ${filteredGuides.map(guide => {
-                      const guideCats = guide.categories || (guide.category ? [guide.category] : []);
-                      const primaryCatId = guideCats[0] || 'gameplay';
-                      const primaryCatObj = categories.find(c => c.id === primaryCatId) || { label: 'Generale', color: 'purple' };
-                      const primaryCatStyles = getCategoryStyles(primaryCatObj.color);
-                      const isBookmarked = bookmarks.includes(guide.id);
-
-                      const badgesHtml = guideCats.map(catId => {
-                        const catObj = categories.find(c => c.id === catId);
-                        if (!catObj) return '';
-                        const catStyles = getCategoryStyles(catObj.color);
-                        return `<span class="text-[9px] font-bold px-2 py-0.5 rounded-full border ${catStyles.badge}">${catObj.label}</span>`;
-                      }).join('');
-                      
-                      return `
-                        <div
-                          onclick="navigateToGuide('${guide.id}')"
-                          class="bg-space-card rounded-2xl border border-slate-800/80 p-6 sm:p-6.5 cursor-pointer hover:border-slate-700/80 transition-all duration-300 hover:-translate-y-1 shadow-md hover:shadow-2xl flex flex-col justify-between group relative overflow-hidden min-h-[260px] sm:min-h-[270px] h-full"
-                        >
-                          <div class="space-y-3.5">
-                            
-                            <div class="flex items-center justify-between gap-2 overflow-hidden">
-                              <div class="flex flex-wrap gap-1 items-center overflow-hidden">
-                                ${badgesHtml}
-                              </div>
-                              
-                              <button
-                                onclick="handleToggleBookmark('${guide.id}', event)"
-                                class="text-slate-500 hover:text-amber-400 p-1 rounded-lg hover:bg-slate-900 transition-colors cursor-pointer shrink-0"
-                                title="${isBookmarked ? 'Rimuovi dai preferiti' : 'Aggiungi ai preferiti'}"
-                              >
-                               <i data-lucide="star" class="w-4 h-4 ${isBookmarked ? 'text-amber-400 fill-current' : ''}"></i>
-                              </button>
-                            </div>
-
-                            
-                            <h3 class="text-base md:text-lg font-black text-slate-100 group-hover:text-white transition-colors line-clamp-2 leading-tight">
-                              ${guide.title}
-                            </h3>
-
-                            
-                            <p class="text-xs text-slate-400 line-clamp-3 leading-relaxed font-sans">
-                              ${guide.description.replace(/\[image\]\(.*?\)/g, '[Immagine]')}
-                            </p>
-                          </div>
-
-                          
-                          <div class="pt-4 mt-4 border-t border-slate-800/70 flex items-center justify-between text-[11px] gap-3">
-                            <div class="flex flex-col gap-1.5 min-w-0 flex-1 overflow-hidden pr-1">
-                              ${getGuideAuthorsList(guide).length > 0 ? `
-                                <div class="flex flex-wrap items-center gap-1.5 overflow-hidden">
-                                  ${getGuideAuthorsList(guide).map(author => `
-                                    <span class="text-[10px] sm:text-[11px] font-sans font-medium flex items-center gap-1 relative group/list-author-2" title="${author.level || 'Autore'}">
-                                      <span style="color: ${author.color || '#cbd5e1'}">
-                                        <button onclick="event.stopPropagation(); viewCreatorCard('${author.name.replace(/'/g, "\\'")}', '${(author.link || '').replace(/'/g, "\\'")}')" class="hover:underline hover:text-fluo-purple transition-all cursor-pointer font-bold text-left bg-transparent border-0 p-0 text-inherit outline-none font-sans">
-                                          ${author.name}
-                                        </button>
-                                      </span>
-                                      <span class="text-[9px] select-none" style="color: ${author.diamondColor || '#26ff5e'}">◆</span>
-                                      <span class="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-1.5 py-0.5 bg-slate-950 border border-slate-850 text-[9px] text-slate-300 rounded opacity-0 group-hover/list-author-2:opacity-100 transition-opacity whitespace-nowrap shadow-md z-30 font-sans">
-                                        ${author.level || 'Autore'}
-                                      </span>
-                                    </span>
-                                  `).join('')}
-                                </div>
-                              ` : ''}
-
-                            </div>
-                            
-                            <span class="text-fluo-purple font-bold flex items-center gap-1 group-hover:text-white transition-colors shrink-0 text-xs pl-1">
-                              Leggi Guida
-                              <i data-lucide="chevron-right" class="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform"></i>
-                            </span>
-                          </div>
+              ${(() => {
+                if (isFolderView) {
+                  // VISTA PRINCIPALE: Solo Griglia Cartelle Categorie (Nessuna guida sotto)
+                  return `
+                    <div class="space-y-4">
+                      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <div class="flex items-center gap-2">
+                          <i data-lucide="folder" class="w-5 h-5 text-fluo-purple"></i>
+                          <h2 class="text-sm font-extrabold text-white uppercase tracking-wider">Cartelle Categorie</h2>
                         </div>
-                      `;
-                    }).join('')}
+                        <span class="text-xs text-slate-400 font-sans">Seleziona una cartella per accedere alle guide</span>
+                      </div>
+
+                      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3.5 pt-1">
+                        
+                        <!-- Cartella: Tutte -->
+                        ${(() => {
+                          const count = getCategoryCount('all');
+                          return `
+                            <div
+                              onclick="selectedCategory = 'all_guides'; searchQuery = ''; renderApp();"
+                              class="group cursor-pointer transition-all duration-200 hover:-translate-y-0.5 flex flex-col h-full"
+                            >
+                              <!-- Linguette Cartella -->
+                              <div class="flex items-end w-full relative -mb-px z-10 pr-3">
+                                <!-- Linguetta Principale -->
+                                <div class="px-3 py-1 rounded-t-lg bg-space-card border-t border-x border-slate-800 group-hover:border-slate-700 relative z-10 flex items-center justify-center text-cyan-400 transition-colors shrink-0">
+                                  <i data-lucide="folder" class="w-3.5 h-3.5"></i>
+                                </div>
+                                <!-- Seconda Linguetta (lunga quasi quanto il riquadro della cartella) -->
+                                <div class="flex-1 h-[18px] rounded-t-lg border-t border-x -ml-1.5 relative z-0 transition-colors block" style="background-color: rgba(0, 240, 255, 0.25); border-color: rgba(0, 240, 255, 0.6);"></div>
+                              </div>
+
+                              <!-- Corpo Cartella -->
+                              <div class="bg-space-card rounded-b-xl rounded-tr-xl rounded-tl-none border border-slate-800 group-hover:border-slate-700 p-4.5 sm:p-5 transition-all duration-200 flex flex-col justify-between min-h-[130px] sm:min-h-[140px] h-full shadow-md relative z-0">
+                                <div class="space-y-2">
+                                  <div class="flex items-center justify-between gap-1.5">
+                                    <div class="p-1.5 rounded-md bg-cyan-500/10 text-cyan-400">
+                                      <i data-lucide="folder" class="w-4 h-4"></i>
+                                    </div>
+                                    <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-slate-950 text-slate-300 border border-slate-800">
+                                      ${count} ${count === 1 ? 'guida' : 'guide'}
+                                    </span>
+                                  </div>
+                                  <h3 class="text-sm sm:text-base font-extrabold text-slate-100 group-hover:text-white transition-colors line-clamp-1 uppercase tracking-wide">
+                                    Tutte
+                                  </h3>
+                                </div>
+
+                                <div class="pt-2 flex items-center justify-between text-[10px] font-semibold text-slate-400 group-hover:text-slate-200 transition-colors">
+                                  <span>Apri</span>
+                                  <i data-lucide="arrow-right" class="w-4 h-4 stroke-[3] text-cyan-400 group-hover:translate-x-1 transition-all"></i>
+                                </div>
+                              </div>
+                            </div>
+                          `;
+                        })()}
+
+                        <!-- Cartelle Categorie Singole -->
+                        ${categories.map(cat => {
+                          const catStyles = getCategoryStyles(cat.color);
+                          const count = getCategoryCount(cat.id);
+                          return `
+                            <div
+                              onclick="selectedCategory = '${cat.id}'; searchQuery = ''; renderApp();"
+                              class="group cursor-pointer transition-all duration-200 hover:-translate-y-0.5 flex flex-col h-full"
+                            >
+                              <!-- Linguette Cartella -->
+                              <div class="flex items-end w-full relative -mb-px z-10 pr-3">
+                                <!-- Linguetta Principale -->
+                                <div class="px-3 py-1 rounded-t-lg bg-space-card border-t border-x border-slate-800 group-hover:border-slate-700 relative z-10 flex items-center justify-center transition-colors shrink-0" style="color: ${catStyles.colorCode};">
+                                  <i data-lucide="folder" class="w-3.5 h-3.5"></i>
+                                </div>
+                                <!-- Seconda Linguetta (lunga quasi quanto il riquadro della cartella) -->
+                                <div class="flex-1 h-[18px] rounded-t-lg border-t border-x -ml-1.5 relative z-0 transition-colors block" style="background-color: ${catStyles.colorCode}35; border-color: ${catStyles.colorCode}90;"></div>
+                              </div>
+
+                              <!-- Corpo Cartella -->
+                              <div class="bg-space-card rounded-b-xl rounded-tr-xl rounded-tl-none border border-slate-800 group-hover:border-slate-700 p-4.5 sm:p-5 transition-all duration-200 flex flex-col justify-between min-h-[130px] sm:min-h-[140px] h-full shadow-md relative z-0">
+                                <div class="space-y-2">
+                                  <div class="flex items-center justify-between gap-1.5">
+                                    <div class="p-1.5 rounded-md" style="background-color: ${catStyles.colorCode}15; color: ${catStyles.colorCode};">
+                                      <i data-lucide="folder" class="w-4 h-4"></i>
+                                    </div>
+                                    <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-slate-950 text-slate-300 border border-slate-800">
+                                      ${count} ${count === 1 ? 'guida' : 'guide'}
+                                    </span>
+                                  </div>
+                                  <h3 class="text-sm sm:text-base font-extrabold text-slate-100 group-hover:text-white transition-colors line-clamp-1 uppercase tracking-wide">
+                                    ${cat.label}
+                                  </h3>
+                                </div>
+
+                                <div class="pt-2 flex items-center justify-between text-[10px] font-semibold text-slate-400 group-hover:text-slate-200 transition-colors">
+                                  <span>Apri</span>
+                                  <i data-lucide="arrow-right" class="w-4 h-4 stroke-[3] group-hover:translate-x-1 transition-all" style="color: ${catStyles.colorCode};"></i>
+                                </div>
+                              </div>
+                            </div>
+                          `;
+                        }).join('')}
+
+                        <!-- Cartella: Preferiti -->
+                        ${(() => {
+                          const count = getCategoryCount('preferiti');
+                          return `
+                            <div
+                              onclick="selectedCategory = 'preferiti'; searchQuery = ''; renderApp();"
+                              class="group cursor-pointer transition-all duration-200 hover:-translate-y-0.5 flex flex-col h-full"
+                            >
+                              <!-- Linguette Cartella -->
+                              <div class="flex items-end w-full relative -mb-px z-10 pr-3">
+                                <!-- Linguetta Principale -->
+                                <div class="px-3 py-1 rounded-t-lg bg-space-card border-t border-x border-slate-800 group-hover:border-slate-700 relative z-10 flex items-center justify-center text-amber-400 transition-colors shrink-0">
+                                  <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+                                </div>
+                                <!-- Seconda Linguetta (lunga quasi quanto il riquadro della cartella) -->
+                                <div class="flex-1 h-[18px] rounded-t-lg border-t border-x -ml-1.5 relative z-0 transition-colors block" style="background-color: rgba(245, 158, 11, 0.25); border-color: rgba(245, 158, 11, 0.6);"></div>
+                              </div>
+
+                              <!-- Corpo Cartella -->
+                              <div class="bg-space-card rounded-b-xl rounded-tr-xl rounded-tl-none border border-slate-800 group-hover:border-slate-700 p-4.5 sm:p-5 transition-all duration-200 flex flex-col justify-between min-h-[130px] sm:min-h-[140px] h-full shadow-md relative z-0">
+                                <div class="space-y-2">
+                                  <div class="flex items-center justify-between gap-1.5">
+                                    <div class="p-1.5 rounded-md text-amber-400 bg-amber-500/10">
+                                      <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                    </div>
+                                    <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-slate-950 text-amber-300 border border-slate-800">
+                                      ${count} ${count === 1 ? 'guida' : 'guide'}
+                                    </span>
+                                  </div>
+                                  <h3 class="text-sm sm:text-base font-extrabold text-slate-100 group-hover:text-white transition-colors line-clamp-1 uppercase tracking-wide">
+                                    I Miei Preferiti
+                                  </h3>
+                                </div>
+
+                                <div class="pt-2 flex items-center justify-between text-[10px] font-semibold text-slate-400 group-hover:text-slate-200 transition-colors">
+                                  <span>Apri</span>
+                                  <i data-lucide="arrow-right" class="w-4 h-4 stroke-[3] text-amber-400 group-hover:translate-x-1 transition-all"></i>
+                                </div>
+                              </div>
+                            </div>
+                          `;
+                        })()}
+
+                      </div>
+
+                      <div class="p-6 bg-space-card/40 border border-slate-800/60 rounded-2xl text-center space-y-1 mt-6">
+                        <p class="text-xs text-slate-400 font-medium">Clicca su una cartella qui sopra per esplorare le relative guide.</p>
+                      </div>
+                    </div>
+                  `;
+                }
+
+                // VISTA SPECIFICA CARTELLA: Cartelle Scomparse, solo Guide con Titolo "Guide: Nome Tag"
+                let folderName = 'Elenco';
+                if (selectedCategory === 'preferiti') {
+                  folderName = 'Preferiti';
+                } else if (selectedCategory === 'all_guides') {
+                  folderName = 'Tutte';
+                } else if (selectedCategory !== 'all') {
+                  const catObj = categories.find(c => c.id === selectedCategory);
+                  folderName = catObj ? catObj.label : selectedCategory;
+                } else if (searchQuery.trim() !== '') {
+                  folderName = `Risultati per "${searchQuery}"`;
+                }
+
+                return `
+                  <div class="space-y-6">
+                    <!-- Top Bar con Pulsante Indietro e Titolo "Guide: Nome Tag" -->
+                    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-4">
+                      <div class="flex items-center gap-3">
+                        <button
+                          onclick="selectedCategory = 'all'; searchQuery = ''; renderApp();"
+                          class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-space-card hover:bg-slate-800 text-slate-300 hover:text-white rounded-xl border border-slate-800 text-xs font-bold transition-all cursor-pointer group shadow-sm"
+                        >
+                          <i data-lucide="arrow-left" class="w-3.5 h-3.5 stroke-[2.5] group-hover:-translate-x-0.5 transition-transform"></i>
+                          <span>Torna alle Cartelle</span>
+                        </button>
+                        <h2 class="text-base sm:text-lg font-black text-white flex items-center gap-2">
+                          <i data-lucide="folder-open" class="w-5 h-5 text-fluo-purple"></i>
+                          <span>Guide: ${folderName}</span>
+                        </h2>
+                      </div>
+                      <span id="guides-count-badge" class="text-xs text-slate-400 font-semibold font-mono">
+                        Trovate ${filteredGuides.length} ${filteredGuides.length === 1 ? 'guida' : 'guide'}
+                      </span>
+                    </div>
+
+                    <div id="guides-list-grid-wrapper">
+                      ${filteredGuides.length === 0 ? `
+                        <div class="bg-space-card border border-slate-900/60 rounded-3xl p-12 text-center space-y-4 font-sans">
+                          <i data-lucide="folder-open" class="w-12 h-12 text-slate-600 mx-auto font-sans"></i>
+                          <p class="text-slate-400 text-sm font-semibold">Nessuna guida trovata in questa cartella.</p>
+                          <button onclick="selectedCategory='all'; searchQuery=''; renderApp();" class="text-xs text-fluo-purple hover:underline font-bold cursor-pointer">Torna alle Cartelle</button>
+                        </div>
+                      ` : `
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          ${filteredGuides.map(guide => {
+                            const guideCats = guide.categories || (guide.category ? [guide.category] : []);
+                            const isBookmarked = bookmarks.includes(guide.id);
+
+                            const badgesHtml = guideCats.map(catId => {
+                              const catObj = categories.find(c => c.id === catId);
+                              if (!catObj) return '';
+                              const catStyles = getCategoryStyles(catObj.color);
+                              return `<span class="text-[9px] font-bold px-2 py-0.5 rounded-full border ${catStyles.badge}">${catObj.label}</span>`;
+                            }).join('');
+                            
+                            return `
+                              <div
+                                onclick="navigateToGuide('${guide.id}')"
+                                class="bg-space-card rounded-2xl border border-slate-800/80 p-6 sm:p-6.5 cursor-pointer hover:border-slate-700/80 transition-all duration-300 hover:-translate-y-1 shadow-md hover:shadow-2xl flex flex-col justify-between group relative overflow-hidden min-h-[260px] sm:min-h-[270px] h-full"
+                              >
+                                <div class="space-y-3.5">
+                                  
+                                  <div class="flex items-center justify-between gap-2 overflow-hidden">
+                                    <div class="flex flex-wrap gap-1 items-center overflow-hidden">
+                                      ${badgesHtml}
+                                    </div>
+                                    
+                                    <button
+                                      onclick="handleToggleBookmark('${guide.id}', event)"
+                                      class="text-slate-500 hover:text-amber-400 p-1 rounded-lg hover:bg-slate-900 transition-colors cursor-pointer shrink-0"
+                                      title="${isBookmarked ? 'Rimuovi dai preferiti' : 'Aggiungi ai preferiti'}"
+                                    >
+                                     <i data-lucide="star" class="w-4 h-4 ${isBookmarked ? 'text-amber-400 fill-current' : ''}"></i>
+                                    </button>
+                                  </div>
+
+                                  <h3 class="text-base md:text-lg font-black text-slate-100 group-hover:text-white transition-colors line-clamp-2 leading-tight">
+                                    ${guide.title}
+                                  </h3>
+
+                                  <p class="text-xs text-slate-400 line-clamp-3 leading-relaxed font-sans">
+                                    ${guide.description.replace(/\[image\]\(.*?\)/g, '[Immagine]')}
+                                  </p>
+                                </div>
+
+                                <div class="pt-4 mt-4 border-t border-slate-800/70 flex items-center justify-between text-[11px] gap-3">
+                                  <div class="flex flex-col gap-1.5 min-w-0 flex-1 overflow-hidden pr-1">
+                                    ${getGuideAuthorsList(guide).length > 0 ? `
+                                      <div class="flex flex-wrap items-center gap-1.5 overflow-hidden">
+                                        ${getGuideAuthorsList(guide).map(author => `
+                                          <span class="text-[10px] sm:text-[11px] font-sans font-medium flex items-center gap-1 relative group/list-author-2" title="${author.level || 'Autore'}">
+                                            <span style="color: ${author.color || '#cbd5e1'}">
+                                              <button onclick="event.stopPropagation(); viewCreatorCard('${author.name.replace(/'/g, "\\'")}', '${(author.link || '').replace(/'/g, "\\'")}')" class="hover:underline hover:text-fluo-purple transition-all cursor-pointer font-bold text-left bg-transparent border-0 p-0 text-inherit outline-none font-sans">
+                                                ${author.name}
+                                              </button>
+                                            </span>
+                                            <span class="text-[9px] select-none" style="color: ${author.diamondColor || '#26ff5e'}">◆</span>
+                                            <span class="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-1.5 py-0.5 bg-slate-950 border border-slate-850 text-[9px] text-slate-300 rounded opacity-0 group-hover/list-author-2:opacity-100 transition-opacity whitespace-nowrap shadow-md z-30 font-sans">
+                                              ${author.level || 'Autore'}
+                                            </span>
+                                          </span>
+                                        `).join('')}
+                                      </div>
+                                    ` : ''}
+
+                                  </div>
+                                  
+                                  <span class="text-fluo-purple font-bold flex items-center gap-1 group-hover:text-white transition-colors shrink-0 text-xs pl-1">
+                                    Leggi Guida
+                                    <i data-lucide="chevron-right" class="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform"></i>
+                                  </span>
+                                </div>
+                              </div>
+                            `;
+                          }).join('')}
+                        </div>
+                      `}
+                    </div>
                   </div>
-                `}
-              </div>
+                `;
+              })()}
 
             </div>
           </div>
@@ -6523,6 +6795,7 @@
                             href="${social.url.startsWith('http') ? social.url : 'https://' + social.url}"
                             target="_blank"
                             rel="noopener noreferrer"
+                            onclick="event.stopPropagation();"
                             class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold rounded-xl border transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
                             style="background-color: ${sColor}15; border-color: ${sColor}40; color: ${sColor};"
                             onmouseover="this.style.backgroundColor='${sColor}2a'; this.style.borderColor='${sColor}'; this.style.color='#ffffff';"
@@ -6538,7 +6811,7 @@
                         const s = getTagStyles(tag);
                         return `
                           <span 
-                            onclick="window.selectedCreatorTag = '${tag.replace(/'/g, "\\'")}'; renderApp();"
+                            onclick="event.stopPropagation(); window.selectedCreatorTag = '${tag.replace(/'/g, "\\'")}'; renderApp();"
                             class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-black border font-sans uppercase tracking-wider cursor-pointer hover:scale-105 transition-transform" 
                             style="color: ${s.colorCode}; border-color: ${s.colorCode}40; background-color: ${s.colorCode}10;"
                             title="Filtra per ${tag}"
@@ -6550,7 +6823,7 @@
                       }).join('');
 
                       return `
-                        <div id="creator-card-${creator.id || creator.name.toLowerCase().replace(/\s+/g, '-')}" class="bg-space-card rounded-2xl border border-slate-800 p-6 shadow-xl flex flex-col justify-between space-y-4 hover:border-slate-700 transition-all duration-300">
+                        <div id="creator-card-${creator.id || creator.name.toLowerCase().replace(/\s+/g, '-')}" onclick="triggerMerloPopup(this, '${creator.name.replace(/'/g, "\\'")}')" class="bg-space-card rounded-2xl border border-slate-800 p-6 shadow-xl flex flex-col justify-between space-y-4 hover:border-slate-700 transition-all duration-300 relative overflow-visible cursor-pointer">
                           <div class="space-y-4">
                             <!-- Profilo -->
                             <div class="flex items-center gap-4">
@@ -6569,10 +6842,12 @@
                                <div class="absolute inset-0 z-10 bg-transparent select-none" oncontextmenu="return false;" ondragstart="return false;"></div>
                              </div>
                               <div>
-                                <h3 class="text-base font-black tracking-tight flex items-center gap-1.5" style="color: ${creator.color || '#38bdf8'};">
-                                  <span style="color: ${creator.color || '#38bdf8'};">${creator.name}</span>
-                                  <span class="text-[10px] select-none" style="color: ${creator.diamondColor || creator.color || '#26ff5e'};">◆</span>
-                                </h3>
+                                <div class="creator-name-wrapper flex items-center flex-wrap gap-1.5 relative">
+                                  <h3 class="text-base font-black tracking-tight flex items-center gap-1.5" style="color: ${creator.color || '#38bdf8'};">
+                                    <span style="color: ${creator.color || '#38bdf8'};">${creator.name}</span>
+                                    <span class="text-[10px] select-none" style="color: ${creator.diamondColor || creator.color || '#26ff5e'};">◆</span>
+                                  </h3>
+                                </div>
                                 <p class="text-xs font-bold text-slate-400 font-sans">${creator.role || 'Autore'}</p>
                               </div>
                             </div>
