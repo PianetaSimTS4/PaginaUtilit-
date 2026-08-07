@@ -1226,7 +1226,7 @@
       "id": "guida-traduzioni-veloce",
       "title": "🇮🇹 COME INSTALLARE LE TRADUZIONI - GUIDA VELOCE",
       "description": "Una guida semplice e coincisa su come installare le traduzioni italiane per le mod di The SIms 4.",
-      "category": "mod_cc",
+      "category": "traduzioni",
       "tags": [
         "installazione",
         "traduzioni"
@@ -1326,7 +1326,6 @@
       ],
       "tips": [],
       "categories": [
-        "mod_cc",
         "traduzioni",
         "guide-veloci"
       ],
@@ -1354,7 +1353,7 @@
       "id": "guida-traduzioni-passopasso",
       "title": "🇮🇹 COME INSTALLARE LE TRADUZIONI - GUIDA PASSO PASSO",
       "description": "Una guida con immagini e con esempio pratico, per i meno esperti, su come installare le traduzioni italiane per le mod di The Sims 4.",
-      "category": "mod_cc",
+      "category": "traduzioni",
       "tags": [
         "traduzioni",
         "installazione"
@@ -1426,7 +1425,6 @@
       ],
       "tips": [],
       "categories": [
-        "mod_cc",
         "traduzioni",
         "guide-passo-passo"
       ],
@@ -2498,6 +2496,91 @@
           "level": "Admin & Traduttrice",
           "color": "#38bdf8",
           "diamondColor": "#38bdf8",
+          "link": "#collaboratori"
+        }
+      ],
+      "authorDiamondColor": "#ffffff",
+      "authorLevel": "Fondatrice & Traduttrice",
+      "authorLink": "#collaboratori",
+      "_rawTags": ""
+    },
+    {
+      "id": "guida-mccc",
+      "title": "INDICE GUIDE MC COMMAND CENTER ",
+      "description": "Raccolta delle guide riguardanti la Mc Command Center (MCCC) di Deaderpool",
+      "category": "mccc",
+      "categories": [
+        "mccc"
+      ],
+      "tags": [],
+      "content": [
+        {
+          "type": "heading2",
+          "value": "[color:#ef4444](**COS'È LA MCCC?**)"
+        },
+        {
+          "type": "paragraph",
+          "value": "[Mc Command Center](https://deaderpool-mccc.com/downloads.html)  è una mod creata da Deaderpool, che offre un ampio controllo sul gameplay, permettendo di gestire le impostazioni del gioco, le dinamiche familiari, trucchi utili e molte altre funzionalità avanzate.",
+          "borderColor": "#ef4444"
+        },
+        {
+          "type": "paragraph",
+          "value": "**[color:#eab308](NON SAI COME INSTALLARE LA MOD? )**\n**[color:#eab308](LEGGI LA NOSTRA GUIDA)**",
+          "align": "center"
+        },
+        {
+          "type": "button",
+          "value": "GUIDA INSTALLAZIONE MOD",
+          "buttonUrl": "https://pianetasimts4.github.io/PaginaUtilit-/#guida-installazione-mod-veloce",
+          "buttonColor": "#eab308"
+        },
+        {
+          "type": "divider",
+          "value": "",
+          "separatorType": "spacer",
+          "dividerType": "color",
+          "height": "20"
+        },
+        {
+          "type": "heading1",
+          "value": "INDICE GUIDE",
+          "color": "#b026ff",
+          "align": "left",
+          "italic": false
+        },
+        {
+          "type": "list",
+          "value": "[**[color:#ec4899](ATTIVAZIONE TRUCCHI)**](https://google.it)",
+          "listType": "bullet"
+        },
+        {
+          "type": "divider",
+          "value": "",
+          "separatorType": "spacer",
+          "dividerType": "standard",
+          "height": "24"
+        },
+        {
+          "type": "paragraph",
+          "value": "[color:#38bdf8](**SE HAI DUBBI O DIFFICOLTÀ, PUOI RICHIEDE ASSISTENZA NEL GRUPPO TELEGRAM**)",
+          "align": "center"
+        },
+        {
+          "type": "button",
+          "value": "ASSISTENZA TELEGRAM",
+          "buttonUrl": "https://t.me/TheSims4ItaliaPianetaSim",
+          "buttonColor": "#38bdf8"
+        }
+      ],
+      "tips": [],
+      "authorName": "LadyPsycoTrilly",
+      "authorColor": "#b026ff",
+      "authors": [
+        {
+          "name": "LadyPsycoTrilly",
+          "level": "Fondatrice & Traduttrice",
+          "color": "#b026ff",
+          "diamondColor": "#ffffff",
           "link": "#collaboratori"
         }
       ],
