@@ -7,6 +7,18 @@
   <link rel="icon" type="image/png" href="images/logo.png">
   
   
+  <!-- Performance Resource Hints -->
+  <link rel="dns-prefetch" href="https://cdn.tailwindcss.com">
+  <link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin>
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="https://unpkg.com">
+  <link rel="preconnect" href="https://unpkg.com" crossorigin>
+
+  <link rel="preload" href="images/logo.png" as="image" fetchpriority="high">
+
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -47,12 +59,8 @@
   
   <script>
     var logoPaths = [
-      '/images/logo.png',
       'images/logo.png',
-      '/logo.png',
-      'logo.png',
-      '/public/images/logo.png',
-      'public/images/logo.png'
+      '/images/logo.png'
     ];
     var logoIndex = 0;
 
@@ -65,12 +73,12 @@
         console.warn("Logo path failed, trying fallback: " + logoPaths[logoIndex]);
         img.src = logoPaths[logoIndex];
       } else {
-        console.warn("All logo paths failed to load. Retrying from main logo.png in 2 seconds...");
+        console.warn("All logo paths failed to load. Retrying from main images/logo.png in 2 seconds...");
         logoIndex = 0;
         setTimeout(function() {
           var currentImg = document.getElementById('logo-img');
           if (currentImg) {
-            currentImg.src = "/images/logo.png?t=" + Date.now();
+            currentImg.src = "images/logo.png?t=" + Date.now();
           }
         }, 2000);
       }
@@ -108,8 +116,6 @@
     }
   </script>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap"></noscript>
 
@@ -260,6 +266,78 @@
       -ms-overflow-style: none;
       scrollbar-width: none;
     }
+
+    @keyframes merloBounceIn {
+      0% {
+        opacity: 0;
+        transform: translateY(30px) scale(0.2) rotate(-15deg);
+      }
+      60% {
+        opacity: 1;
+        transform: translateY(-10px) scale(1.15) rotate(5deg);
+      }
+      80% {
+        transform: translateY(2px) scale(0.95) rotate(-2deg);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1) rotate(0deg);
+      }
+    }
+
+    @keyframes merloBounceOut {
+      0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(25px) scale(0.1) rotate(15deg);
+      }
+    }
+
+    @keyframes floatNote {
+      0% {
+        opacity: 0;
+        transform: translateY(0) scale(0.6) rotate(0deg);
+      }
+      50% {
+        opacity: 1;
+        transform: translateY(-15px) scale(1.2) rotate(-12deg);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-30px) scale(0.8) rotate(15deg);
+      }
+    }
+
+    .animate-merlo-bounce {
+      animation: merloBounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    .animate-merlo-fadeout {
+      animation: merloBounceOut 0.4s ease-in forwards;
+    }
+
+    .animate-float-note {
+      animation: floatNote 1.6s ease-out infinite;
+    }
+
+    .animate-float-note-delayed {
+      animation: floatNote 1.6s ease-out 0.8s infinite;
+    }
+
+    /* Performance Optimizations */
+    .fast-render-card {
+      content-visibility: auto;
+      contain-intrinsic-size: 1px 200px;
+    }
+
+    #constellations-canvas, .space-bg {
+      will-change: transform;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+    }
   </style>
 </head>
 <body class="flex flex-col min-h-full selection:bg-fluo-green selection:text-black">
@@ -281,7 +359,7 @@
       
       <div class="flex items-center gap-3 cursor-pointer select-none" onclick="switchTab('guides')">
         <div id="logo-container" class="h-10 w-10 shrink-0 flex items-center justify-center">
-          <img id="logo-img" src="/images/logo.png" alt="PianetaSim Logo" class="h-10 w-10 object-contain shrink-0" onerror="tryNextLogo()">
+          <img id="logo-img" src="images/logo.png" alt="PianetaSim Logo" width="40" height="40" fetchpriority="high" loading="eager" class="h-10 w-10 object-contain shrink-0" onerror="tryNextLogo()">
         </div>
         <div id="logo-fallback" class="flex items-center">
           <div class="font-black text-xl tracking-wider text-white m-0">PIANETA<span class="animate-sim-color">SIM</span></div>
@@ -289,35 +367,36 @@
       </div>
 
       
-      <nav class="flex items-center gap-2 sm:gap-3 overflow-x-auto max-w-full pb-1 sm:pb-0 scrollbar-none">
+      <!-- Navigazione Desktop & Mobile responsive -->
+      <nav class="flex flex-wrap items-center justify-center sm:justify-start gap-1.5 sm:gap-2 lg:gap-2.5 max-w-full pb-1 sm:pb-0 scrollbar-none">
         <a
           id="btn-tab-home"
           href="https://pianetasimts.github.io/PianetaSim/index.html"
-          class="px-4 py-2 sm:px-5 sm:py-3 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-300 bg-slate-900/60 border border-slate-800 hover:text-white hover:border-fluo-green flex items-center justify-center shadow-sm"
+          class="px-2.5 py-1.5 sm:px-3 sm:py-2 lg:px-3.5 lg:py-2 rounded-full text-[11px] sm:text-xs lg:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-300 bg-slate-900/60 border border-slate-800 hover:text-white hover:border-fluo-green flex items-center justify-center shadow-sm shrink-0"
         >
           Home
         </a>
         <a
           href="https://pianetasimts.github.io/PianetaSim/mod.html"
-          class="px-4 py-2 sm:px-5 sm:py-3 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-300 bg-slate-900/60 border border-slate-800 hover:text-white hover:border-fluo-green flex items-center justify-center shadow-sm"
+          class="px-2.5 py-1.5 sm:px-3 sm:py-2 lg:px-3.5 lg:py-2 rounded-full text-[11px] sm:text-xs lg:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-300 bg-slate-900/60 border border-slate-800 hover:text-white hover:border-fluo-green flex items-center justify-center shadow-sm shrink-0"
         >
           Mod & Traduzioni
         </a>
         <a
           href="https://pianetasimts.github.io/PianetaSim/mod18.html"
-          class="px-4 py-2 sm:px-5 sm:py-3 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-300 bg-slate-900/60 border border-slate-800 hover:text-white hover:border-fluo-green flex items-center justify-center shadow-sm"
+          class="px-2.5 py-1.5 sm:px-3 sm:py-2 lg:px-3.5 lg:py-2 rounded-full text-[11px] sm:text-xs lg:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-300 bg-slate-900/60 border border-slate-800 hover:text-white hover:border-fluo-green flex items-center justify-center shadow-sm shrink-0"
         >
           Mod & Traduzioni 18+
         </a>
         <a
           href="https://pianetasimts.github.io/PianetaSim/animazioniww18.html"
-          class="px-4 py-2 sm:px-5 sm:py-3 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-300 bg-slate-900/60 border border-slate-800 hover:text-white hover:border-fluo-green flex items-center justify-center shadow-sm"
+          class="px-2.5 py-1.5 sm:px-3 sm:py-2 lg:px-3.5 lg:py-2 rounded-full text-[11px] sm:text-xs lg:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-300 bg-slate-900/60 border border-slate-800 hover:text-white hover:border-fluo-green flex items-center justify-center shadow-sm shrink-0"
         >
           Animazioni
         </a>
         <a
           href="https://pianetasimts.github.io/PianetaSim/storie.html"
-          class="px-4 py-2 sm:px-5 sm:py-3 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-300 bg-slate-900/60 border border-slate-800 hover:text-white hover:border-fluo-green flex items-center justify-center shadow-sm"
+          class="px-2.5 py-1.5 sm:px-3 sm:py-2 lg:px-3.5 lg:py-2 rounded-full text-[11px] sm:text-xs lg:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-300 bg-slate-900/60 border border-slate-800 hover:text-white hover:border-fluo-green flex items-center justify-center shadow-sm shrink-0"
         >
           Racconti
         </a>
@@ -326,9 +405,18 @@
           role="button"
           tabindex="0"
           onclick="switchTab('guides')"
-          class="px-4 py-2 sm:px-5 sm:py-3 rounded-full text-xs sm:text-sm font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap bg-fluo-purple text-white shadow-[0_0_15px_rgba(176,38,255,0.55)] border border-fluo-purple/40 flex items-center justify-center"
+          class="px-2.5 py-1.5 sm:px-3 sm:py-2 lg:px-3.5 lg:py-2 rounded-full text-[11px] sm:text-xs lg:text-sm font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap bg-fluo-purple text-white shadow-[0_0_15px_rgba(176,38,255,0.55)] border border-fluo-purple/40 flex items-center justify-center shrink-0"
         >
           GUIDE & UTILITÀ
+        </div>
+        <div
+          id="btn-tab-creators"
+          role="button"
+          tabindex="0"
+          onclick="switchTab('creators')"
+          class="px-2.5 py-1.5 sm:px-3 sm:py-2 lg:px-3.5 lg:py-2 rounded-full text-[11px] sm:text-xs lg:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-300 bg-slate-900/60 border border-slate-800 hover:text-white hover:border-fluo-green flex items-center justify-center shadow-sm shrink-0"
+        >
+          CHI SIAMO?
         </div>
         
         <div
@@ -337,7 +425,7 @@
           tabindex="0"
           onclick="switchTab('admin')"
           title="Pannello Admin"
-          class="hidden w-10 h-10 rounded-full text-base font-bold transition-all cursor-pointer text-purple-300 hover:text-white bg-slate-900/60 border border-purple-900/50 hover:bg-purple-950/40 hover:border-fluo-purple/40 flex items-center justify-center shadow-sm shrink-0 hover:scale-105 active:scale-95"
+          class="hidden w-7 h-7 sm:w-8 sm:h-8 lg:w-9 lg:h-9 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer text-purple-300 hover:text-white bg-slate-900/60 border border-purple-900/50 hover:bg-purple-950/40 hover:border-fluo-purple/40 flex items-center justify-center shadow-sm shrink-0 hover:scale-105 active:scale-95"
         >
           👽
         </div>
@@ -646,12 +734,14 @@
 
     function getDefaultAuthorTags() {
       return [
-        { name: "Amministratore", color: "#ff007f" },
+        { name: "Admin", color: "#38bdf8" },
+        { name: "Fondatrice", color: "#ffffff" },
         { name: "Traduttore", color: "#b026ff" },
-        { name: "Guide Creator", color: "#38bdf8" },
         { name: "Moderatore", color: "#eab308" },
         { name: "Supporto Tecnico", color: "#22c55e" },
-        { name: "CC Expert", color: "#a855f7" }
+        { name: "Modder", color: "#ff007f" },
+        { name: "Utente", color: "#94a3b8" },
+        { name: "Programmatore", color: "#ef4444" }
       ];
     }
 
@@ -661,9 +751,9 @@
           id: "ladypsycotrilly",
           name: "LadyPsycoTrilly",
           role: "Amministratrice & Traduttrice",
-          avatar: "images/logo.png",
+          avatar: "images/FpLady.png",
           description: "Appassionata di The Sims da sempre. Cura il sito di PianetaSim, traduce le mod più popolari e scrive guide dettagliate sul gameplay e la personalizzazione del gioco.",
-          tags: ["Amministratore", "Traduttore", "Guide Creator"],
+          tags: ["Admin", "Traduttore", "Fondatrice"],
           socials: [
             { label: "Telegram", url: "https://t.me/TheSims4ItaliaPianetaSim" },
             { label: "Sito Web", url: "https://pianetasimts.github.io/PianetaSim/index.html" }
@@ -673,9 +763,9 @@
           id: "sha",
           name: "Sha",
           role: "Moderatrice & Aiuto Supporto",
-          avatar: "images/logo.png",
+          avatar: "images/FpSha.png",
           description: "Esperta di installazioni e risoluzione problemi delle Mod e del Custom Content. Fornisce supporto tecnico tempestivo e guide passo-passo semplici per tutti.",
-          tags: ["Moderatore", "Supporto Tecnico", "CC Expert"],
+          tags: ["Moderatore", "Supporto Tecnico", "Traduttore"],
           socials: [
             { label: "Telegram", url: "https://t.me/TheSims4ItaliaPianetaSim" }
           ]
@@ -711,7 +801,7 @@
     }
 
     
-    const catColorsList = ['nero', 'grigio', 'bianco', 'rosso', 'arancione', 'giallo', 'lime', 'verde', 'verdeacqua', 'azzurro', 'blu', 'viola', 'fucsia', 'rosa'];
+    const catColorsList = ['nero', 'grigio', 'bianco', 'rosso', 'arancione', 'giallo', 'lime', 'verde', 'verdeacqua', 'azzurro', 'blu', 'viola', 'lilla', 'fucsia', 'rosa'];
     
     const textColorsList = [
       '#ef4444', 
@@ -723,6 +813,7 @@
       '#38bdf8', 
       '#2563eb', 
       '#b026ff', 
+      '#c3b0e8', 
       '#ff007f', 
       '#ec4899', 
       '#ffffff', 
@@ -809,6 +900,12 @@
           text: 'text-purple-400',
           colorCode: '#b026ff'
         },
+        lilla: {
+          badge: 'bg-purple-500/10 text-violet-300 border-purple-500/30 hover:border-purple-500/50',
+          shadow: 'neon-shadow-purple',
+          text: 'text-violet-300',
+          colorCode: '#c3b0e8'
+        },
         fucsia: {
           badge: 'bg-fuchsia-500/10 text-fluo-fuchsia border-fluo-fuchsia/30 hover:border-fluo-fuchsia/50',
           shadow: 'neon-shadow-fuchsia',
@@ -835,7 +932,7 @@
       for (let i = 0; i < tagName.length; i++) {
         hash = tagName.charCodeAt(i) + ((hash << 5) - hash);
       }
-      const presets = ['viola', 'verde', 'azzurro', 'rosso', 'arancione', 'giallo', 'fucsia', 'rosa', 'lime', 'verdeacqua', 'blu'];
+      const presets = ['viola', 'lilla', 'verde', 'azzurro', 'rosso', 'arancione', 'giallo', 'fucsia', 'rosa', 'lime', 'verdeacqua', 'blu'];
       const index = Math.abs(hash) % presets.length;
       return getCategoryStyles(presets[index]);
     }
@@ -1147,6 +1244,21 @@
             }
           }
         }
+        case 'button_action': {
+          const btnColor = b.buttonColor || '#26ff5e';
+          const action = b.actionName || 'forceResetCache';
+          return `
+            <div class="my-6 text-center">
+              <button
+                onclick="window['${action}'] && window['${action}']()"
+                class="inline-flex items-center gap-2 px-5 py-2.5 hover:scale-[1.02] text-black font-black text-xs rounded-xl transition-all cursor-pointer shadow-[0_0_15px_rgba(38,255,94,0.35)]"
+                style="background-color: ${btnColor};"
+              >
+                <span>${value}</span>
+              </button>
+            </div>
+          `;
+        }
         case 'button': {
           const btnUrl = b.buttonUrl || '#';
           const btnColor = b.buttonColor || '#b026ff';
@@ -1445,6 +1557,79 @@
       draggedGuideId = null;
     }
 
+    // Drag and drop & move handlers for creator/collaborator reordering
+    let draggedCreatorId = null;
+
+    function handleCreatorDragStart(e, id) {
+      draggedCreatorId = id;
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', id);
+      const el = e.currentTarget;
+      el.classList.add('opacity-40', 'border-fluo-purple', 'bg-purple-950/20');
+    }
+
+    function handleCreatorDragOver(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      e.currentTarget.classList.add('border-dashed', 'border-fluo-purple', 'scale-[1.01]');
+    }
+
+    function handleCreatorDragLeave(e) {
+      e.currentTarget.classList.remove('border-dashed', 'border-fluo-purple', 'scale-[1.01]');
+    }
+
+    function handleCreatorDragEnd(e) {
+      e.currentTarget.classList.remove('opacity-40', 'border-fluo-purple', 'bg-purple-950/20', 'border-dashed', 'scale-[1.01]');
+    }
+
+    function handleCreatorDrop(e, targetId) {
+      e.preventDefault();
+      e.currentTarget.classList.remove('border-dashed', 'border-fluo-purple', 'scale-[1.01]');
+      
+      if (!draggedCreatorId || draggedCreatorId === targetId) return;
+      
+      const draggedIdx = creators.findIndex(c => c.id === draggedCreatorId);
+      const targetIdx = creators.findIndex(c => c.id === targetId);
+      
+      if (draggedIdx !== -1 && targetIdx !== -1) {
+        const [draggedItem] = creators.splice(draggedIdx, 1);
+        creators.splice(targetIdx, 0, draggedItem);
+        
+        persistDataLocally();
+        saveAllGuidesToServer();
+        renderApp();
+        showToast('Ordine dello staff salvato con successo! ↕️', 'success');
+      }
+      
+      draggedCreatorId = null;
+    }
+
+    function moveCreatorUp(id) {
+      const idx = creators.findIndex(c => c.id === id);
+      if (idx > 0) {
+        const temp = creators[idx];
+        creators[idx] = creators[idx - 1];
+        creators[idx - 1] = temp;
+        persistDataLocally();
+        saveAllGuidesToServer();
+        renderApp();
+        showToast('Ordine dello staff aggiornato!', 'success');
+      }
+    }
+
+    function moveCreatorDown(id) {
+      const idx = creators.findIndex(c => c.id === id);
+      if (idx !== -1 && idx < creators.length - 1) {
+        const temp = creators[idx];
+        creators[idx] = creators[idx + 1];
+        creators[idx + 1] = temp;
+        persistDataLocally();
+        saveAllGuidesToServer();
+        renderApp();
+        showToast('Ordine dello staff aggiornato!', 'success');
+      }
+    }
+
     // Global keyboard listener for Undo / Redo (Ctrl+Z / Ctrl+Y)
     window.addEventListener('keydown', (e) => {
       if (!window.editingGuide) return;
@@ -1471,7 +1656,7 @@
     let adminPassword = 'sticazzi';
     let siteTitle = '<span class="animate-title-color">Guide & Utilità</span>';
     let siteDescription = 'Benvenuto nella sezione delle guide di PianetaSim! Impara nuove tecniche di costruzione, installa mod tradotte e copia trucchi con un solo click.';
-    let siteLogo = '/images/logo.png?v=10';
+    let siteLogo = 'images/logo.png';
     let alertPopup = {
       enabled: false,
       title: 'Avviso Importante',
@@ -1529,51 +1714,62 @@
         return;
       }
       
-      const objectUrl = URL.createObjectURL(file);
-      const img = new Image();
-      img.onload = function() {
-        // Revoke the object URL immediately once the image is loaded into memory to free browser resources
-        URL.revokeObjectURL(objectUrl);
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const rawBase64 = evt.target.result;
         
-        // Defer CPU-heavy canvas scaling & encoding to keep the UI responsive and render the toast
-        setTimeout(() => {
-          const maxDim = 1200; // max dimension 1200px for high performance and excellent readability
+        // Se il file è piccolo (sotto i 300KB), non c'è bisogno di comprimere
+        if (file.size < 300 * 1024) {
+          callback(null, rawBase64);
+          return;
+        }
+        
+        // Comprimiamo l'immagine usando Canvas
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
           let width = img.width;
           let height = img.height;
           
-          if (width > maxDim || height > maxDim) {
+          // Limite dimensione massima di 1600px mantenendo le proporzioni
+          const MAX_DIM = 1600;
+          if (width > MAX_DIM || height > MAX_DIM) {
             if (width > height) {
-              height = Math.round((height * maxDim) / width);
-              width = maxDim;
+              height = Math.round((height * MAX_DIM) / width);
+              width = MAX_DIM;
             } else {
-              width = Math.round((width * maxDim) / height);
-              height = maxDim;
+              width = Math.round((width * MAX_DIM) / height);
+              height = MAX_DIM;
             }
           }
           
-          const canvas = document.createElement('canvas');
           canvas.width = width;
           canvas.height = height;
+          
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, width, height);
           
-          // Compress as JPEG with 0.85 quality - maintains very high text readability and fine details while keeping size compact
-          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.85);
+          // Conversione in JPEG di alta qualità (0.8) per massimizzare la compressione
+          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.8);
           callback(null, compressedBase64);
-        }, 50);
+        };
+        img.onerror = function() {
+          // In caso di errore nel caricamento in canvas, inviamo l'immagine originale
+          callback(null, rawBase64);
+        };
+        img.src = rawBase64;
       };
-      img.onerror = function() {
-        URL.revokeObjectURL(objectUrl);
-        callback(new Error("Errore nel caricamento dell'immagine per la compressione"), null);
+      reader.onerror = function(err) {
+        callback(new Error("Errore nel caricamento dell'immagine originale: " + (err ? err.message : '')), null);
       };
-      img.src = objectUrl;
+      reader.readAsDataURL(file);
     }
 
     function updateLogoSrc() {
       const container = document.getElementById('logo-container');
       if (container) {
-        const logoUrl = siteLogo || '/images/logo.png?v=10';
-        container.innerHTML = `<img id="logo-img" src="${logoUrl}" alt="PianetaSim Logo" class="h-10 w-10 object-contain shrink-0" onerror="tryNextLogo()" />`;
+        const logoUrl = siteLogo || 'images/logo.png';
+        container.innerHTML = `<img id="logo-img" src="${logoUrl}" alt="PianetaSim Logo" width="40" height="40" fetchpriority="high" class="h-10 w-10 object-contain shrink-0" onerror="tryNextLogo()" />`;
         logoIndex = 0;
         if (!logoPaths.includes(logoUrl)) {
           logoPaths.unshift(logoUrl);
@@ -1589,10 +1785,10 @@
         const file = e.target.files[0];
         if (!file) return;
 
-        showToast('Compressione e caricamento logo...', 'info');
+        showToast('Caricamento logo in alta qualità...', 'info');
         compressAndProcessImage(file, (err, base64Data) => {
           if (err) {
-            showToast('Errore nella compressione logo: ' + err.message, 'info');
+            showToast('Errore nel caricamento del logo: ' + err.message, 'info');
             return;
           }
           
@@ -1644,7 +1840,11 @@
             if (localImgs.length > 12) {
               localImgs = localImgs.slice(0, 12);
             }
-            localStorage.setItem('pianetasim-local-images', JSON.stringify(localImgs));
+            try {
+              localStorage.setItem('pianetasim-local-images', JSON.stringify(localImgs));
+            } catch (ex) {
+              console.warn("Spazio di archiviazione per le immagini di backup locali esaurito:", ex);
+            }
             
             fetchUploadedImages();
             updateLogoPath(base64Data);
@@ -1881,11 +2081,13 @@
       const end = textarea.selectionEnd;
       const text = textarea.value;
       const selected = text.substring(start, end);
-      const replacement = `[color:${colorHex}](${selected || 'testo colorato'})`;
+      const targetText = selected || 'testo colorato';
+      const prefix = `[color:${colorHex}](`;
+      const replacement = `${prefix}${targetText})`;
 
       textarea.value = text.substring(0, start) + replacement + text.substring(end);
       textarea.focus();
-      textarea.setSelectionRange(start + replacement.length, start + replacement.length);
+      textarea.setSelectionRange(start + prefix.length, start + prefix.length + targetText.length);
 
       const palette = document.getElementById(`color-palette-${id}`);
       if (palette) palette.classList.add('hidden');
@@ -1949,6 +2151,14 @@
       });
     }
 
+    window.forceResetCache = function() {
+      localStorage.removeItem('pianetasim-custom-data');
+      showToast("Cache locale svuotata! Ripristino in corso...", "info");
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    };
+
     
     document.addEventListener('DOMContentLoaded', () => {
       
@@ -1961,8 +2171,8 @@
              parsed.siteTitle = '<span class="animate-title-color">Guide & Utilità</span>';
              updated = true;
            }
-           if (parsed.siteLogo && parsed.siteLogo.includes('logo.png') && !parsed.siteLogo.includes('?v=10')) {
-             parsed.siteLogo = '/images/logo.png?v=10';
+           if (parsed.siteLogo && parsed.siteLogo.includes('logo.png')) {
+             parsed.siteLogo = 'images/logo.png';
              updated = true;
            }
            if (updated) {
@@ -1975,63 +2185,34 @@
       updateBookmarksCountBanner();
       
       
-      if (cachedData) {
-        try {
-          const parsed = JSON.parse(cachedData);
-          if (parsed.categories && parsed.guides) {
-            categories = parsed.categories;
-            guides = parsed.guides;
-            creators = parsed.creators || getDefaultCreators();
-            authorTags = parsed.authorTags || getDefaultAuthorTags();
-            migrateAllGuidesTips();
-            if (parsed.adminPassword) {
-              adminPassword = parsed.adminPassword;
-            }
-            if (parsed.siteTitle) {
-              siteTitle = parsed.siteTitle;
-              if (siteTitle.includes('Guide & Utilità') || siteTitle.includes('Tutto quello che devi sapere su The Sims 4') || siteTitle.includes('pin-glow') || siteTitle.includes('svg')) {
-                siteTitle = '<span class="animate-title-color">Guide & Utilità</span>';
-              }
-            }
-            if (parsed.siteDescription) siteDescription = parsed.siteDescription;
-            if (parsed.alertPopup) alertPopup = parsed.alertPopup;
-            if (parsed.siteLogo) {
-              siteLogo = parsed.siteLogo;
-              if (siteLogo.includes('logo.png')) {
-                siteLogo = '/images/logo.png?v=10';
-              }
-            }
-            updateLogoSrc();
-            handleHashRouting();
-            checkAndShowAlertPopup();
-            return;
-          }
-        } catch(e) {
-          console.error("Errore nel caricamento dei dati personalizzati da localStorage:", e);
-        }
-      }
-      
-      
+      // Try fetching fresh data from the server first.
+      // This ensures any newly updated guides, creators, or tags on the server are visible to returning users immediately.
       robustFetch('/guides.json?t=' + Date.now())
-        .then(response => response.json())
+        .then(response => {
+          if (!response.ok) throw new Error("Server response not ok");
+          return response.json();
+        })
         .then(data => {
-          if (data.categories && data.guides) {
+          if (data && data.categories && data.guides) {
             categories = data.categories;
             guides = data.guides;
             creators = data.creators || getDefaultCreators();
             authorTags = data.authorTags || getDefaultAuthorTags();
+            normalizeAuthorTagsAndCreators();
             if (data.adminPassword) adminPassword = data.adminPassword;
             if (data.siteTitle) siteTitle = data.siteTitle;
             if (data.siteDescription) siteDescription = data.siteDescription;
             if (data.alertPopup) alertPopup = data.alertPopup;
             if (data.siteLogo) {
               siteLogo = data.siteLogo;
-              if (siteLogo.includes('logo.png') && !siteLogo.includes('?v=')) {
-                siteLogo = '/images/logo.png?v=10';
+              if (siteLogo.includes('logo.png')) {
+                siteLogo = 'images/logo.png';
               }
             }
+            // Sync local cache with latest server data so it is ready for offline usage
+            persistDataLocally();
           } else {
-            
+            // Legacy / simple array data format fallback
             categories = [
               { id: 'mod_cc', label: 'Mod e CC', color: 'cyan' },
               { id: 'costruzione', label: 'Costruzione', color: 'green' },
@@ -2041,6 +2222,8 @@
             guides = data;
             creators = getDefaultCreators();
             authorTags = getDefaultAuthorTags();
+            normalizeAuthorTagsAndCreators();
+            persistDataLocally();
           }
           migrateAllGuidesTips();
           updateLogoSrc();
@@ -2048,25 +2231,84 @@
           checkAndShowAlertPopup();
         })
         .catch(error => {
-          console.error('Errore nel caricamento delle guide:', error);
-         
+          console.warn('Errore nel recupero dati dal server, provo a caricare dalla cache locale:', error);
+          
+          // Offline fallback: load from localStorage if cachedData is present
+          if (cachedData) {
+            try {
+              const parsed = JSON.parse(cachedData);
+              if (parsed.categories && parsed.guides) {
+                categories = parsed.categories;
+                guides = parsed.guides;
+                creators = parsed.creators || getDefaultCreators();
+                authorTags = parsed.authorTags || getDefaultAuthorTags();
+                normalizeAuthorTagsAndCreators();
+                migrateAllGuidesTips();
+                if (parsed.adminPassword) {
+                  adminPassword = parsed.adminPassword;
+                }
+                if (parsed.siteTitle) {
+                  siteTitle = parsed.siteTitle;
+                  if (siteTitle.includes('Guide & Utilità') || siteTitle.includes('Tutto quello che devi sapere su The Sims 4') || siteTitle.includes('pin-glow') || siteTitle.includes('svg')) {
+                    siteTitle = '<span class="animate-title-color">Guide & Utilità</span>';
+                  }
+                }
+                if (parsed.siteDescription) siteDescription = parsed.siteDescription;
+                if (parsed.alertPopup) alertPopup = parsed.alertPopup;
+                if (parsed.siteLogo) {
+                  siteLogo = parsed.siteLogo;
+                  if (siteLogo.includes('logo.png')) {
+                    siteLogo = 'images/logo.png';
+                  }
+                }
+                updateLogoSrc();
+                handleHashRouting();
+                checkAndShowAlertPopup();
+                return;
+              }
+            } catch(e) {
+              console.error("Errore nel caricamento dei dati personalizzati da localStorage:", e);
+            }
+          }
+          
+          // Complete offline / error fallback screen
           categories = [{ id: 'costruzione', label: 'Generali', color: 'green' }];
           guides = [
             {
               id: 'guide-error',
-              title: 'Errore nel caricamento delle guide',
-              description: 'Non è stato possibile caricare il file guides.json. Controlla il server o la cartella principale.',
+              title: 'Errore nel caricamento delle guide ⚠️',
+              description: 'Non è stato possibile caricare il file guides.json dal server e non ci sono copie locali disponibili.',
               category: 'costruzione',
               tags: ['errore'],
               content: [
-                'Si è verificato un problema nel recupero dei contenuti. Controlla il server o la cartella principale.'
+                {
+                  type: 'heading2',
+                  value: '[color:#ef4444](Impossibile caricare guides.json)'
+                },
+                {
+                  type: 'paragraph',
+                  value: 'Si è verificato un problema nel recupero dei contenuti. Questo può accadere se il server ha riscontrato un errore momentaneo o se sei offline.'
+                },
+                {
+                  type: 'paragraph',
+                  value: 'Fai clic sul pulsante qui sotto per riprovare a caricare o svuotare la cache locale:'
+                },
+                {
+                  type: 'button_action',
+                  value: 'Riprova / Svuota Cache 🔄',
+                  actionName: 'forceResetCache',
+                  buttonColor: '#26ff5e'
+                }
               ],
               tips: []
             }
           ];
+          creators = getDefaultCreators();
+          authorTags = getDefaultAuthorTags();
+          normalizeAuthorTagsAndCreators();
           migrateAllGuidesTips();
           renderApp();
-        });
+        });;
     });
 
     
@@ -2339,10 +2581,10 @@
         const file = e.target.files[0];
         if (!file) return;
 
-        showToast('Compressione e caricamento immagine...', 'info');
+        showToast('Caricamento immagine in alta qualità...', 'info');
         compressAndProcessImage(file, (err, base64Data) => {
           if (err) {
-            showToast('Errore nella compressione: ' + err.message, 'info');
+            showToast('Errore nel caricamento immagine: ' + err.message, 'info');
             return;
           }
           
@@ -2411,7 +2653,11 @@
             if (localImgs.length > 12) {
               localImgs = localImgs.slice(0, 12);
             }
-            localStorage.setItem('pianetasim-local-images', JSON.stringify(localImgs));
+            try {
+              localStorage.setItem('pianetasim-local-images', JSON.stringify(localImgs));
+            } catch (ex) {
+              console.warn("Spazio di archiviazione per le immagini di backup locali esaurito:", ex);
+            }
             
             fetchUploadedImages();
             insertImageToTextarea(base64Data);
@@ -2430,22 +2676,35 @@
       const text = textarea.value;
       const selected = text.substring(start, end);
       let replacement = "";
+      let prefixLen = 0;
+      let targetLen = 0;
       
       if (type === 'bold') {
-        replacement = `**${selected || 'testo in grassetto'}**`;
+        const targetText = selected || 'testo in grassetto';
+        prefixLen = 2;
+        targetLen = targetText.length;
+        replacement = `**${targetText}**`;
       } else if (type === 'italic') {
-        replacement = `*${selected || 'testo in corsivo'}*`;
+        const targetText = selected || 'testo in corsivo';
+        prefixLen = 1;
+        targetLen = targetText.length;
+        replacement = `*${targetText}*`;
       } else if (type === 'link') {
-        replacement = `[${selected || 'Nome Link'}](https://google.it)`;
+        const targetText = selected || 'Nome Link';
+        prefixLen = 1;
+        targetLen = targetText.length;
+        replacement = `[${targetText}](https://google.it)`;
       } else if (type === 'color') {
-        replacement = `[color:#ff007f](${selected || 'testo colorato'})`;
+        const targetText = selected || 'testo colorato';
+        prefixLen = 15;
+        targetLen = targetText.length;
+        replacement = `[color:#ff007f](${targetText})`;
       }
 
       textarea.value = text.substring(0, start) + replacement + text.substring(end);
       textarea.focus();
-      textarea.setSelectionRange(start + replacement.length, start + replacement.length);
+      textarea.setSelectionRange(start + prefixLen, start + prefixLen + targetLen);
 
-      
       if (id === 'admin-edit-desc') {
         updateEditingField('description', textarea.value);
       } else {
@@ -2561,10 +2820,10 @@
         const file = e.target.files[0];
         if (!file) return;
 
-        showToast('Compressione e caricamento immagine profilo...', 'info');
+        showToast('Caricamento immagine profilo in alta qualità...', 'info');
         compressAndProcessImage(file, (err, base64Data) => {
           if (err) {
-            showToast('Errore nella compressione: ' + err.message, 'info');
+            showToast('Errore nel caricamento immagine: ' + err.message, 'info');
             return;
           }
           
@@ -2605,7 +2864,11 @@
               url: base64Data,
               local: true
             });
-            localStorage.setItem('pianetasim-local-images', JSON.stringify(localImgs));
+            try {
+              localStorage.setItem('pianetasim-local-images', JSON.stringify(localImgs));
+            } catch (ex) {
+              console.warn("Spazio di archiviazione per le immagini di backup locali esaurito:", ex);
+            }
             
             fetchUploadedImages();
             const input = document.getElementById(inputId);
@@ -2618,6 +2881,57 @@
       fileInput.click();
     }
 
+    window.syncEditingCreatorDraft = function() {
+      if (!window.editingCreatorDraft) window.editingCreatorDraft = {};
+      const nameInput = document.getElementById('edit-creator-name');
+      const roleInput = document.getElementById('edit-creator-role');
+      const avatarInput = document.getElementById('edit-creator-avatar');
+      const colorInput = document.getElementById('edit-creator-color');
+      const diamondColorInput = document.getElementById('edit-creator-diamond-color');
+      const descInput = document.getElementById('edit-creator-desc');
+
+      if (nameInput) window.editingCreatorDraft.name = nameInput.value;
+      if (roleInput) window.editingCreatorDraft.role = roleInput.value;
+      if (avatarInput) window.editingCreatorDraft.avatar = avatarInput.value;
+      if (colorInput) window.editingCreatorDraft.color = colorInput.value;
+      if (diamondColorInput) window.editingCreatorDraft.diamondColor = diamondColorInput.value;
+      if (descInput) window.editingCreatorDraft.description = descInput.value;
+    };
+
+    window.syncNewCreatorDraft = function() {
+      if (!window.newCreatorDraft) window.newCreatorDraft = {};
+      const nameInput = document.getElementById('new-creator-name');
+      const roleInput = document.getElementById('new-creator-role');
+      const avatarInput = document.getElementById('new-creator-avatar');
+      const colorInput = document.getElementById('new-creator-color');
+      const diamondColorInput = document.getElementById('new-creator-diamond-color');
+      const descInput = document.getElementById('new-creator-desc');
+
+      if (nameInput) window.newCreatorDraft.name = nameInput.value;
+      if (roleInput) window.newCreatorDraft.role = roleInput.value;
+      if (avatarInput) window.newCreatorDraft.avatar = avatarInput.value;
+      if (colorInput) window.newCreatorDraft.color = colorInput.value;
+      if (diamondColorInput) window.newCreatorDraft.diamondColor = diamondColorInput.value;
+      if (descInput) window.newCreatorDraft.description = descInput.value;
+    };
+
+    window.selectCreatorForEdit = function(creatorId) {
+      const cToEdit = creators.find(c => c.id === creatorId);
+      if (!cToEdit) return;
+      window.editingCreatorId = creatorId;
+      window.editingSocialsList = JSON.parse(JSON.stringify(cToEdit.socials || []));
+      window.editingCreatorTagsList = JSON.parse(JSON.stringify(cToEdit.tags || []));
+      window.editingCreatorDraft = {
+        name: cToEdit.name || '',
+        role: cToEdit.role || '',
+        avatar: cToEdit.avatar || '',
+        color: cToEdit.color || '#38bdf8',
+        diamondColor: cToEdit.diamondColor || cToEdit.color || '#26ff5e',
+        description: cToEdit.description || ''
+      };
+      renderApp();
+    };
+
     window.updateEditingSocial = function(index, field, value) {
       if (window.editingSocialsList && window.editingSocialsList[index]) {
         window.editingSocialsList[index][field] = value;
@@ -2625,12 +2939,14 @@
     };
 
     window.addEditingSocial = function() {
+      window.syncEditingCreatorDraft();
       if (!window.editingSocialsList) window.editingSocialsList = [];
       window.editingSocialsList.push({ label: '', url: '', color: '#a855f7' });
       renderApp();
     };
 
     window.removeEditingSocial = function(index) {
+      window.syncEditingCreatorDraft();
       if (window.editingSocialsList) {
         window.editingSocialsList.splice(index, 1);
         renderApp();
@@ -2644,60 +2960,279 @@
     };
 
     window.addNewCreatorSocial = function() {
+      window.syncNewCreatorDraft();
       if (!window.newCreatorSocialsList) window.newCreatorSocialsList = [];
       window.newCreatorSocialsList.push({ label: '', url: '', color: '#a855f7' });
       renderApp();
     };
 
     window.removeNewCreatorSocial = function(index) {
+      window.syncNewCreatorDraft();
       if (window.newCreatorSocialsList) {
         window.newCreatorSocialsList.splice(index, 1);
         renderApp();
       }
     };
 
-    function handleAddCreator() {
-      const nameInput = document.getElementById('new-creator-name');
-      const roleInput = document.getElementById('new-creator-role');
-      const avatarInput = document.getElementById('new-creator-avatar');
-      const descInput = document.getElementById('new-creator-desc');
+    window.toggleEditingCreatorTag = function(tagName, isChecked) {
+      if (!window.editingCreatorTagsList) window.editingCreatorTagsList = [];
+      if (isChecked) {
+        if (!window.editingCreatorTagsList.some(t => t.toLowerCase() === tagName.toLowerCase())) {
+          window.editingCreatorTagsList.push(tagName);
+        }
+      } else {
+        window.editingCreatorTagsList = window.editingCreatorTagsList.filter(t => t.toLowerCase() !== tagName.toLowerCase());
+      }
+    };
 
-      if (!nameInput || !nameInput.value.trim()) {
+    window.toggleNewCreatorTag = function(tagName, isChecked) {
+      if (!window.newCreatorTagsList) window.newCreatorTagsList = [];
+      if (isChecked) {
+        if (!window.newCreatorTagsList.some(t => t.toLowerCase() === tagName.toLowerCase())) {
+          window.newCreatorTagsList.push(tagName);
+        }
+      } else {
+        window.newCreatorTagsList = window.newCreatorTagsList.filter(t => t.toLowerCase() !== tagName.toLowerCase());
+      }
+    };
+
+    function addCreatorAsGuideAuthor(creatorId) {
+      if (!window.editingGuide) return;
+      const c = creators.find(item => item.id === creatorId);
+      if (!c) return;
+      
+      if (!window.editingGuide.authors) {
+        window.editingGuide.authors = getGuideAuthorsList(window.editingGuide);
+      }
+      
+      const exists = window.editingGuide.authors.some(a => a.name.toLowerCase() === c.name.toLowerCase());
+      if (exists) {
+        showToast(`${c.name} è già aggiunto tra gli autori di questa guida!`, 'info');
+        return;
+      }
+
+      const personalColor = c.color || '#38bdf8';
+      window.editingGuide.authors.push({
+        name: c.name,
+        level: c.role || 'Collaboratore',
+        color: personalColor,
+        diamondColor: c.diamondColor || personalColor || '#26ff5e',
+        link: '#collaboratori'
+      });
+      
+      syncLegacyAuthorFields();
+      updateLivePreview();
+      pushHistoryImmediate();
+      renderApp();
+      showToast(`${c.name} aggiunto come autore della guida!`, 'success');
+    }
+
+    function applyCreatorToAuthor(authorIdx, creatorId) {
+      if (!window.editingGuide || !creatorId) return;
+      const c = creators.find(item => item.id === creatorId);
+      if (!c) return;
+      
+      if (!window.editingGuide.authors) {
+        window.editingGuide.authors = getGuideAuthorsList(window.editingGuide);
+      }
+      
+      if (window.editingGuide.authors[authorIdx]) {
+        const personalColor = c.color || '#38bdf8';
+        window.editingGuide.authors[authorIdx].name = c.name;
+        window.editingGuide.authors[authorIdx].level = c.role || 'Collaboratore';
+        window.editingGuide.authors[authorIdx].color = personalColor;
+        window.editingGuide.authors[authorIdx].diamondColor = c.diamondColor || personalColor || '#26ff5e';
+        window.editingGuide.authors[authorIdx].link = '#collaboratori';
+        
+        syncLegacyAuthorFields();
+        updateLivePreview();
+        pushHistoryImmediate();
+        renderApp();
+        showToast(`Autore #${authorIdx + 1} impostato su ${c.name}!`, 'success');
+      }
+    }
+
+    function normalizeAuthorTagsAndCreators() {
+      // Ensure creators is a valid array of objects
+      if (!Array.isArray(creators)) {
+        creators = getDefaultCreators();
+      }
+      creators = creators.filter(c => c && typeof c === 'object' && typeof c.name === 'string' && c.name.trim().length > 0);
+
+      // Ensure authorTags is a valid array of objects
+      if (!Array.isArray(authorTags)) {
+        authorTags = getDefaultAuthorTags();
+      }
+
+      // Pre-filter: remove any elements that are null, undefined, or lack a string name property
+      authorTags = authorTags.filter(t => t && typeof t === 'object' && typeof t.name === 'string' && t.name.trim().length > 0);
+
+      if (authorTags.length === 0) {
+        authorTags = getDefaultAuthorTags();
+      }
+
+      // 1. Ensure 'Admin' is azzurro (#38bdf8) and properly initialized
+      let adminTag = authorTags.find(t => t && t.name && (t.name.toLowerCase() === 'admin' || t.name.toLowerCase() === 'amministratore'));
+      if (adminTag) {
+        adminTag.name = 'Admin';
+        adminTag.color = '#38bdf8';
+      } else {
+        authorTags.unshift({ name: 'Admin', color: '#38bdf8' });
+      }
+
+      // Enforce Modder is fucsia (#ff007f)
+      let modderTag = authorTags.find(t => t && t.name && t.name.toLowerCase() === 'modder');
+      if (modderTag) {
+        modderTag.color = '#ff007f';
+      }
+
+      // Enforce Utente is grigio (#94a3b8)
+      let utenteTag = authorTags.find(t => t && t.name && t.name.toLowerCase() === 'utente');
+      if (utenteTag) {
+        utenteTag.color = '#94a3b8';
+      }
+
+      // Enforce Programmatore is rosso (#ef4444)
+      let progTag = authorTags.find(t => t && t.name && t.name.toLowerCase() === 'programmatore');
+      if (progTag) {
+        progTag.color = '#ef4444';
+      }
+
+      // 2. Clear any empty or invalid tags
+      authorTags = authorTags.filter(t => t && typeof t.name === 'string' && t.name.trim().length > 0);
+
+      // Collect any tags currently assigned to creators that are missing from authorTags
+      if (Array.isArray(creators)) {
+        creators.forEach(c => {
+          if (c && Array.isArray(c.tags)) {
+            c.tags.forEach(tag => {
+              if (typeof tag === 'string' && tag.trim().length > 0) {
+                const cleanTag = tag.trim();
+                const exists = authorTags.some(t => t && t.name && t.name.toLowerCase() === cleanTag.toLowerCase());
+                if (!exists) {
+                  authorTags.push({ name: cleanTag, color: '#38bdf8' });
+                }
+              }
+            });
+          }
+        });
+      }
+
+      // 3. Deduplicate tags in authorTags and sort alphabetically
+      const seen = new Set();
+      authorTags = authorTags.filter(t => {
+        if (!t || typeof t.name !== 'string') return false;
+        const lname = t.name.toLowerCase();
+        if (seen.has(lname)) return false;
+        seen.add(lname);
+        return true;
+      });
+      authorTags.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'it', { sensitivity: 'base' }));
+
+      // 4. Normalize creators tags, ensure id, personal color, diamond color, and sort tags alphabetically
+      if (Array.isArray(creators)) {
+        creators.forEach((c, idx) => {
+          if (!c || typeof c !== 'object') return;
+          if (!c.id) {
+            c.id = 'creator-' + (c.name ? String(c.name).toLowerCase().replace(/[^a-z0-9]/g, '') : idx) + '-' + Math.floor(Math.random() * 1000);
+          }
+          if (!c.color) {
+            c.color = '#38bdf8';
+          }
+          if (!c.diamondColor) {
+            c.diamondColor = c.color || '#26ff5e';
+          }
+          if (c.tags) {
+            if (!Array.isArray(c.tags)) {
+              if (typeof c.tags === 'string' && c.tags.trim().length > 0) {
+                c.tags = [c.tags];
+              } else {
+                c.tags = [];
+              }
+            }
+
+            c.tags = c.tags
+              .map(tag => {
+                if (typeof tag !== 'string') return '';
+                return tag.toLowerCase() === 'amministratore' ? 'Admin' : tag;
+              })
+              .filter(tag => tag && tag.trim().length > 0);
+
+            // Match casing from authorTags
+            c.tags = c.tags.map(tag => {
+              const match = authorTags.find(at => at && at.name && at.name.toLowerCase() === tag.toLowerCase());
+              return match ? match.name : tag;
+            });
+
+            // Deduplicate per creator
+            const cSeen = new Set();
+            c.tags = c.tags.filter(tag => {
+              if (!tag) return false;
+              const lname = tag.toLowerCase();
+              if (cSeen.has(lname)) return false;
+              cSeen.add(lname);
+              return true;
+            });
+
+            // Sort tags alphabetically
+            c.tags.sort((a, b) => a.localeCompare(b, 'it', { sensitivity: 'base' }));
+          } else {
+            c.tags = [];
+          }
+        });
+      }
+    }
+
+    function handleAddCreator() {
+      window.syncNewCreatorDraft();
+
+      const name = (window.newCreatorDraft && window.newCreatorDraft.name) ? window.newCreatorDraft.name.trim() : (document.getElementById('new-creator-name') ? document.getElementById('new-creator-name').value.trim() : '');
+      if (!name) {
         showToast('Il nome del creatore è obbligatorio!', 'info');
         return;
       }
 
-      const name = nameInput.value.trim();
-      const role = roleInput ? roleInput.value.trim() : 'Autore';
-      const avatar = avatarInput ? avatarInput.value.trim() : '';
-      const description = descInput ? descInput.value.trim() : '';
+      const role = (window.newCreatorDraft && window.newCreatorDraft.role) ? window.newCreatorDraft.role.trim() : (document.getElementById('new-creator-role') ? document.getElementById('new-creator-role').value.trim() : 'Autore');
+      const avatar = (window.newCreatorDraft && window.newCreatorDraft.avatar) ? window.newCreatorDraft.avatar.trim() : (document.getElementById('new-creator-avatar') ? document.getElementById('new-creator-avatar').value.trim() : '');
+      const colorInput = document.getElementById('new-creator-color');
+      const color = colorInput ? colorInput.value : ((window.newCreatorDraft && window.newCreatorDraft.color) || '#38bdf8');
+      const description = (window.newCreatorDraft && window.newCreatorDraft.description) ? window.newCreatorDraft.description.trim() : (document.getElementById('new-creator-desc') ? document.getElementById('new-creator-desc').value.trim() : '');
       
-      const tags = [];
-      authorTags.forEach(t => {
-        const id = `new-creator-tag-${t.name.replace(/\s+/g, '-')}`;
-        const cb = document.getElementById(id);
-        if (cb && cb.checked) {
-          tags.push(t.name);
+      const tags = window.newCreatorTagsList ? [...window.newCreatorTagsList] : [];
+      authorTags.forEach((t, tIdx) => {
+        const cb = document.getElementById(`new-creator-tag-${tIdx}`);
+        if (cb) {
+          if (cb.checked && !tags.some(tag => tag.toLowerCase() === t.name.toLowerCase())) {
+            tags.push(t.name);
+          } else if (!cb.checked && tags.some(tag => tag.toLowerCase() === t.name.toLowerCase())) {
+            const idx = tags.findIndex(tag => tag.toLowerCase() === t.name.toLowerCase());
+            if (idx !== -1) tags.splice(idx, 1);
+          }
         }
       });
-      if (tags.length === 0) {
-        tags.push('Autore');
-      }
 
       const socials = (window.newCreatorSocialsList || []).filter(s => s.label.trim() && s.url.trim());
+      const diamondColorInput = document.getElementById('new-creator-diamond-color');
+      const diamondColor = diamondColorInput ? diamondColorInput.value : ((window.newCreatorDraft && window.newCreatorDraft.diamondColor) || color || '#26ff5e');
 
       const newCreator = {
         id: 'creator-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
         name: name,
         role: role,
-        avatar: avatar,
+        avatar: avatar || 'images/logo.png',
+        color: color || '#38bdf8',
+        diamondColor: diamondColor,
         description: description,
         tags: tags,
         socials: socials
       };
 
       creators.push(newCreator);
+      window.newCreatorDraft = null;
       window.newCreatorSocialsList = [];
+      window.newCreatorTagsList = [];
+
+      normalizeAuthorTagsAndCreators();
       persistDataLocally();
       saveAllGuidesToServer();
       renderApp();
@@ -2707,15 +3242,7 @@
     function handleSaveCreatorEdit() {
       if (!window.editingCreatorId) return;
 
-      const nameInput = document.getElementById('edit-creator-name');
-      const roleInput = document.getElementById('edit-creator-role');
-      const avatarInput = document.getElementById('edit-creator-avatar');
-      const descInput = document.getElementById('edit-creator-desc');
-
-      if (!nameInput || !nameInput.value.trim()) {
-        showToast('Il nome del creatore è obbligatorio!', 'info');
-        return;
-      }
+      window.syncEditingCreatorDraft();
 
       const creatorIdx = creators.findIndex(c => c.id === window.editingCreatorId);
       if (creatorIdx === -1) {
@@ -2723,22 +3250,37 @@
         return;
       }
 
-      const name = nameInput.value.trim();
-      const role = roleInput ? roleInput.value.trim() : 'Autore';
-      const avatar = avatarInput ? avatarInput.value.trim() : '';
-      const description = descInput ? descInput.value.trim() : '';
+      const nameInput = document.getElementById('edit-creator-name');
+      const roleInput = document.getElementById('edit-creator-role');
+      const avatarInput = document.getElementById('edit-creator-avatar');
+      const colorInput = document.getElementById('edit-creator-color');
+      const diamondColorInput = document.getElementById('edit-creator-diamond-color');
+      const descInput = document.getElementById('edit-creator-desc');
+
+      const name = nameInput ? nameInput.value.trim() : (window.editingCreatorDraft ? window.editingCreatorDraft.name.trim() : '');
+      if (!name) {
+        showToast('Il nome del creatore è obbligatorio!', 'info');
+        return;
+      }
+
+      const role = roleInput ? roleInput.value.trim() : (window.editingCreatorDraft && window.editingCreatorDraft.role ? window.editingCreatorDraft.role.trim() : 'Autore');
+      const avatar = avatarInput ? avatarInput.value.trim() : (window.editingCreatorDraft && window.editingCreatorDraft.avatar ? window.editingCreatorDraft.avatar.trim() : '');
+      const color = colorInput ? colorInput.value : ((window.editingCreatorDraft && window.editingCreatorDraft.color) || creators[creatorIdx].color || '#38bdf8');
+      const diamondColor = diamondColorInput ? diamondColorInput.value : ((window.editingCreatorDraft && window.editingCreatorDraft.diamondColor) || creators[creatorIdx].diamondColor || color || '#26ff5e');
+      const description = descInput ? descInput.value.trim() : (window.editingCreatorDraft && window.editingCreatorDraft.description ? window.editingCreatorDraft.description.trim() : '');
       
-      const tags = [];
-      authorTags.forEach(t => {
-        const id = `edit-creator-tag-${t.name.replace(/\s+/g, '-')}`;
-        const cb = document.getElementById(id);
-        if (cb && cb.checked) {
-          tags.push(t.name);
+      const tags = window.editingCreatorTagsList ? [...window.editingCreatorTagsList] : [...(creators[creatorIdx].tags || [])];
+      authorTags.forEach((t, tIdx) => {
+        const cb = document.getElementById(`edit-creator-tag-${tIdx}`);
+        if (cb) {
+          if (cb.checked && !tags.some(tag => tag.toLowerCase() === t.name.toLowerCase())) {
+            tags.push(t.name);
+          } else if (!cb.checked && tags.some(tag => tag.toLowerCase() === t.name.toLowerCase())) {
+            const idx = tags.findIndex(tag => tag.toLowerCase() === t.name.toLowerCase());
+            if (idx !== -1) tags.splice(idx, 1);
+          }
         }
       });
-      if (tags.length === 0) {
-        tags.push('Autore');
-      }
 
       const socials = (window.editingSocialsList || []).filter(s => s.label.trim() && s.url.trim());
 
@@ -2747,13 +3289,19 @@
         name: name,
         role: role,
         avatar: avatar,
+        color: color || '#38bdf8',
+        diamondColor: diamondColor,
         description: description,
         tags: tags,
         socials: socials
       };
 
       window.editingCreatorId = null;
+      window.editingCreatorDraft = null;
       window.editingSocialsList = null;
+      window.editingCreatorTagsList = null;
+
+      normalizeAuthorTagsAndCreators();
       persistDataLocally();
       saveAllGuidesToServer();
       renderApp();
@@ -2792,8 +3340,9 @@
         showToast('Questo tag esiste già!', 'info');
         return;
       }
-      const color = colorInput ? colorInput.value : '#ff007f';
+      const color = colorInput ? colorInput.value : '#38bdf8';
       authorTags.push({ name, color });
+      normalizeAuthorTagsAndCreators();
       persistDataLocally();
       saveAllGuidesToServer();
       renderApp();
@@ -2809,7 +3358,7 @@
         return;
       }
       const newName = nameInput.value.trim();
-      const newColor = colorInput ? colorInput.value : '#ff007f';
+      const newColor = colorInput ? colorInput.value : '#38bdf8';
 
       const tagIdx = authorTags.findIndex(t => t.name.toLowerCase() === window.editingAuthorTagName.toLowerCase());
       if (tagIdx === -1) {
@@ -2824,8 +3373,16 @@
         }
       });
 
+      if (window.editingCreatorTagsList) {
+        window.editingCreatorTagsList = window.editingCreatorTagsList.map(tag => tag.toLowerCase() === oldName.toLowerCase() ? newName : tag);
+      }
+      if (window.newCreatorTagsList) {
+        window.newCreatorTagsList = window.newCreatorTagsList.map(tag => tag.toLowerCase() === oldName.toLowerCase() ? newName : tag);
+      }
+
       authorTags[tagIdx] = { name: newName, color: newColor };
       window.editingAuthorTagName = null;
+      normalizeAuthorTagsAndCreators();
       persistDataLocally();
       saveAllGuidesToServer();
       renderApp();
@@ -2840,6 +3397,13 @@
           c.tags = c.tags.filter(tag => tag.toLowerCase() !== tagName.toLowerCase());
         }
       });
+      if (window.editingCreatorTagsList) {
+        window.editingCreatorTagsList = window.editingCreatorTagsList.filter(tag => tag.toLowerCase() !== tagName.toLowerCase());
+      }
+      if (window.newCreatorTagsList) {
+        window.newCreatorTagsList = window.newCreatorTagsList.filter(tag => tag.toLowerCase() !== tagName.toLowerCase());
+      }
+      normalizeAuthorTagsAndCreators();
       persistDataLocally();
       saveAllGuidesToServer();
       renderApp();
@@ -3038,15 +3602,7 @@
             ${contentHtml || '<p class="text-slate-500 italic text-xs">Nessun contenuto aggiunto.</p>'}
           </div>
 
-          ${g.tags && g.tags.length > 0 ? `
-            <div class="pt-4 border-t border-slate-900 flex flex-wrap gap-1.5">
-              ${g.tags.map(tag => `
-                <span class="inline-block text-[9px] text-slate-400 bg-slate-900 border border-slate-850 px-2 py-0.5 rounded font-mono">
-                  #${tag}
-                </span>
-              `).join('')}
-            </div>
-          ` : ''}
+
         </div>
       `;
       container.scrollTop = savedScrollTop;
@@ -3064,14 +3620,31 @@
     function getGuideAuthorsList(guide) {
       if (!guide) return [];
       if (guide.authors && Array.isArray(guide.authors) && guide.authors.length > 0) {
-        return guide.authors;
+        return guide.authors.map(a => {
+          if (a && typeof a === 'object') {
+            return {
+              name: a.name || 'Nuovo Autore',
+              color: a.color || '#cbd5e1',
+              diamondColor: a.diamondColor || a.color || '#26ff5e',
+              level: a.level || 'Collaboratore',
+              link: a.link || ''
+            };
+          }
+          return {
+            name: typeof a === 'string' ? a : 'Nuovo Autore',
+            color: '#cbd5e1',
+            diamondColor: '#26ff5e',
+            level: 'Collaboratore',
+            link: ''
+          };
+        });
       }
       // Fallback to legacy single author properties if exists
       if (guide.authorName) {
         return [{
           name: guide.authorName,
           color: guide.authorColor || '#cbd5e1',
-          diamondColor: guide.authorDiamondColor || '#26ff5e',
+          diamondColor: guide.authorDiamondColor || guide.authorColor || '#26ff5e',
           level: guide.authorLevel || 'Moderatore',
           link: guide.authorLink || ''
         }];
@@ -3200,6 +3773,18 @@
       window.editingGuide.content.push(newBlock);
       pushHistoryImmediate();
       renderApp();
+
+      const newIdx = window.editingGuide.content.length - 1;
+      setTimeout(() => {
+        scrollToEditorBlock(newIdx);
+        const inputEl = document.getElementById(`admin-block-${newIdx}`) || document.getElementById(`admin-paragraph-${newIdx}`);
+        if (inputEl) {
+          inputEl.focus();
+          if (inputEl.setSelectionRange) {
+            inputEl.setSelectionRange(inputEl.value.length, inputEl.value.length);
+          }
+        }
+      }, 100);
     }
 
     function scrollToEditorBlock(idx) {
@@ -3483,18 +4068,22 @@
     }
 
     function persistDataLocally() {
-      const payload = {
-        categories: categories,
-        guides: guides,
-        creators: creators,
-        authorTags: authorTags,
-        adminPassword: adminPassword,
-        siteTitle: siteTitle,
-        siteDescription: siteDescription,
-        alertPopup: alertPopup,
-        siteLogo: siteLogo
-      };
-      localStorage.setItem('pianetasim-custom-data', JSON.stringify(payload));
+      try {
+        const payload = {
+          categories: categories,
+          guides: guides,
+          creators: creators,
+          authorTags: authorTags,
+          adminPassword: adminPassword,
+          siteTitle: siteTitle,
+          siteDescription: siteDescription,
+          alertPopup: alertPopup,
+          siteLogo: siteLogo
+        };
+        localStorage.setItem('pianetasim-custom-data', JSON.stringify(payload));
+      } catch (e) {
+        console.warn("Spazio di archiviazione locale (localStorage) esaurito. Le modifiche non possono essere salvate come bozza locale nel browser, ma verranno comunque salvate correttamente sul server permanente.", e);
+      }
     }
 
     function resetGuidesToDefault() {
@@ -3543,6 +4132,7 @@
               creators = getDefaultCreators();
               authorTags = getDefaultAuthorTags();
             }
+            normalizeAuthorTagsAndCreators();
             
             requestAnimationFrame(() => {
               updateLogoSrc();
@@ -3599,19 +4189,7 @@
         return;
       }
       
-      if (g._rawTags !== undefined) {
-        g.tags = g._rawTags.split(',')
-          .map(t => t.trim().toLowerCase())
-          .filter(t => t.length > 0);
-        delete g._rawTags;
-      } else {
-        const tagsInput = document.getElementById('admin-edit-tags');
-        if (tagsInput) {
-          g.tags = tagsInput.value.split(',')
-            .map(t => t.trim().toLowerCase())
-            .filter(t => t.length > 0);
-        }
-      }
+      if (g._rawTags) delete g._rawTags;
 
       
       g.content = g.content.map(block => {
@@ -3816,6 +4394,7 @@
             guides = importedGuides;
             creators = importedCreators;
             authorTags = importedAuthorTags;
+            normalizeAuthorTagsAndCreators();
             migrateAllGuidesTips();
             
             persistDataLocally();
@@ -3958,6 +4537,33 @@
       window.location.hash = '#chi-siamo';
     }
 
+    function triggerMerloPopup(cardEl, creatorName) {
+      if (!cardEl) return;
+      
+      const existing = cardEl.querySelector('.merlo-popup-wrapper');
+      if (existing) existing.remove();
+
+      cardEl.style.position = 'relative';
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'merlo-popup-wrapper absolute top-3 right-10 z-50 pointer-events-none animate-merlo-bounce';
+      wrapper.innerHTML = `
+        <div class="bg-amber-400 text-slate-950 px-3 py-1.5 rounded-2xl text-xs font-black shadow-xl border-2 border-amber-300 flex items-center gap-1.5 whitespace-nowrap">
+          <span>Cip cip! 🐦</span>
+        </div>
+      `;
+
+      cardEl.appendChild(wrapper);
+
+      setTimeout(() => {
+        wrapper.classList.remove('animate-merlo-bounce');
+        wrapper.classList.add('animate-merlo-fadeout');
+        setTimeout(() => {
+          wrapper.remove();
+        }, 400);
+      }, 3000);
+    }
+
     function viewCreatorCard(creatorName, fallbackLink) {
       const creator = creators.find(c => c.name.toLowerCase().trim() === creatorName.toLowerCase().trim());
       if (creator) {
@@ -3969,6 +4575,7 @@
             cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
             cardEl.classList.remove('border-slate-800');
             cardEl.classList.add('border-fluo-purple', 'ring-2', 'ring-fluo-purple/45', 'shadow-[0_0_25px_rgba(176,38,255,0.4)]');
+            triggerMerloPopup(cardEl, creator.name);
             setTimeout(() => {
               cardEl.classList.remove('border-fluo-purple', 'ring-2', 'ring-fluo-purple/45', 'shadow-[0_0_25px_rgba(176,38,255,0.4)]');
               cardEl.classList.add('border-slate-800');
@@ -4027,6 +4634,8 @@
     function switchTab(tab) {
       if (tab === 'admin') {
         navigateToAdmin();
+      } else if (tab === 'creators' || tab === 'chi-siamo') {
+        navigateToCreators();
       } else {
         selectedCategory = 'all';
         navigateToGuidesList();
@@ -4039,9 +4648,12 @@
     }
 
     function getCategoryCount(catId) {
-      if (catId === 'all') return guides.length;
-      if (catId === 'preferiti') return bookmarks.length;
-      return guides.filter(g => g.category === catId).length;
+      if (catId === 'all') return (guides || []).length;
+      if (catId === 'preferiti') return (bookmarks || []).length;
+      return (guides || []).filter(g => {
+        const guideCats = g.categories || (g.category ? [g.category] : []);
+        return guideCats.includes(catId);
+      }).length;
     }
 
     
@@ -4082,6 +4694,8 @@
         searchQuery = '';
         const searchInput = document.getElementById('guide-search-input');
         if (searchInput) searchInput.value = '';
+        const mobileInput = document.getElementById('guide-search-input-mobile');
+        if (mobileInput) mobileInput.value = '';
         switchTab('admin');
         showToast("🔐 Inserisci la password per accedere al pannello", "info");
         return;
@@ -4095,32 +4709,27 @@
       }, 100);
     }
 
+    var renderAnimationFrame = null;
     function renderApp() {
+      if (renderAnimationFrame) {
+        cancelAnimationFrame(renderAnimationFrame);
+      }
       const savedWindowScroll = window.scrollY;
       const previewEl = document.getElementById('guide-live-preview-container');
       const savedPreviewScroll = previewEl ? previewEl.scrollTop : 0;
 
-      _actualRenderApp();
+      renderAnimationFrame = requestAnimationFrame(function() {
+        renderAnimationFrame = null;
+        _actualRenderApp();
 
-      if (savedWindowScroll !== undefined) {
-        window.scrollTo(0, savedWindowScroll);
-      }
-      const newPreviewEl = document.getElementById('guide-live-preview-container');
-      if (newPreviewEl && savedPreviewScroll) {
-        newPreviewEl.scrollTop = savedPreviewScroll;
-      }
-      setTimeout(() => {
-        const pEl = document.getElementById('guide-live-preview-container');
-        if (pEl && savedPreviewScroll) {
-          pEl.scrollTop = savedPreviewScroll;
+        if (savedWindowScroll !== undefined && Math.abs(window.scrollY - savedWindowScroll) > 2) {
+          window.scrollTo(0, savedWindowScroll);
         }
-      }, 0);
-      setTimeout(() => {
-        const pEl = document.getElementById('guide-live-preview-container');
-        if (pEl && savedPreviewScroll) {
-          pEl.scrollTop = savedPreviewScroll;
+        const newPreviewEl = document.getElementById('guide-live-preview-container');
+        if (newPreviewEl && savedPreviewScroll) {
+          newPreviewEl.scrollTop = savedPreviewScroll;
         }
-      }, 50);
+      });
     }
 
     // --- UTILITY E RENDERING MODULARE PANNELLO ADMIN (ACCORDION) ---
@@ -4534,6 +5143,9 @@
                   if (!window.editingSocialsList) {
                     window.editingSocialsList = JSON.parse(JSON.stringify(cToEdit.socials || []));
                   }
+                  if (!window.editingCreatorTagsList) {
+                    window.editingCreatorTagsList = JSON.parse(JSON.stringify(cToEdit.tags || []));
+                  }
 
                   return `
                     <div class="p-4 bg-slate-950/40 border border-slate-850 rounded-2xl space-y-3">
@@ -4547,7 +5159,8 @@
                           <input
                             type="text"
                             id="edit-creator-name"
-                            value="${cToEdit.name}"
+                            value="${window.editingCreatorDraft && window.editingCreatorDraft.name !== undefined ? window.editingCreatorDraft.name : cToEdit.name}"
+                            oninput="syncEditingCreatorDraft()"
                             class="w-full px-3 py-1.5 bg-slate-900 border border-slate-850 rounded-lg text-white outline-none focus:ring-1 focus:ring-fluo-purple font-sans"
                           />
                         </div>
@@ -4557,7 +5170,8 @@
                           <input
                             type="text"
                             id="edit-creator-role"
-                            value="${cToEdit.role || ''}"
+                            value="${window.editingCreatorDraft && window.editingCreatorDraft.role !== undefined ? window.editingCreatorDraft.role : (cToEdit.role || '')}"
+                            oninput="syncEditingCreatorDraft()"
                             placeholder="es: Amministratrice & Traduttrice"
                             class="w-full px-3 py-1.5 bg-slate-900 border border-slate-850 rounded-lg text-white outline-none focus:ring-1 focus:ring-fluo-purple font-sans"
                           />
@@ -4569,7 +5183,8 @@
                             <input
                               type="text"
                               id="edit-creator-avatar"
-                              value="${cToEdit.avatar || ''}"
+                              value="${window.editingCreatorDraft && window.editingCreatorDraft.avatar !== undefined ? window.editingCreatorDraft.avatar : (cToEdit.avatar || '')}"
+                              oninput="syncEditingCreatorDraft()"
                               placeholder="es: images/avatar.png"
                               class="flex-grow px-3 py-1.5 bg-slate-900 border border-slate-850 rounded-lg text-white outline-none font-mono text-[10px]"
                             />
@@ -4583,24 +5198,76 @@
                           </div>
                         </div>
 
+                        <div class="space-y-1.5">
+                          <label class="text-[9px] uppercase font-black text-slate-400 font-sans block">Colore Personale Collaboratore (Nome)</label>
+                          <div class="flex items-center gap-2">
+                            <input
+                              type="color"
+                              id="edit-creator-color"
+                              value="${window.editingCreatorDraft && window.editingCreatorDraft.color !== undefined ? window.editingCreatorDraft.color : (cToEdit.color || '#38bdf8')}"
+                              oninput="syncEditingCreatorDraft(); renderApp();"
+                              class="w-6 h-6 p-0 bg-transparent border-0 rounded cursor-pointer shrink-0"
+                            />
+                            <span class="text-[10px] text-slate-400 font-mono">${(window.editingCreatorDraft && window.editingCreatorDraft.color) || cToEdit.color || '#38bdf8'}</span>
+                          </div>
+                          <div class="flex flex-wrap gap-1 mt-1">
+                            ${textColorsList.map(hex => `
+                              <button
+                                type="button"
+                                onclick="if(!window.editingCreatorDraft) window.editingCreatorDraft={}; window.editingCreatorDraft.color='${hex}'; const el=document.getElementById('edit-creator-color'); if(el) el.value='${hex}'; renderApp();"
+                                class="w-4 h-4 rounded-md border transition-all hover:scale-125 cursor-pointer shrink-0"
+                                style="background-color: ${hex}; border-color: ${((window.editingCreatorDraft && window.editingCreatorDraft.color) || cToEdit.color || '#38bdf8').toLowerCase() === hex.toLowerCase() ? '#ffffff' : 'rgba(255,255,255,0.1)'};"
+                                title="${hex}"
+                              ></button>
+                            `).join('')}
+                          </div>
+                        </div>
+
+                        <div class="space-y-1.5">
+                          <label class="text-[9px] uppercase font-black text-slate-400 font-sans block">Colore del Rombo (Diamante ◆)</label>
+                          <div class="flex items-center gap-2">
+                            <input
+                              type="color"
+                              id="edit-creator-diamond-color"
+                              value="${window.editingCreatorDraft && window.editingCreatorDraft.diamondColor !== undefined ? window.editingCreatorDraft.diamondColor : (cToEdit.diamondColor || cToEdit.color || '#26ff5e')}"
+                              oninput="syncEditingCreatorDraft(); renderApp();"
+                              class="w-6 h-6 p-0 bg-transparent border-0 rounded cursor-pointer shrink-0"
+                            />
+                            <span class="text-[10px] text-slate-400 font-mono">${(window.editingCreatorDraft && window.editingCreatorDraft.diamondColor) || cToEdit.diamondColor || cToEdit.color || '#26ff5e'}</span>
+                          </div>
+                          <div class="flex flex-wrap gap-1 mt-1">
+                            ${textColorsList.map(hex => `
+                              <button
+                                type="button"
+                                onclick="if(!window.editingCreatorDraft) window.editingCreatorDraft={}; window.editingCreatorDraft.diamondColor='${hex}'; const el=document.getElementById('edit-creator-diamond-color'); if(el) el.value='${hex}'; renderApp();"
+                                class="w-4 h-4 rounded-md border transition-all hover:scale-125 cursor-pointer shrink-0"
+                                style="background-color: ${hex}; border-color: ${((window.editingCreatorDraft && window.editingCreatorDraft.diamondColor) || cToEdit.diamondColor || cToEdit.color || '#26ff5e').toLowerCase() === hex.toLowerCase() ? '#ffffff' : 'rgba(255,255,255,0.1)'};"
+                                title="${hex}"
+                              ></button>
+                            `).join('')}
+                          </div>
+                        </div>
+
                         <div class="space-y-1">
                           <label class="text-[9px] uppercase font-black text-slate-400 font-sans">Biografia Breve</label>
                           <textarea
                             id="edit-creator-desc"
                             rows="3"
+                            oninput="syncEditingCreatorDraft()"
                             class="w-full px-3 py-1.5 bg-slate-900 border border-slate-850 rounded-lg text-white outline-none focus:ring-1 focus:ring-fluo-purple font-sans"
                             placeholder="Parla un po' di te..."
-                          >${cToEdit.description || ''}</textarea>
+                          >${window.editingCreatorDraft && window.editingCreatorDraft.description !== undefined ? window.editingCreatorDraft.description : (cToEdit.description || '')}</textarea>
                         </div>
 
                         <div class="space-y-1">
                           <label class="text-[9px] uppercase font-black text-slate-400 font-sans">Tag dell'Autore (Seleziona solo tra quelli esistenti)</label>
                           <div class="grid grid-cols-2 gap-2 bg-slate-900 p-3 rounded-xl border border-slate-850 max-h-[140px] overflow-y-auto scrollbar-none">
-                            ${authorTags.map(t => {
-                              const isChecked = (cToEdit.tags || []).includes(t.name) ? 'checked' : '';
+                            ${authorTags.map((t, tIdx) => {
+                              const isChecked = (window.editingCreatorTagsList || []).some(tag => tag.toLowerCase() === t.name.toLowerCase()) ? 'checked' : '';
+                              const safeName = t.name.replace(/'/g, "\\'");
                               return `
                                 <label class="flex items-center gap-2 text-[11px] text-slate-300 hover:text-white cursor-pointer select-none font-sans">
-                                  <input type="checkbox" id="edit-creator-tag-${t.name.replace(/\s+/g, '-')}" ${isChecked} class="rounded border-slate-850 text-fluo-purple focus:ring-fluo-purple bg-slate-950 w-3.5 h-3.5" />
+                                  <input type="checkbox" id="edit-creator-tag-${tIdx}" ${isChecked} onchange="toggleEditingCreatorTag('${safeName}', this.checked)" class="rounded border-slate-850 text-fluo-purple focus:ring-fluo-purple bg-slate-950 w-3.5 h-3.5 cursor-pointer" />
                                   <span class="inline-block w-2.5 h-2.5 rounded-full shrink-0" style="background-color: ${t.color}"></span>
                                   <span class="truncate">${t.name}</span>
                                 </label>
@@ -4637,7 +5304,7 @@
                                     const activeBorder = isSelected ? 'border-white scale-110 ring-1 ring-white/50' : 'border-slate-800 hover:scale-115';
                                     return `
                                       <button type="button"
-                                        onclick="updateEditingSocial(${index}, 'color', '${hex}'); renderApp();"
+                                        onclick="syncEditingCreatorDraft(); updateEditingSocial(${index}, 'color', '${hex}'); renderApp();"
                                         class="w-3.5 h-3.5 rounded border cursor-pointer transition-all ${activeBorder}"
                                         style="background-color: ${hex};"
                                         title="${hex}"
@@ -4662,7 +5329,7 @@
                             Salva Modifiche
                           </button>
                           <button
-                            onclick="window.editingCreatorId = null; renderApp();"
+                            onclick="window.editingCreatorId = null; window.editingSocialsList = null; window.editingCreatorTagsList = null; renderApp();"
                             class="px-3 py-2 bg-slate-900 hover:bg-slate-850 border border-slate-850 text-slate-400 rounded-lg text-xs font-bold cursor-pointer"
                           >
                             Annulla
@@ -4678,27 +5345,67 @@
             })()}
 
             <div class="space-y-2">
-              <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Membri del Team Attuali:</h4>
-              <div class="space-y-1.5 max-h-[160px] overflow-y-auto scrollbar-none pr-1">
-                ${creators.map(c => `
-                  <div class="flex items-center justify-between p-2 bg-slate-950/40 rounded-xl border border-slate-900/60 hover:border-slate-850 transition-colors">
+              <div class="flex items-center justify-between">
+                <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Membri del Team Attuali:</h4>
+                <span class="text-[9px] text-slate-500 font-sans flex items-center gap-1">
+                  <i data-lucide="grip-vertical" class="w-3 h-3 text-slate-400"></i>
+                  Trascina o usa le frecce per riordinare
+                </span>
+              </div>
+              <div class="space-y-1.5 max-h-[220px] overflow-y-auto scrollbar-none pr-1">
+                ${creators.map((c, index) => `
+                  <div
+                    draggable="true"
+                    ondragstart="handleCreatorDragStart(event, '${c.id}')"
+                    ondragover="handleCreatorDragOver(event)"
+                    ondragleave="handleCreatorDragLeave(event)"
+                    ondragend="handleCreatorDragEnd(event)"
+                    ondrop="handleCreatorDrop(event, '${c.id}')"
+                    class="flex items-center justify-between p-2 bg-slate-950/40 rounded-xl border border-slate-900/60 hover:border-slate-800 transition-all cursor-grab active:cursor-grabbing group/creator"
+                  >
                     <div class="flex items-center gap-2 truncate">
-                      <img src="${c.avatar || 'images/logo.png'}" alt="${c.name}" class="w-7 h-7 rounded-full border border-slate-800 object-cover bg-slate-900 shrink-0" onerror="this.src='images/logo.png';" />
+                      <div class="text-slate-600 group-hover/creator:text-slate-400 transition-colors shrink-0 cursor-grab" title="Trascina per riordinare">
+                        <i data-lucide="grip-vertical" class="w-3.5 h-3.5"></i>
+                      </div>
+                      <div class="relative w-7 h-7 rounded-full border border-slate-800 overflow-hidden bg-slate-900 shrink-0 select-none" oncontextmenu="return false;">
+                        <img src="${c.avatar || 'images/logo.png'}" alt="${c.name}" draggable="false" oncontextmenu="return false;" ondragstart="return false;" class="w-full h-full object-cover select-none pointer-events-none" onerror="this.src='images/logo.png';" />
+                        <div class="absolute inset-0 z-10 bg-transparent select-none" oncontextmenu="return false;"></div>
+                      </div>
                       <div class="truncate leading-tight">
                         <div class="text-xs font-bold text-slate-200 truncate font-sans">${c.name}</div>
                         <div class="text-[9px] text-slate-500 truncate font-sans">${c.role || 'Autore'}</div>
                       </div>
                     </div>
                     <div class="flex items-center gap-1 shrink-0">
+                      <div class="flex items-center mr-1 bg-slate-900/80 rounded-lg p-0.5 border border-slate-850">
+                        <button
+                          type="button"
+                          onclick="event.stopPropagation(); moveCreatorUp('${c.id}')"
+                          ${index === 0 ? 'disabled' : ''}
+                          class="p-1 text-slate-400 hover:text-white disabled:opacity-30 disabled:hover:text-slate-400 cursor-pointer disabled:cursor-not-allowed rounded transition-colors"
+                          title="Sposta su"
+                        >
+                          <i data-lucide="chevron-up" class="w-3 h-3"></i>
+                        </button>
+                        <button
+                          type="button"
+                          onclick="event.stopPropagation(); moveCreatorDown('${c.id}')"
+                          ${index === creators.length - 1 ? 'disabled' : ''}
+                          class="p-1 text-slate-400 hover:text-white disabled:opacity-30 disabled:hover:text-slate-400 cursor-pointer disabled:cursor-not-allowed rounded transition-colors"
+                          title="Sposta giù"
+                        >
+                          <i data-lucide="chevron-down" class="w-3 h-3"></i>
+                        </button>
+                      </div>
                       <button
-                        onclick="window.editingCreatorId = '${c.id}'; renderApp();"
+                        onclick="event.stopPropagation(); selectCreatorForEdit('${c.id}')"
                         class="p-1.5 text-fluo-purple hover:text-purple-400 hover:bg-slate-900/40 rounded transition-colors"
                         title="Modifica questo autore"
                       >
                         <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
                       </button>
                       <button
-                        onclick="handleDeleteCreator('${c.id}')"
+                        onclick="event.stopPropagation(); handleDeleteCreator('${c.id}')"
                         class="p-1.5 text-red-500 hover:text-red-400 hover:bg-red-500/10 rounded transition-colors"
                         title="Elimina questo autore"
                       >
@@ -4719,6 +5426,8 @@
                     <input
                       type="text"
                       id="new-creator-name"
+                      value="${window.newCreatorDraft ? window.newCreatorDraft.name || '' : ''}"
+                      oninput="syncNewCreatorDraft()"
                       placeholder="es: LadyPsycoTrilly"
                       class="w-full px-3 py-1.5 bg-slate-900 border border-slate-850 rounded-lg text-white outline-none focus:ring-1 focus:ring-fluo-purple font-sans"
                     />
@@ -4729,6 +5438,8 @@
                     <input
                       type="text"
                       id="new-creator-role"
+                      value="${window.newCreatorDraft ? window.newCreatorDraft.role || '' : ''}"
+                      oninput="syncNewCreatorDraft()"
                       placeholder="es: Amministratrice & Traduttrice"
                       class="w-full px-3 py-1.5 bg-slate-900 border border-slate-850 rounded-lg text-white outline-none focus:ring-1 focus:ring-fluo-purple font-sans"
                     />
@@ -4740,6 +5451,8 @@
                       <input
                         type="text"
                         id="new-creator-avatar"
+                        value="${window.newCreatorDraft ? window.newCreatorDraft.avatar || '' : ''}"
+                        oninput="syncNewCreatorDraft()"
                         placeholder="es: images/logo.png"
                         class="flex-grow px-3 py-1.5 bg-slate-900 border border-slate-850 rounded-lg text-white outline-none font-mono text-[10px]"
                       />
@@ -4753,26 +5466,81 @@
                     </div>
                   </div>
 
+                  <div class="space-y-1.5">
+                    <label class="text-[9px] uppercase font-black text-slate-400 font-sans block">Colore Personale Collaboratore (Nome)</label>
+                    <div class="flex items-center gap-2">
+                      <input
+                        type="color"
+                        id="new-creator-color"
+                        value="${window.newCreatorDraft && window.newCreatorDraft.color ? window.newCreatorDraft.color : '#38bdf8'}"
+                        oninput="syncNewCreatorDraft(); renderApp();"
+                        class="w-6 h-6 p-0 bg-transparent border-0 rounded cursor-pointer shrink-0"
+                      />
+                      <span class="text-[10px] text-slate-400 font-mono">${(window.newCreatorDraft && window.newCreatorDraft.color) || '#38bdf8'}</span>
+                    </div>
+                    <div class="flex flex-wrap gap-1 mt-1">
+                      ${textColorsList.map(hex => `
+                        <button
+                          type="button"
+                          onclick="if(!window.newCreatorDraft) window.newCreatorDraft={}; window.newCreatorDraft.color='${hex}'; const el=document.getElementById('new-creator-color'); if(el) el.value='${hex}'; renderApp();"
+                          class="w-4 h-4 rounded-md border transition-all hover:scale-125 cursor-pointer shrink-0"
+                          style="background-color: ${hex}; border-color: ${((window.newCreatorDraft && window.newCreatorDraft.color) || '#38bdf8').toLowerCase() === hex.toLowerCase() ? '#ffffff' : 'rgba(255,255,255,0.1)'};"
+                          title="${hex}"
+                        ></button>
+                      `).join('')}
+                    </div>
+                  </div>
+
+                  <div class="space-y-1.5">
+                    <label class="text-[9px] uppercase font-black text-slate-400 font-sans block">Colore del Rombo (Diamante ◆)</label>
+                    <div class="flex items-center gap-2">
+                      <input
+                        type="color"
+                        id="new-creator-diamond-color"
+                        value="${window.newCreatorDraft && window.newCreatorDraft.diamondColor ? window.newCreatorDraft.diamondColor : '#26ff5e'}"
+                        oninput="syncNewCreatorDraft(); renderApp();"
+                        class="w-6 h-6 p-0 bg-transparent border-0 rounded cursor-pointer shrink-0"
+                      />
+                      <span class="text-[10px] text-slate-400 font-mono">${(window.newCreatorDraft && window.newCreatorDraft.diamondColor) || '#26ff5e'}</span>
+                    </div>
+                    <div class="flex flex-wrap gap-1 mt-1">
+                      ${textColorsList.map(hex => `
+                        <button
+                          type="button"
+                          onclick="if(!window.newCreatorDraft) window.newCreatorDraft={}; window.newCreatorDraft.diamondColor='${hex}'; const el=document.getElementById('new-creator-diamond-color'); if(el) el.value='${hex}'; renderApp();"
+                          class="w-4 h-4 rounded-md border transition-all hover:scale-125 cursor-pointer shrink-0"
+                          style="background-color: ${hex}; border-color: ${((window.newCreatorDraft && window.newCreatorDraft.diamondColor) || '#26ff5e').toLowerCase() === hex.toLowerCase() ? '#ffffff' : 'rgba(255,255,255,0.1)'};"
+                          title="${hex}"
+                        ></button>
+                      `).join('')}
+                    </div>
+                  </div>
+
                   <div class="space-y-1">
                     <label class="text-[9px] uppercase font-black text-slate-400 font-sans">Biografia Breve</label>
                     <textarea
                       id="new-creator-desc"
                       rows="2"
+                      oninput="syncNewCreatorDraft()"
                       class="w-full px-3 py-1.5 bg-slate-900 border border-slate-850 rounded-lg text-white outline-none focus:ring-1 focus:ring-fluo-purple font-sans"
                       placeholder="Scrivi una breve biografia..."
-                    ></textarea>
+                    >${window.newCreatorDraft ? window.newCreatorDraft.description || '' : ''}</textarea>
                   </div>
 
                   <div class="space-y-1">
                     <label class="text-[9px] uppercase font-black text-slate-400 font-sans">Seleziona i Tag dell'Autore (Seleziona solo tra quelli esistenti)</label>
                     <div class="grid grid-cols-2 gap-2 bg-slate-900 p-3 rounded-xl border border-slate-850 max-h-[140px] overflow-y-auto scrollbar-none">
-                      ${authorTags.map(t => `
-                        <label class="flex items-center gap-2 text-[11px] text-slate-300 hover:text-white cursor-pointer select-none font-sans">
-                          <input type="checkbox" id="new-creator-tag-${t.name.replace(/\s+/g, '-')}" class="rounded border-slate-850 text-fluo-purple focus:ring-fluo-purple bg-slate-950 w-3.5 h-3.5" />
-                          <span class="inline-block w-2.5 h-2.5 rounded-full shrink-0" style="background-color: ${t.color}"></span>
-                          <span class="truncate">${t.name}</span>
-                        </label>
-                      `).join('')}
+                      ${authorTags.map((t, tIdx) => {
+                        const isChecked = (window.newCreatorTagsList || []).some(tag => tag.toLowerCase() === t.name.toLowerCase()) ? 'checked' : '';
+                        const safeName = t.name.replace(/'/g, "\\'");
+                        return `
+                          <label class="flex items-center gap-2 text-[11px] text-slate-300 hover:text-white cursor-pointer select-none font-sans">
+                            <input type="checkbox" id="new-creator-tag-${tIdx}" ${isChecked} onchange="toggleNewCreatorTag('${safeName}', this.checked)" class="rounded border-slate-850 text-fluo-purple focus:ring-fluo-purple bg-slate-950 w-3.5 h-3.5 cursor-pointer" />
+                            <span class="inline-block w-2.5 h-2.5 rounded-full shrink-0" style="background-color: ${t.color}"></span>
+                            <span class="truncate">${t.name}</span>
+                          </label>
+                        `;
+                      }).join('')}
                     </div>
                   </div>
 
@@ -5166,23 +5934,27 @@
 
       
       const btnGuides = document.getElementById('btn-tab-guides');
+      const btnCreators = document.getElementById('btn-tab-creators');
       const btnAdmin = document.getElementById('btn-tab-admin');
 
+      const activeBtnClass = "px-2.5 py-1.5 sm:px-3 sm:py-2 lg:px-3.5 lg:py-2 rounded-full text-[11px] sm:text-xs lg:text-sm font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap bg-fluo-purple text-white shadow-[0_0_15px_rgba(176,38,255,0.55)] border border-fluo-purple/40 flex items-center justify-center shrink-0";
+      const inactiveBtnClass = "px-2.5 py-1.5 sm:px-3 sm:py-2 lg:px-3.5 lg:py-2 rounded-full text-[11px] sm:text-xs lg:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-300 bg-slate-900/60 border border-slate-800 hover:text-white hover:border-fluo-green flex items-center justify-center shadow-sm shrink-0";
+
       if (btnGuides) {
-        if (activeTab === 'guides') {
-          btnGuides.className = "px-4 py-2 sm:px-5 sm:py-3 rounded-full text-xs sm:text-sm font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap bg-fluo-purple text-white shadow-[0_0_15px_rgba(176,38,255,0.55)] border border-fluo-purple/40 flex items-center justify-center";
-        } else {
-          btnGuides.className = "px-4 py-2 sm:px-5 sm:py-3 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap text-slate-300 bg-slate-900/60 border border-slate-800 hover:text-white hover:border-fluo-green flex items-center justify-center shadow-sm";
-        }
+        btnGuides.className = (activeTab === 'guides') ? activeBtnClass : inactiveBtnClass;
+      }
+
+      if (btnCreators) {
+        btnCreators.className = (activeTab === 'creators') ? activeBtnClass : inactiveBtnClass;
       }
 
       if (btnAdmin) {
         if (window.isAdminAuthenticated) {
           btnAdmin.classList.remove('hidden');
           if (activeTab === 'admin') {
-            btnAdmin.className = "w-10 h-10 rounded-full text-base font-black transition-all cursor-pointer bg-fluo-purple text-white shadow-[0_0_15px_rgba(176,38,255,0.55)] border border-fluo-purple/40 flex items-center justify-center shrink-0 hover:scale-105 active:scale-95";
+            btnAdmin.className = "w-7 h-7 sm:w-8 sm:h-8 lg:w-9 lg:h-9 rounded-full text-xs sm:text-sm font-black transition-all cursor-pointer bg-fluo-purple text-white shadow-[0_0_15px_rgba(176,38,255,0.55)] border border-fluo-purple/40 flex items-center justify-center shrink-0 hover:scale-105 active:scale-95";
           } else {
-            btnAdmin.className = "w-10 h-10 rounded-full text-base font-bold transition-all cursor-pointer text-purple-300 hover:text-white bg-slate-900/60 border border-purple-900/50 hover:bg-purple-950/40 hover:border-fluo-purple/40 flex items-center justify-center shadow-sm shrink-0 hover:scale-105 active:scale-95";
+            btnAdmin.className = "w-7 h-7 sm:w-8 sm:h-8 lg:w-9 lg:h-9 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer text-purple-300 hover:text-white bg-slate-900/60 border border-purple-900/50 hover:bg-purple-950/40 hover:border-fluo-purple/40 flex items-center justify-center shadow-sm shrink-0 hover:scale-105 active:scale-95";
           }
         } else {
           btnAdmin.classList.add('hidden');
@@ -5301,13 +6073,7 @@
               ` : ''}
 
               
-              <div class="pt-6 border-t border-slate-800/80 flex flex-wrap gap-1.5">
-                ${guide.tags.map(tag => `
-                  <span class="inline-block text-xs text-slate-400 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-md font-mono">
-                    #${tag}
-                  </span>
-                `).join('')}
-              </div>
+
             </div>
           </div>
         `;
@@ -5326,7 +6092,7 @@
           let matchesCategory = true;
           if (selectedCategory === 'preferiti') {
             matchesCategory = bookmarks.includes(guide.id);
-          } else if (selectedCategory !== 'all') {
+          } else if (selectedCategory !== 'all' && selectedCategory !== 'all_guides') {
             const guideCats = guide.categories || (guide.category ? [guide.category] : []);
             matchesCategory = guideCats.includes(selectedCategory);
           }
@@ -5336,8 +6102,8 @@
         
         const listWrapperEl = document.getElementById('guides-list-grid-wrapper');
         const countBadgeEl = document.getElementById('guides-count-badge');
-        const searchInputEl = document.getElementById('guide-search-input');
-        const isSearchInputFocused = (searchInputEl === document.activeElement);
+        const searchInputEl = document.getElementById('guide-search-input') || document.getElementById('guide-search-input-mobile');
+        const isSearchInputFocused = (document.activeElement && (document.activeElement.id === 'guide-search-input' || document.activeElement.id === 'guide-search-input-mobile'));
         
         if (listWrapperEl && countBadgeEl && isSearchInputFocused) {
           countBadgeEl.textContent = `Trovate ${filteredGuides.length} guide`;
@@ -5366,9 +6132,9 @@
                 return `
                   <div
                     onclick="navigateToGuide('${guide.id}')"
-                    class="bg-space-card rounded-2xl border border-slate-800/80 p-5 cursor-pointer hover:border-slate-700/80 transition-all duration-300 hover:-translate-y-1 shadow-md hover:shadow-2xl flex flex-col justify-between group relative overflow-hidden min-h-[250px] h-full"
+                    class="bg-space-card rounded-2xl border border-slate-800/80 p-6 sm:p-6.5 cursor-pointer hover:border-slate-700/80 transition-all duration-300 hover:-translate-y-1 shadow-md hover:shadow-2xl flex flex-col justify-between group relative overflow-hidden min-h-[260px] sm:min-h-[270px] h-full"
                   >
-                    <div class="space-y-3">
+                    <div class="space-y-3.5">
                       
                       <div class="flex items-center justify-between gap-2 overflow-hidden">
                         <div class="flex flex-wrap gap-1 items-center overflow-hidden">
@@ -5396,12 +6162,12 @@
                     </div>
  
                     
-                    <div class="pt-3 border-t border-slate-900 flex items-center justify-between text-[11px]">
-                      <div class="flex flex-col gap-0.5 max-w-[60%] overflow-hidden">
+                    <div class="pt-4 mt-4 border-t border-slate-800/70 flex items-center justify-between text-[11px] gap-3">
+                      <div class="flex flex-col gap-1.5 min-w-0 flex-1 overflow-hidden pr-1">
                         ${(getGuideAuthorsList(guide).length > 0 && !guide.hideAuthorsInPreview) ? `
                           <div class="flex flex-wrap items-center gap-1.5 overflow-hidden">
                             ${getGuideAuthorsList(guide).map(author => `
-                              <span class="text-[10px] font-sans font-medium flex items-center gap-1 relative group/list-author-1" title="${author.level || 'Autore'}">
+                              <span class="text-[10px] sm:text-[11px] font-sans font-medium flex items-center gap-1 relative group/list-author-1" title="${author.level || 'Autore'}">
                                 <span style="color: ${author.color || '#cbd5e1'}">
                                   <button onclick="event.stopPropagation(); viewCreatorCard('${author.name.replace(/'/g, "\\'")}', '${(author.link || '').replace(/'/g, "\\'")}')" class="hover:underline hover:text-fluo-purple transition-all cursor-pointer font-bold text-left bg-transparent border-0 p-0 text-inherit outline-none font-sans">
                                     ${author.name}
@@ -5415,12 +6181,10 @@
                             `).join('')}
                           </div>
                         ` : ''}
-                        <span class="text-slate-500 truncate font-mono">
-                          #${guide.tags.slice(0, 2).join(' #')}
-                        </span>
+
                       </div>
                       
-                      <span class="text-fluo-purple font-bold flex items-center gap-1 group-hover:text-white transition-colors">
+                      <span class="text-fluo-purple font-bold flex items-center gap-1 group-hover:text-white transition-colors shrink-0 text-xs pl-1">
                         Leggi Guida
                         <i data-lucide="chevron-right" class="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform"></i>
                       </span>
@@ -5434,14 +6198,315 @@
           return;
         }
 
+        const isFolderView = (selectedCategory === 'all' && searchQuery.trim() === '');
+
         container.innerHTML = `
-          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start w-full">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start w-full">
             
-            
-            <div class="lg:col-span-3 space-y-6">
+            <!-- Area Principale (Mostrata in alto su Mobile order-1, a destra su Desktop lg:order-2) -->
+            <div class="lg:col-span-9 space-y-6 order-1 lg:order-2">
               
+              <!-- Card Cerca Guida (Specifico per Mobile < lg) -->
+              <div class="lg:hidden bg-space-card p-4 rounded-2xl border border-slate-800 shadow-xl space-y-2.5 neon-shadow-purple">
+                <h2 class="text-xs font-bold text-slate-400 uppercase tracking-widest">
+                  Cerca Guida
+                </h2>
+                <div class="relative">
+                  <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500"></i>
+                  <input
+                    type="text"
+                    id="guide-search-input-mobile"
+                    placeholder="Parole chiave, mod, trucchi..."
+                    value="${searchQuery}"
+                    oninput="handleSearchInput(this.value)"
+                    class="w-full pl-9 pr-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:ring-2 focus:ring-fluo-purple focus:border-transparent outline-none transition-all"
+                  />
+                </div>
+              </div>
               
-              <div class="bg-space-card p-5 rounded-2xl border border-slate-800 shadow-xl space-y-3 neon-shadow-purple">
+              ${(() => {
+                if (isFolderView) {
+                  // VISTA PRINCIPALE: Solo Griglia Cartelle Categorie (Nessuna guida sotto)
+                  return `
+                    <div class="space-y-4">
+                      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <div class="flex items-center gap-2">
+                          <i data-lucide="folder" class="w-5 h-5 text-fluo-purple"></i>
+                          <h2 class="text-sm font-extrabold text-white uppercase tracking-wider">Cartelle Categorie</h2>
+                        </div>
+                        <span class="text-xs text-slate-400 font-sans">Seleziona una cartella per accedere alle guide</span>
+                      </div>
+
+                      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 pt-1">
+                        
+                        <!-- Cartella: Tutte -->
+                        ${(() => {
+                          const count = getCategoryCount('all');
+                          return `
+                            <div
+                              onclick="selectedCategory = 'all_guides'; searchQuery = ''; renderApp();"
+                              class="group cursor-pointer transition-all duration-200 hover:-translate-y-0.5 flex flex-col h-full"
+                            >
+                              <!-- Linguette Cartella -->
+                              <div class="flex items-end w-full relative -mb-px z-10 pr-2 sm:pr-3">
+                                <!-- Linguetta Principale -->
+                                <div class="px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-t-lg bg-space-card border-t border-x border-slate-800 group-hover:border-slate-700 relative z-10 flex items-center justify-center text-cyan-400 transition-colors shrink-0">
+                                  <i data-lucide="folder" class="w-3.5 h-3.5"></i>
+                                </div>
+                                <!-- Seconda Linguetta -->
+                                <div class="flex-1 h-[14px] sm:h-[18px] rounded-t-lg border-t border-x -ml-1.5 relative z-0 transition-colors block" style="background-color: rgba(0, 240, 255, 0.25); border-color: rgba(0, 240, 255, 0.6);"></div>
+                              </div>
+
+                              <!-- Corpo Cartella -->
+                              <div class="bg-space-card rounded-b-xl rounded-tr-xl rounded-tl-none border border-slate-800 group-hover:border-slate-700 p-3.5 sm:p-4.5 md:p-5 transition-all duration-200 flex flex-col justify-between min-h-[110px] sm:min-h-[135px] h-full shadow-md relative z-0">
+                                <div class="space-y-1.5 sm:space-y-2">
+                                  <div class="flex items-center justify-between gap-1 overflow-hidden">
+                                    <div class="p-1 sm:p-1.5 rounded-md bg-cyan-500/10 text-cyan-400 shrink-0">
+                                      <i data-lucide="folder" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+                                    </div>
+                                    <span class="text-[9px] sm:text-[10px] font-mono font-bold px-1.5 sm:px-2 py-0.5 rounded-full bg-slate-950 text-slate-300 border border-slate-800 shrink-0 whitespace-nowrap">
+                                      ${count} ${count === 1 ? 'guida' : 'guide'}
+                                    </span>
+                                  </div>
+                                  <h3 class="text-xs sm:text-sm lg:text-base font-extrabold text-slate-100 group-hover:text-white transition-colors line-clamp-2 leading-tight uppercase tracking-wide text-left break-words">
+                                    Tutte
+                                  </h3>
+                                </div>
+
+                                <div class="pt-2 flex items-center justify-between text-[10px] sm:text-[11px] font-semibold text-slate-400 group-hover:text-slate-200 transition-colors">
+                                  <span>Apri</span>
+                                  <i data-lucide="arrow-right" class="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[3] text-cyan-400 group-hover:translate-x-1 transition-all"></i>
+                                </div>
+                              </div>
+                            </div>
+                          `;
+                        })()}
+
+                        <!-- Cartelle Categorie Singole -->
+                        ${categories.map(cat => {
+                          const catStyles = getCategoryStyles(cat.color);
+                          const count = getCategoryCount(cat.id);
+                          return `
+                            <div
+                              onclick="selectedCategory = '${cat.id}'; searchQuery = ''; renderApp();"
+                              class="group cursor-pointer transition-all duration-200 hover:-translate-y-0.5 flex flex-col h-full"
+                            >
+                              <!-- Linguette Cartella -->
+                              <div class="flex items-end w-full relative -mb-px z-10 pr-2 sm:pr-3">
+                                <!-- Linguetta Principale -->
+                                <div class="px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-t-lg bg-space-card border-t border-x border-slate-800 group-hover:border-slate-700 relative z-10 flex items-center justify-center transition-colors shrink-0" style="color: ${catStyles.colorCode};">
+                                  <i data-lucide="folder" class="w-3.5 h-3.5"></i>
+                                </div>
+                                <!-- Seconda Linguetta -->
+                                <div class="flex-1 h-[14px] sm:h-[18px] rounded-t-lg border-t border-x -ml-1.5 relative z-0 transition-colors block" style="background-color: ${catStyles.colorCode}35; border-color: ${catStyles.colorCode}90;"></div>
+                              </div>
+
+                              <!-- Corpo Cartella -->
+                              <div class="bg-space-card rounded-b-xl rounded-tr-xl rounded-tl-none border border-slate-800 group-hover:border-slate-700 p-3.5 sm:p-4.5 md:p-5 transition-all duration-200 flex flex-col justify-between min-h-[110px] sm:min-h-[135px] h-full shadow-md relative z-0">
+                                <div class="space-y-1.5 sm:space-y-2">
+                                  <div class="flex items-center justify-between gap-1 overflow-hidden">
+                                    <div class="p-1 sm:p-1.5 rounded-md shrink-0" style="background-color: ${catStyles.colorCode}15; color: ${catStyles.colorCode};">
+                                      <i data-lucide="folder" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+                                    </div>
+                                    <span class="text-[9px] sm:text-[10px] font-mono font-bold px-1.5 sm:px-2 py-0.5 rounded-full bg-slate-950 text-slate-300 border border-slate-800 shrink-0 whitespace-nowrap">
+                                      ${count} ${count === 1 ? 'guida' : 'guide'}
+                                    </span>
+                                  </div>
+                                  <h3 class="text-xs sm:text-sm lg:text-base font-extrabold text-slate-100 group-hover:text-white transition-colors line-clamp-2 leading-tight uppercase tracking-wide text-left break-words">
+                                    ${cat.label}
+                                  </h3>
+                                </div>
+
+                                <div class="pt-2 flex items-center justify-between text-[10px] sm:text-[11px] font-semibold text-slate-400 group-hover:text-slate-200 transition-colors">
+                                  <span>Apri</span>
+                                  <i data-lucide="arrow-right" class="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[3] group-hover:translate-x-1 transition-all" style="color: ${catStyles.colorCode};"></i>
+                                </div>
+                              </div>
+                            </div>
+                          `;
+                        }).join('')}
+
+                        <!-- Cartella: Preferiti -->
+                        ${(() => {
+                          const count = getCategoryCount('preferiti');
+                          return `
+                            <div
+                              onclick="selectedCategory = 'preferiti'; searchQuery = ''; renderApp();"
+                              class="group cursor-pointer transition-all duration-200 hover:-translate-y-0.5 flex flex-col h-full"
+                            >
+                              <!-- Linguette Cartella -->
+                              <div class="flex items-end w-full relative -mb-px z-10 pr-2 sm:pr-3">
+                                <!-- Linguetta Principale -->
+                                <div class="px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-t-lg bg-space-card border-t border-x border-slate-800 group-hover:border-slate-700 relative z-10 flex items-center justify-center text-amber-400 transition-colors shrink-0">
+                                  <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+                                </div>
+                                <!-- Seconda Linguetta -->
+                                <div class="flex-1 h-[14px] sm:h-[18px] rounded-t-lg border-t border-x -ml-1.5 relative z-0 transition-colors block" style="background-color: rgba(245, 158, 11, 0.25); border-color: rgba(245, 158, 11, 0.6);"></div>
+                              </div>
+
+                              <!-- Corpo Cartella -->
+                              <div class="bg-space-card rounded-b-xl rounded-tr-xl rounded-tl-none border border-slate-800 group-hover:border-slate-700 p-3.5 sm:p-4.5 md:p-5 transition-all duration-200 flex flex-col justify-between min-h-[110px] sm:min-h-[135px] h-full shadow-md relative z-0">
+                                <div class="space-y-1.5 sm:space-y-2">
+                                  <div class="flex items-center justify-between gap-1 overflow-hidden">
+                                    <div class="p-1 sm:p-1.5 rounded-md text-amber-400 bg-amber-500/10 shrink-0">
+                                      <i data-lucide="star" class="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-current"></i>
+                                    </div>
+                                    <span class="text-[9px] sm:text-[10px] font-mono font-bold px-1.5 sm:px-2 py-0.5 rounded-full bg-slate-950 text-amber-300 border border-slate-800 shrink-0 whitespace-nowrap">
+                                      ${count} ${count === 1 ? 'guida' : 'guide'}
+                                    </span>
+                                  </div>
+                                  <h3 class="text-xs sm:text-sm lg:text-base font-extrabold text-slate-100 group-hover:text-white transition-colors line-clamp-2 leading-tight uppercase tracking-wide text-left break-words">
+                                    I Miei Preferiti
+                                  </h3>
+                                </div>
+
+                                <div class="pt-2 flex items-center justify-between text-[10px] sm:text-[11px] font-semibold text-slate-400 group-hover:text-slate-200 transition-colors">
+                                  <span>Apri</span>
+                                  <i data-lucide="arrow-right" class="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[3] text-amber-400 group-hover:translate-x-1 transition-all"></i>
+                                </div>
+                              </div>
+                            </div>
+                          `;
+                        })()}
+
+                      </div>
+
+                      <div class="p-6 bg-space-card/40 border border-slate-800/60 rounded-2xl text-center space-y-1 mt-6">
+                        <p class="text-xs text-slate-400 font-medium">Clicca su una cartella qui sopra per esplorare le relative guide.</p>
+                      </div>
+                    </div>
+                  `;
+                }
+
+                // VISTA SPECIFICA CARTELLA: Cartelle Scomparse, solo Guide con Titolo "Guide: Nome Tag"
+                let folderName = 'Elenco';
+                if (selectedCategory === 'preferiti') {
+                  folderName = 'Preferiti';
+                } else if (selectedCategory === 'all_guides') {
+                  folderName = 'Tutte';
+                } else if (selectedCategory !== 'all') {
+                  const catObj = categories.find(c => c.id === selectedCategory);
+                  folderName = catObj ? catObj.label : selectedCategory;
+                } else if (searchQuery.trim() !== '') {
+                  folderName = `Risultati per "${searchQuery}"`;
+                }
+
+                return `
+                  <div class="space-y-6">
+                    <!-- Top Bar con Pulsante Indietro e Titolo "Guide: Nome Tag" -->
+                    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-4">
+                      <div class="flex items-center gap-3">
+                        <button
+                          onclick="selectedCategory = 'all'; searchQuery = ''; renderApp();"
+                          class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-space-card hover:bg-slate-800 text-slate-300 hover:text-white rounded-xl border border-slate-800 text-xs font-bold transition-all cursor-pointer group shadow-sm"
+                        >
+                          <i data-lucide="arrow-left" class="w-3.5 h-3.5 stroke-[2.5] group-hover:-translate-x-0.5 transition-transform"></i>
+                          <span>Torna alle Cartelle</span>
+                        </button>
+                        <h2 class="text-base sm:text-lg font-black text-white flex items-center gap-2">
+                          <i data-lucide="folder-open" class="w-5 h-5 text-fluo-purple"></i>
+                          <span>Guide: ${folderName}</span>
+                        </h2>
+                      </div>
+                      <span id="guides-count-badge" class="text-xs text-slate-400 font-semibold font-mono">
+                        Trovate ${filteredGuides.length} ${filteredGuides.length === 1 ? 'guida' : 'guide'}
+                      </span>
+                    </div>
+
+                    <div id="guides-list-grid-wrapper">
+                      ${filteredGuides.length === 0 ? `
+                        <div class="bg-space-card border border-slate-900/60 rounded-3xl p-12 text-center space-y-4 font-sans">
+                          <i data-lucide="folder-open" class="w-12 h-12 text-slate-600 mx-auto font-sans"></i>
+                          <p class="text-slate-400 text-sm font-semibold">Nessuna guida trovata in questa cartella.</p>
+                          <button onclick="selectedCategory='all'; searchQuery=''; renderApp();" class="text-xs text-fluo-purple hover:underline font-bold cursor-pointer">Torna alle Cartelle</button>
+                        </div>
+                      ` : `
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          ${filteredGuides.map(guide => {
+                            const guideCats = guide.categories || (guide.category ? [guide.category] : []);
+                            const isBookmarked = bookmarks.includes(guide.id);
+
+                            const badgesHtml = guideCats.map(catId => {
+                              const catObj = categories.find(c => c.id === catId);
+                              if (!catObj) return '';
+                              const catStyles = getCategoryStyles(catObj.color);
+                              return `<span class="text-[9px] font-bold px-2 py-0.5 rounded-full border ${catStyles.badge}">${catObj.label}</span>`;
+                            }).join('');
+                            
+                            return `
+                              <div
+                                onclick="navigateToGuide('${guide.id}')"
+                                class="bg-space-card rounded-2xl border border-slate-800/80 p-6 sm:p-6.5 cursor-pointer hover:border-slate-700/80 transition-all duration-300 hover:-translate-y-1 shadow-md hover:shadow-2xl flex flex-col justify-between group relative overflow-hidden min-h-[260px] sm:min-h-[270px] h-full"
+                              >
+                                <div class="space-y-3.5">
+                                  
+                                  <div class="flex items-center justify-between gap-2 overflow-hidden">
+                                    <div class="flex flex-wrap gap-1 items-center overflow-hidden">
+                                      ${badgesHtml}
+                                    </div>
+                                    
+                                    <button
+                                      onclick="handleToggleBookmark('${guide.id}', event)"
+                                      class="text-slate-500 hover:text-amber-400 p-1 rounded-lg hover:bg-slate-900 transition-colors cursor-pointer shrink-0"
+                                      title="${isBookmarked ? 'Rimuovi dai preferiti' : 'Aggiungi ai preferiti'}"
+                                    >
+                                     <i data-lucide="star" class="w-4 h-4 ${isBookmarked ? 'text-amber-400 fill-current' : ''}"></i>
+                                    </button>
+                                  </div>
+
+                                  <h3 class="text-base md:text-lg font-black text-slate-100 group-hover:text-white transition-colors line-clamp-2 leading-tight">
+                                    ${guide.title}
+                                  </h3>
+
+                                  <p class="text-xs text-slate-400 line-clamp-3 leading-relaxed font-sans">
+                                    ${guide.description.replace(/\[image\]\(.*?\)/g, '[Immagine]')}
+                                  </p>
+                                </div>
+
+                                <div class="pt-4 mt-4 border-t border-slate-800/70 flex items-center justify-between text-[11px] gap-3">
+                                  <div class="flex flex-col gap-1.5 min-w-0 flex-1 overflow-hidden pr-1">
+                                    ${getGuideAuthorsList(guide).length > 0 ? `
+                                      <div class="flex flex-wrap items-center gap-1.5 overflow-hidden">
+                                        ${getGuideAuthorsList(guide).map(author => `
+                                          <span class="text-[10px] sm:text-[11px] font-sans font-medium flex items-center gap-1 relative group/list-author-2" title="${author.level || 'Autore'}">
+                                            <span style="color: ${author.color || '#cbd5e1'}">
+                                              <button onclick="event.stopPropagation(); viewCreatorCard('${author.name.replace(/'/g, "\\'")}', '${(author.link || '').replace(/'/g, "\\'")}')" class="hover:underline hover:text-fluo-purple transition-all cursor-pointer font-bold text-left bg-transparent border-0 p-0 text-inherit outline-none font-sans">
+                                                ${author.name}
+                                              </button>
+                                            </span>
+                                            <span class="text-[9px] select-none" style="color: ${author.diamondColor || '#26ff5e'}">◆</span>
+                                            <span class="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-1.5 py-0.5 bg-slate-950 border border-slate-850 text-[9px] text-slate-300 rounded opacity-0 group-hover/list-author-2:opacity-100 transition-opacity whitespace-nowrap shadow-md z-30 font-sans">
+                                              ${author.level || 'Autore'}
+                                            </span>
+                                          </span>
+                                        `).join('')}
+                                      </div>
+                                    ` : ''}
+
+                                  </div>
+                                  
+                                  <span class="text-fluo-purple font-bold flex items-center gap-1 group-hover:text-white transition-colors shrink-0 text-xs pl-1">
+                                    Leggi Guida
+                                    <i data-lucide="chevron-right" class="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform"></i>
+                                  </span>
+                                </div>
+                              </div>
+                            `;
+                          }).join('')}
+                        </div>
+                      `}
+                    </div>
+                  </div>
+                `;
+              })()}
+
+            </div>
+
+            <!-- Sidebar (Order 2 su Mobile, Order 1 su Desktop lg) -->
+            <div class="lg:col-span-3 space-y-6 order-2 lg:order-1">
+              
+              <!-- Card Cerca Guida (Visibile solo su Desktop lg) -->
+              <div class="hidden lg:block bg-space-card p-5 rounded-2xl border border-slate-800 shadow-xl space-y-3 neon-shadow-purple">
                 <h2 class="text-xs font-bold text-slate-400 uppercase tracking-widest">
                   Cerca Guida
                 </h2>
@@ -5458,58 +6523,60 @@
                 </div>
               </div>
 
-              
-              <div class="bg-space-card p-5 rounded-2xl border border-slate-800 shadow-xl space-y-3.5 neon-shadow-blue">
-                <h2 class="text-xs font-extrabold text-slate-400 uppercase tracking-widest">
-                  Filtra per Categoria
-                </h2>
-                <div class="flex flex-wrap gap-2">
-                  <button
-                    onclick="selectedCategory = 'all'; renderApp();"
-                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer border ${
-                      selectedCategory === 'all'
-                        ? 'bg-fluo-blue text-black border-fluo-blue shadow-[0_0_12px_rgba(0,240,255,0.3)]'
-                        : 'bg-slate-900/80 hover:bg-slate-850 text-slate-300 border-slate-800/80 hover:border-slate-700/80'
-                    }"
-                  >
-                    <span>Tutte</span>
-                    <span class="px-1.5 py-0.5 bg-black/30 text-[10px] rounded-full font-mono">${getCategoryCount('all')}</span>
-                  </button>
+              <!-- Card Filtra per Categoria (Appare SOLO all'interno delle cartelle) -->
+              ${!isFolderView ? `
+                <div class="bg-space-card p-4 sm:p-5 rounded-2xl border border-slate-800 shadow-xl space-y-3.5 neon-shadow-blue">
+                  <h2 class="text-xs font-extrabold text-slate-400 uppercase tracking-widest">
+                    Filtra per Categoria
+                  </h2>
+                  <div class="flex flex-wrap gap-2">
+                    <button
+                      onclick="selectedCategory = 'all_guides'; renderApp();"
+                      class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer border ${
+                        (selectedCategory === 'all' || selectedCategory === 'all_guides')
+                          ? 'bg-fluo-blue text-black border-fluo-blue shadow-[0_0_12px_rgba(0,240,255,0.3)]'
+                          : 'bg-slate-900/80 hover:bg-slate-850 text-slate-300 border-slate-800/80 hover:border-slate-700/80'
+                      }"
+                    >
+                      <span>Tutte</span>
+                      <span class="px-1.5 py-0.5 bg-black/30 text-[10px] rounded-full font-mono">${getCategoryCount('all')}</span>
+                    </button>
 
-                  ${categories.map(cat => {
-                    const isActive = selectedCategory === cat.id;
-                    const catStyles = getCategoryStyles(cat.color);
-                    return `
-                      <button
-                        onclick="selectedCategory = '${cat.id}'; renderApp();"
-                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer border"
-                        style="${
-                          isActive
-                            ? `background-color: #1e293b; color: #ffffff; border-color: ${catStyles.colorCode}; box-shadow: 0 0 10px ${catStyles.colorCode}25;`
-                            : 'background-color: rgba(15,23,42,0.8); color: #cbd5e1; border-color: rgba(30,41,59,0.8);'
-                        }"
-                      >
-                        <span class="w-2 h-2 rounded-full" style="background-color: ${catStyles.colorCode}"></span>
-                        <span>${cat.label}</span>
-                        <span class="px-1.5 py-0.5 bg-black/30 text-[10px] rounded-full font-mono">${getCategoryCount(cat.id)}</span>
-                      </button>
-                    `;
-                  }).join('')}
+                    ${categories.map(cat => {
+                      const isActive = selectedCategory === cat.id;
+                      const catStyles = getCategoryStyles(cat.color);
+                      return `
+                        <button
+                          onclick="selectedCategory = '${cat.id}'; renderApp();"
+                          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer border"
+                          style="${
+                            isActive
+                              ? `background-color: #1e293b; color: #ffffff; border-color: ${catStyles.colorCode}; box-shadow: 0 0 10px ${catStyles.colorCode}25;`
+                              : 'background-color: rgba(15,23,42,0.8); color: #cbd5e1; border-color: rgba(30,41,59,0.8);'
+                          }"
+                        >
+                          <span class="w-2 h-2 rounded-full" style="background-color: ${catStyles.colorCode}"></span>
+                          <span>${cat.label}</span>
+                          <span class="px-1.5 py-0.5 bg-black/30 text-[10px] rounded-full font-mono">${getCategoryCount(cat.id)}</span>
+                        </button>
+                      `;
+                    }).join('')}
 
-                  <button
-                    onclick="selectedCategory = 'preferiti'; renderApp();"
-                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer border ${
-                      selectedCategory === 'preferiti'
-                        ? 'bg-amber-500 text-white border-amber-500 shadow-[0_0_12px_rgba(245,158,11,0.3)]'
-                        : 'bg-slate-900/80 hover:bg-slate-850 text-slate-300 border-slate-800/80 hover:border-slate-700/80'
-                    }"
-                  >
-                    <i data-lucide="star" class="w-3.5 h-3.5 text-amber-400 fill-current"></i>
-                    <span>Preferiti</span>
-                    <span class="px-1.5 py-0.5 bg-black/30 text-[10px] rounded-full font-mono">${getCategoryCount('preferiti')}</span>
-                  </button>
+                    <button
+                      onclick="selectedCategory = 'preferiti'; renderApp();"
+                      class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer border ${
+                        selectedCategory === 'preferiti'
+                          ? 'bg-amber-500 text-white border-amber-500 shadow-[0_0_12px_rgba(245,158,11,0.3)]'
+                          : 'bg-slate-900/80 hover:bg-slate-850 text-slate-300 border-slate-800/80 hover:border-slate-700/80'
+                      }"
+                    >
+                      <i data-lucide="star" class="w-3.5 h-3.5 text-amber-400 fill-current"></i>
+                      <span>Preferiti</span>
+                      <span class="px-1.5 py-0.5 bg-black/30 text-[10px] rounded-full font-mono">${getCategoryCount('preferiti')}</span>
+                    </button>
+                  </div>
                 </div>
-              </div>
+              ` : ''}
 
               <!-- Card Chi siamo? -->
               <div class="p-5 bg-space-card border border-slate-800 rounded-2xl text-slate-200 shadow-md relative overflow-hidden space-y-3">
@@ -5528,7 +6595,7 @@
                 </button>
               </div>
 
-              
+              <!-- Card Serve Aiuto? -->
               <div class="p-5 bg-space-card border border-slate-800 rounded-2xl text-slate-200 shadow-md relative overflow-hidden space-y-3">
                 <h2 class="text-xs font-extrabold uppercase tracking-widest text-fluo-green flex items-center gap-1.5">
                   <i data-lucide="help-circle" class="w-4 h-4 text-fluo-green"></i>
@@ -5549,106 +6616,277 @@
 
             </div>
 
-            
-            <div class="lg:col-span-9 space-y-6">
+          </div>
+        `;
+        lazyCreateIcons();
+        return;
+      }
+
+      if (activeTab === 'creators') {
+        window.selectedCreatorTag = window.selectedCreatorTag || 'all';
+
+        // Estrazione di tutti i tag disponibili da authorTags e dai creatori
+        const tagMap = new Map();
+        (authorTags || []).forEach(t => {
+          if (t && t.name) {
+            tagMap.set(t.name.toLowerCase(), { name: t.name, color: t.color });
+          }
+        });
+        (creators || []).forEach(c => {
+          (c.tags || []).forEach(t => {
+            if (t && !tagMap.has(t.toLowerCase())) {
+              tagMap.set(t.toLowerCase(), { name: t, color: getTagStyles(t).colorCode });
+            }
+          });
+        });
+        const allTagsList = Array.from(tagMap.values());
+        allTagsList.sort((a, b) => a.name.localeCompare(b.name, 'it', { sensitivity: 'base' }));
+
+        // Conteggio collaboratori per ciascun tag
+        const tagCounts = {};
+        (creators || []).forEach(c => {
+          (c.tags || []).forEach(t => {
+            const key = t.trim();
+            if (key) {
+              const matched = allTagsList.find(a => a.name.toLowerCase() === key.toLowerCase());
+              const tagName = matched ? matched.name : key;
+              tagCounts[tagName] = (tagCounts[tagName] || 0) + 1;
+            }
+          });
+        });
+
+        // Filtraggio dei creatori
+        const selectedTag = window.selectedCreatorTag;
+        const filteredCreators = (selectedTag === 'all')
+          ? creators
+          : creators.filter(c => (c.tags || []).some(t => t.toLowerCase() === selectedTag.toLowerCase()));
+
+        container.innerHTML = `
+          <div class="max-w-6xl mx-auto space-y-8 animate-fade-in font-sans">
+            <!-- Header con pulsante indietro -->
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800 pb-5">
+              <div>
+                <h1 class="text-2xl sm:text-3xl font-black text-white flex items-center gap-2.5">
+                  <i data-lucide="users" class="w-7 h-7 text-fluo-purple"></i>
+                  I nostri Collaboratori ❤︎
+                </h1>
+                <p class="text-xs sm:text-sm text-slate-400">Scopri il team, i creatori di guide e la community dietro a PianetaSim</p>
+              </div>
+              <button
+                onclick="navigateToGuidesList()"
+                class="inline-flex items-center gap-2 text-xs font-bold text-slate-400 hover:text-fluo-green bg-slate-900/80 hover:bg-slate-800/80 border border-slate-800 px-4 py-2.5 rounded-xl cursor-pointer transition-all duration-200 shrink-0"
+              >
+                <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                Torna all'elenco delle guide
+              </button>
+            </div>
+
+            <!-- Grid principale con Sidebar (Telegram + Filtri Tag) a sinistra e Collaboratori a destra -->
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
               
-              <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                <h2 class="text-base font-extrabold text-white">
-                  ${selectedCategory === 'preferiti' 
-                    ? 'I Miei Preferiti' 
-                    : selectedCategory === 'all' 
-                      ? 'Tutte le Guide' 
-                      : categories.find(c => c.id === selectedCategory)?.label || 'Elenco Guide'}
-                </h2>
-                <span id="guides-count-badge" class="text-xs text-slate-400 font-semibold font-mono font-sans">
-                  Trovate ${filteredGuides.length} guide
-                </span>
+              <!-- Sidebar laterale -->
+              <div class="lg:col-span-1 space-y-6">
+                
+                <!-- Box / Tasto di spinta per il Gruppo Telegram -->
+                <div class="bg-space-card border border-slate-800 hover:border-sky-500/50 rounded-2xl p-5 shadow-xl relative overflow-hidden group transition-all duration-300">
+                  <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-sky-500/15 rounded-full blur-2xl group-hover:bg-sky-500/30 transition-all"></div>
+                  <div class="relative z-10 space-y-3">
+                    <div class="flex items-center gap-3">
+                      <div class="w-10 h-10 rounded-xl bg-sky-500/20 border border-sky-400/40 text-sky-400 flex items-center justify-center shrink-0 shadow-md">
+                        <i data-lucide="send" class="w-5 h-5"></i>
+                      </div>
+                      <div>
+                        <span class="text-[9px] font-black uppercase tracking-wider text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded-md border border-sky-500/20">Community Telegram</span>
+                        <h3 class="text-sm font-black text-white leading-tight mt-0.5">Unisciti a Pianeta Sim!</h3>
+                      </div>
+                    </div>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                      Hai bisogno di una mano, vuoi semplicemente condividere la tua passione per The Sims o vuoi anche tu dare una mano alla comunnity? Entra nel nostro gruppo Telegram!
+                    </p>
+                    <a
+                      href="https://t.me/TheSims4ItaliaPianetaSim"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-black text-xs rounded-xl shadow-lg shadow-sky-500/25 hover:shadow-sky-500/40 transition-all duration-200 transform active:scale-95 group/btn"
+                    >
+                      <span>Entra nel Gruppo Telegram</span>
+                      <i data-lucide="external-link" class="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 transition-transform"></i>
+                    </a>
+                  </div>
+                </div>
+
+                <!-- Sezione Filtri per Tag -->
+                <div class="bg-space-card border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+                  <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+                    <h2 class="text-xs font-black uppercase tracking-wider text-white flex items-center gap-2">
+                      <i data-lucide="filter" class="w-4 h-4 text-fluo-purple"></i>
+                      Filtra per Ruolo
+                    </h2>
+                    ${selectedTag !== 'all' ? `
+                      <button
+                        onclick="window.selectedCreatorTag = 'all'; renderApp();"
+                        class="text-[11px] font-bold text-slate-400 hover:text-fluo-pink underline transition-colors cursor-pointer"
+                      >
+                        Reset
+                      </button>
+                    ` : ''}
+                  </div>
+
+                  <div class="flex flex-col gap-1.5">
+                    <!-- Pulsante 'Tutti i Collaboratori' -->
+                    <button
+                      onclick="window.selectedCreatorTag = 'all'; renderApp();"
+                      class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${selectedTag === 'all' ? 'bg-fluo-purple text-white shadow-md shadow-purple-900/40 font-black' : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'}"
+                    >
+                      <span class="flex items-center gap-2">
+                        <i data-lucide="users" class="w-3.5 h-3.5"></i>
+                        Tutti i Collaboratori
+                      </span>
+                      <span class="px-2 py-0.5 rounded-full text-[10px] ${selectedTag === 'all' ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-400'}">${creators.length}</span>
+                    </button>
+
+                    <!-- Elenco Tag -->
+                    ${allTagsList.map(tagObj => {
+                      const isSelected = selectedTag.toLowerCase() === tagObj.name.toLowerCase();
+                      const count = tagCounts[tagObj.name] || 0;
+                      const s = getTagStyles(tagObj.name);
+
+                      return `
+                        <button
+                          onclick="window.selectedCreatorTag = '${tagObj.name.replace(/'/g, "\\'")}'; renderApp();"
+                          class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer border ${isSelected ? 'border-transparent text-white font-black shadow-md' : 'border-transparent text-slate-300 hover:bg-slate-800/60 hover:text-white'}"
+                          style="${isSelected ? `background-color: ${s.colorCode};` : ''}"
+                        >
+                          <span class="flex items-center gap-2 truncate">
+                            <span class="w-2 h-2 rounded-full shrink-0" style="background-color: ${isSelected ? '#ffffff' : s.colorCode}"></span>
+                            <span class="truncate">${tagObj.name}</span>
+                          </span>
+                          <span class="px-2 py-0.5 rounded-full text-[10px] shrink-0 ${isSelected ? 'bg-black/20 text-white' : 'bg-slate-800 text-slate-400'}">${count}</span>
+                        </button>
+                      `;
+                    }).join('')}
+                  </div>
+                </div>
+
               </div>
 
-              <div id="guides-list-grid-wrapper">
-                ${filteredGuides.length === 0 ? `
-                  <div class="bg-space-card border border-slate-900/60 rounded-3xl p-12 text-center space-y-4 font-sans">
-                    <i data-lucide="folder-open" class="w-12 h-12 text-slate-600 mx-auto font-sans"></i>
-                    <p class="text-slate-400 text-sm font-semibold">Nessuna guida corrisponde ai filtri selezionati.</p>
-                    <button onclick="selectedCategory='all'; searchQuery=''; renderApp();" class="text-xs text-fluo-purple hover:underline font-bold cursor-pointer">Resetta tutti i filtri</button>
+              <!-- Contenuto Collaboratori (3 colonne su desktop) -->
+              <div class="lg:col-span-3 space-y-6">
+                ${selectedTag !== 'all' ? `
+                  <div class="flex items-center justify-between bg-slate-900/80 border border-purple-900/40 px-4 py-3 rounded-xl">
+                    <div class="flex items-center gap-2 text-xs text-slate-300">
+                      <span>Filtro attivo:</span>
+                      <span class="font-black text-white px-2.5 py-0.5 rounded-full text-[11px] border" style="background-color: ${getTagStyles(selectedTag).colorCode}20; border-color: ${getTagStyles(selectedTag).colorCode}; color: ${getTagStyles(selectedTag).colorCode}">
+                        ${selectedTag}
+                      </span>
+                      <span class="text-slate-400">(${filteredCreators.length} ${filteredCreators.length === 1 ? 'collaboratore' : 'collaboratori'})</span>
+                    </div>
+                    <button
+                      onclick="window.selectedCreatorTag = 'all'; renderApp();"
+                      class="text-xs font-bold text-slate-400 hover:text-white flex items-center gap-1 cursor-pointer"
+                    >
+                      <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                      Mostra tutti
+                    </button>
+                  </div>
+                ` : ''}
+
+                ${filteredCreators.length === 0 ? `
+                  <div class="bg-space-card border border-slate-800 rounded-2xl p-12 text-center space-y-4">
+                    <div class="w-12 h-12 rounded-2xl bg-slate-800 text-slate-400 flex items-center justify-center mx-auto">
+                      <i data-lucide="user-x" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-base font-bold text-white">Nessun collaboratore trovato</h3>
+                    <p class="text-xs text-slate-400 max-w-sm mx-auto">Non ci sono collaboratori con il tag "${selectedTag}".</p>
+                    <button
+                      onclick="window.selectedCreatorTag = 'all'; renderApp();"
+                      class="px-4 py-2 bg-fluo-purple text-white text-xs font-bold rounded-xl hover:bg-opacity-90 transition-colors cursor-pointer"
+                    >
+                      Mostra tutti i collaboratori
+                    </button>
                   </div>
                 ` : `
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    ${filteredGuides.map(guide => {
-                      const guideCats = guide.categories || (guide.category ? [guide.category] : []);
-                      const primaryCatId = guideCats[0] || 'gameplay';
-                      const primaryCatObj = categories.find(c => c.id === primaryCatId) || { label: 'Generale', color: 'purple' };
-                      const primaryCatStyles = getCategoryStyles(primaryCatObj.color);
-                      const isBookmarked = bookmarks.includes(guide.id);
-
-                      const badgesHtml = guideCats.map(catId => {
-                        const catObj = categories.find(c => c.id === catId);
-                        if (!catObj) return '';
-                        const catStyles = getCategoryStyles(catObj.color);
-                        return `<span class="text-[9px] font-bold px-2 py-0.5 rounded-full border ${catStyles.badge}">${catObj.label}</span>`;
+                    ${filteredCreators.map(creator => {
+                      const avatarSrc = creator.avatar || 'images/logo.png';
+                      const socialsHtml = (creator.socials || []).map(social => {
+                        const sColor = social.color || '#a855f7';
+                        return `
+                          <a
+                            href="${social.url.startsWith('http') ? social.url : 'https://' + social.url}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onclick="event.stopPropagation();"
+                            class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold rounded-xl border transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
+                            style="background-color: ${sColor}15; border-color: ${sColor}40; color: ${sColor};"
+                            onmouseover="this.style.backgroundColor='${sColor}2a'; this.style.borderColor='${sColor}'; this.style.color='#ffffff';"
+                            onmouseout="this.style.backgroundColor='${sColor}15'; this.style.borderColor='${sColor}40'; this.style.color='${sColor}';"
+                          >
+                            <span>${social.label}</span>
+                            <i data-lucide="external-link" class="w-3.5 h-3.5" style="color: ${sColor}"></i>
+                          </a>
+                        `;
                       }).join('');
-                      
+
+                      const tagsHtml = (creator.tags || []).map(tag => {
+                        const s = getTagStyles(tag);
+                        return `
+                          <span 
+                            onclick="event.stopPropagation(); window.selectedCreatorTag = '${tag.replace(/'/g, "\\'")}'; renderApp();"
+                            class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-black border font-sans uppercase tracking-wider cursor-pointer hover:scale-105 transition-transform" 
+                            style="color: ${s.colorCode}; border-color: ${s.colorCode}40; background-color: ${s.colorCode}10;"
+                            title="Filtra per ${tag}"
+                          >
+                            <span class="w-1.5 h-1.5 rounded-full" style="background-color: ${s.colorCode}"></span>
+                            ${tag}
+                          </span>
+                        `;
+                      }).join('');
+
                       return `
-                        <div
-                          onclick="navigateToGuide('${guide.id}')"
-                          class="bg-space-card rounded-2xl border border-slate-800/80 p-5 cursor-pointer hover:border-slate-700/80 transition-all duration-300 hover:-translate-y-1 shadow-md hover:shadow-2xl flex flex-col justify-between group relative overflow-hidden h-[240px]"
-                        >
-                          <div class="space-y-3">
-                            
-                            <div class="flex items-center justify-between gap-2 overflow-hidden">
-                              <div class="flex flex-wrap gap-1 items-center overflow-hidden">
-                                ${badgesHtml}
+                        <div id="creator-card-${creator.id || creator.name.toLowerCase().replace(/\s+/g, '-')}" onclick="triggerMerloPopup(this, '${creator.name.replace(/'/g, "\\'")}')" class="bg-space-card rounded-2xl border border-slate-800 p-6 shadow-xl flex flex-col justify-between space-y-4 hover:border-slate-700 transition-all duration-300 relative overflow-visible cursor-pointer">
+                          <div class="space-y-4">
+                            <!-- Profilo -->
+                            <div class="flex items-center gap-4">
+                              <div class="relative w-16 h-16 rounded-full border-2 border-fluo-purple/40 overflow-hidden bg-slate-900/40 shrink-0 select-none animate-fade-in" oncontextmenu="return false;" onselectstart="return false;">
+                               <img 
+                                 src="${avatarSrc}" 
+                                 referrerpolicy="no-referrer"
+                                 alt="${creator.name}" 
+                                 draggable="false"
+                                 oncontextmenu="return false;"
+                                 onselectstart="return false;"
+                                 ondragstart="return false;"
+                                 class="w-full h-full object-cover select-none pointer-events-none"
+                                 onerror="this.src='images/logo.png';"
+                               />
+                               <div class="absolute inset-0 z-10 bg-transparent select-none" oncontextmenu="return false;" ondragstart="return false;"></div>
+                             </div>
+                              <div>
+                                <div class="creator-name-wrapper flex items-center flex-wrap gap-1.5 relative">
+                                  <h3 class="text-base font-black tracking-tight flex items-center gap-1.5" style="color: ${creator.color || '#38bdf8'};">
+                                    <span style="color: ${creator.color || '#38bdf8'};">${creator.name}</span>
+                                    <span class="text-[10px] select-none" style="color: ${creator.diamondColor || creator.color || '#26ff5e'};">◆</span>
+                                  </h3>
+                                </div>
+                                <p class="text-xs font-bold text-slate-400 font-sans">${creator.role || 'Autore'}</p>
                               </div>
-                              
-                              <button
-                                onclick="handleToggleBookmark('${guide.id}', event)"
-                                class="text-slate-500 hover:text-amber-400 p-1 rounded-lg hover:bg-slate-900 transition-colors cursor-pointer shrink-0"
-                                title="${isBookmarked ? 'Rimuovi dai preferiti' : 'Aggiungi ai preferiti'}"
-                              >
-                               <i data-lucide="star" class="w-4 h-4 ${isBookmarked ? 'text-amber-400 fill-current' : ''}"></i>
-                              </button>
                             </div>
 
-                            
-                            <h3 class="text-base md:text-lg font-black text-slate-100 group-hover:text-white transition-colors line-clamp-2 leading-tight">
-                              ${guide.title}
-                            </h3>
-
-                            
-                            <p class="text-xs text-slate-400 line-clamp-3 leading-relaxed font-sans">
-                              ${guide.description.replace(/\[image\]\(.*?\)/g, '[Immagine]')}
+                            <!-- Descrizione -->
+                            <p class="text-xs text-slate-300 leading-relaxed font-sans min-h-[60px]">
+                              ${creator.description || 'Nessuna descrizione inserita.'}
                             </p>
+
+                            <!-- Tag dell'autore -->
+                            <div class="flex flex-wrap gap-1">
+                              ${tagsHtml}
+                            </div>
                           </div>
 
-                          
-                          <div class="pt-3 border-t border-slate-900 flex items-center justify-between text-[11px]">
-                            <div class="flex flex-col gap-0.5 max-w-[60%] overflow-hidden">
-                              ${getGuideAuthorsList(guide).length > 0 ? `
-                                <div class="flex flex-wrap items-center gap-1.5 overflow-hidden">
-                                  ${getGuideAuthorsList(guide).map(author => `
-                                    <span class="text-[10px] font-sans font-medium flex items-center gap-1 relative group/list-author-2" title="${author.level || 'Autore'}">
-                                      <span style="color: ${author.color || '#cbd5e1'}">
-                                        <button onclick="event.stopPropagation(); viewCreatorCard('${author.name.replace(/'/g, "\\'")}', '${(author.link || '').replace(/'/g, "\\'")}')" class="hover:underline hover:text-fluo-purple transition-all cursor-pointer font-bold text-left bg-transparent border-0 p-0 text-inherit outline-none font-sans">
-                                          ${author.name}
-                                        </button>
-                                      </span>
-                                      <span class="text-[9px] select-none" style="color: ${author.diamondColor || '#26ff5e'}">◆</span>
-                                      <span class="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-1.5 py-0.5 bg-slate-950 border border-slate-850 text-[9px] text-slate-300 rounded opacity-0 group-hover/list-author-2:opacity-100 transition-opacity whitespace-nowrap shadow-md z-30 font-sans">
-                                        ${author.level || 'Autore'}
-                                      </span>
-                                    </span>
-                                  `).join('')}
-                                </div>
-                              ` : ''}
-                              <span class="text-slate-500 truncate font-mono">
-                                #${guide.tags.slice(0, 2).join(' #')}
-                              </span>
-                            </div>
-                            
-                            <span class="text-fluo-purple font-bold flex items-center gap-1 group-hover:text-white transition-colors">
-                              Leggi Guida
-                              <i data-lucide="chevron-right" class="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform"></i>
-                            </span>
+                          <!-- Bottoni Social -->
+                          <div class="pt-4 border-t border-slate-700/80 flex flex-wrap gap-2">
+                            ${socialsHtml || '<span class="text-xs text-slate-500 italic">Nessun link social</span>'}
                           </div>
                         </div>
                       `;
@@ -5657,105 +6895,6 @@
                 `}
               </div>
 
-            </div>
-          </div>
-        `;
-        lazyCreateIcons();
-        return;
-      }
-
-      if (activeTab === 'creators') {
-        container.innerHTML = `
-          <div class="max-w-4xl mx-auto space-y-8 animate-fade-in font-sans">
-            <!-- Header con pulsante indietro -->
-            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800 pb-5">
-              <div>
-                <h1 class="text-2xl font-black text-white flex items-center gap-2">
-                  <i data-lucide="users" class="w-6 h-6 text-fluo-purple"></i>
-                  Chi Siamo
-                </h1>
-                <p class="text-xs text-slate-400">Scopri chi c'è dietro a Pianeta e la sua Community</p>
-              </div>
-              <button
-                onclick="navigateToGuidesList()"
-                class="inline-flex items-center gap-2 text-xs font-bold text-slate-400 hover:text-fluo-green bg-slate-900/80 hover:bg-slate-800/80 border border-slate-800 px-4 py-2.5 rounded-xl cursor-pointer transition-all duration-200"
-              >
-                <i data-lucide="arrow-left" class="w-4 h-4"></i>
-                Torna all'elenco delle guide
-              </button>
-            </div>
-
-            <!-- Griglia dei Creatori -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              ${creators.map(creator => {
-                const avatarSrc = creator.avatar || 'images/logo.png';
-                const socialsHtml = (creator.socials || []).map(social => {
-                  const sColor = social.color || '#a855f7';
-                  return `
-                    <a
-                      href="${social.url.startsWith('http') ? social.url : 'https://' + social.url}"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold rounded-xl border transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
-                      style="background-color: ${sColor}15; border-color: ${sColor}40; color: ${sColor};"
-                      onmouseover="this.style.backgroundColor='${sColor}2a'; this.style.borderColor='${sColor}'; this.style.color='#ffffff';"
-                      onmouseout="this.style.backgroundColor='${sColor}15'; this.style.borderColor='${sColor}40'; this.style.color='${sColor}';"
-                    >
-                      <span>${social.label}</span>
-                      <i data-lucide="external-link" class="w-3.5 h-3.5" style="color: ${sColor}"></i>
-                    </a>
-                  `;
-                }).join('');
-
-                const tagsHtml = (creator.tags || []).map(tag => {
-                  const s = getTagStyles(tag);
-                  return `
-                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-black border font-sans uppercase tracking-wider" style="color: ${s.colorCode}; border-color: ${s.colorCode}40; background-color: ${s.colorCode}10;">
-                      <span class="w-1.5 h-1.5 rounded-full" style="background-color: ${s.colorCode}"></span>
-                      ${tag}
-                    </span>
-                  `;
-                }).join('');
-
-                return `
-                  <div id="creator-card-${creator.id || creator.name.toLowerCase().replace(/\s+/g, '-')}" class="bg-space-card rounded-2xl border border-slate-800 p-6 shadow-xl flex flex-col justify-between space-y-4 hover:border-slate-700 transition-all duration-300">
-                    <div class="space-y-4">
-                      <!-- Profilo -->
-                      <div class="flex items-center gap-4">
-                        <img 
-                          src="${avatarSrc}" 
-                          referrerpolicy="no-referrer"
-                          alt="${creator.name}" 
-                          class="w-16 h-16 rounded-full border-2 border-fluo-purple/40 object-cover bg-slate-900/40 shrink-0 animate-fade-in"
-                          onerror="this.src='images/logo.png';"
-                        />
-                        <div>
-                          <h3 class="text-base font-black text-white tracking-tight flex items-center gap-1.5">
-                            ${creator.name}
-                            <span class="text-[10px] select-none text-fluo-green">◆</span>
-                          </h3>
-                          <p class="text-xs font-bold text-slate-400 font-sans">${creator.role || 'Autore'}</p>
-                        </div>
-                      </div>
-
-                      <!-- Descrizione -->
-                      <p class="text-xs text-slate-300 leading-relaxed font-sans min-h-[60px]">
-                        ${creator.description || 'Nessuna descrizione inserita.'}
-                      </p>
-
-                      <!-- Tag dell'autore -->
-                      <div class="flex flex-wrap gap-1">
-                        ${tagsHtml}
-                      </div>
-                    </div>
-
-                    <!-- Bottoni Social -->
-                    <div class="pt-4 border-t border-slate-900 flex flex-wrap gap-2">
-                      ${socialsHtml || '<span class="text-xs text-slate-500 italic">Nessun link social</span>'}
-                    </div>
-                  </div>
-                `;
-              }).join('')}
             </div>
           </div>
         `;
@@ -5955,31 +7094,7 @@
                         />
                       </div>
 
-                      <div class="space-y-1.5">
-                        <label class="text-xs font-bold text-slate-400 uppercase">Tags (Separati da Virgola)</label>
-                        <input
-                          type="text"
-                          id="admin-edit-tags"
-                          value="${g._rawTags !== undefined ? g._rawTags : g.tags.join(', ')}"
-                          oninput="updateEditingTags(this.value)"
-                          placeholder="es: costruzione, trucchi, mobili"
-                          class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:ring-2 focus:ring-fluo-purple outline-none"
-                        />
-                        ${g.tags && g.tags.length > 0 ? `
-                        <div class="flex flex-wrap gap-1 mt-1.5">
-                          ${g.tags.map((tag, tIdx) => `
-                            <span class="inline-flex items-center gap-1 text-[10px] bg-slate-900 text-slate-300 border border-slate-800 px-2 py-0.5 rounded-md font-mono">
-                              #${tag}
-                              <button
-                                type="button"
-                                onclick="deleteTagFromEditingGuide(${tIdx})"
-                                class="hover:text-red-400 text-slate-500 cursor-pointer text-[10px] font-black"
-                              >✕</button>
-                            </span>
-                          `).join('')}
-                        </div>
-                        ` : ''}
-                      </div>
+
                     </div>
 
                     <div class="p-3 bg-slate-900/30 rounded-xl border border-slate-900/60 flex items-center gap-2 mt-2">
@@ -5994,21 +7109,32 @@
                       </label>
                     </div>
 
-                    <!-- Gestione Autori dell'Articolo (Nuova Sezione Avanzata per Autori Multipli) -->
+                    <!-- Gestione Autori dell'Articolo (Seleziona dai Collaboratori o Inserimento Manuale) -->
                     <div class="space-y-3.5 border-t border-slate-900 pt-4 mt-4">
-                      <div class="flex items-center justify-between">
+                      <div class="flex flex-wrap items-center justify-between gap-2">
                         <label class="text-xs font-bold text-slate-300 uppercase tracking-wider font-sans flex items-center gap-1.5">
                           <i data-lucide="users" class="w-4 h-4 text-fluo-purple"></i>
                           Gestione Autori dell'Articolo
                         </label>
-                        <button
-                          type="button"
-                          onclick="addAuthorToEditingGuide()"
-                          class="px-2.5 py-1.5 bg-fluo-purple hover:bg-opacity-90 text-white rounded-lg text-[10px] font-black cursor-pointer transition-all flex items-center gap-1 shadow-md shadow-purple-950/20"
-                        >
-                          <i data-lucide="user-plus" class="w-3 h-3"></i>
-                          Aggiungi Autore
-                        </button>
+                        <div class="flex items-center gap-2">
+                          ${creators && creators.length > 0 ? `
+                            <select
+                              onchange="if(this.value){ addCreatorAsGuideAuthor(this.value); this.value=''; }"
+                              class="px-2 py-1.5 bg-slate-950 border border-slate-800 rounded-lg text-[10px] font-bold text-slate-300 outline-none focus:ring-1 focus:ring-fluo-purple cursor-pointer"
+                            >
+                              <option value="">+ Seleziona dai Collaboratori...</option>
+                              ${creators.map(c => `<option value="${c.id}">${c.name} (${c.role || 'Collaboratore'})</option>`).join('')}
+                            </select>
+                          ` : ''}
+                          <button
+                            type="button"
+                            onclick="addAuthorToEditingGuide()"
+                            class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-[10px] font-black cursor-pointer transition-all flex items-center gap-1 shadow-md"
+                          >
+                            <i data-lucide="user-plus" class="w-3 h-3"></i>
+                            Nuovo Manuale
+                          </button>
+                        </div>
                       </div>
 
                       <div class="space-y-3">
@@ -6031,6 +7157,23 @@
                                 </button>
                               ` : ''}
                             </div>
+
+                            ${creators && creators.length > 0 ? `
+                              <div class="bg-slate-950/80 p-2 rounded-xl border border-slate-850/80 flex flex-wrap items-center justify-between gap-2">
+                                <span class="text-[9px] font-bold text-slate-400 uppercase font-sans">Collega a Collaboratore Esistente:</span>
+                                <select
+                                  onchange="if(this.value){ applyCreatorToAuthor(${authorIdx}, this.value); }"
+                                  class="px-2 py-1 bg-slate-900 border border-slate-800 rounded-lg text-[10px] text-fluo-purple font-bold outline-none cursor-pointer"
+                                >
+                                  <option value="">-- Seleziona un Collaboratore --</option>
+                                  ${creators.map(c => `
+                                    <option value="${c.id}" ${author.name && author.name.toLowerCase() === c.name.toLowerCase() ? 'selected' : ''}>
+                                      ${c.name} (${c.role || 'Collaboratore'})
+                                    </option>
+                                  `).join('')}
+                                </select>
+                              </div>
+                            ` : ''}
 
                             <!-- Form campi autore in grid responsive -->
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -6797,7 +7940,7 @@
 
   
   <script>
-    (function() {
+    function initConstellationsCanvas() {
       const canvas = document.getElementById('constellations-canvas');
       if (!canvas) return;
       const ctx = canvas.getContext('2d');
@@ -7213,7 +8356,7 @@
         isTabActive = !document.hidden;
       });
 
-      const fpsInterval = 1000 / 30; // 30 FPS throttling for background canvas animation
+      const fpsInterval = 1000 / 24; // 24 FPS throttling for optimal performance & zero lag
       let lastFrameTime = performance.now();
 
       function animate(timestamp) {
@@ -7241,6 +8384,7 @@
         }
 
         
+        ctx.fillStyle = '#ffffff';
         for (let i = 0; i < backgroundStars.length; i++) {
           const s = backgroundStars[i];
           s.opacity += s.twinkleSpeed * s.twinkleDir;
@@ -7253,10 +8397,11 @@
           }
 
           
-          ctx.fillStyle = `rgba(255, 255, 255, ${s.opacity})`;
+          ctx.globalAlpha = s.opacity;
           const size = s.radius * 2;
           ctx.fillRect(s.x - s.radius, s.y - s.radius, size, size);
         }
+        ctx.globalAlpha = 1.0;
 
         
         ctx.font = '9px "JetBrains Mono", Courier, monospace';
@@ -7341,7 +8486,23 @@
       }
 
       animate();
-    })();
+    }
+
+    if (document.readyState === 'complete') {
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(initConstellationsCanvas, { timeout: 1500 });
+      } else {
+        setTimeout(initConstellationsCanvas, 200);
+      }
+    } else {
+      window.addEventListener('load', function() {
+        if ('requestIdleCallback' in window) {
+          requestIdleCallback(initConstellationsCanvas, { timeout: 1500 });
+        } else {
+          setTimeout(initConstellationsCanvas, 200);
+        }
+      });
+    }
   </script>
 </body>
 </html>

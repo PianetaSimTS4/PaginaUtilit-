@@ -45,7 +45,7 @@ copyFile(path.join(process.cwd(), 'index.html'), path.join(distDir, 'index.html'
 copyFile(path.join(process.cwd(), 'guides.json'), path.join(distDir, 'guides.json'));
 
 
-copyFile(path.join(process.cwd(), 'logo.png'), path.join(distDir, 'logo.png'));
+copyFile(path.join(process.cwd(), 'images', 'logo.png'), path.join(distDir, 'logo.png'));
 
 
 const imagesSrc = path.join(process.cwd(), 'images');
