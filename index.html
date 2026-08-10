@@ -5184,7 +5184,7 @@
                     <div class="min-w-0 flex-1">
                       <span class="text-xs text-slate-200 font-bold flex items-center gap-2">
                         <span class="w-2 h-2 rounded-full shrink-0" style="background-color: ${getCategoryStyles(c.color).colorCode}"></span>
-                        ${c.icon ? `<span class="shrink-0">${c.icon}</span>` : ''}
+<span class="shrink-0">${c.icon || '📁'}</span>
                         <span class="truncate">${c.label}</span>
                       </span>
                       ${c.description ? `<p class="text-[10px] text-slate-400 font-sans truncate pl-4 mt-0.5">${c.description}</p>` : ''}
@@ -6377,7 +6377,7 @@
                               </div>
 
                               <!-- Corpo Cartella -->
-                              <div class="bg-space-card rounded-b-xl rounded-tr-xl rounded-tl-none border border-slate-800 group-hover:border-slate-700 p-3.5 sm:p-4.5 md:p-5 transition-all duration-200 flex flex-col justify-between min-h-[155px] sm:min-h-[180px] h-full shadow-md relative z-0">
+<div class="bg-space-card rounded-b-xl rounded-tr-xl rounded-tl-none border border-slate-800 group-hover:border-slate-700 p-3.5 sm:p-4.5 md:p-5 transition-all duration-200 flex flex-col justify-between min-h-[155px] sm:min-h-[180px] h-full shadow-md relative z-0">
                                 <div class="space-y-1.5 sm:space-y-2">
                                   <div class="flex items-center justify-between gap-1 overflow-hidden">
                                     <div class="p-1 sm:p-1.5 rounded-md bg-cyan-500/10 text-cyan-400 shrink-0 flex items-center justify-center font-sans">
@@ -6390,7 +6390,7 @@
                                   <h3 class="text-xs sm:text-sm lg:text-base font-extrabold text-slate-100 group-hover:text-white transition-colors line-clamp-1 leading-tight uppercase tracking-wide text-left break-words">
                                     Tutte
                                   </h3>
-                                  <p class="text-[10.5px] sm:text-[11.5px] text-slate-300 font-sans line-clamp-4 leading-relaxed">
+<p class="text-[10.5px] sm:text-[11.5px] text-slate-300 font-sans line-clamp-4 leading-relaxed">
                                     Tutte le guide disponibili nel catalogo.
                                   </p>
                                 </div>
@@ -6415,15 +6415,15 @@
                               <!-- Linguette Cartella -->
                               <div class="flex items-end w-full relative -mb-px z-10 pr-2 sm:pr-3">
                                 <!-- Linguetta Principale -->
-                                <div class="px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-t-lg bg-space-card border-t border-x relative z-10 flex items-center justify-center transition-colors shrink-0" style="color: ${catStyles.colorCode}; border-color: ${catStyles.colorCode}90;">
-                                  <i data-lucide="folder" class="w-3.5 h-3.5"></i>
+<div class="px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-t-lg bg-space-card border-t border-x border-slate-800 group-hover:border-slate-700 relative z-10 flex items-center justify-center transition-colors shrink-0" style="color: ${catStyles.colorCode}; border-color: ${catStyles.colorCode}90;">
+                                  ${cat.icon ? `<span class="text-xs font-sans">${cat.icon}</span>` : `<i data-lucide="folder" class="w-3.5 h-3.5"></i>`}
                                 </div>
                                 <!-- Seconda Linguetta -->
                                 <div class="flex-1 h-[14px] sm:h-[18px] rounded-t-lg border-t border-x -ml-1.5 relative z-0 transition-colors block" style="background-color: ${catStyles.colorCode}35; border-color: ${catStyles.colorCode}90;"></div>
                               </div>
 
                               <!-- Corpo Cartella -->
-                              <div class="bg-space-card rounded-b-xl rounded-tr-xl rounded-tl-none border border-slate-800 group-hover:border-slate-700 p-3.5 sm:p-4.5 md:p-5 transition-all duration-200 flex flex-col justify-between min-h-[155px] sm:min-h-[180px] h-full shadow-md relative z-0">
+<div class="bg-space-card rounded-b-xl rounded-tr-xl rounded-tl-none border border-slate-800 group-hover:border-slate-700 p-3.5 sm:p-4.5 md:p-5 transition-all duration-200 flex flex-col justify-between min-h-[155px] sm:min-h-[180px] h-full shadow-md relative z-0">
                                 <div class="space-y-1.5 sm:space-y-2">
                                   <div class="flex items-center justify-between gap-1 overflow-hidden">
                                     <div class="p-1 sm:p-1.5 rounded-md shrink-0 flex items-center justify-center font-sans text-xs sm:text-sm" style="background-color: ${catStyles.colorCode}15; color: ${catStyles.colorCode};">
@@ -6437,7 +6437,7 @@
                                     <span>${cat.label}</span>
                                   </h3>
                                   ${cat.description ? `
-                                    <p class="text-[10.5px] sm:text-[11.5px] text-slate-300 font-sans line-clamp-4 leading-relaxed">
+<p class="text-[10.5px] sm:text-[11.5px] text-slate-300 font-sans line-clamp-4 leading-relaxed">
                                       ${cat.description}
                                     </p>
                                   ` : ''}
@@ -6470,7 +6470,7 @@
                               </div>
 
                               <!-- Corpo Cartella -->
-                              <div class="bg-space-card rounded-b-xl rounded-tr-xl rounded-tl-none border border-slate-800 group-hover:border-slate-700 p-3.5 sm:p-4.5 md:p-5 transition-all duration-200 flex flex-col justify-between min-h-[155px] sm:min-h-[180px] h-full shadow-md relative z-0">
+<div class="bg-space-card rounded-b-xl rounded-tr-xl rounded-tl-none border border-slate-800 group-hover:border-slate-700 p-3.5 sm:p-4.5 md:p-5 transition-all duration-200 flex flex-col justify-between min-h-[155px] sm:min-h-[180px] h-full shadow-md relative z-0">
                                 <div class="space-y-1.5 sm:space-y-2">
                                   <div class="flex items-center justify-between gap-1 overflow-hidden">
                                     <div class="p-1 sm:p-1.5 rounded-md text-amber-400 bg-amber-500/10 shrink-0">
@@ -6483,7 +6483,7 @@
                                   <h3 class="text-xs sm:text-sm lg:text-base font-extrabold text-slate-100 group-hover:text-white transition-colors line-clamp-1 leading-tight uppercase tracking-wide text-left break-words">
                                     I Miei Preferiti
                                   </h3>
-                                  <p class="text-[10.5px] sm:text-[11.5px] text-slate-300 font-sans line-clamp-4 leading-relaxed">
+<p class="text-[10.5px] sm:text-[11.5px] text-slate-300 font-sans line-clamp-4 leading-relaxed">
                                     Le tue guide salvate nei preferiti.
                                   </p>
                                 </div>
@@ -7155,7 +7155,7 @@
                             }"
                           >
                             <span class="w-1.5 h-1.5 rounded-full" style="background-color: ${catStyles.colorCode}"></span>
-                            <span>${c.icon ? c.icon + ' ' : ''}${c.label}</span>
+<span>${c.icon || '📁'} ${c.label}</span>
                             ${isSelected ? '<span class="text-fluo-green text-[10px] font-black">✓</span>' : ''}
                           </button>
                         `;
@@ -7191,7 +7191,7 @@
                                   : 'background-color: rgba(15,23,42,0.6); color: #94a3b8; border-color: rgba(30,41,59,0.8);'
                               }"
                             >
-                              <span>📌 ${c.icon ? c.icon + ' ' : ''}${c.label}</span>
+<span>📌 ${c.icon || '📁'} ${c.label}</span>
                               ${isPinnedInCat ? '<span class="text-amber-300 font-black text-[10px]">✓ Pinnata</span>' : ''}
                             </button>
                           `;
