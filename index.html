@@ -2722,6 +2722,8 @@
     function handleAddCategory() {
       const labelInput = document.getElementById('new-cat-label');
       const colorSelect = document.getElementById('new-cat-color');
+      const iconInput = document.getElementById('new-cat-icon');
+      const descInput = document.getElementById('new-cat-desc');
       if (!labelInput || !labelInput.value.trim()) {
         showToast('Il nome della categoria è obbligatorio!', 'info');
         return;
@@ -2740,19 +2742,26 @@
       categories.push({
         id: id,
         label: label,
-        color: colorSelect.value
+        color: colorSelect ? colorSelect.value : selectedCategoryColor,
+        icon: iconInput ? iconInput.value.trim() : '',
+        description: descInput ? descInput.value.trim() : ''
       });
 
       labelInput.value = '';
+      if (iconInput) iconInput.value = '';
+      if (descInput) descInput.value = '';
       persistDataLocally();
       saveAllGuidesToServer();
       renderApp();
+      showToast(`Categoria "${label}" creata con successo!`, 'success');
     }
 
     function handleUpdateCategory() {
       if (!window.editingCategoryId) return;
       const labelInput = document.getElementById('new-cat-label');
       const colorSelect = document.getElementById('new-cat-color');
+      const iconInput = document.getElementById('new-cat-icon');
+      const descInput = document.getElementById('new-cat-desc');
       if (!labelInput || !labelInput.value.trim()) {
         showToast('Il nome della categoria è obbligatorio!', 'info');
         return;
@@ -2772,8 +2781,10 @@
       const catIdx = categories.findIndex(c => c.id === oldId);
       if (catIdx >= 0) {
         categories[catIdx].label = newLabel;
-        categories[catIdx].color = colorSelect.value || selectedCategoryColor;
+        categories[catIdx].color = (colorSelect && colorSelect.value) || selectedCategoryColor;
         categories[catIdx].id = newId;
+        categories[catIdx].icon = iconInput ? iconInput.value.trim() : (categories[catIdx].icon || '');
+        categories[catIdx].description = descInput ? descInput.value.trim() : (categories[catIdx].description || '');
       }
 
       if (oldId !== newId) {
@@ -2781,12 +2792,55 @@
           if (g.category === oldId) {
             g.category = newId;
           }
+          if (g.categories && Array.isArray(g.categories)) {
+            g.categories = g.categories.map(c => c === oldId ? newId : c);
+          }
+          if (g.pinnedFolders && Array.isArray(g.pinnedFolders)) {
+            g.pinnedFolders = g.pinnedFolders.map(c => c === oldId ? newId : c);
+          }
         });
       }
 
       window.editingCategoryId = null;
       persistDataLocally();
       saveAllGuidesToServer();
+      renderApp();
+      showToast('Categoria aggiornata con successo!', 'success');
+    }
+
+    function isGuidePinnedInCategory(guide, categoryId) {
+      if (!guide) return false;
+      if (guide.pinnedFolders && Array.isArray(guide.pinnedFolders)) {
+        if (categoryId === 'all' || categoryId === 'all_guides') {
+          return guide.pinnedFolders.length > 0 || !!guide.pinned;
+        }
+        if (guide.pinnedFolders.includes(categoryId)) {
+          return true;
+        }
+      }
+      if (guide.pinned) {
+        if (categoryId === 'all' || categoryId === 'all_guides' || categoryId === 'preferiti') {
+          return true;
+        }
+        const guideCats = guide.categories || (guide.category ? [guide.category] : []);
+        return guideCats.includes(categoryId);
+      }
+      return false;
+    }
+
+    function toggleEditingGuidePinnedFolder(catId) {
+      if (!window.editingGuide) return;
+      if (!window.editingGuide.pinnedFolders) {
+        window.editingGuide.pinnedFolders = [];
+      }
+      const idx = window.editingGuide.pinnedFolders.indexOf(catId);
+      if (idx >= 0) {
+        window.editingGuide.pinnedFolders.splice(idx, 1);
+      } else {
+        window.editingGuide.pinnedFolders.push(catId);
+      }
+      if (typeof updateLivePreviewDebounced === 'function') updateLivePreviewDebounced();
+      if (typeof pushHistoryDebounced === 'function') pushHistoryDebounced();
       renderApp();
     }
 
@@ -4986,8 +5040,29 @@
                             id="new-cat-label"
                             value="${catToEdit.label}"
                             placeholder="es: Carriere Segrete"
-                            class="w-full px-3 py-1.5 bg-slate-900 border border-slate-850 rounded-lg text-xs text-white focus:ring-1 focus:ring-fluo-blue outline-none"
+                            class="w-full px-3 py-1.5 bg-slate-900 border border-slate-850 rounded-lg text-xs text-white focus:ring-1 focus:ring-fluo-blue outline-none font-sans"
                           />
+                        </div>
+
+                        <div class="space-y-1">
+                          <label class="text-[9px] uppercase font-black text-slate-400 tracking-wider">Simbolo / Emoji Cartella</label>
+                          <input
+                            type="text"
+                            id="new-cat-icon"
+                            value="${catToEdit.icon || ''}"
+                            placeholder="es: 📁, 🧩, 🎮, 🏗️"
+                            class="w-full px-3 py-1.5 bg-slate-900 border border-slate-850 rounded-lg text-xs text-white focus:ring-1 focus:ring-fluo-blue outline-none font-sans"
+                          />
+                        </div>
+
+                        <div class="space-y-1">
+                          <label class="text-[9px] uppercase font-black text-slate-400 tracking-wider">Descrizione Cartella</label>
+                          <textarea
+                            id="new-cat-desc"
+                            rows="2"
+                            placeholder="es: Scopri le migliori guide e approfondimenti..."
+                            class="w-full px-3 py-1.5 bg-slate-900 border border-slate-850 rounded-lg text-xs text-white focus:ring-1 focus:ring-fluo-blue outline-none font-sans resize-y"
+                          >${catToEdit.description || ''}</textarea>
                         </div>
 
                         <div class="space-y-1.5">
@@ -5042,8 +5117,28 @@
                         type="text"
                         id="new-cat-label"
                         placeholder="es: Trucchi e Cheat"
-                        class="w-full px-3 py-1.5 bg-slate-900 border border-slate-850 rounded-lg text-xs text-white focus:ring-1 focus:ring-fluo-blue outline-none"
+                        class="w-full px-3 py-1.5 bg-slate-900 border border-slate-850 rounded-lg text-xs text-white focus:ring-1 focus:ring-fluo-blue outline-none font-sans"
                       />
+                    </div>
+
+                    <div class="space-y-1">
+                      <label class="text-[9px] uppercase font-black text-slate-400 tracking-wider">Simbolo / Emoji Cartella</label>
+                      <input
+                        type="text"
+                        id="new-cat-icon"
+                        placeholder="es: 📁, 🧩, 🎮, 🏗️"
+                        class="w-full px-3 py-1.5 bg-slate-900 border border-slate-850 rounded-lg text-xs text-white focus:ring-1 focus:ring-fluo-blue outline-none font-sans"
+                      />
+                    </div>
+
+                    <div class="space-y-1">
+                      <label class="text-[9px] uppercase font-black text-slate-400 tracking-wider">Descrizione Cartella</label>
+                      <textarea
+                        id="new-cat-desc"
+                        rows="2"
+                        placeholder="es: Scopri le migliori guide e approfondimenti..."
+                        class="w-full px-3 py-1.5 bg-slate-900 border border-slate-850 rounded-lg text-xs text-white focus:ring-1 focus:ring-fluo-blue outline-none font-sans resize-y"
+                      ></textarea>
                     </div>
 
                     <div class="space-y-1.5">
@@ -5080,14 +5175,18 @@
 
             <div class="space-y-2 pt-2 border-t border-slate-900">
               <h5 class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Categorie Esistenti:</h5>
-              <div class="space-y-1.5 max-h-[160px] overflow-y-auto scrollbar-none pr-1">
+              <div class="space-y-1.5 max-h-[220px] overflow-y-auto scrollbar-none pr-1">
                 ${categories.map(c => `
-                  <div class="flex items-center justify-between p-2 bg-slate-950/40 rounded-xl border border-slate-900/60 hover:border-slate-850 transition-colors">
-                    <span class="text-xs text-slate-200 font-bold flex items-center gap-2">
-                      <span class="w-2 h-2 rounded-full" style="background-color: ${getCategoryStyles(c.color).colorCode}"></span>
-                      ${c.label}
-                    </span>
-                    <div class="flex items-center gap-1">
+                  <div class="flex items-center justify-between p-2.5 bg-slate-950/40 rounded-xl border border-slate-900/60 hover:border-slate-850 transition-colors gap-2">
+                    <div class="min-w-0 flex-1">
+                      <span class="text-xs text-slate-200 font-bold flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full shrink-0" style="background-color: ${getCategoryStyles(c.color).colorCode}"></span>
+                        <span class="shrink-0">${c.icon || '📁'}</span>
+                        <span class="truncate">${c.label}</span>
+                      </span>
+                      ${c.description ? `<p class="text-[10px] text-slate-400 font-sans truncate pl-4 mt-0.5">${c.description}</p>` : ''}
+                    </div>
+                    <div class="flex items-center gap-1 shrink-0">
                       <button
                         onclick="window.editingCategoryId = '${c.id}'; selectedCategoryColor = '${c.color}'; renderApp();"
                         class="p-1 text-fluo-blue hover:text-cyan-300 hover:bg-slate-900/40 rounded transition-colors"
@@ -6099,6 +6198,15 @@
           return matchesSearch && matchesCategory;
         });
 
+        // Ordina le guide mettendo in cima quelle pinnate nella categoria corrente
+        filteredGuides.sort((a, b) => {
+          const aPinned = isGuidePinnedInCategory(a, selectedCategory);
+          const bPinned = isGuidePinnedInCategory(b, selectedCategory);
+          if (aPinned && !bPinned) return -1;
+          if (!aPinned && bPinned) return 1;
+          return 0;
+        });
+
         
         const listWrapperEl = document.getElementById('guides-list-grid-wrapper');
         const countBadgeEl = document.getElementById('guides-count-badge');
@@ -6122,6 +6230,13 @@
                 const primaryCatStyles = getCategoryStyles(primaryCatObj.color);
                 const isBookmarked = bookmarks.includes(guide.id);
 
+                const isPinnedInCurrentView = isGuidePinnedInCategory(guide, selectedCategory);
+                const pinnedBadgeHtml = isPinnedInCurrentView ? `
+                  <span class="text-[9px] font-black px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/50 flex items-center gap-1 shadow-[0_0_8px_rgba(245,158,11,0.25)] shrink-0">
+                    📌 In Evidenza
+                  </span>
+                ` : '';
+
                 const badgesHtml = guideCats.map(catId => {
                   const catObj = categories.find(c => c.id === catId);
                   if (!catObj) return '';
@@ -6138,6 +6253,7 @@
                       
                       <div class="flex items-center justify-between gap-2 overflow-hidden">
                         <div class="flex flex-wrap gap-1 items-center overflow-hidden">
+                          ${pinnedBadgeHtml}
                           ${badgesHtml}
                         </div>
                         
@@ -6258,23 +6374,25 @@
                               </div>
 
                               <!-- Corpo Cartella -->
-                              <div class="bg-space-card rounded-b-xl rounded-tr-xl rounded-tl-none border border-slate-800 group-hover:border-slate-700 p-3.5 sm:p-4.5 md:p-5 transition-all duration-200 flex flex-col justify-between min-h-[110px] sm:min-h-[135px] h-full shadow-md relative z-0">
+                              <div class="bg-space-card rounded-b-xl rounded-tr-xl rounded-tl-none border border-slate-800 group-hover:border-slate-700 p-3.5 sm:p-4.5 md:p-5 transition-all duration-200 flex flex-col justify-between min-h-[120px] sm:min-h-[145px] h-full shadow-md relative z-0">
                                 <div class="space-y-1.5 sm:space-y-2">
                                   <div class="flex items-center justify-between gap-1 overflow-hidden">
-                                    <div class="p-1 sm:p-1.5 rounded-md bg-cyan-500/10 text-cyan-400 shrink-0">
+                                    <div class="p-1 sm:p-1.5 rounded-md bg-cyan-500/10 text-cyan-400 shrink-0 flex items-center justify-center font-sans">
                                       <i data-lucide="folder" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
                                     </div>
                                     <span class="text-[9px] sm:text-[10px] font-mono font-bold px-1.5 sm:px-2 py-0.5 rounded-full bg-slate-950 text-slate-300 border border-slate-800 shrink-0 whitespace-nowrap">
                                       ${count} ${count === 1 ? 'guida' : 'guide'}
                                     </span>
                                   </div>
-                                  <h3 class="text-xs sm:text-sm lg:text-base font-extrabold text-slate-100 group-hover:text-white transition-colors line-clamp-2 leading-tight uppercase tracking-wide text-left break-words">
+                                  <h3 class="text-xs sm:text-sm lg:text-base font-extrabold text-slate-100 group-hover:text-white transition-colors line-clamp-1 leading-tight uppercase tracking-wide text-left break-words">
                                     Tutte
                                   </h3>
+                                  <p class="text-[10px] sm:text-[11px] text-slate-400 font-sans line-clamp-2 leading-snug">
+                                    Tutte le guide disponibili nel catalogo.
+                                  </p>
                                 </div>
 
-                                <div class="pt-2 flex items-center justify-between text-[10px] sm:text-[11px] font-semibold text-slate-400 group-hover:text-slate-200 transition-colors">
-                                  <span>Apri</span>
+                                <div class="pt-2 flex items-center justify-end text-[10px] sm:text-[11px] font-semibold text-slate-400 group-hover:text-slate-200 transition-colors">
                                   <i data-lucide="arrow-right" class="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[3] text-cyan-400 group-hover:translate-x-1 transition-all"></i>
                                 </div>
                               </div>
@@ -6295,30 +6413,34 @@
                               <div class="flex items-end w-full relative -mb-px z-10 pr-2 sm:pr-3">
                                 <!-- Linguetta Principale -->
                                 <div class="px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-t-lg bg-space-card border-t border-x border-slate-800 group-hover:border-slate-700 relative z-10 flex items-center justify-center transition-colors shrink-0" style="color: ${catStyles.colorCode};">
-                                  <i data-lucide="folder" class="w-3.5 h-3.5"></i>
+                                  ${cat.icon ? `<span class="text-xs font-sans">${cat.icon}</span>` : `<i data-lucide="folder" class="w-3.5 h-3.5"></i>`}
                                 </div>
                                 <!-- Seconda Linguetta -->
                                 <div class="flex-1 h-[14px] sm:h-[18px] rounded-t-lg border-t border-x -ml-1.5 relative z-0 transition-colors block" style="background-color: ${catStyles.colorCode}35; border-color: ${catStyles.colorCode}90;"></div>
                               </div>
 
                               <!-- Corpo Cartella -->
-                              <div class="bg-space-card rounded-b-xl rounded-tr-xl rounded-tl-none border border-slate-800 group-hover:border-slate-700 p-3.5 sm:p-4.5 md:p-5 transition-all duration-200 flex flex-col justify-between min-h-[110px] sm:min-h-[135px] h-full shadow-md relative z-0">
+                              <div class="bg-space-card rounded-b-xl rounded-tr-xl rounded-tl-none border border-slate-800 group-hover:border-slate-700 p-3.5 sm:p-4.5 md:p-5 transition-all duration-200 flex flex-col justify-between min-h-[120px] sm:min-h-[145px] h-full shadow-md relative z-0">
                                 <div class="space-y-1.5 sm:space-y-2">
                                   <div class="flex items-center justify-between gap-1 overflow-hidden">
-                                    <div class="p-1 sm:p-1.5 rounded-md shrink-0" style="background-color: ${catStyles.colorCode}15; color: ${catStyles.colorCode};">
-                                      <i data-lucide="folder" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+                                    <div class="p-1 sm:p-1.5 rounded-md shrink-0 flex items-center justify-center font-sans text-xs sm:text-sm" style="background-color: ${catStyles.colorCode}15; color: ${catStyles.colorCode};">
+                                      ${cat.icon || `<i data-lucide="folder" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>`}
                                     </div>
                                     <span class="text-[9px] sm:text-[10px] font-mono font-bold px-1.5 sm:px-2 py-0.5 rounded-full bg-slate-950 text-slate-300 border border-slate-800 shrink-0 whitespace-nowrap">
                                       ${count} ${count === 1 ? 'guida' : 'guide'}
                                     </span>
                                   </div>
-                                  <h3 class="text-xs sm:text-sm lg:text-base font-extrabold text-slate-100 group-hover:text-white transition-colors line-clamp-2 leading-tight uppercase tracking-wide text-left break-words">
-                                    ${cat.label}
+                                  <h3 class="text-xs sm:text-sm lg:text-base font-extrabold text-slate-100 group-hover:text-white transition-colors line-clamp-1 leading-tight uppercase tracking-wide text-left break-words flex items-center gap-1.5">
+                                    <span>${cat.label}</span>
                                   </h3>
+                                  ${cat.description ? `
+                                    <p class="text-[10px] sm:text-[11px] text-slate-400 font-sans line-clamp-2 leading-snug">
+                                      ${cat.description}
+                                    </p>
+                                  ` : ''}
                                 </div>
 
-                                <div class="pt-2 flex items-center justify-between text-[10px] sm:text-[11px] font-semibold text-slate-400 group-hover:text-slate-200 transition-colors">
-                                  <span>Apri</span>
+                                <div class="pt-2 flex items-center justify-end text-[10px] sm:text-[11px] font-semibold text-slate-400 group-hover:text-slate-200 transition-colors">
                                   <i data-lucide="arrow-right" class="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[3] group-hover:translate-x-1 transition-all" style="color: ${catStyles.colorCode};"></i>
                                 </div>
                               </div>
@@ -6345,7 +6467,7 @@
                               </div>
 
                               <!-- Corpo Cartella -->
-                              <div class="bg-space-card rounded-b-xl rounded-tr-xl rounded-tl-none border border-slate-800 group-hover:border-slate-700 p-3.5 sm:p-4.5 md:p-5 transition-all duration-200 flex flex-col justify-between min-h-[110px] sm:min-h-[135px] h-full shadow-md relative z-0">
+                              <div class="bg-space-card rounded-b-xl rounded-tr-xl rounded-tl-none border border-slate-800 group-hover:border-slate-700 p-3.5 sm:p-4.5 md:p-5 transition-all duration-200 flex flex-col justify-between min-h-[120px] sm:min-h-[145px] h-full shadow-md relative z-0">
                                 <div class="space-y-1.5 sm:space-y-2">
                                   <div class="flex items-center justify-between gap-1 overflow-hidden">
                                     <div class="p-1 sm:p-1.5 rounded-md text-amber-400 bg-amber-500/10 shrink-0">
@@ -6355,13 +6477,15 @@
                                       ${count} ${count === 1 ? 'guida' : 'guide'}
                                     </span>
                                   </div>
-                                  <h3 class="text-xs sm:text-sm lg:text-base font-extrabold text-slate-100 group-hover:text-white transition-colors line-clamp-2 leading-tight uppercase tracking-wide text-left break-words">
+                                  <h3 class="text-xs sm:text-sm lg:text-base font-extrabold text-slate-100 group-hover:text-white transition-colors line-clamp-1 leading-tight uppercase tracking-wide text-left break-words">
                                     I Miei Preferiti
                                   </h3>
+                                  <p class="text-[10px] sm:text-[11px] text-slate-400 font-sans line-clamp-2 leading-snug">
+                                    Le tue guide salvate nei preferiti.
+                                  </p>
                                 </div>
 
-                                <div class="pt-2 flex items-center justify-between text-[10px] sm:text-[11px] font-semibold text-slate-400 group-hover:text-slate-200 transition-colors">
-                                  <span>Apri</span>
+                                <div class="pt-2 flex items-center justify-end text-[10px] sm:text-[11px] font-semibold text-slate-400 group-hover:text-slate-200 transition-colors">
                                   <i data-lucide="arrow-right" class="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[3] text-amber-400 group-hover:translate-x-1 transition-all"></i>
                                 </div>
                               </div>
@@ -6426,6 +6550,13 @@
                             const guideCats = guide.categories || (guide.category ? [guide.category] : []);
                             const isBookmarked = bookmarks.includes(guide.id);
 
+                            const isPinnedInCurrentView = isGuidePinnedInCategory(guide, selectedCategory);
+                            const pinnedBadgeHtml = isPinnedInCurrentView ? `
+                              <span class="text-[9px] font-black px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/50 flex items-center gap-1 shadow-[0_0_8px_rgba(245,158,11,0.25)] shrink-0">
+                                📌 In Evidenza
+                              </span>
+                            ` : '';
+
                             const badgesHtml = guideCats.map(catId => {
                               const catObj = categories.find(c => c.id === catId);
                               if (!catObj) return '';
@@ -6442,6 +6573,7 @@
                                   
                                   <div class="flex items-center justify-between gap-2 overflow-hidden">
                                     <div class="flex flex-wrap gap-1 items-center overflow-hidden">
+                                      ${pinnedBadgeHtml}
                                       ${badgesHtml}
                                     </div>
                                     
@@ -7020,11 +7152,48 @@
                             }"
                           >
                             <span class="w-1.5 h-1.5 rounded-full" style="background-color: ${catStyles.colorCode}"></span>
-                            <span>${c.label}</span>
+                            <span>${c.icon || '📁'} ${c.label}</span>
                             ${isSelected ? '<span class="text-fluo-green text-[10px] font-black">✓</span>' : ''}
                           </button>
                         `;
                       }).join('')}
+                    </div>
+                  </div>
+
+                  <!-- Pinna in Evidenza nelle Cartelle -->
+                  <div class="space-y-1.5 p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                      <label class="text-xs font-bold text-amber-300 uppercase font-sans flex items-center gap-1.5">
+                        <span>📌 Pinna in Evidenza nelle Cartelle</span>
+                      </label>
+                      <span class="text-[10px] text-slate-400 font-sans">Seleziona la cartella in cui mostrare la guida in prima posizione</span>
+                    </div>
+                    <div class="flex flex-wrap gap-1.5 pt-1">
+                      ${(() => {
+                        const guideCats = g.categories || (g.category ? [g.category] : []);
+                        const relevantCats = categories.filter(c => guideCats.includes(c.id));
+                        if (relevantCats.length === 0) {
+                          return '<span class="text-[11px] text-slate-500 italic">Seleziona prima almeno una categoria qui sopra per attivare il pinning.</span>';
+                        }
+                        return relevantCats.map(c => {
+                          const isPinnedInCat = g.pinnedFolders && Array.isArray(g.pinnedFolders) && g.pinnedFolders.includes(c.id);
+                          return `
+                            <button
+                              type="button"
+                              onclick="toggleEditingGuidePinnedFolder('${c.id}')"
+                              class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold transition-all duration-200 cursor-pointer border"
+                              style="${
+                                isPinnedInCat
+                                  ? 'background-color: rgba(245,158,11,0.25); color: #fef08a; border-color: #f59e0b; box-shadow: 0 0 10px rgba(245,158,11,0.3);'
+                                  : 'background-color: rgba(15,23,42,0.6); color: #94a3b8; border-color: rgba(30,41,59,0.8);'
+                              }"
+                            >
+                              <span>📌 ${c.icon || '📁'} ${c.label}</span>
+                              ${isPinnedInCat ? '<span class="text-amber-300 font-black text-[10px]">✓ Pinnata</span>' : ''}
+                            </button>
+                          `;
+                        }).join('');
+                      })()}
                     </div>
                   </div>
 
