@@ -1,49 +1,67 @@
 {
   "categories": [
     {
-      "id": "mod_cc",
-      "label": "Mod e CC",
-      "color": "cyan"
+      "id": "mod",
+      "label": "Mod",
+      "color": "viola",
+      "icon": "📁",
+      "description": "Guide tutorial su tutto ciò che riguarda l'installazione o il funzionamento delle mod di The Sims 4."
     },
     {
-      "id": "gameplay",
-      "label": "Gameplay",
-      "color": "azzurro"
+      "id": "cc",
+      "label": "CC",
+      "color": "fucsia",
+      "icon": "👗",
+      "description": "Guide tutorial su tutto ciò che riguarda l0installazioni e informazioni riguardanti al contenuto personalizzato (cc) di The Sims 4."
     },
     {
       "id": "guide-veloci",
       "label": "Guide Veloci",
-      "color": "giallo"
+      "color": "giallo",
+      "icon": "⚡",
+      "description": "Le guide veloci sono senza immagini e molto brevi, perfette per chi si trova a suo agio tra i file e dinamiche di The Sims 4."
     },
     {
       "id": "guide-passo-passo",
       "label": "Guide Passo Passo",
-      "color": "verde"
+      "color": "verde",
+      "icon": "🐢",
+      "description": "Le guide passo passo sono con immagini e ben dettagliate, utili per chi ha bisogni di tutorial lenti e non tecnici."
     },
     {
       "id": "pianeta-sim",
       "label": "Pianeta Sim",
-      "color": "blu"
+      "color": "bianco",
+      "icon": "🪐",
+      "description": "Tutte le guide riguardanti questo sito!"
     },
     {
       "id": "mccc",
       "label": "MCCC",
-      "color": "rosso"
+      "color": "rosso",
+      "icon": "🖥️",
+      "description": "Guide tutorial riguardanti alla Mc Command Center di DeaderPool, una delle mod più utilizzate e utili che migliora e semplifica il gamplay."
     },
     {
       "id": "traduzioni",
       "label": "Traduzioni",
-      "color": "fucsia"
+      "color": "lime",
+      "icon": "🇮🇹",
+      "description": "Guide tutorial riguardanti il mondo delle traduzioni italiane di The Sims 4."
     },
     {
-      "id": "tabelle",
-      "label": "Tabelle",
-      "color": "arancione"
+      "id": "tabelle-sito",
+      "label": "Tabelle Sito",
+      "color": "arancione",
+      "icon": "🔎",
+      "description": ""
     },
     {
       "id": "gshade",
       "label": "GShade",
-      "color": "verdeacqua"
+      "color": "verdeacqua",
+      "icon": "📷",
+      "description": "Guida tutorial su GShade, un programma esterno che modifica la grafica di The Sims 4."
     }
   ],
   "guides": [
@@ -314,7 +332,10 @@
       ],
       "authorDiamondColor": "#ffffff",
       "authorLevel": "Fondatrice & Traduttrice",
-      "authorLink": "#collaboratori"
+      "authorLink": "#collaboratori",
+      "pinnedFolders": [
+        "pianeta-sim"
+      ]
     },
     {
       "id": "guida-tabella-mod",
@@ -323,7 +344,7 @@
       "category": "pianeta-sim",
       "categories": [
         "pianeta-sim",
-        "tabelle"
+        "tabelle-sito"
       ],
       "tags": [
         "paineta sim",
@@ -562,7 +583,7 @@
       "category": "pianeta-sim",
       "categories": [
         "pianeta-sim",
-        "tabelle"
+        "tabelle-sito"
       ],
       "tags": [
         "pianeta sim",
@@ -678,7 +699,7 @@
       "id": "installazione-mod-veloce",
       "title": "📁 COME INSTALLARE LE MOD - GUIDA VELOCE",
       "description": "Questa guida è fatta per chi è ha confidenza o ha già esperienze nelle installazioni e videogiochi.",
-      "category": "mod_cc",
+      "category": "mod",
       "tags": [
         "mod",
         "installazione",
@@ -934,7 +955,7 @@
       ],
       "tips": [],
       "categories": [
-        "mod_cc",
+        "mod",
         "guide-veloci"
       ],
       "authors": [
@@ -961,7 +982,7 @@
       "id": "guida-mods-passopasso",
       "title": "📁 COME INSTALLARE LE MOD - GUIDA PASSO PASSO",
       "description": "Questa guida è per chi è poco pratico o alla prime armi. Ad ogni punto verrai guidato attraverso le immagini e spiegazioni semplici.",
-      "category": "mod_cc",
+      "category": "mod",
       "tags": [
         "mods",
         "installazioni",
@@ -1199,7 +1220,7 @@
       ],
       "tips": [],
       "categories": [
-        "mod_cc",
+        "mod",
         "guide-passo-passo"
       ],
       "authors": [
@@ -1452,9 +1473,10 @@
       "id": "come-attivare-mod-e-cc-in-gioco-guida",
       "title": "⚙️ COME ATTIVARE MOD E CC IN GIOCO - GUIDA VELOCE",
       "description": "Ecco come poter attivare le mod e cc in The Sims 4.",
-      "category": "mod_cc",
+      "category": "mod",
       "categories": [
-        "mod_cc",
+        "mod",
+        "cc",
         "guide-veloci"
       ],
       "tags": [
@@ -1524,9 +1546,10 @@
       "id": "guida-mod-attivazione",
       "title": "⚙️ COME ATTIVARE MOD E CC IN GIOCO - GUIDA PASSO PASSO",
       "description": "Dopo aver scaricato mod e cc serve attivarle in gioco, segui la guida con immagini per sapere come fare.",
-      "category": "mod_cc",
+      "category": "mod",
       "categories": [
-        "mod_cc",
+        "mod",
+        "cc",
         "guide-passo-passo"
       ],
       "tags": [
@@ -1635,9 +1658,10 @@
       "id": "come-organizzare-mod-cc",
       "title": "✍️ CONSIGLI SU COME ORGANIZZARE MOD E CC",
       "description": "Se non sai come prganizzare la cartella Mods ti offriamo alcuni consigli per poter migliorare la tua esperienza di gioco o trarre infomazioni utili.",
-      "category": "mod_cc",
+      "category": "mod",
       "categories": [
-        "mod_cc"
+        "mod",
+        "cc"
       ],
       "tags": [
         "cc",
@@ -2241,9 +2265,9 @@
       "id": "guida-installazione-cc",
       "title": "👗 COME INSTALLARE I CC - GUIDA VELOCE",
       "description": "Spiegazione chiara e riassuntiva su come poter scaricare i tuoi cc (contenuto personalizzato) su The Sims 4.",
-      "category": "mod_cc",
+      "category": "cc",
       "categories": [
-        "mod_cc",
+        "cc",
         "guide-veloci"
       ],
       "tags": [],
@@ -2401,9 +2425,9 @@
       "id": "guida-installare-cc-veloce",
       "title": "👗 COME INSTALLARE I CC - GUIDA PASSO PASSO",
       "description": "Spiegazione dettagliata e approfondita su come poter scaricare i tuoi cc (contenuto personalizzato) su The Sims 4.\n",
-      "category": "mod_cc",
+      "category": "cc",
       "categories": [
-        "mod_cc",
+        "cc",
         "guide-passo-passo"
       ],
       "tags": [],
@@ -2587,7 +2611,10 @@
       "authorDiamondColor": "#ffffff",
       "authorLevel": "Fondatrice & Traduttrice",
       "authorLink": "#collaboratori",
-      "_rawTags": ""
+      "_rawTags": "",
+      "pinnedFolders": [
+        "mccc"
+      ]
     }
   ],
   "creators": [
@@ -2614,6 +2641,41 @@
       "diamondColor": "#ffffff"
     },
     {
+      "id": "creator-1786367355919-645",
+      "name": "LeymeTartaruga",
+      "role": "Fondatrice",
+      "avatar": "images/logo.png",
+      "color": "#14b8a6",
+      "diamondColor": "#ffffff",
+      "description": "Co-fondatrice di Pianeta Sim, appassionata di The Sims 4, supporta idee e progetti del gruppo con creatività, collaborazione e aiuto pratico.",
+      "tags": [
+        "Admin",
+        "Fondatrice",
+        "Moderatore"
+      ],
+      "socials": []
+    },
+    {
+      "id": "creator-1785142827052-172",
+      "name": "Leo",
+      "role": "Admin & Traduttore",
+      "avatar": "images/FpLeo.jpg",
+      "color": "#2563eb",
+      "description": "Laureando in Relazioni Internazionali, mi occupo della traduzione italiana delle mod di The Sims 4, collaboro con Pianeta Sim offrendo supporto alla community online.",
+      "tags": [
+        "Admin",
+        "Traduttore"
+      ],
+      "socials": [
+        {
+          "label": "Patreon",
+          "url": "https://www.patreon.com/cw/leotranslations",
+          "color": "#f97316"
+        }
+      ],
+      "diamondColor": "#38bdf8"
+    },
+    {
       "id": "sha",
       "name": "Sha",
       "role": "Admin & Traduttrice",
@@ -2634,26 +2696,6 @@
           "label": "Tumblr",
           "url": "https://www.tumblr.com/sh4-ts",
           "color": "#2563eb"
-        }
-      ],
-      "diamondColor": "#38bdf8"
-    },
-    {
-      "id": "creator-1785142827052-172",
-      "name": "Leo",
-      "role": "Admin & Traduttore",
-      "avatar": "images/FpLeo.jpg",
-      "color": "#2563eb",
-      "description": "Collaboratore attivo di PianetaSim. Aiuta con la traduzione di mod e custom content per arricchire l'esperienza dei giocatori italiani.",
-      "tags": [
-        "Admin",
-        "Traduttore"
-      ],
-      "socials": [
-        {
-          "label": "Patreon",
-          "url": "https://www.patreon.com/cw/leotranslations",
-          "color": "#f97316"
         }
       ],
       "diamondColor": "#38bdf8"
