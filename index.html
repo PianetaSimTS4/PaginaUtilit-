@@ -6416,7 +6416,7 @@
                               <div class="flex items-end w-full relative -mb-px z-10 pr-2 sm:pr-3">
                                 <!-- Linguetta Principale -->
                                 <div class="px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-t-lg bg-space-card border-t border-x border-slate-800 group-hover:border-slate-700 relative z-10 flex items-center justify-center transition-colors shrink-0" style="color: ${catStyles.colorCode};">
-                                  <i data-lucide="folder" class="w-3.5 h-3.5"></i>
+                                  ${cat.icon ? `<span class="text-xs font-sans">${cat.icon}</span>` : `<i data-lucide="folder" class="w-3.5 h-3.5"></i>`}
                                 </div>
                                 <!-- Seconda Linguetta -->
                                 <div class="flex-1 h-[14px] sm:h-[18px] rounded-t-lg border-t border-x -ml-1.5 relative z-0 transition-colors block" style="background-color: ${catStyles.colorCode}35; border-color: ${catStyles.colorCode}90;"></div>
