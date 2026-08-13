@@ -447,15 +447,14 @@
           Benvenuto nella sezione delle guide di PianetaSim! Impara nuove tecniche di costruzione, installa mod tradotte e copia trucchi con un solo click.
         </p>
         
-        <div id="inline-alert-box" class="w-full max-w-2xl mt-4 hidden text-left border rounded-2xl p-4 relative transition-all duration-300">
-          <div class="flex items-start gap-3">
-            <div id="inline-alert-icon-container" class="p-2 rounded-xl shrink-0">
-              <i id="inline-alert-icon" data-lucide="alert-triangle" class="w-5 h-5"></i>
-            </div>
-            <div class="space-y-1">
-              <div id="inline-alert-title" class="text-xs font-black uppercase tracking-wider text-white"></div>
-              <div id="inline-alert-text" class="text-xs text-slate-300 leading-relaxed font-sans"></div>
-            </div>
+        <div id="inline-alert-box" class="w-full max-w-md mt-3 hidden text-center border rounded-2xl p-3.5 sm:p-4 relative transition-all duration-300 backdrop-blur-md shadow-lg">
+          <button id="inline-alert-dismiss-btn" onclick="dismissInlineAlert()" class="absolute top-2.5 right-2.5 p-1 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800/50 transition-colors cursor-pointer z-10" title="Chiudi avviso">
+            <i data-lucide="x" class="w-3.5 h-3.5"></i>
+          </button>
+          <div class="space-y-1.5 px-2 flex flex-col items-center justify-center">
+            <div id="inline-alert-title" class="text-xs font-black uppercase tracking-wider text-center"></div>
+            <div id="inline-alert-text" class="text-xs text-slate-200 leading-relaxed font-sans text-center"></div>
+            <div id="inline-alert-action" class="pt-2 flex justify-center w-full hidden"></div>
           </div>
         </div>
         
@@ -568,7 +567,7 @@
         </div>
 
         
-        <div class="pt-4 border-t border-slate-900 flex justify-end">
+        <div id="alert-modal-actions" class="pt-4 border-t border-slate-900 flex justify-end gap-3">
           <button
             onclick="closeAlertModal()"
             id="alert-modal-ok-btn"
@@ -1659,9 +1658,12 @@
     let siteLogo = 'images/logo.png';
     let alertPopup = {
       enabled: false,
+      mode: 'avviso',
       title: 'Avviso Importante',
       text: 'Benvenuto su PianetaSim! Questo è un messaggio di avviso personalizzabile.',
-      color: 'rosso'
+      color: 'rosso',
+      link: '',
+      linkText: 'Vai alla Guida'
     };
 
     function updateSiteTitle(val) {
@@ -1677,6 +1679,9 @@
     function updateAlertEnabled(val) {
       alertPopup.enabled = val;
     }
+    function updateAlertMode(val) {
+      alertPopup.mode = val;
+    }
     function updateAlertTitle(val) {
       alertPopup.title = val;
     }
@@ -1685,6 +1690,12 @@
     }
     function updateAlertText(val) {
       alertPopup.text = val;
+    }
+    function updateAlertLink(val) {
+      alertPopup.link = val;
+    }
+    function updateAlertLinkText(val) {
+      alertPopup.linkText = val;
     }
 
     function updateEditingTags(val) {
@@ -2372,18 +2383,48 @@
       if (!alertPopup || !alertPopup.enabled) {
         const box = document.getElementById('inline-alert-box');
         if (box) box.classList.add('hidden');
+        closeAlertModal();
         return;
       }
       
       const isClosed = sessionStorage.getItem('pianetasim-alert-closed');
-      if (isClosed === 'true') {
+      const mode = alertPopup.mode || 'avviso';
+
+      if (isClosed === 'true' && mode !== 'novita') {
         const box = document.getElementById('inline-alert-box');
         if (box) box.classList.add('hidden');
+        closeAlertModal();
         return;
       }
 
-      showInlineAlert();
-      showAlertModal(false);
+      if (mode === 'novita') {
+        // Modalità 2: Novità -> riquadro nella pagina sotto il benvenuto, NO popup in primo piano
+        const modal = document.getElementById('alert-modal');
+        if (modal) {
+          modal.classList.remove('flex');
+          modal.classList.add('hidden');
+        }
+        showInlineAlert(false);
+      } else {
+        // Modalità 1: Avviso -> Pop-up in primo piano
+        const box = document.getElementById('inline-alert-box');
+        if (box) box.classList.add('hidden');
+        showAlertModal(false);
+      }
+    }
+
+    function handleAlertActionClick(link) {
+      if (!link) return;
+      closeAlertModal();
+      if ((alertPopup.mode || 'avviso') !== 'novita') {
+        dismissInlineAlert();
+      }
+      if (link.startsWith('http://') || link.startsWith('https://')) {
+        window.open(link, '_blank', 'noopener,noreferrer');
+      } else {
+        const cleanId = link.replace('#guida-', '').trim();
+        navigateToGuide(cleanId);
+      }
     }
 
     function showInlineAlert(forcePreview = false) {
@@ -2394,62 +2435,106 @@
       }
 
       const box = document.getElementById('inline-alert-box');
-      const iconContainer = document.getElementById('inline-alert-icon-container');
-      const iconEl = document.getElementById('inline-alert-icon');
       const titleEl = document.getElementById('inline-alert-title');
       const textEl = document.getElementById('inline-alert-text');
+      const actionEl = document.getElementById('inline-alert-action');
+      const dismissBtn = document.getElementById('inline-alert-dismiss-btn');
 
       if (!box) return;
 
-      
-      titleEl.textContent = alertPopup.title || 'Avviso';
-      textEl.innerHTML = formatParagraphText(alertPopup.text || '');
+      const mode = alertPopup.mode || 'avviso';
+      const isNovita = mode === 'novita';
 
-      
-      const col = alertPopup.color || 'rosso';
-      
-      
-      box.className = "w-full max-w-2xl mt-4 text-left border rounded-2xl p-4 relative transition-all duration-300 bg-space-card/80";
-      iconContainer.className = "p-2 rounded-xl shrink-0";
-
-      let borderClass = "border-red-500/30";
-      let textClass = "text-red-500";
-      let bgClass = "bg-red-500/10";
-      let shadowClass = "neon-shadow-red";
-
-      if (col === 'verde') {
-        borderClass = "border-emerald-500/30";
-        textClass = "text-fluo-green";
-        bgClass = "bg-fluo-green/10";
-        shadowClass = "neon-shadow-green";
-      } else if (col === 'azzurro') {
-        borderClass = "border-cyan-500/30";
-        textClass = "text-fluo-blue";
-        bgClass = "bg-fluo-blue/10";
-        shadowClass = "neon-shadow-blue";
-      } else if (col === 'viola') {
-        borderClass = "border-purple-500/30";
-        textClass = "text-fluo-purple";
-        bgClass = "bg-fluo-purple/10";
-        shadowClass = "neon-shadow-purple";
-      } else if (col === 'giallo') {
-        borderClass = "border-amber-500/30";
-        textClass = "text-amber-400";
-        bgClass = "bg-amber-500/10";
-        shadowClass = "neon-shadow-yellow";
+      if (dismissBtn) {
+        if (isNovita) {
+          dismissBtn.classList.add('hidden');
+        } else {
+          dismissBtn.classList.remove('hidden');
+        }
       }
 
-      box.classList.add(borderClass, shadowClass);
-      iconContainer.classList.add(bgClass, textClass);
-      if (iconEl) iconEl.className = `w-5 h-5 ${textClass}`;
+      if (titleEl) {
+        titleEl.textContent = alertPopup.title || (isNovita ? 'Nuova Guida Disponibile!' : 'Avviso');
+      }
+      if (textEl) {
+        textEl.innerHTML = formatParagraphText(alertPopup.text || '');
+      }
 
-      
+      const col = alertPopup.color || (isNovita ? 'viola' : 'rosso');
+
+      const colorStyles = {
+        viola: {
+          bg: 'rgba(176, 38, 255, 0.14)',
+          border: 'rgba(176, 38, 255, 0.45)',
+          titleClass: 'text-fluo-purple',
+          shadowClass: 'neon-shadow-purple',
+          btnClass: 'bg-fluo-purple text-white hover:bg-opacity-95 shadow-[0_0_12px_rgba(176,38,255,0.3)]'
+        },
+        verde: {
+          bg: 'rgba(38, 255, 94, 0.14)',
+          border: 'rgba(38, 255, 94, 0.45)',
+          titleClass: 'text-fluo-green',
+          shadowClass: 'neon-shadow-green',
+          btnClass: 'bg-fluo-green text-black hover:bg-opacity-95 shadow-[0_0_12px_rgba(38,255,94,0.3)]'
+        },
+        azzurro: {
+          bg: 'rgba(0, 240, 255, 0.14)',
+          border: 'rgba(0, 240, 255, 0.45)',
+          titleClass: 'text-fluo-blue',
+          shadowClass: 'neon-shadow-blue',
+          btnClass: 'bg-fluo-blue text-black hover:bg-opacity-95 shadow-[0_0_12px_rgba(0,240,255,0.3)]'
+        },
+        rosso: {
+          bg: 'rgba(239, 68, 68, 0.14)',
+          border: 'rgba(239, 68, 68, 0.45)',
+          titleClass: 'text-red-400',
+          shadowClass: 'neon-shadow-red',
+          btnClass: 'bg-red-500 text-white hover:bg-red-600 shadow-[0_0_12px_rgba(239,68,68,0.3)]'
+        },
+        giallo: {
+          bg: 'rgba(245, 158, 11, 0.14)',
+          border: 'rgba(245, 158, 11, 0.45)',
+          titleClass: 'text-amber-400',
+          shadowClass: 'neon-shadow-yellow',
+          btnClass: 'bg-amber-500 text-black hover:bg-amber-400 shadow-[0_0_12px_rgba(245,158,11,0.3)]'
+        }
+      };
+
+      const styleConfig = colorStyles[col] || colorStyles.viola;
+
+      box.className = `w-full max-w-md mt-3 text-center border rounded-2xl p-3.5 sm:p-4 relative transition-all duration-300 backdrop-blur-md shadow-lg ${styleConfig.shadowClass}`;
+      box.style.backgroundColor = styleConfig.bg;
+      box.style.borderColor = styleConfig.border;
+
+      if (titleEl) {
+        titleEl.className = `text-xs font-black uppercase tracking-wider text-center ${styleConfig.titleClass}`;
+      }
+
+      if (actionEl) {
+        if (alertPopup.link && alertPopup.link.trim() !== '') {
+          const btnText = alertPopup.linkText && alertPopup.linkText.trim() !== '' ? alertPopup.linkText.trim() : (isNovita ? 'Vai alla Guida ➔' : 'Scopri di più ➔');
+          const safeLink = alertPopup.link.trim().replace(/'/g, "\\'");
+          actionEl.innerHTML = `
+            <button
+              onclick="handleAlertActionClick('${safeLink}')"
+              class="inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${styleConfig.btnClass}"
+            >
+              <span>${btnText}</span>
+            </button>
+          `;
+          actionEl.classList.remove('hidden');
+        } else {
+          actionEl.innerHTML = '';
+          actionEl.classList.add('hidden');
+        }
+      }
+
       box.classList.remove('hidden');
-      
       lazyCreateIcons();
     }
 
     function dismissInlineAlert() {
+      if ((alertPopup && alertPopup.mode) === 'novita') return;
       const box = document.getElementById('inline-alert-box');
       if (box) {
         box.classList.add('hidden');
@@ -2468,7 +2553,6 @@
           modal.classList.add('hidden');
         }, 300);
       }
-      dismissInlineAlert();
     }
 
     function showAlertModal(forcePreview = false) {
@@ -2481,6 +2565,7 @@
       const titleEl = document.getElementById('alert-modal-title');
       const textEl = document.getElementById('alert-modal-text');
       const okBtn = document.getElementById('alert-modal-ok-btn');
+      const actionsContainer = document.getElementById('alert-modal-actions');
 
       if (!modal || !box) return;
 
@@ -2488,14 +2573,15 @@
         sessionStorage.removeItem('pianetasim-alert-closed');
       }
 
-      
-      titleEl.textContent = alertPopup.title || 'Avviso';
+      const mode = alertPopup.mode || 'avviso';
+      const isNovita = mode === 'novita';
+
+      titleEl.textContent = alertPopup.title || (isNovita ? 'Nuova Guida!' : 'Avviso');
       textEl.innerHTML = formatParagraphText(alertPopup.text || '');
 
-      
-      const col = alertPopup.color || 'rosso';
-      
-      
+      const col = alertPopup.color || (isNovita ? 'viola' : 'rosso');
+      let iconName = isNovita ? 'sparkles' : 'alert-triangle';
+
       box.className = "bg-space-card border rounded-3xl w-full max-w-lg p-6 md:p-8 relative z-10 transition-all transform scale-95 opacity-0 duration-300";
       iconContainer.className = "p-3 rounded-2xl float-animation shrink-0";
 
@@ -2533,10 +2619,39 @@
 
       box.classList.add(borderClass, shadowClass);
       iconContainer.classList.add(bgClass, textClass);
-      okBtn.className = `px-5 py-2.5 rounded-xl text-xs font-extrabold cursor-pointer transition-all duration-200 ${btnClass}`;
-      if (iconEl) iconEl.className = `w-7 h-7 ${textClass}`;
+      if (iconEl) {
+        iconEl.setAttribute('data-lucide', iconName);
+        iconEl.className = `w-7 h-7 ${textClass}`;
+      }
 
-      
+      if (actionsContainer) {
+        let linkBtnHtml = '';
+        if (alertPopup.link && alertPopup.link.trim() !== '') {
+          const btnText = alertPopup.linkText && alertPopup.linkText.trim() !== '' ? alertPopup.linkText.trim() : 'Vai alla Guida ➔';
+          const safeLink = alertPopup.link.trim().replace(/'/g, "\\'");
+          linkBtnHtml = `
+            <button
+              onclick="handleAlertActionClick('${safeLink}')"
+              class="px-5 py-2.5 rounded-xl text-xs font-extrabold cursor-pointer transition-all duration-200 ${btnClass}"
+            >
+              ${btnText}
+            </button>
+          `;
+        }
+        actionsContainer.innerHTML = `
+          ${linkBtnHtml}
+          <button
+            onclick="closeAlertModal()"
+            id="alert-modal-ok-btn"
+            class="px-5 py-2.5 bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 rounded-xl text-xs font-extrabold cursor-pointer transition-all duration-200"
+          >
+            Ho Capito
+          </button>
+        `;
+      } else if (okBtn) {
+        okBtn.className = `px-5 py-2.5 rounded-xl text-xs font-extrabold cursor-pointer transition-all duration-200 ${btnClass}`;
+      }
+
       modal.classList.remove('hidden');
       modal.classList.add('flex');
       setTimeout(() => {
@@ -4314,14 +4429,43 @@
       }
     }
 
+    function handleAlertGuideSelect(val) {
+      const linkInput = document.getElementById('input-alert-link');
+      if (val && val !== 'custom') {
+        if (linkInput) linkInput.value = val;
+        updateAlertLink(val);
+      } else if (val === '') {
+        if (linkInput) linkInput.value = '';
+        updateAlertLink('');
+      }
+    }
+
+    function handleAlertPreview() {
+      saveSiteConfiguration();
+      const mode = alertPopup.mode || 'avviso';
+      if (mode === 'novita') {
+        showInlineAlert(true);
+        const box = document.getElementById('inline-alert-box');
+        if (box) {
+          box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        showToast('Anteprima Riquadro Novità attivata nella pagina!', 'success');
+      } else {
+        showAlertModal(true);
+      }
+    }
+
     function saveSiteConfiguration() {
       const titleInput = document.getElementById('input-site-title');
       const descInput = document.getElementById('input-site-description');
       const logoInput = document.getElementById('input-site-logo');
       const alertEnabled = document.getElementById('checkbox-alert-enabled');
+      const alertModeSelect = document.getElementById('select-alert-mode');
       const alertTitleInput = document.getElementById('input-alert-title');
       const alertColorSelect = document.getElementById('select-alert-color');
       const alertTextInput = document.getElementById('input-alert-text');
+      const alertLinkInput = document.getElementById('input-alert-link');
+      const alertLinkTextInput = document.getElementById('input-alert-link-text');
 
       if (titleInput) siteTitle = titleInput.value.trim() || siteTitle;
       if (descInput) siteDescription = descInput.value.trim() || siteDescription;
@@ -4332,9 +4476,12 @@
       
       alertPopup = {
         enabled: alertEnabled ? alertEnabled.checked : false,
+        mode: alertModeSelect ? alertModeSelect.value : (alertPopup.mode || 'avviso'),
         title: alertTitleInput ? alertTitleInput.value.trim() : 'Avviso',
         color: alertColorSelect ? alertColorSelect.value : 'rosso',
-        text: alertTextInput ? alertTextInput.value.trim() : ''
+        text: alertTextInput ? alertTextInput.value.trim() : '',
+        link: alertLinkInput ? alertLinkInput.value.trim() : '',
+        linkText: alertLinkTextInput ? alertLinkTextInput.value.trim() : 'Vai alla Guida'
       };
 
       persistDataLocally();
@@ -4918,11 +5065,11 @@
                   </button>
                 </div>
               </div>
- 
+
               <div class="pt-3 border-t border-slate-900 space-y-3">
                 <div class="flex items-center justify-between">
                   <h4 class="text-[10px] font-black text-slate-300 uppercase tracking-wider flex items-center gap-1">
-                    Pop-up Avviso Visitatori
+                    Avviso / Novità Visitatori
                   </h4>
                   <label class="relative inline-flex items-center cursor-pointer">
                     <input
@@ -4936,16 +5083,28 @@
                     <span class="ml-2 text-[9px] font-black text-slate-400 uppercase tracking-widest">Attivo</span>
                   </label>
                 </div>
- 
+
+                <div class="space-y-1.5">
+                  <label class="text-[9px] uppercase font-black text-slate-400 tracking-wider">Modalità Visualizzazione</label>
+                  <select
+                    id="select-alert-mode"
+                    onchange="updateAlertMode(this.value); renderApp();"
+                    class="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-850 rounded-xl text-xs text-white focus:ring-1 focus:ring-fluo-purple outline-none cursor-pointer font-sans"
+                  >
+                    <option value="avviso" ${(alertPopup.mode || 'avviso') === 'avviso' ? 'selected' : ''}>Modalità 1: Avviso (Pop-up finestra in primo piano)</option>
+                    <option value="novita" ${alertPopup.mode === 'novita' ? 'selected' : ''}>Modalità 2: Novità (Riquadro presente nella pagina sotto la descrizione)</option>
+                  </select>
+                </div>
+
                 <div class="grid grid-cols-3 gap-2 items-center">
                   <div class="col-span-2 space-y-1.5">
-                    <label class="text-[9px] uppercase font-black text-slate-400 tracking-wider">Titolo Avviso</label>
+                    <label class="text-[9px] uppercase font-black text-slate-400 tracking-wider">Titolo</label>
                     <input
                       type="text"
                       id="input-alert-title"
                       value="${alertPopup.title || ''}"
                       oninput="updateAlertTitle(this.value)"
-                      placeholder="Avviso Importante"
+                      placeholder="${alertPopup.mode === 'novita' ? 'Nuova Guida Disponibile!' : 'Avviso Importante'}"
                       class="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-850 rounded-xl text-xs text-white focus:ring-1 focus:ring-fluo-purple outline-none font-sans"
                     />
                   </div>
@@ -4956,22 +5115,22 @@
                       onchange="updateAlertColor(this.value)"
                       class="w-full px-2 py-1.5 bg-slate-900 border border-slate-850 rounded-xl text-xs text-white focus:ring-1 focus:ring-fluo-purple outline-none cursor-pointer"
                     >
-                      <option value="rosso" ${alertPopup.color === 'rosso' ? 'selected' : ''}>Rosso</option>
+                      <option value="viola" ${alertPopup.color === 'viola' ? 'selected' : ''}>Viola</option>
                       <option value="verde" ${alertPopup.color === 'verde' ? 'selected' : ''}>Verde</option>
                       <option value="azzurro" ${alertPopup.color === 'azzurro' ? 'selected' : ''}>Azzurro</option>
-                      <option value="viola" ${alertPopup.color === 'viola' ? 'selected' : ''}>Viola</option>
+                      <option value="rosso" ${alertPopup.color === 'rosso' ? 'selected' : ''}>Rosso</option>
                       <option value="giallo" ${alertPopup.color === 'giallo' ? 'selected' : ''}>Giallo</option>
                     </select>
                   </div>
                 </div>
- 
+
                 <div class="space-y-1.5">
                   <div class="flex justify-between items-center">
                     <label class="text-[9px] uppercase font-black text-slate-400 tracking-wider">Messaggio (supporta HTML/Formattazione)</label>
                     <button
                       type="button"
-                      onclick="saveSiteConfiguration(); setTimeout(() => showAlertModal(true), 50);"
-                      class="px-2 py-0.5 bg-slate-900 hover:bg-slate-850 border border-slate-850 text-[9px] font-black text-fluo-green rounded transition-colors"
+                      onclick="handleAlertPreview()"
+                      class="px-2 py-0.5 bg-slate-900 hover:bg-slate-850 border border-slate-850 text-[9px] font-black text-fluo-green rounded transition-colors cursor-pointer"
                     >
                       Anteprima 👁️
                     </button>
@@ -4980,9 +5139,45 @@
                     id="input-alert-text"
                     rows="2"
                     oninput="updateAlertText(this.value)"
-                    placeholder="Benvenuto su PianetaSim!..."
+                    placeholder="Esempio: Abbiamo appena pubblicato una nuova guida! Clicca sul pulsante per leggerla."
                     class="w-full px-3 py-2 bg-slate-900 border border-slate-850 rounded-xl text-xs text-white focus:ring-1 focus:ring-fluo-purple outline-none resize-y min-h-[50px] font-sans"
                   >${alertPopup.text || ''}</textarea>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-2 items-center pt-2 border-t border-slate-850/60">
+                  <div class="md:col-span-2 space-y-1.5">
+                    <label class="text-[9px] uppercase font-black text-slate-400 tracking-wider">Link o Guida Correlata (Opzionale)</label>
+                    <div class="flex gap-1.5">
+                      <select
+                        id="select-alert-link-guide"
+                        onchange="handleAlertGuideSelect(this.value)"
+                        class="w-1/2 px-2 py-1.5 bg-slate-900 border border-slate-850 rounded-xl text-xs text-white focus:ring-1 focus:ring-fluo-purple outline-none cursor-pointer truncate"
+                      >
+                        <option value="">-- Seleziona una Guida --</option>
+                        ${guides.map(g => `<option value="${g.id}" ${alertPopup.link === g.id ? 'selected' : ''}>${g.title.replace(/<[^>]*>/g, '')}</option>`).join('')}
+                        <option value="custom" ${alertPopup.link && !guides.some(g => g.id === alertPopup.link) ? 'selected' : ''}>[ URL Personalizzato / Altro ]</option>
+                      </select>
+                      <input
+                        type="text"
+                        id="input-alert-link"
+                        value="${alertPopup.link || ''}"
+                        oninput="updateAlertLink(this.value)"
+                        placeholder="es. ID guida o https://..."
+                        class="w-1/2 px-2.5 py-1.5 bg-slate-900 border border-slate-850 rounded-xl text-xs text-white focus:ring-1 focus:ring-fluo-purple outline-none font-sans"
+                      />
+                    </div>
+                  </div>
+                  <div class="space-y-1.5">
+                    <label class="text-[9px] uppercase font-black text-slate-400 tracking-wider">Testo Pulsante</label>
+                    <input
+                      type="text"
+                      id="input-alert-link-text"
+                      value="${alertPopup.linkText || ''}"
+                      oninput="updateAlertLinkText(this.value)"
+                      placeholder="es. Vai alla Guida ➔"
+                      class="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-850 rounded-xl text-xs text-white focus:ring-1 focus:ring-fluo-purple outline-none font-sans"
+                    />
+                  </div>
                 </div>
               </div>
  
@@ -6369,7 +6564,7 @@
                               <!-- Linguette Cartella -->
                               <div class="flex items-end w-full relative -mb-px z-10 pr-2 sm:pr-3">
                                 <!-- Linguetta Principale -->
-                                <div class="px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-t-lg bg-space-card border-t border-x border-slate-800 group-hover:border-slate-700 relative z-10 flex items-center justify-center text-cyan-400 transition-colors shrink-0">
+                                <div class="px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-t-lg bg-space-card border-t border-x relative z-10 flex items-center justify-center text-cyan-400 transition-colors shrink-0" style="border-color: rgba(0, 240, 255, 0.6);">
                                   <i data-lucide="folder" class="w-3.5 h-3.5"></i>
                                 </div>
                                 <!-- Seconda Linguetta -->
@@ -6377,7 +6572,7 @@
                               </div>
 
                               <!-- Corpo Cartella -->
-<div class="bg-space-card rounded-b-xl rounded-tr-xl rounded-tl-none border border-slate-800 group-hover:border-slate-700 p-3.5 sm:p-4.5 md:p-5 transition-all duration-200 flex flex-col justify-between min-h-[155px] sm:min-h-[180px] h-full shadow-md relative z-0">
+                              <div class="bg-space-card rounded-b-xl rounded-tr-xl rounded-tl-none border p-3.5 sm:p-4.5 md:p-5 transition-all duration-200 flex flex-col justify-between min-h-[155px] sm:min-h-[180px] h-full shadow-md relative z-0" style="border-color: rgba(0, 240, 255, 0.6);">
                                 <div class="space-y-1.5 sm:space-y-2">
                                   <div class="flex items-center justify-between gap-1 overflow-hidden">
                                     <div class="p-1 sm:p-1.5 rounded-md bg-cyan-500/10 text-cyan-400 shrink-0 flex items-center justify-center font-sans">
@@ -6390,7 +6585,7 @@
                                   <h3 class="text-xs sm:text-sm lg:text-base font-extrabold text-slate-100 group-hover:text-white transition-colors line-clamp-1 leading-tight uppercase tracking-wide text-left break-words">
                                     Tutte
                                   </h3>
-<p class="text-[10.5px] sm:text-[11.5px] text-slate-300 font-sans line-clamp-4 leading-relaxed">
+                                  <p class="text-[10.5px] sm:text-[11.5px] text-slate-300 font-sans line-clamp-4 leading-relaxed">
                                     Tutte le guide disponibili nel catalogo.
                                   </p>
                                 </div>
@@ -6415,15 +6610,15 @@
                               <!-- Linguette Cartella -->
                               <div class="flex items-end w-full relative -mb-px z-10 pr-2 sm:pr-3">
                                 <!-- Linguetta Principale -->
-<div class="px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-t-lg bg-space-card border-t border-x border-slate-800 group-hover:border-slate-700 relative z-10 flex items-center justify-center transition-colors shrink-0" style="color: ${catStyles.colorCode}; border-color: ${catStyles.colorCode}90;">
-                                  ${cat.icon ? `<span class="text-xs font-sans">${cat.icon}</span>` : `<i data-lucide="folder" class="w-3.5 h-3.5"></i>`}
+                                <div class="px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-t-lg bg-space-card border-t border-x relative z-10 flex items-center justify-center transition-colors shrink-0" style="color: ${catStyles.colorCode}; border-color: ${catStyles.colorCode}90;">
+                                  <i data-lucide="folder" class="w-3.5 h-3.5"></i>
                                 </div>
                                 <!-- Seconda Linguetta -->
                                 <div class="flex-1 h-[14px] sm:h-[18px] rounded-t-lg border-t border-x -ml-1.5 relative z-0 transition-colors block" style="background-color: ${catStyles.colorCode}35; border-color: ${catStyles.colorCode}90;"></div>
                               </div>
 
                               <!-- Corpo Cartella -->
-<div class="bg-space-card rounded-b-xl rounded-tr-xl rounded-tl-none border border-slate-800 group-hover:border-slate-700 p-3.5 sm:p-4.5 md:p-5 transition-all duration-200 flex flex-col justify-between min-h-[155px] sm:min-h-[180px] h-full shadow-md relative z-0">
+                              <div class="bg-space-card rounded-b-xl rounded-tr-xl rounded-tl-none border p-3.5 sm:p-4.5 md:p-5 transition-all duration-200 flex flex-col justify-between min-h-[155px] sm:min-h-[180px] h-full shadow-md relative z-0" style="border-color: ${catStyles.colorCode}90;">
                                 <div class="space-y-1.5 sm:space-y-2">
                                   <div class="flex items-center justify-between gap-1 overflow-hidden">
                                     <div class="p-1 sm:p-1.5 rounded-md shrink-0 flex items-center justify-center font-sans text-xs sm:text-sm" style="background-color: ${catStyles.colorCode}15; color: ${catStyles.colorCode};">
@@ -6437,7 +6632,7 @@
                                     <span>${cat.label}</span>
                                   </h3>
                                   ${cat.description ? `
-<p class="text-[10.5px] sm:text-[11.5px] text-slate-300 font-sans line-clamp-4 leading-relaxed">
+                                    <p class="text-[10.5px] sm:text-[11.5px] text-slate-300 font-sans line-clamp-4 leading-relaxed">
                                       ${cat.description}
                                     </p>
                                   ` : ''}
@@ -6462,7 +6657,7 @@
                               <!-- Linguette Cartella -->
                               <div class="flex items-end w-full relative -mb-px z-10 pr-2 sm:pr-3">
                                 <!-- Linguetta Principale -->
-                                <div class="px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-t-lg bg-space-card border-t border-x border-slate-800 group-hover:border-slate-700 relative z-10 flex items-center justify-center text-amber-400 transition-colors shrink-0">
+                                <div class="px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-t-lg bg-space-card border-t border-x relative z-10 flex items-center justify-center text-amber-400 transition-colors shrink-0" style="border-color: rgba(245, 158, 11, 0.6);">
                                   <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
                                 </div>
                                 <!-- Seconda Linguetta -->
@@ -6470,7 +6665,7 @@
                               </div>
 
                               <!-- Corpo Cartella -->
-<div class="bg-space-card rounded-b-xl rounded-tr-xl rounded-tl-none border border-slate-800 group-hover:border-slate-700 p-3.5 sm:p-4.5 md:p-5 transition-all duration-200 flex flex-col justify-between min-h-[155px] sm:min-h-[180px] h-full shadow-md relative z-0">
+                              <div class="bg-space-card rounded-b-xl rounded-tr-xl rounded-tl-none border p-3.5 sm:p-4.5 md:p-5 transition-all duration-200 flex flex-col justify-between min-h-[155px] sm:min-h-[180px] h-full shadow-md relative z-0" style="border-color: rgba(245, 158, 11, 0.6);">
                                 <div class="space-y-1.5 sm:space-y-2">
                                   <div class="flex items-center justify-between gap-1 overflow-hidden">
                                     <div class="p-1 sm:p-1.5 rounded-md text-amber-400 bg-amber-500/10 shrink-0">
