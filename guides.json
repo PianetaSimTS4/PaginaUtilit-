@@ -2614,7 +2614,8 @@
       "_rawTags": "",
       "pinnedFolders": [
         "mccc"
-      ]
+      ],
+      "status": "draft"
     }
   ],
   "creators": [
@@ -2706,7 +2707,7 @@
       "role": "Programmatore & Admin",
       "avatar": "images/logo.png",
       "color": "#ef4444",
-      "description": "Programmatore per hobby, crea app e gestisce la logistica del sito e di Help Sim. Supporto sempre fondamentale nella realizzazione concreta delle idee del gruppo.",
+      "description": "Programmatore per passione, crea app e gestisce la logistica del sito e di Help Sim. Supporto sempre fondamentale nella realizzazione concreta delle idee del gruppo.",
       "tags": [
         "Admin",
         "Programmatore"
