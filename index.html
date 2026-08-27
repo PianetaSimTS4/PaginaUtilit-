@@ -3590,6 +3590,7 @@
           category: categories[0]?.id || 'gameplay',
           categories: [categories[0]?.id || 'gameplay'],
           tags: [],
+          status: 'published',
           content: [{ type: 'paragraph', value: '' }],
           tips: [],
           authorName: 'Lidia',
@@ -4389,6 +4390,8 @@
         g.tips = g.tips.map(t => t.trim()).filter(t => t.length > 0);
       }
 
+      g.status = (g.status === 'draft') ? 'draft' : 'published';
+
       
       if (!g.categories || g.categories.length === 0) {
         g.categories = [g.category || categories[0]?.id || 'gameplay'];
@@ -4852,9 +4855,13 @@
     }
 
     function getCategoryCount(catId) {
-      if (catId === 'all') return (guides || []).length;
-      if (catId === 'preferiti') return (bookmarks || []).length;
+      if (catId === 'all') return (guides || []).filter(g => g.status !== 'draft').length;
+      if (catId === 'preferiti') return (bookmarks || []).filter(id => {
+        const g = (guides || []).find(x => x.id === id);
+        return g && g.status !== 'draft';
+      }).length;
       return (guides || []).filter(g => {
+        if (g.status === 'draft') return false;
         const guideCats = g.categories || (g.category ? [g.category] : []);
         return guideCats.includes(catId);
       }).length;
@@ -6120,9 +6127,32 @@
       `;
     }
 
+    window.adminGuideStatusFilter = window.adminGuideStatusFilter || 'all';
+
+    function toggleGuideStatusFromAdmin(guideId, event) {
+      if (event) event.stopPropagation();
+      const guide = guides.find(g => g.id === guideId);
+      if (!guide) return;
+      guide.status = (guide.status === 'draft') ? 'published' : 'draft';
+      persistDataLocally();
+      saveAllGuidesToServer();
+      renderApp();
+      showToast(guide.status === 'draft' ? 'Guida salvata come bozza' : 'Guida pubblicata con successo!', 'success');
+    }
+
     // 6. ELENCO DELLE GUIDE PRESENTI (guidesList)
     function renderAdminSectionGuidesList() {
       const isOpen = window.adminSectionsOpen.guidesList;
+      const statusFilter = window.adminGuideStatusFilter || 'all';
+      const publishedGuidesCount = (guides || []).filter(g => g.status !== 'draft').length;
+      const draftGuidesCount = (guides || []).filter(g => g.status === 'draft').length;
+
+      const displayedGuides = (guides || []).filter(g => {
+        if (statusFilter === 'published') return g.status !== 'draft';
+        if (statusFilter === 'draft') return g.status === 'draft';
+        return true;
+      });
+
       return `
         <div class="bg-space-card rounded-3xl border border-slate-800 shadow-xl overflow-hidden transition-all duration-300 animate-fade-in">
           <button
@@ -6135,7 +6165,7 @@
               </div>
               <div>
                 <h3 class="text-xs font-black text-white uppercase tracking-wider">Gestione Elenco Guide</h3>
-                <p class="text-[10px] text-slate-400 font-sans">Modifica, elimina o riordina trascinando le guide.</p>
+                <p class="text-[10px] text-slate-400 font-sans">Modifica, elimina, imposta bozze o riordina trascinando.</p>
               </div>
             </div>
             <div class="flex items-center gap-2">
@@ -6152,22 +6182,54 @@
           </button>
           
           <div class="${isOpen ? 'p-5 space-y-4 animate-fade-in' : 'hidden'} transition-all duration-300">
-            <div class="flex items-center justify-between gap-4 pb-2 border-b border-slate-900">
-              <p class="text-[11px] text-slate-400 font-sans">Trascina le righe per riordinare la lista pubblica delle guide! ↕️</p>
+            <!-- Header con Pulsanti Filtro Stato Bozza / Pubblicata e Tasto Nuova Guida -->
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-slate-900">
+              <!-- Filtri Stato -->
+              <div class="flex items-center bg-slate-900/80 p-1 rounded-xl border border-slate-800/80 gap-1 text-[11px] font-bold font-sans">
+                <button
+                  type="button"
+                  onclick="window.adminGuideStatusFilter = 'all'; renderApp();"
+                  class="px-2.5 py-1 rounded-lg transition-all cursor-pointer ${statusFilter === 'all' ? 'bg-slate-800 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'}"
+                >
+                  Tutte (${guides.length})
+                </button>
+                <button
+                  type="button"
+                  onclick="window.adminGuideStatusFilter = 'published'; renderApp();"
+                  class="px-2.5 py-1 rounded-lg transition-all cursor-pointer flex items-center gap-1.5 ${statusFilter === 'published' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'text-slate-400 hover:text-emerald-400'}"
+                >
+                  <i data-lucide="globe" class="w-3 h-3"></i>
+                  <span>Pubblicate (${publishedGuidesCount})</span>
+                </button>
+                <button
+                  type="button"
+                  onclick="window.adminGuideStatusFilter = 'draft'; renderApp();"
+                  class="px-2.5 py-1 rounded-lg transition-all cursor-pointer flex items-center gap-1.5 ${statusFilter === 'draft' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' : 'text-slate-400 hover:text-amber-300'}"
+                >
+                  <i data-lucide="file-edit" class="w-3 h-3"></i>
+                  <span>Bozze (${draftGuidesCount})</span>
+                </button>
+              </div>
+
               <button
                 onclick="selectGuideForEdit('new')"
-                class="px-3.5 py-1.5 bg-fluo-purple text-white font-black rounded-xl text-[10px] cursor-pointer shadow hover:scale-105 transition-all font-sans"
+                class="px-3.5 py-1.5 bg-fluo-purple text-white font-black rounded-xl text-[10px] cursor-pointer shadow hover:scale-105 transition-all font-sans shrink-0"
               >
                 + Crea Nuova Guida
               </button>
             </div>
 
             <div class="space-y-2.5 max-h-[700px] overflow-y-auto scrollbar-none pr-1">
-              ${guides.map(g => {
+              ${displayedGuides.length === 0 ? `
+                <div class="p-8 text-center bg-slate-950/40 border border-slate-900 rounded-2xl space-y-2">
+                  <p class="text-xs text-slate-400 font-sans">Nessuna guida trovata per questo filtro.</p>
+                </div>
+              ` : displayedGuides.map(g => {
                 const guideCats = g.categories || (g.category ? [g.category] : []);
+                const isDraft = g.status === 'draft';
                 return `
                   <div
-                    class="p-3 bg-slate-950/60 border border-slate-900 rounded-2xl flex items-center justify-between gap-4 hover:border-slate-800/80 transition-all duration-150 cursor-grab active:cursor-grabbing"
+                    class="p-3 bg-slate-950/60 border ${isDraft ? 'border-amber-500/30 bg-amber-500/[0.02]' : 'border-slate-900'} rounded-2xl flex items-center justify-between gap-4 hover:border-slate-800/80 transition-all duration-150 cursor-grab active:cursor-grabbing"
                     draggable="true"
                     ondragstart="handleDragStart(event, '${g.id}')"
                     ondragover="handleDragOver(event)"
@@ -6181,7 +6243,20 @@
                       </span>
                       
                       <div class="space-y-1.5 truncate">
-                        <div class="flex flex-wrap gap-1">
+                        <div class="flex flex-wrap items-center gap-1.5">
+                          <!-- Badge Stato -->
+                          ${isDraft ? `
+                            <span class="text-[8px] font-black px-2 py-0.5 rounded-md font-sans uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center gap-1">
+                              <i data-lucide="file-edit" class="w-2.5 h-2.5"></i>
+                              Bozza (Nascosta)
+                            </span>
+                          ` : `
+                            <span class="text-[8px] font-black px-2 py-0.5 rounded-md font-sans uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center gap-1">
+                              <i data-lucide="globe" class="w-2.5 h-2.5"></i>
+                              Pubblicata
+                            </span>
+                          `}
+
                           ${guideCats.map(catId => {
                             const cObj = categories.find(c => c.id === catId);
                             if (!cObj) return '';
@@ -6198,6 +6273,14 @@
                     </div>
 
                     <div class="flex items-center gap-1.5 shrink-0">
+                      <!-- Toggle Rapido Bozza / Pubblicata -->
+                      <button
+                        onclick="toggleGuideStatusFromAdmin('${g.id}', event)"
+                        class="p-2 ${isDraft ? 'text-amber-400 bg-amber-500/10 hover:bg-amber-500/20 border-amber-500/20' : 'text-slate-400 bg-slate-900 hover:text-emerald-400 hover:bg-emerald-500/10 border-slate-800'} border rounded-xl cursor-pointer transition-colors"
+                        title="${isDraft ? 'Clicca per Pubblicare sul sito' : 'Clicca per salvare come Bozza (nascondere dal sito)'}"
+                      >
+                        <i data-lucide="${isDraft ? 'eye-off' : 'eye'}" class="w-3.5 h-3.5"></i>
+                      </button>
                       <button
                         onclick="selectGuideForEdit('${g.id}')"
                         class="p-2 text-fluo-green bg-emerald-500/5 hover:bg-emerald-500/10 border border-emerald-500/10 rounded-xl cursor-pointer transition-colors"
@@ -6381,6 +6464,7 @@
       
       if (activeTab === 'guides') {
         const filteredGuides = guides.filter(guide => {
+          if (guide.status === 'draft') return false;
           const matchesSearch = 
             guide.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
             guide.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -7287,21 +7371,51 @@
         if (window.editingGuide) {
           
           const g = window.editingGuide;
+          const isDraft = g.status === 'draft';
           container.innerHTML = `
             <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
               <!-- Pannello Edit -->
               <div class="lg:col-span-7 space-y-6 bg-space-card border border-slate-800 p-6 md:p-8 rounded-3xl shadow-2xl">
                 
-                <!-- Intestazione Editor con pulsanti Undo/Redo -->
+                <!-- Intestazione Editor con pulsanti Undo/Redo e Stato Bozza/Pubblicata -->
                 <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
                   <div>
-                    <h2 class="text-lg font-black text-white">
-                      ${g.id.startsWith('nuova-guida-') ? 'Crea Nuova Guida' : 'Modifica Guida'}
-                    </h2>
+                    <div class="flex items-center gap-2">
+                      <h2 class="text-lg font-black text-white">
+                        ${g.id.startsWith('nuova-guida-') ? 'Crea Nuova Guida' : 'Modifica Guida'}
+                      </h2>
+                      ${isDraft ? `
+                        <span class="px-2 py-0.5 bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded-lg text-[9px] font-black uppercase tracking-wider">Bozza</span>
+                      ` : `
+                        <span class="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 rounded-lg text-[9px] font-black uppercase tracking-wider">Pubblicata</span>
+                      `}
+                    </div>
                     <p class="text-[10px] text-slate-400 font-sans">Usa il tasto "+" tra i blocchi per inserire contenuti in qualsiasi punto.</p>
                   </div>
                   
-                  <div class="flex items-center gap-2">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <!-- Selettore Stato Pubblicata / Bozza -->
+                    <div class="flex items-center bg-slate-900 border border-slate-800 rounded-xl p-0.5 font-sans">
+                      <button
+                        type="button"
+                        onclick="updateEditingField('status', 'published'); renderApp();"
+                        class="px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${!isDraft ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 shadow-sm' : 'text-slate-400 hover:text-slate-200'}"
+                        title="La guida sarà visibile a tutti i visitatori del sito"
+                      >
+                        <i data-lucide="globe" class="w-3.5 h-3.5"></i>
+                        <span>Pubblicata</span>
+                      </button>
+                      <button
+                        type="button"
+                        onclick="updateEditingField('status', 'draft'); renderApp();"
+                        class="px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${isDraft ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-sm' : 'text-slate-400 hover:text-slate-200'}"
+                        title="La guida rimarrà nascosta ai visitatori e visibile solo nel pannello admin"
+                      >
+                        <i data-lucide="file-edit" class="w-3.5 h-3.5"></i>
+                        <span>Bozza</span>
+                      </button>
+                    </div>
+
                     <!-- Undo / Redo Arrow Buttons -->
                     <div class="flex items-center bg-slate-900 border border-slate-800 rounded-xl p-1 gap-1">
                       <button
@@ -7326,7 +7440,7 @@
 
                     <button
                       onclick="window.editingGuide = null; renderApp();"
-                      class="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white rounded-xl border border-slate-800 text-xs font-bold cursor-pointer transition-colors"
+                      class="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white rounded-xl border border-slate-800 text-xs font-bold cursor-pointer transition-colors font-sans"
                     >
                       Annulla
                     </button>
@@ -8204,13 +8318,14 @@
                 <div class="pt-6 border-t border-slate-800 flex flex-col sm:flex-row gap-3">
                   <button
                     onclick="saveEditingGuide()"
-                    class="flex-grow py-3 bg-fluo-purple text-white font-extrabold rounded-xl text-xs cursor-pointer shadow-lg hover:bg-opacity-95 text-center transition-all"
+                    class="flex-grow py-3 ${isDraft ? 'bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-[0_0_15px_rgba(245,158,11,0.35)]' : 'bg-fluo-purple text-white hover:bg-opacity-95 shadow-[0_0_15px_rgba(176,38,255,0.4)]'} font-extrabold rounded-xl text-xs cursor-pointer text-center transition-all flex items-center justify-center gap-2"
                   >
-                    Salva Localmente ed Esci
+                    <i data-lucide="${isDraft ? 'file-edit' : 'save'}" class="w-4 h-4"></i>
+                    <span>${isDraft ? 'Salva come Bozza' : 'Salva & Pubblica Guida'}</span>
                   </button>
                   <button
                     onclick="window.editingGuide = null; renderApp();"
-                    class="flex-grow py-3 bg-slate-900 hover:bg-slate-850 border border-slate-800 text-slate-300 rounded-xl text-xs font-bold cursor-pointer text-center transition-colors"
+                    class="flex-grow py-3 bg-slate-900 hover:bg-slate-850 border border-slate-800 text-slate-300 rounded-xl text-xs font-bold cursor-pointer text-center transition-colors font-sans"
                   >
                     Annulla Modifiche
                   </button>
