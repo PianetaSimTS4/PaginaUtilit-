@@ -2854,12 +2854,17 @@
   ],
   "adminPassword": "sticazzi",
   "siteTitle": "<span class=\"animate-title-color\">Guide & Utilità</span>",
-  "siteDescription": "Benvenuto nella sezione delle guide di PianetaSim! Impara nuove tecniche di costruzione, installa mod tradotte e copia trucchi con un solo click.",
+  "siteDescription": "Benvenuto nella sezione delle guide di PianetaSim! Impara a installare mod, traduzioni e tanto altro. Potrai sempre ricevere supporto e proporre nuove guide!",
+  "aboutTitle": "<span class=\"animate-title-color\">Chi siamo</span>",
+  "aboutDescription": "Pianeta Sim è nato nel 2022 come progetto tra amici, desiderosi di creare uno spazio in cui condividere la propria passione su The Sims il più liberamente possibile, chiacchierare in compagnia e divertirsi!\nNegli anni Pianeta Sim si è ampliato fino a diventare una community solida e produttiva, diventando un progetto non solo di intrattenimento ma di utilità per gli appassionati del gioco; con la speranza di diventare un punto di riferimento per la community italiana di The Sims.",
   "siteLogo": "images/logo.png",
   "alertPopup": {
     "enabled": false,
+    "mode": "avviso",
     "title": "Avviso Importante",
     "color": "rosso",
-    "text": "Benvenuto su PianetaSim! Questo è un messaggio di avviso personalizzabile."
+    "text": "Benvenuto su PianetaSim! Questo è un messaggio di avviso personalizzabile.",
+    "link": "",
+    "linkText": ""
   }
 }
