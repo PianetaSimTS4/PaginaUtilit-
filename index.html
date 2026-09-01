@@ -1655,6 +1655,8 @@
     let adminPassword = 'sticazzi';
     let siteTitle = '<span class="animate-title-color">Guide & Utilità</span>';
     let siteDescription = 'Benvenuto nella sezione delle guide di PianetaSim! Impara nuove tecniche di costruzione, installa mod tradotte e copia trucchi con un solo click.';
+    let aboutTitle = '<span class="animate-title-color">Chi siamo</span>';
+    let aboutDescription = 'Benvenuto nella sezione Chi siamo di PianetaSim! Scopri il nostro team, i creatori di guide, i traduttori e la fantastica community che rende vivo questo progetto.';
     let siteLogo = 'images/logo.png';
     let alertPopup = {
       enabled: false,
@@ -1671,6 +1673,12 @@
     }
     function updateSiteDescription(val) {
       siteDescription = val;
+    }
+    function updateAboutTitle(val) {
+      aboutTitle = val;
+    }
+    function updateAboutDescription(val) {
+      aboutDescription = val;
     }
     function updateSiteLogo(val) {
       siteLogo = val;
@@ -2213,6 +2221,8 @@
             if (data.adminPassword) adminPassword = data.adminPassword;
             if (data.siteTitle) siteTitle = data.siteTitle;
             if (data.siteDescription) siteDescription = data.siteDescription;
+            if (data.aboutTitle) aboutTitle = data.aboutTitle;
+            if (data.aboutDescription) aboutDescription = data.aboutDescription;
             if (data.alertPopup) alertPopup = data.alertPopup;
             if (data.siteLogo) {
               siteLogo = data.siteLogo;
@@ -2265,6 +2275,8 @@
                   }
                 }
                 if (parsed.siteDescription) siteDescription = parsed.siteDescription;
+                if (parsed.aboutTitle) aboutTitle = parsed.aboutTitle;
+                if (parsed.aboutDescription) aboutDescription = parsed.aboutDescription;
                 if (parsed.alertPopup) alertPopup = parsed.alertPopup;
                 if (parsed.siteLogo) {
                   siteLogo = parsed.siteLogo;
@@ -4247,6 +4259,8 @@
           adminPassword: adminPassword,
           siteTitle: siteTitle,
           siteDescription: siteDescription,
+          aboutTitle: aboutTitle,
+          aboutDescription: aboutDescription,
           alertPopup: alertPopup,
           siteLogo: siteLogo
         };
@@ -4289,6 +4303,8 @@
               adminPassword = data.adminPassword || 'sticazzi';
               if (data.siteTitle) siteTitle = data.siteTitle;
               if (data.siteDescription) siteDescription = data.siteDescription;
+              if (data.aboutTitle) aboutTitle = data.aboutTitle;
+              if (data.aboutDescription) aboutDescription = data.aboutDescription;
               if (data.alertPopup) alertPopup = data.alertPopup;
               if (data.siteLogo) siteLogo = data.siteLogo;
             } else {
@@ -4461,6 +4477,8 @@
     function saveSiteConfiguration() {
       const titleInput = document.getElementById('input-site-title');
       const descInput = document.getElementById('input-site-description');
+      const aboutTitleInput = document.getElementById('input-about-title');
+      const aboutDescInput = document.getElementById('input-about-description');
       const logoInput = document.getElementById('input-site-logo');
       const alertEnabled = document.getElementById('checkbox-alert-enabled');
       const alertModeSelect = document.getElementById('select-alert-mode');
@@ -4472,6 +4490,8 @@
 
       if (titleInput) siteTitle = titleInput.value.trim() || siteTitle;
       if (descInput) siteDescription = descInput.value.trim() || siteDescription;
+      if (aboutTitleInput) aboutTitle = aboutTitleInput.value.trim() || aboutTitle;
+      if (aboutDescInput) aboutDescription = aboutDescInput.value.trim() || aboutDescription;
       if (logoInput) {
         siteLogo = logoInput.value.trim() || siteLogo;
         updateLogoSrc();
@@ -4505,6 +4525,8 @@
         adminPassword: adminPassword,
         siteTitle: siteTitle,
         siteDescription: siteDescription,
+        aboutTitle: aboutTitle,
+        aboutDescription: aboutDescription,
         siteLogo: siteLogo,
         alertPopup: alertPopup
       };
@@ -4538,6 +4560,8 @@
         adminPassword: adminPassword,
         siteTitle: siteTitle,
         siteDescription: siteDescription,
+        aboutTitle: aboutTitle,
+        aboutDescription: aboutDescription,
         siteLogo: siteLogo,
         alertPopup: alertPopup
       };
@@ -4578,6 +4602,8 @@
               if (data.adminPassword) adminPassword = data.adminPassword;
               if (data.siteTitle) siteTitle = data.siteTitle;
               if (data.siteDescription) siteDescription = data.siteDescription;
+              if (data.aboutTitle) aboutTitle = data.aboutTitle;
+              if (data.aboutDescription) aboutDescription = data.aboutDescription;
               if (data.alertPopup) alertPopup = data.alertPopup;
               if (data.siteLogo) siteLogo = data.siteLogo;
             } else if (Array.isArray(data)) {
@@ -4611,6 +4637,8 @@
               adminPassword: adminPassword,
               siteTitle: siteTitle,
               siteDescription: siteDescription,
+              aboutTitle: aboutTitle,
+              aboutDescription: aboutDescription,
               alertPopup: alertPopup,
               siteLogo: siteLogo
             };
@@ -4674,6 +4702,8 @@
         adminPassword: adminPassword,
         siteTitle: siteTitle,
         siteDescription: siteDescription,
+        aboutTitle: aboutTitle,
+        aboutDescription: aboutDescription,
         siteLogo: siteLogo,
         alertPopup: alertPopup
       };
@@ -5028,27 +5058,61 @@
           </button>
           
           <div class="${isOpen ? 'p-5 space-y-4 animate-fade-in' : 'hidden'} transition-all duration-300">
-            <div class="space-y-3">
-              <div class="space-y-1.5">
-                <label class="text-[10px] uppercase font-black text-slate-400 tracking-wider">Titolo Hero (supporta HTML/Colori)</label>
-                <textarea
-                  id="input-site-title"
-                  rows="2"
-                  oninput="updateSiteTitle(this.value)"
-                  placeholder="es: Tutto quello che devi sapere su The Sims 4"
-                  class="w-full px-3 py-2 bg-slate-900 border border-slate-850 rounded-xl text-xs text-white focus:ring-1 focus:ring-fluo-purple outline-none resize-y min-h-[50px] font-sans"
-                >${siteTitle}</textarea>
+            <div class="space-y-4">
+              <!-- Pagina Guide -->
+              <div class="p-3.5 bg-slate-900/60 border border-slate-850 rounded-2xl space-y-3">
+                <div class="flex items-center gap-2 border-b border-slate-800 pb-2">
+                  <span class="w-2 h-2 rounded-full bg-fluo-purple"></span>
+                  <h4 class="text-[11px] font-black uppercase tracking-wider text-purple-300">Pagina Guide (Home)</h4>
+                </div>
+                <div class="space-y-1.5">
+                  <label class="text-[10px] uppercase font-black text-slate-400 tracking-wider">Titolo Hero Guide (supporta HTML/Colori)</label>
+                  <textarea
+                    id="input-site-title"
+                    rows="2"
+                    oninput="updateSiteTitle(this.value)"
+                    placeholder="es: <span class=&quot;animate-title-color&quot;>Guide & Utilità</span>"
+                    class="w-full px-3 py-2 bg-slate-900 border border-slate-850 rounded-xl text-xs text-white focus:ring-1 focus:ring-fluo-purple outline-none resize-y min-h-[45px] font-sans"
+                  >${siteTitle}</textarea>
+                </div>
+                <div class="space-y-1.5">
+                  <label class="text-[10px] uppercase font-black text-slate-400 tracking-wider">Descrizione Hero Guide</label>
+                  <textarea
+                    id="input-site-description"
+                    rows="3"
+                    oninput="updateSiteDescription(this.value)"
+                    placeholder="Benvenuto nella sezione delle guide di PianetaSim!..."
+                    class="w-full px-3 py-2 bg-slate-900 border border-slate-850 rounded-xl text-xs text-white focus:ring-1 focus:ring-fluo-purple outline-none resize-y min-h-[55px] font-sans"
+                  >${siteDescription}</textarea>
+                </div>
               </div>
- 
-              <div class="space-y-1.5">
-                <label class="text-[10px] uppercase font-black text-slate-400 tracking-wider">Descrizione Hero</label>
-                <textarea
-                  id="input-site-description"
-                  rows="3"
-                  oninput="updateSiteDescription(this.value)"
-                  placeholder="Benvenuto nella sezione delle guide di PianetaSim!..."
-                  class="w-full px-3 py-2 bg-slate-900 border border-slate-850 rounded-xl text-xs text-white focus:ring-1 focus:ring-fluo-purple outline-none resize-y min-h-[60px] font-sans"
-                >${siteDescription}</textarea>
+
+              <!-- Pagina Chi siamo -->
+              <div class="p-3.5 bg-slate-900/60 border border-slate-850 rounded-2xl space-y-3">
+                <div class="flex items-center gap-2 border-b border-slate-800 pb-2">
+                  <span class="w-2 h-2 rounded-full bg-fluo-pink"></span>
+                  <h4 class="text-[11px] font-black uppercase tracking-wider text-pink-300">Pagina Chi siamo</h4>
+                </div>
+                <div class="space-y-1.5">
+                  <label class="text-[10px] uppercase font-black text-slate-400 tracking-wider">Titolo Hero Chi siamo (supporta HTML/Colori)</label>
+                  <textarea
+                    id="input-about-title"
+                    rows="2"
+                    oninput="updateAboutTitle(this.value)"
+                    placeholder="es: <span class=&quot;animate-title-color&quot;>Chi siamo</span>"
+                    class="w-full px-3 py-2 bg-slate-900 border border-slate-850 rounded-xl text-xs text-white focus:ring-1 focus:ring-fluo-pink outline-none resize-y min-h-[45px] font-sans"
+                  >${aboutTitle || '<span class="animate-title-color">Chi siamo</span>'}</textarea>
+                </div>
+                <div class="space-y-1.5">
+                  <label class="text-[10px] uppercase font-black text-slate-400 tracking-wider">Descrizione Hero Chi siamo</label>
+                  <textarea
+                    id="input-about-description"
+                    rows="3"
+                    oninput="updateAboutDescription(this.value)"
+                    placeholder="Benvenuto nella sezione Chi siamo di PianetaSim!..."
+                    class="w-full px-3 py-2 bg-slate-900 border border-slate-850 rounded-xl text-xs text-white focus:ring-1 focus:ring-fluo-pink outline-none resize-y min-h-[55px] font-sans"
+                  >${aboutDescription || ''}</textarea>
+                </div>
               </div>
  
               <div class="space-y-1.5">
@@ -6309,8 +6373,26 @@
       
       const heroTitle = document.getElementById('site-hero-title');
       const heroDesc = document.getElementById('site-hero-desc');
-      if (heroTitle) heroTitle.innerHTML = siteTitle;
-      if (heroDesc) heroDesc.innerHTML = siteDescription;
+      if (heroTitle) {
+        if (activeTab === 'creators') {
+          const currentAboutTitle = (aboutTitle && aboutTitle.trim().startsWith('<span'))
+            ? aboutTitle
+            : `<span class="animate-title-color">${aboutTitle || 'Chi siamo'}</span>`;
+          heroTitle.innerHTML = currentAboutTitle;
+        } else {
+          const currentSiteTitle = (siteTitle && siteTitle.trim().startsWith('<span'))
+            ? siteTitle
+            : `<span class="animate-title-color">${siteTitle || 'Guide & Utilità'}</span>`;
+          heroTitle.innerHTML = currentSiteTitle;
+        }
+      }
+      if (heroDesc) {
+        if (activeTab === 'creators') {
+          heroDesc.innerHTML = aboutDescription || 'Benvenuto nella sezione Chi siamo di PianetaSim! Scopri il nostro team, i creatori di guide, i traduttori e la fantastica community che rende vivo questo progetto.';
+        } else {
+          heroDesc.innerHTML = siteDescription || 'Benvenuto nella sezione delle guide di PianetaSim! Impara nuove tecniche di costruzione, installa mod tradotte e copia trucchi con un solo click.';
+        }
+      }
 
       
       const btnGuides = document.getElementById('btn-tab-guides');
