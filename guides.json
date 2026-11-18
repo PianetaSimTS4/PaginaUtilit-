@@ -2788,6 +2788,189 @@
       "authorLevel": "Admin & Traduttrice",
       "authorLink": "#collaboratori",
       "_rawTags": ""
+    },
+    {
+      "id": "influenzare-gravidanza",
+      "title": "🍼 COME IFNLUENZARE IL GENERE E NUMERO DEI FIGLI",
+      "description": "Scopri com'è possibile influenzare il genere e numero dei figli durante la gravidanza con e senza l'utilizzo dei cheat.",
+      "category": "gameplay",
+      "categories": [
+        "gameplay"
+      ],
+      "tags": [],
+      "status": "published",
+      "content": [
+        {
+          "type": "paragraph",
+          "value": "*Attraverso semplici meccaniche di gioco è possibile influenzare il genere e numero dei figli durante la gravidanza. Invece, a fine guida, potrai trovare i cheat che forzano numero e genere.*",
+          "quoteType": "virgolette",
+          "borderColor": "#b026ff",
+          "align": "left"
+        },
+        {
+          "type": "heading2",
+          "value": "COME AVERE UN MASCHIETTO",
+          "color": "#38bdf8"
+        },
+        {
+          "type": "list",
+          "value": "Acolta [color:#38bdf8](➜) **Musica Alternativa**\nMangia [color:#38bdf8](➜) **Carote**",
+          "listType": "bullet"
+        },
+        {
+          "type": "heading2",
+          "value": "COME AVERE UNA FEMMINUCCIA",
+          "color": "#ff007f"
+        },
+        {
+          "type": "list",
+          "value": "Acolta [color:#ff007f](➜) **Musica Pop**\nMangia [color:#ff007f](➜) **Fragole**",
+          "listType": "bullet"
+        },
+        {
+          "type": "heading2",
+          "value": "COME AVERE DEI GEMELLI",
+          "color": "#b026ff"
+        },
+        {
+          "type": "paragraph",
+          "value": "Senza l'utilizzo dei cheat è impossibile forzare il numero di gemelli e il loro sesso, ma si possono aumentare le probabilità attraverso:"
+        },
+        {
+          "type": "paragraph",
+          "value": "[color:#c3b0e8](**NUMERO GEMELLI**)"
+        },
+        {
+          "type": "quote",
+          "value": "Questi metodi vanno svolti subito prima che il/la Sim sia in cinta.",
+          "quoteType": "linea",
+          "lineColor": "giallo"
+        },
+        {
+          "type": "list",
+          "value": "[color:#b026ff](**Tratto Fertile:**) acquistabile con i punti soddisfazione (3.000) nei tratti premio oppure attraverso il trucco *traits.equip_trait trait_Fertile*\n\n[color:#b026ff](**Tratto Lotto Linea Temporale Fertile:**) si trova nella modalità costruisci, tratti lotto *[Espansione: Vita in Città]*\n\n[color:#b026ff](**Elisir della Fertilità:**) con il Livello 10 di Erboristeria, attraverso un fornello, griglia o calderone, potrai preparare l'elisir con questi ingredienti: morchelle false, 2 di salvia, 1 basilico e 1 fuoco fatuo *[Espansione: Vita all'Aria Aperta]*\n\n[color:#b026ff](**Massaggio della Fertilità:**) attraverso un lettino per massaggi in una spa *[Gamepack: Un Giorno alla Spa]*",
+          "listType": "bullet"
+        },
+        {
+          "type": "tip",
+          "value": "Più di questi metodi proverai e più le probabilità di avere gemelli si alzeranno."
+        },
+        {
+          "type": "paragraph",
+          "value": "[color:#c3b0e8](**GENERE GEMELLI**)"
+        },
+        {
+          "type": "paragraph",
+          "value": "Questi due metodi non sono certi, quindi ci sono probabilità che falliscano"
+        },
+        {
+          "type": "quote",
+          "value": "Questi metodi vanno svolti dopo aver provato i metodi per aumentare la fertilità e durante la gravidanza.",
+          "quoteType": "linea",
+          "lineColor": "giallo"
+        },
+        {
+          "type": "list",
+          "value": "[color:#b026ff](**Due Gemelli di Sesso Opposto:**) mangia in quantità **equiparate** carote e fragole.\n\n[color:#b026ff](**Visita Medica:**) al **secondo trimestre** fai determinare il sesso del bambino da un **medico** [Espansione Al Lavoro!] Questo bloccherà il genere di un solo gemello, poi inizia a mangiare carote o fragole e ascoltare musica in base al genere che vorresti. Facendo così avrai probabilità di influenzare il sesso dell'altro gemello.",
+          "listType": "bullet"
+        },
+        {
+          "type": "divider",
+          "value": "",
+          "separatorType": "line",
+          "dividerType": "standard"
+        },
+        {
+          "type": "heading2",
+          "value": "TRUCCHI PER LA GRAVIDANZA",
+          "color": "#26ff5e"
+        },
+        {
+          "type": "tip",
+          "value": "Questi trucchi funzionano su un/una Sim **già** incinta."
+        },
+        {
+          "type": "quote",
+          "value": "Apri la console e attiva i trucchi con:\n**Ctrl** + **Maiusc** + **C** \nScrivi **testingcheats true** + **Invio**",
+          "quoteType": "linea",
+          "lineColor": "verde"
+        },
+        {
+          "type": "didascalia",
+          "value": "Le scritte in corsivo colorate vanno sostituite da ciò che è nominato. Puoi guardare gli esempi alla fine dell'elenco."
+        },
+        {
+          "type": "paragraph",
+          "value": "**[color:#eab308](NUMERO DEI FIGLI:)**"
+        },
+        {
+          "type": "list",
+          "value": "Digita **sims.get_sim_id_by_name *[color:#b026ff](Nome Cognome)*** + **Invio**\nCopia il numero uscito, è l'ID del Sim\nDigita **pregnancy.force_offspring_count *[color:#38bdf8](ID Sim) [color:#eab308](Numero figli)*** + **Invio**",
+          "listType": "number"
+        },
+        {
+          "type": "didascalia",
+          "value": "[color:#26ff5e](Es:) \n1. sims.get_sim_id_by_name [color:#b026ff](Daniela Alberghini)\n3. pregnancy.force_offspring_count [color:#38bdf8](123456789012345) [color:#eab308](2)",
+          "borderColor": "#ffffff",
+          "quoteType": "linea",
+          "lineColor": "verde"
+        },
+        {
+          "type": "paragraph",
+          "value": "**[color:#f97316](STADIO DI GRAVIDANZA)**"
+        },
+        {
+          "type": "list",
+          "value": "Primo Trimestre [color:#f97316](➜) *sims.add_buff buff_Pregnancy_Trimester1*\nSecondo Trimestre [color:#f97316](➜) *sims.add_buff buff_Pregnancy_Trimester2*\nTerzo Trimestre [color:#f97316](➜) *sims.add_buff buff_Pregnancy_Trimester3*\nTravaglio [color:#f97316](➜) *sims.add_buff buff_Pregnancy_InLabor*\nInterrompre gravidanza [color:#f97316](➜) *sims.remove_all_buffs pregnancy_in labor*",
+          "listType": "bullet"
+        },
+        {
+          "type": "divider",
+          "value": "",
+          "separatorType": "spacer",
+          "dividerType": "standard",
+          "height": "10"
+        },
+        {
+          "type": "quote",
+          "value": "Questa guida è stata realizzanta basandosi su:\n- [[color:#c3b0e8](Guida Gravidanza)](https://gamesplus.it/trucchi-e-soluzioni/the-sims-4-i-migliori-trucchi-per-la-gravidanza-39788)\n-[[color:#c3b0e8](Guida Gemelli)](https://www.icrewplay.com/the-sims-4-gemelli-trigemini-trucchi-senza-cheat/)\n- [[color:#c3b0e8](EA)](https://help.ea.com/it/articles/the-sims/the-sims-4/pregnancy-guide/)",
+          "quoteType": "linea",
+          "lineColor": "viola"
+        },
+        {
+          "type": "divider",
+          "value": "",
+          "separatorType": "line",
+          "dividerType": "standard"
+        },
+        {
+          "type": "paragraph",
+          "value": "[color:#38bdf8](**SE HAI DUBBI O DIFFICOLTÀ, PUOI RICHIEDE ASSISTENZA NEL GRUPPO TELEGRAM**)",
+          "align": "center"
+        },
+        {
+          "type": "button",
+          "value": "ASSISTENZA TELEGRAM",
+          "buttonUrl": "https://t.me/TheSims4ItaliaPianetaSim",
+          "buttonColor": "#38bdf8"
+        }
+      ],
+      "tips": [],
+      "authorName": "Sha",
+      "authorColor": "#38bdf8",
+      "authors": [
+        {
+          "name": "Sha",
+          "level": "Admin & Traduttrice",
+          "color": "#38bdf8",
+          "diamondColor": "#38bdf8",
+          "link": "#collaboratori"
+        }
+      ],
+      "authorDiamondColor": "#38bdf8",
+      "authorLevel": "Admin & Traduttrice",
+      "authorLink": "#collaboratori",
+      "_rawTags": ""
     }
   ],
   "creators": [
@@ -3025,12 +3208,12 @@
   "aboutDescription": "Pianeta Sim è nato nel 2022 come progetto tra amici, desiderosi di creare uno spazio in cui condividere la propria passione su The Sims il più liberamente possibile, chiacchierare in compagnia e divertirsi!\nNegli anni Pianeta Sim si è ampliato fino a diventare una community solida e produttiva, diventando un progetto non solo di intrattenimento ma di utilità per gli appassionati del gioco; con la speranza di diventare un punto di riferimento per la community italiana di The Sims.",
   "siteLogo": "images/logo.png",
   "alertPopup": {
-    "enabled": false,
-    "mode": "avviso",
-    "title": "Avviso Importante",
-    "color": "rosso",
-    "text": "Benvenuto su PianetaSim! Questo è un messaggio di avviso personalizzabile.",
-    "link": "",
+    "enabled": true,
+    "mode": "novita",
+    "title": "📣 NUOVA GUIDA!",
+    "color": "azzurro",
+    "text": "È uscita la nuova guida gameplay su come poter influenzare le gravidanze dei Sim! :3",
+    "link": "influenzare-gravidanza",
     "linkText": ""
   }
 }
